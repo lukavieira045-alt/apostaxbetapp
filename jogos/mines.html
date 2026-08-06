@@ -87,6 +87,8 @@ a {
 <script>
 
 let saldo = Number(localStorage.getItem("saldo") || 2);
+let bombas = [];
+
 
 function atualizarSaldo(){
 
@@ -94,9 +96,11 @@ function atualizarSaldo(){
     "💰 Saldo: R$ " + saldo.toFixed(2);
 
     localStorage.setItem("saldo", saldo);
+
 }
 
 atualizarSaldo();
+
 
 
 function iniciarJogo(){
@@ -115,6 +119,21 @@ function iniciarJogo(){
     const grid = document.getElementById("grid");
 
     grid.innerHTML = "";
+
+    bombas = [];
+
+
+    while(bombas.length < 3){
+
+        let pos = Math.floor(Math.random() * 9);
+
+        if(!bombas.includes(pos)){
+
+            bombas.push(pos);
+
+        }
+
+    }
 
 
     for(let i = 0; i < 9; i++){
@@ -136,23 +155,19 @@ function iniciarJogo(){
             }
 
 
-            let bomba = Math.random() > 0.7;
-
-
-            if(bomba){
+            if(bombas.includes(i)){
 
                 this.classList.add("bomb");
 
                 this.innerText = "💣";
 
+                alert("💥 Bomba! Fim da rodada!");
 
             } else {
-
 
                 this.classList.add("revealed");
 
                 this.innerText = "💎";
-
 
                 saldo += 0.50;
 
@@ -168,6 +183,9 @@ function iniciarJogo(){
     }
 
 }
+
+
+
 
 </script>
 
