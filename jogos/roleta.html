@@ -11,7 +11,7 @@
 body{
     background:#050505;
     color:white;
-    font-family:Arial;
+    font-family:Arial, sans-serif;
     text-align:center;
 }
 
@@ -23,47 +23,75 @@ h1{
 #saldo{
     color:#00ff88;
     font-size:22px;
+    margin:15px;
 }
+
 
 .area{
     width:340px;
-    height:340px;
+    height:380px;
     margin:40px auto;
     position:relative;
 }
 
+
+/* PONTEIRO */
+
 #ponteiro{
-    font-size:45px;
+
     position:absolute;
-    top:-35px;
+    top:-5px;
     left:50%;
+
     transform:translateX(-50%);
-    z-index:5;
+
+    z-index:999;
+
+    color:red;
+
+    font-size:60px;
+
+    font-weight:bold;
+
+    text-shadow:
+    0 0 10px red,
+    0 0 20px red;
+
 }
 
 
+
+/* ROLETA */
+
 #roleta{
+
+    position:absolute;
+
+    top:45px;
+    left:20px;
 
     width:300px;
     height:300px;
 
     border-radius:50%;
 
-    border:15px solid #ffd700;
+    border:15px solid #d4af37;
+
 
     background:
     conic-gradient(
-        #111 0deg 60deg,
-        #c40000 60deg 120deg,
-        #111 120deg 180deg,
-        #008f39 180deg 240deg,
-        #111 240deg 300deg,
-        #d4af37 300deg 360deg
+        #d00000 0deg 60deg,
+        #111 60deg 120deg,
+        #008000 120deg 180deg,
+        #111 180deg 240deg,
+        #d4af37 240deg 300deg,
+        #111 300deg 360deg
     );
 
-    position:relative;
 
-    transition:transform 12s cubic-bezier(.12,.8,.15,1);
+    transition:
+    transform 12s cubic-bezier(.15,.8,.15,1);
+
 
     box-shadow:
     0 0 40px #ffd700,
@@ -72,19 +100,26 @@ h1{
 }
 
 
+
+/* PRÊMIOS */
+
 .premio{
 
     position:absolute;
+
     width:100%;
     height:100%;
 
     display:flex;
+
     justify-content:center;
+
     align-items:flex-start;
 
     padding-top:25px;
 
     font-size:20px;
+
     font-weight:bold;
 
 }
@@ -99,15 +134,20 @@ h1{
 
 
 
+/* CENTRO */
+
 .centro{
 
     position:absolute;
 
     top:115px;
+
     left:115px;
 
     width:70px;
+
     height:70px;
+
 
     background:#111;
 
@@ -115,9 +155,12 @@ h1{
 
     border-radius:50%;
 
+
     display:flex;
-    align-items:center;
+
     justify-content:center;
+
+    align-items:center;
 
     font-size:30px;
 
@@ -141,6 +184,7 @@ button{
 
 }
 
+
 </style>
 
 </head>
@@ -155,10 +199,12 @@ button{
 <div id="saldo"></div>
 
 
-<div id="ponteiro">🔻</div>
-
-
 <div class="area">
+
+
+<div id="ponteiro">
+▼
+</div>
 
 
 <div id="roleta">
@@ -183,6 +229,7 @@ button{
 </div>
 
 
+
 <button onclick="girar()">
 GIRAR R$1
 </button>
@@ -199,7 +246,14 @@ let girando=false;
 let giroAtual=0;
 
 
-const premios=[0,1,2,5,10,50];
+const premios=[
+0,
+1,
+2,
+5,
+10,
+50
+];
 
 
 
@@ -214,7 +268,6 @@ localStorage.setItem("saldo",saldo);
 
 
 atualizarSaldo();
-
 
 
 
@@ -245,17 +298,14 @@ atualizarSaldo();
 let casa=Math.floor(Math.random()*premios.length);
 
 
-
-let parada=360 - (casa*60);
+let parada=360-(casa*60);
 
 
 giroAtual += 360*8 + parada;
 
 
-
 document.getElementById("roleta").style.transform =
 "rotate("+giroAtual+"deg)";
-
 
 
 
@@ -271,21 +321,21 @@ saldo+=ganho;
 atualizarSaldo();
 
 
+if(ganho>0){
 
-alert(
-ganho > 0 ?
-"🎉 Você ganhou R$ "+ganho.toFixed(2)
-:
-"😢 Não ganhou dessa vez"
-);
+alert("🎉 Você ganhou R$ "+ganho.toFixed(2));
 
+}else{
+
+alert("😢 Você perdeu");
+
+}
 
 
 girando=false;
 
 
 },12000);
-
 
 
 }
