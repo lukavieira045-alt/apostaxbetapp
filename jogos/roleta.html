@@ -7,118 +7,292 @@
 <title>Roleta ApostaXBet</title>
 
 <style>
+
 body{
-    background:#080808;
+    background:#050505;
     color:white;
     font-family:Arial;
     text-align:center;
 }
 
 h1{
-    color:#d4af37;
+    color:#ffd700;
+    text-shadow:0 0 15px #ffd700;
+}
+
+#saldo{
+    color:#00ff88;
+    font-size:22px;
 }
 
 .area{
-    width:330px;
-    height:330px;
+    width:340px;
+    height:340px;
     margin:40px auto;
     position:relative;
 }
 
+#ponteiro{
+    font-size:45px;
+    position:absolute;
+    top:-35px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:5;
+}
+
+
 #roleta{
+
     width:300px;
     height:300px;
-    border-radius:50%;
-    border:15px solid #d4af37;
 
-    background:conic-gradient(
-        red 0deg 45deg,
-        black 45deg 90deg,
-        gold 90deg 135deg,
-        black 135deg 180deg,
-        green 180deg 225deg,
-        black 225deg 270deg,
-        red 270deg 315deg,
-        black 315deg 360deg
+    border-radius:50%;
+
+    border:15px solid #ffd700;
+
+    background:
+    conic-gradient(
+        #111 0deg 60deg,
+        #c40000 60deg 120deg,
+        #111 120deg 180deg,
+        #008f39 180deg 240deg,
+        #111 240deg 300deg,
+        #d4af37 300deg 360deg
     );
 
-    transition:transform 10s cubic-bezier(.15,.8,.15,1);
+    position:relative;
 
-    box-shadow:0 0 40px #d4af37;
+    transition:transform 12s cubic-bezier(.12,.8,.15,1);
+
+    box-shadow:
+    0 0 40px #ffd700,
+    inset 0 0 30px #000;
+
 }
 
-.ponteiro{
-    font-size:45px;
+
+.premio{
+
+    position:absolute;
+    width:100%;
+    height:100%;
+
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+
+    padding-top:25px;
+
+    font-size:20px;
+    font-weight:bold;
+
 }
+
+
+.p1{transform:rotate(30deg);}
+.p2{transform:rotate(90deg);}
+.p3{transform:rotate(150deg);}
+.p4{transform:rotate(210deg);}
+.p5{transform:rotate(270deg);}
+.p6{transform:rotate(330deg);}
+
+
+
+.centro{
+
+    position:absolute;
+
+    top:115px;
+    left:115px;
+
+    width:70px;
+    height:70px;
+
+    background:#111;
+
+    border:5px solid #ffd700;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:30px;
+
+}
+
+
 
 button{
-    padding:15px 40px;
-    background:#d4af37;
+
+    padding:18px 50px;
+
+    background:#ffd700;
+
     border:0;
+
     border-radius:15px;
+
+    font-size:20px;
+
     font-weight:bold;
+
 }
+
 </style>
 
 </head>
 
+
 <body>
+
 
 <h1>🎰 Roleta Cassino</h1>
 
-<div class="ponteiro">🔻</div>
+
+<div id="saldo"></div>
+
+
+<div id="ponteiro">🔻</div>
+
 
 <div class="area">
-<div id="roleta"></div>
+
+
+<div id="roleta">
+
+
+<div class="premio p1">R$0</div>
+<div class="premio p2">R$1</div>
+<div class="premio p3">R$2</div>
+<div class="premio p4">R$5</div>
+<div class="premio p5">R$10</div>
+<div class="premio p6">R$50</div>
+
+
+<div class="centro">
+🎰
 </div>
 
-<button onclick="girar()">GIRAR</button>
+
+</div>
+
+
+</div>
+
+
+<button onclick="girar()">
+GIRAR R$1
+</button>
+
 
 
 <script>
 
-let girando=false;
-let giro=0;
 
-let premios=[
-"R$ 0",
-"R$ 1",
-"R$ 2",
-"R$ 5",
-"R$ 10",
-"R$ 50"
-];
+let saldo = Number(localStorage.getItem("saldo") || 2);
+
+let girando=false;
+
+let giroAtual=0;
+
+
+const premios=[0,1,2,5,10,50];
+
+
+
+function atualizarSaldo(){
+
+document.getElementById("saldo").innerHTML =
+"💰 Saldo: R$ "+saldo.toFixed(2);
+
+localStorage.setItem("saldo",saldo);
+
+}
+
+
+atualizarSaldo();
+
+
 
 
 function girar(){
 
+
 if(girando)return;
+
+
+if(saldo < 1){
+
+alert("Saldo insuficiente");
+
+return;
+
+}
+
 
 girando=true;
 
 
-let numero=Math.floor(Math.random()*premios.length);
+saldo-=1;
+
+atualizarSaldo();
 
 
-giro += 360*6 + numero*60;
+
+let casa=Math.floor(Math.random()*premios.length);
 
 
-document.getElementById("roleta").style.transform=
-"rotate("+giro+"deg)";
+
+let parada=360 - (casa*60);
+
+
+giroAtual += 360*8 + parada;
+
+
+
+document.getElementById("roleta").style.transform =
+"rotate("+giroAtual+"deg)";
+
+
 
 
 setTimeout(()=>{
 
-alert("Resultado: "+premios[numero]);
+
+let ganho=premios[casa];
+
+
+saldo+=ganho;
+
+
+atualizarSaldo();
+
+
+
+alert(
+ganho > 0 ?
+"🎉 Você ganhou R$ "+ganho.toFixed(2)
+:
+"😢 Não ganhou dessa vez"
+);
+
+
 
 girando=false;
 
-},10000);
+
+},12000);
+
 
 
 }
 
+
 </script>
+
 
 </body>
 </html>
