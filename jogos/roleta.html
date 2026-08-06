@@ -27,14 +27,23 @@ h1{
 
 .container{
     position:relative;
-    width:260px;
-    height:260px;
-    margin:30px auto;
+    width:280px;
+    height:280px;
+    margin:40px auto;
+}
+
+#ponteiro{
+    position:absolute;
+    top:-20px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:35px;
+    z-index:2;
 }
 
 #roleta{
-    width:250px;
-    height:250px;
+    width:270px;
+    height:270px;
     border-radius:50%;
     background:conic-gradient(
         #00ff88 0deg 45deg,
@@ -47,29 +56,26 @@ h1{
         #ff4444 315deg 360deg
     );
     border:8px solid white;
-    transition:3s;
-}
-
-#valores{
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
+    transition:4s;
     display:flex;
     align-items:center;
     justify-content:center;
+}
+
+#texto{
     font-size:18px;
     font-weight:bold;
+    color:white;
+    transform:rotate(0deg);
 }
 
 button{
-    padding:15px 30px;
+    padding:15px 35px;
     background:#00ff88;
     border:0;
     border-radius:10px;
-    font-weight:bold;
     font-size:18px;
+    font-weight:bold;
 }
 
 a{
@@ -88,12 +94,18 @@ a{
 <div id="saldo"></div>
 
 <div class="container">
-<div id="roleta"></div>
-<div id="valores">
-💰1 | 💰5 | 💰0 | 💰10<br>
-💰2 | 💰0 | 💰50 | 💰1
+
+<div id="ponteiro">🔻</div>
+
+<div id="roleta">
+<div id="texto">
+R$1 | R$5 | R$0 | R$10<br>
+R$2 | R$0 | R$50 | R$1
 </div>
 </div>
+
+</div>
+
 
 <button onclick="girar()">GIRAR</button>
 
@@ -104,37 +116,7 @@ a{
 
 let saldo = Number(localStorage.getItem("saldo") || 2);
 
-function atualizarSaldo(){
-
-document.getElementById("saldo").innerHTML =
-"💰 Saldo: R$ " + saldo.toFixed(2);
-
-localStorage.setItem("saldo",saldo);
-
-}
-
-atualizarSaldo();
-
-
-function girar(){
-
-if(saldo < 1){
-alert("Saldo insuficiente!");
-return;
-}
-
-saldo -= 1;
-atualizarSaldo();
-
-
-let roleta=document.getElementById("roleta");
-
-let giro=1440 + Math.floor(Math.random()*360);
-
-roleta.style.transform="rotate("+giro+"deg)";
-
-
-setTimeout(()=>{
+let rodando=false;
 
 let premios=[
 1,
@@ -148,10 +130,58 @@ let premios=[
 ];
 
 
-let premio=premios[Math.floor(Math.random()*premios.length)];
+function atualizarSaldo(){
+
+document.getElementById("saldo").innerHTML=
+"💰 Saldo: R$ "+saldo.toFixed(2);
+
+localStorage.setItem("saldo",saldo);
+
+}
+
+atualizarSaldo();
 
 
-saldo += premio;
+
+function girar(){
+
+if(rodando)return;
+
+if(saldo < 1){
+
+alert("Saldo insuficiente!");
+
+return;
+
+}
+
+
+rodando=true;
+
+saldo-=1;
+
+atualizarSaldo();
+
+
+let roleta=document.getElementById("roleta");
+
+
+let sorte=Math.floor(Math.random()*8);
+
+let graus=(360*5)+(sorte*45)+22;
+
+
+roleta.style.transform=
+"rotate("+graus+"deg)";
+
+
+setTimeout(()=>{
+
+
+let premio=premios[sorte];
+
+
+saldo+=premio;
 
 atualizarSaldo();
 
@@ -159,7 +189,11 @@ atualizarSaldo();
 alert("🎉 Você ganhou R$ "+premio.toFixed(2));
 
 
-},3000);
+rodando=false;
+
+
+},4000);
+
 
 }
 
