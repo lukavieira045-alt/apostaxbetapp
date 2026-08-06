@@ -1,134 +1,395 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crash - ApostaXBet</title>
 
-    <style>
-        body {
-            background-color: #0f1923;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        h1 {
-            color: #00ff88;
-        }
+<title>Crash - ApostaXBet</title>
 
-        #saldo {
-            font-size: 22px;
-            color: #00ff88;
-            margin: 20px;
-        }
+<style>
 
-        #multiplier {
-            font-size: 70px;
-            color: #00ff88;
-            margin: 40px 0;
-            font-weight: bold;
-        }
+*{
+    box-sizing:border-box;
+    font-family:Arial;
+}
 
-        button {
-            padding: 15px 30px;
-            font-size: 18px;
-            background: #00ff88;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+body{
+    margin:0;
+    background:#050505;
+    color:white;
+    text-align:center;
+}
 
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+h1{
+    color:#ffd700;
+    text-shadow:0 0 15px #ffd700;
+}
 
-        a {
-            display: block;
-            margin-top: 30px;
-            color: #aaa;
-            text-decoration: none;
-        }
-    </style>
+#saldo{
+    color:#00ff88;
+    font-size:22px;
+    margin:20px;
+}
+
+
+.jogo{
+
+    width:360px;
+    max-width:90%;
+
+    margin:20px auto;
+
+    background:#111;
+
+    border:2px solid #ffd700;
+
+    border-radius:20px;
+
+    padding:20px;
+
+}
+
+
+
+#multiplicador{
+
+    font-size:55px;
+
+    color:#00ff88;
+
+    margin:20px;
+
+}
+
+
+
+.area{
+
+    height:180px;
+
+    position:relative;
+
+    overflow:hidden;
+
+    border-radius:15px;
+
+    background:#000;
+
+    border:1px solid #333;
+
+}
+
+
+
+#foguete{
+
+    position:absolute;
+
+    bottom:20px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    font-size:70px;
+
+    transition:.2s;
+
+}
+
+
+
+input{
+
+    width:120px;
+
+    padding:12px;
+
+    margin:15px;
+
+    border-radius:10px;
+
+    text-align:center;
+
+    font-size:18px;
+
+}
+
+
+
+button{
+
+    padding:15px 25px;
+
+    margin:5px;
+
+    border:0;
+
+    border-radius:12px;
+
+    font-weight:bold;
+
+    font-size:16px;
+
+    background:#ffd700;
+
+}
+
+
+
+#sacar{
+
+    background:#00ff88;
+
+}
+
+
+
+</style>
+
 </head>
+
 
 <body>
 
-    <h1>🚀 Crash</h1>
 
-    <div id="saldo">💰 Saldo: R$ 2,00</div>
+<h1>🚀 Crash ApostaXBet</h1>
 
-    <div id="multiplier">1.00x</div>
 
-    <button id="btnStart" onclick="iniciarCrash()">INICIAR</button>
+<div id="saldo"></div>
 
-    <br><br>
 
-    <a href="../index.html">Voltar para o Menu</a>
+<div class="jogo">
+
+
+<div id="multiplicador">
+1.00x
+</div>
+
+
+
+<div class="area">
+
+<div id="foguete">
+🚀
+</div>
+
+</div>
+
+
+
+<input 
+id="aposta"
+type="number"
+value="1"
+min="1"
+>
+
+
+
+<br>
+
+
+<button onclick="iniciar()">
+JOGAR
+</button>
+
+
+<button id="sacar" onclick="sacar()">
+SACAR
+</button>
+
+
+
+</div>
+
 
 
 <script>
 
-let saldo = Number(localStorage.getItem("saldo") || 2);
 
-function atualizarSaldo() {
-    document.getElementById("saldo").innerText =
-    "💰 Saldo: R$ " + saldo.toFixed(2);
+let saldo =
+Number(localStorage.getItem("saldo") || 2);
 
-    localStorage.setItem("saldo", saldo);
+
+let rodando=false;
+
+let timer;
+
+let multiplicador=1;
+
+let aposta=0;
+
+let limite=0;
+
+
+
+function atualizarSaldo(){
+
+document.getElementById("saldo").innerHTML =
+"💰 Saldo: R$ "+
+saldo.toFixed(2);
+
+
+localStorage.setItem("saldo",saldo);
+
 }
+
 
 atualizarSaldo();
 
 
-let intervalo;
-
-function iniciarCrash() {
-
-    if (saldo < 1) {
-        alert("Saldo insuficiente!");
-        return;
-    }
-
-    saldo -= 1;
-    atualizarSaldo();
-
-    clearInterval(intervalo);
-
-    let valor = 1.00;
-
-    const el = document.getElementById('multiplier');
-    const btn = document.getElementById('btnStart');
-
-    btn.disabled = true;
-    el.style.color = '#00ff88';
 
 
-    intervalo = setInterval(() => {
-
-        valor += 0.01 + (Math.random() * 0.02);
-
-        el.innerText = valor.toFixed(2) + 'x';
+function iniciar(){
 
 
-        if(Math.random() > 0.98) {
+if(rodando)return;
 
-            clearInterval(intervalo);
 
-            el.innerText = "CRASHED @ " + valor.toFixed(2) + "x";
+aposta =
+Number(document.getElementById("aposta").value);
 
-            el.style.color = "#ff4444";
 
-            btn.disabled = false;
-        }
 
-    }, 50);
+if(aposta<=0 || aposta>saldo){
+
+alert("Saldo insuficiente");
+
+return;
+
 }
 
+
+
+saldo-=aposta;
+
+atualizarSaldo();
+
+
+
+multiplicador=1;
+
+
+
+limite =
+Math.random()*5+1;
+
+
+
+rodando=true;
+
+
+
+timer=setInterval(function(){
+
+
+multiplicador +=0.05;
+
+
+
+document.getElementById("multiplicador").innerHTML =
+multiplicador.toFixed(2)+"x";
+
+
+
+document.getElementById("foguete").style.bottom =
+(20 + multiplicador*10)+"px";
+
+
+
+if(multiplicador>=limite){
+
+
+clearInterval(timer);
+
+
+alert(
+"💥 Caiu em "+
+multiplicador.toFixed(2)+"x"
+);
+
+
+rodando=false;
+
+
+reset();
+
+}
+
+
+
+},100);
+
+
+
+}
+
+
+
+
+
+function sacar(){
+
+
+if(!rodando)return;
+
+
+
+let premio =
+aposta*multiplicador;
+
+
+
+saldo += premio;
+
+
+atualizarSaldo();
+
+
+
+alert(
+"🎉 Você sacou R$ "+
+premio.toFixed(2)+
+" em "+
+multiplicador.toFixed(2)+"x"
+);
+
+
+
+clearInterval(timer);
+
+
+rodando=false;
+
+
+reset();
+
+
+}
+
+
+
+
+
+function reset(){
+
+multiplicador=1;
+
+
+document.getElementById("multiplicador").innerHTML=
+"1.00x";
+
+
+document.getElementById("foguete").style.bottom=
+"20px";
+
+}
+
+
 </script>
+
 
 </body>
 </html>
