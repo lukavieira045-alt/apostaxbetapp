@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crash - ApostaXBet</title>
+    <style>
+        body { background-color: #0f1923; color: white; font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        h1 { color: #00ff88; }
+        #multiplier { font-size: 70px; color: #00ff88; margin: 40px 0; font-weight: bold; }
+        button { padding: 15px 30px; font-size: 18px; background: #00ff88; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        a { display: block; margin-top: 30px; color: #aaa; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <h1>🚀 Crash</h1>
+    <div id="multiplier">1.00x</div>
+    <button id="btnStart" onclick="iniciarCrash()">INICIAR</button>
+    <br><br>
+    <a href="../index.html">Voltar para o Menu</a>
+
+    <script>
+        let intervalo;
+        function iniciarCrash() {
+            clearInterval(intervalo);
+            let valor = 1.00;
+            const el = document.getElementById('multiplier');
+            const btn = document.getElementById('btnStart');
+            btn.disabled = true;
+            el.style.color = '#00ff88';
+            
+            intervalo = setInterval(() => {
+                valor += 0.01 + (Math.random() * 0.02);
+                el.innerText = valor.toFixed(2) + 'x';
+                
+                if(Math.random() > 0.98) {
+                    clearInterval(intervalo);
+                    el.innerText = "CRASHED @ " + valor.toFixed(2) + "x";
+                    el.style.color = "#ff4444";
+                    btn.disabled = false;
+                }
+            }, 50);
+        }
+    </script>
+</body>
+</html>
