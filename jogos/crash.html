@@ -7,9 +7,10 @@
 <title>Crash ApostaXBet</title>
 
 <style>
+
 body{
     margin:0;
-    background:#080808;
+    background:#050505;
     color:white;
     font-family:Arial;
     text-align:center;
@@ -17,19 +18,20 @@ body{
 
 h1{
     color:#ffd700;
+    text-shadow:0 0 15px #ffd700;
 }
 
 #saldo{
     color:#00ff88;
     font-size:22px;
-    margin:20px;
+    margin:15px;
 }
 
 .box{
     width:90%;
-    max-width:380px;
+    max-width:400px;
     margin:auto;
-    background:#151515;
+    background:#111;
     border:2px solid #ffd700;
     border-radius:20px;
     padding:20px;
@@ -38,30 +40,46 @@ h1{
 #numero{
     font-size:55px;
     color:#00ff88;
-    margin:20px;
 }
 
-.campo{
-    height:180px;
-    background:#000;
+.area{
+    height:220px;
+    background:linear-gradient(#000,#101010);
     border-radius:15px;
-    position:relative;
     overflow:hidden;
+    position:relative;
+    border:1px solid #333;
 }
+
+
+#linha{
+    position:absolute;
+    width:4px;
+    height:0;
+    background:#00ff88;
+    bottom:20px;
+    left:50px;
+    transform:rotate(-35deg);
+    box-shadow:0 0 15px #00ff88;
+}
+
 
 #foguete{
     position:absolute;
     bottom:20px;
-    left:45%;
+    left:40px;
     font-size:60px;
+    transition:.15s;
 }
 
+
 input{
-    padding:12px;
     width:100px;
-    margin:20px;
+    padding:10px;
+    margin:15px;
     border-radius:10px;
 }
+
 
 button{
     padding:15px 30px;
@@ -72,52 +90,97 @@ button{
     font-size:18px;
 }
 
+
 .sacar{
     background:#00ff88;
 }
+
+
+#historico{
+    margin-top:20px;
+    color:#aaa;
+}
+
+
 </style>
 
 </head>
 
+
 <body>
 
-<h1>🚀 Crash</h1>
+
+<h1>🚀 Crash ApostaXBet</h1>
+
 
 <div id="saldo"></div>
 
+
 <div class="box">
+
 
 <div id="numero">
 1.00x
 </div>
 
-<div class="campo">
-<div id="foguete">🚀</div>
+
+<div class="area">
+
+<div id="linha"></div>
+
+<div id="foguete">
+🚀
 </div>
+
+</div>
+
 
 <input id="aposta" type="number" value="1">
 
+
 <br>
 
-<button onclick="jogar()">JOGAR</button>
 
-<button class="sacar" onclick="retirar()">SACAR</button>
+<button onclick="jogar()">
+JOGAR
+</button>
+
+
+<button class="sacar" onclick="sacar()">
+SACAR
+</button>
+
+
+<div id="historico">
+Últimas rodadas:
+</div>
+
 
 </div>
+
 
 
 <script>
 
-let saldo = Number(localStorage.getItem("saldo") || 2);
+
+let saldo=Number(localStorage.getItem("saldo")||2);
 
 let rodando=false;
+
 let valor=1;
+
 let aposta=0;
-let queda=0;
+
+let queda;
+
 let tempo;
 
 
-function tela(){
+let historico=[];
+
+
+
+function atualizar(){
 
 document.getElementById("saldo").innerHTML=
 "💰 Saldo: R$ "+saldo.toFixed(2);
@@ -126,10 +189,12 @@ localStorage.setItem("saldo",saldo);
 
 }
 
-tela();
+atualizar();
+
 
 
 function jogar(){
+
 
 if(rodando)return;
 
@@ -137,9 +202,9 @@ if(rodando)return;
 aposta=Number(document.getElementById("aposta").value);
 
 
-if(aposta>saldo){
+if(aposta<=0 || aposta>saldo){
 
-alert("Saldo insuficiente");
+alert("Saldo inválido");
 return;
 
 }
@@ -147,15 +212,15 @@ return;
 
 saldo-=aposta;
 
-tela();
+atualizar();
 
 
 valor=1;
 
-queda=Math.random()*4+1;
+queda=Math.random()*5+1;
+
 
 rodando=true;
-
 
 
 tempo=setInterval(()=>{
@@ -169,62 +234,90 @@ valor.toFixed(2)+"x";
 
 
 document.getElementById("foguete").style.bottom=
-(20+valor*15)+"px";
+20+valor*12+"px";
+
+
+document.getElementById("linha").style.height=
+valor*30+"px";
 
 
 
 if(valor>=queda){
 
 
-clearInterval(tempo);
+finalizar();
 
-alert("💥 Caiu!");
-
-rodando=false;
-
-voltar();
 
 }
 
 
-},150);
+},120);
 
 
 }
 
 
 
-function retirar(){
+function sacar(){
+
 
 if(!rodando)return;
 
 
-saldo+=aposta*valor;
-
-tela();
+let premio=aposta*valor;
 
 
-alert("🎉 Retirou em "+valor.toFixed(2)+"x");
+saldo+=premio;
 
 
-clearInterval(tempo);
+atualizar();
 
 
-rodando=false;
+alert("🎉 Ganhou R$ "+premio.toFixed(2));
 
-voltar();
+
+finalizar();
+
+
 
 }
 
 
 
-function voltar(){
+function finalizar(){
+
+
+clearInterval(tempo);
+
+
+historico.unshift(valor.toFixed(2)+"x");
+
+
+if(historico.length>5)
+historico.pop();
+
+
+
+document.getElementById("historico").innerHTML=
+"Últimas rodadas:<br>"+
+historico.join(" | ");
+
+
+
+rodando=false;
+
 
 valor=1;
 
+
 document.getElementById("numero").innerHTML="1.00x";
 
+
+document.getElementById("linha").style.height="0px";
+
+
 document.getElementById("foguete").style.bottom="20px";
+
 
 }
 
