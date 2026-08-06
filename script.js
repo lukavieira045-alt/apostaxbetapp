@@ -1,23 +1,48 @@
-// Saldo inicial
-let saldo = Number(localStorage.getItem("saldo") || 2);
+// Sistema de saldo
 
-// Atualiza o saldo na tela
-function atualizarSaldo() {
-    document.getElementById("saldo").textContent =
+let saldo = Number(localStorage.getItem("saldo")) || 2;
+
+
+function atualizarSaldo(){
+
+    let campo = document.getElementById("saldo");
+
+    if(campo){
+        campo.innerHTML = 
         "R$ " + saldo.toFixed(2);
+    }
 
     localStorage.setItem("saldo", saldo);
+
 }
+
 
 atualizarSaldo();
 
-// Botões (temporário)
-const botoes = document.querySelectorAll(".acoes button");
 
-botoes[0].addEventListener("click", () => {
-    alert("Depósito via PIX (em breve).");
-});
 
-botoes[1].addEventListener("click", () => {
-    alert("Saque (em breve).");
-});
+// Botões da carteira
+
+let botoes = document.querySelectorAll(".botoes button");
+
+
+if(botoes.length >= 2){
+
+
+    botoes[0].onclick = function(){
+
+        alert("💳 Área de depósito PIX em construção");
+
+
+    };
+
+
+    botoes[1].onclick = function(){
+
+        alert("💸 Área de saque em construção");
+
+
+    };
+
+
+}
