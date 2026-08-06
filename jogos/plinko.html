@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Plinko ApostaXBet</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    font-family:Arial;
+}
+
+body{
+    margin:0;
+    background:#050505;
+    color:white;
+    text-align:center;
+}
+
+h1{
+    color:#ffd700;
+    text-shadow:0 0 15px #ffd700;
+}
+
+#saldo{
+    color:#00ff88;
+    font-size:22px;
+    margin:20px;
+}
+
+.caixa{
+    width:95%;
+    max-width:420px;
+    margin:auto;
+    background:#111;
+    border:2px solid #ffd700;
+    border-radius:20px;
+    padding:20px;
+}
+
+
+#jogo{
+    height:350px;
+    background:#000;
+    border-radius:15px;
+    position:relative;
+    overflow:hidden;
+    border:1px solid #333;
+}
+
+
+.pino{
+    position:absolute;
+    width:10px;
+    height:10px;
+    background:#ffd700;
+    border-radius:50%;
+}
+
+
+#bola{
+    position:absolute;
+    top:10px;
+    left:50%;
+    width:22px;
+    height:22px;
+    background:#00ff88;
+    border-radius:50%;
+    transform:translateX(-50%);
+    z-index:5;
+}
+
+
+#premio{
+    margin-top:15px;
+    color:#ffd700;
+    font-size:25px;
+}
+
+
+input{
+    width:120px;
+    padding:10px;
+    margin:15px;
+    border-radius:10px;
+    text-align:center;
+}
+
+
+button{
+    padding:15px 35px;
+    background:#ffd700;
+    border:0;
+    border-radius:12px;
+    font-size:18px;
+    font-weight:bold;
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<h1>🎯 Plinko</h1>
+
+
+<div id="saldo"></div>
+
+
+<div class="caixa">
+
+
+<div id="jogo">
+
+<div id="bola"></div>
+
+</div>
+
+
+<div id="premio">
+Prêmio: R$ 0
+</div>
+
+
+<input id="aposta" type="number" value="1">
+
+
+<br>
+
+
+<button onclick="soltar()">
+SOLTAR BOLA
+</button>
+
+
+</div>
+
+
+
+<script>
+
+
+let saldo = Number(localStorage.getItem("saldo") || 1000);
+
+
+function atualizar(){
+
+document.getElementById("saldo").innerHTML =
+"💰 Saldo: R$ "+saldo.toFixed(2);
+
+localStorage.setItem("saldo",saldo);
+
+}
+
+
+atualizar();
+
+
+
+let jogo=document.getElementById("jogo");
+
+
+// criar pinos
+
+for(let linha=0; linha<7; linha++){
+
+    for(let coluna=0; coluna<linha+3; coluna++){
+
+        let p=document.createElement("div");
+
+        p.className="pino";
+
+        p.style.top=(40+linha*35)+"px";
+
+        p.style.left=(90+coluna*35-(linha*17))+"px";
+
+        jogo.appendChild(p);
+
+    }
+
+}
+
+
+
+function soltar(){
+
+
+let aposta=Number(
+document.getElementById("aposta").value
+);
+
+
+
+if(aposta<=0 || aposta>saldo){
+
+alert("Saldo inválido");
+
+return;
+
+}
+
+
+saldo-=aposta;
+
+atualizar();
+
+
+
+let bola=document.getElementById("bola");
+
+
+let x=50;
+
+let y=10;
+
+let passos=0;
+
+
+let movimento=setInterval(()=>{
+
+
+x += Math.random()>0.5 ? 8 : -8;
+
+if(x<10)x=10;
+
+if(x>90)x=90;
+
+
+y+=35;
+
+
+bola.style.left=x+"%";
+
+bola.style.top=y+"px";
+
+
+passos++;
+
+
+if(passos>=7){
+
+
+clearInterval(movimento);
+
+
+
+let opcoes=[
+0,
+1,
+2,
+5,
+10
+];
+
+
+let mult=
+opcoes[Math.floor(Math.random()*opcoes.length)];
+
+
+let ganho=aposta*mult;
+
+
+saldo+=ganho;
+
+
+atualizar();
+
+
+document.getElementById("premio").innerHTML=
+"🎉 Prêmio: R$ "+
+ganho.toFixed(2);
+
+
+
+setTimeout(()=>{
+
+bola.style.top="10px";
+bola.style.left="50%";
+
+},1000);
+
+
+}
+
+
+},350);
+
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>
