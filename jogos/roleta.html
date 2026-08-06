@@ -14,13 +14,31 @@
     </style>
 </head>
 <body>
-    <h1>🎡 Roleta da Sorte</h1>
+    <h1>🎡 Roleta da Sorte</h1><div id="saldo">💰 Saldo: R$ 2,00</div>
     <div id="resultado">❓</div>
     <button onclick="girar()">GIRAR AGORA</button>
     <br><br>
     <a href="../index.html"> Voltar para o Menu</a>
 <script>
+let saldo = Number(localStorage.getItem("saldo") || 2);
+
+function atualizarSaldo() {
+    document.getElementById("saldo").innerText = "💰 Saldo: R$ " + saldo.toFixed(2);
+    localStorage.setItem("saldo", saldo);
+}
+
+atualizarSaldo();
+
 function girar() {
+
+    if (saldo < 1) {
+        alert("Saldo insuficiente!");
+        return;
+    }
+
+    saldo -= 1;
+    atualizarSaldo();
+
     const el = document.getElementById('resultado');
     el.innerText = '...';
 
@@ -32,11 +50,16 @@ function girar() {
 
         if (sorteado === '🔴') {
             el.style.color = '#ff4444';
+            saldo += 2;
         } else if (sorteado === '⚫') {
             el.style.color = '#ffffff';
+            saldo += 1;
         } else {
             el.style.color = '#00ff88';
         }
+
+        atualizarSaldo();
+
     }, 500);
 }
 </script>
