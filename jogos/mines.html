@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Mines - ApostaXBet</title>
 
 <style>
 body {
-    background-color:#0f1923;
+    background:#0f1923;
     color:white;
-    font-family:Arial,sans-serif;
+    font-family:Arial;
     text-align:center;
     padding:20px;
 }
@@ -29,7 +30,7 @@ h1 {
     grid-template-columns:repeat(3,70px);
     gap:10px;
     justify-content:center;
-    margin:30px auto;
+    margin:30px;
 }
 
 .cell {
@@ -39,25 +40,24 @@ h1 {
     border:2px solid #2a3b4c;
     border-radius:8px;
     font-size:30px;
-    cursor:pointer;
     display:flex;
     align-items:center;
     justify-content:center;
+    cursor:pointer;
 }
 
-.cell.revealed {
+.revealed {
     background:#00ff88;
 }
 
-.cell.bomb {
+.bomb {
     background:#ff4444;
 }
 
 button {
     padding:12px 25px;
-    font-size:16px;
     background:#00ff88;
-    border:none;
+    border:0;
     border-radius:8px;
     font-weight:bold;
 }
@@ -75,13 +75,13 @@ a {
 
 <h1>💣 Mines</h1>
 
-<div id="saldo">💰 Saldo: R$ 2,00</div>
+<div id="saldo"></div>
 
 <div id="grid"></div>
 
 <button onclick="iniciarJogo()">Novo Jogo</button>
 
-<a href="../index.html">Voltar para o Menu</a>
+<a href="../index.html">Voltar</a>
 
 
 <script>
@@ -92,100 +92,87 @@ let bombas = [];
 
 function atualizarSaldo(){
 
-    document.getElementById("saldo").innerText =
-    "💰 Saldo: R$ " + saldo.toFixed(2);
+document.getElementById("saldo").innerHTML =
+"💰 Saldo: R$ " + saldo.toFixed(2);
 
-    localStorage.setItem("saldo", saldo);
+localStorage.setItem("saldo", saldo);
 
 }
-
-atualizarSaldo();
-
 
 
 function iniciarJogo(){
 
-    if(saldo < 1){
+if(saldo < 1){
+alert("Saldo insuficiente!");
+return;
+}
 
-        alert("Saldo insuficiente!");
-        return;
-
-    }
-
-    saldo -= 1;
-    atualizarSaldo();
+saldo -= 1;
+atualizarSaldo();
 
 
-    const grid = document.getElementById("grid");
+let grid = document.getElementById("grid");
+grid.innerHTML="";
 
-    grid.innerHTML = "";
-
-    bombas = [];
-
-
-    while(bombas.length < 3){
-
-        let pos = Math.floor(Math.random() * 9);
-
-        if(!bombas.includes(pos)){
-
-            bombas.push(pos);
-
-        }
-
-    }
+bombas=[];
 
 
-    for(let i = 0; i < 9; i++){
+while(bombas.length < 3){
 
-        let cell = document.createElement("div");
+let p=Math.floor(Math.random()*9);
 
-        cell.className = "cell";
-
-        cell.innerText = "?";
-
-
-        cell.onclick = function(){
-
-            if(this.classList.contains("revealed") ||
-               this.classList.contains("bomb")){
-
-                return;
-
-            }
-
-
-            if(bombas.includes(i)){
-
-                this.classList.add("bomb");
-
-                this.innerText = "💣";
-
-                alert("💥 Bomba! Fim da rodada!");
-
-            } else {
-
-                this.classList.add("revealed");
-
-                this.innerText = "💎";
-
-                saldo += 0.50;
-
-                atualizarSaldo();
-
-            }
-
-        };
-
-
-        grid.appendChild(cell);
-
-    }
+if(!bombas.includes(p)){
+bombas.push(p);
+}
 
 }
 
 
+for(let i=0;i<9;i++){
 
+let cell=document.createElement("div");
+
+cell.className="cell";
+cell.innerText="?";
+
+
+cell.onclick=function(){
+
+if(this.classList.contains("revealed") ||
+this.classList.contains("bomb")) return;
+
+
+if(bombas.includes(i)){
+
+this.classList.add("bomb");
+this.innerText="💣";
+
+alert("💥 Bomba!");
+
+
+}else{
+
+this.classList.add("revealed");
+this.innerText="💎";
+
+saldo += 0.50;
+atualizarSaldo();
+
+}
+
+};
+
+
+grid.appendChild(cell);
+
+}
+
+
+}
+
+
+atualizarSaldo();
+iniciarJogo();
 
 </script>
 
