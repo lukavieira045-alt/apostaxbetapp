@@ -16,35 +16,61 @@
     </style>
 </head>
 <body>
-    <h1>💣 Mines</h1>
+    <h1>💣 Mines</h1><div id="saldo">💰 Saldo: R$ 2,00</div>
     <div id="grid"></div>
     <button onclick="iniciarJogo()">Novo Jogo</button>
     <br><br>
     <a href="../index.html">Voltar para o Menu</a>
 
-    <script>
-        function iniciarJogo() {
-            const grid = document.getElementById('grid');
-            grid.innerHTML = '';
-            for(let i=0; i<9; i++) {
-                let cell = document.createElement('div');
-                cell.className = 'cell';
-                cell.innerText = '?';
-                cell.onclick = function() {
-                    if(this.classList.contains('revealed') || this.classList.contains('bomb')) return;
-                    const isBomb = Math.random() > 0.7;
-                    if(isBomb) {
-                        this.classList.add('bomb');
-this.innerText = '💣';
-                    } else {
-                        this.classList.add('revealed');
-                        this.innerText = '💎';
-                    }
-                };
-                grid.appendChild(cell);
+   <script>
+let saldo = Number(localStorage.getItem("saldo") || 2);
+
+function atualizarSaldo() {
+    document.getElementById("saldo").innerText = "💰 Saldo: R$ " + saldo.toFixed(2);
+    localStorage.setItem("saldo", saldo);
+}
+
+atualizarSaldo();
+
+function iniciarJogo() {
+
+    if (saldo < 1) {
+        alert("Saldo insuficiente!");
+        return;
+    }
+
+    saldo -= 1;
+    atualizarSaldo();
+
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+
+    for(let i=0; i<9; i++) {
+        let cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.innerText = '?';
+
+        cell.onclick = function() {
+            if(this.classList.contains('revealed') || this.classList.contains('bomb')) return;
+
+            const isBomb = Math.random() > 0.7;
+
+            if(isBomb) {
+                this.classList.add('bomb');
+                this.innerText = '💣';
+            } else {
+                this.classList.add('revealed');
+                this.innerText = '💎';
+                saldo += 0.50;
+                atualizarSaldo();
             }
-        }
-        iniciarJogo();
-    </script>
+        };
+
+        grid.appendChild(cell);
+    }
+}
+
+
+</script> 
 </body>
 </html>
