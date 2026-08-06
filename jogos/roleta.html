@@ -9,112 +9,150 @@
 <style>
 
 body{
-    background:#080808;
+    background:#050505;
     color:white;
-    font-family:Arial;
+    font-family:Arial,sans-serif;
     text-align:center;
     padding:20px;
 }
 
 h1{
     color:#ffd700;
-    text-shadow:0 0 15px #ffd700;
+    text-shadow:0 0 20px #ffd700;
 }
 
 #saldo{
     color:#00ff88;
-    font-size:22px;
+    font-size:24px;
     margin:20px;
 }
 
-.area{
-    width:320px;
-    height:320px;
+
+.container{
+    width:340px;
+    height:340px;
     margin:40px auto;
     position:relative;
 }
 
+
 #ponteiro{
     position:absolute;
-    top:-35px;
+    top:-25px;
     left:50%;
     transform:translateX(-50%);
     font-size:45px;
-    z-index:5;
+    z-index:10;
 }
+
 
 #roleta{
-    width:300px;
-    height:300px;
-    border-radius:50%;
-    border:12px solid #ffd700;
 
-    background:conic-gradient(
-        #111 0deg 60deg,
-        #d40000 60deg 120deg,
-        #111 120deg 180deg,
-        #00aa55 180deg 240deg,
-        #111 240deg 300deg,
-        #ffd700 300deg 360deg
+    width:320px;
+    height:320px;
+
+    border-radius:50%;
+
+    border:15px solid #d4af37;
+
+    background:
+    conic-gradient(
+        #111 0deg 45deg,
+        #c00000 45deg 90deg,
+        #111 90deg 135deg,
+        #008000 135deg 180deg,
+        #111 180deg 225deg,
+        #c00000 225deg 270deg,
+        #111 270deg 315deg,
+        #d4af37 315deg 360deg
     );
 
-    transition:transform 7s cubic-bezier(.15,.8,.2,1);
+    box-shadow:
+    0 0 25px #ffd700,
+    inset 0 0 20px black;
 
-    box-shadow:0 0 30px #ffd700;
+    transition:transform 8s cubic-bezier(.12,.8,.2,1);
 
     position:relative;
+
 }
 
+
 .valor{
+
     position:absolute;
+
     width:100%;
     height:100%;
+
     display:flex;
     justify-content:center;
     align-items:flex-start;
+
     padding-top:25px;
+
     font-size:22px;
     font-weight:bold;
+
 }
 
 
-.v1{transform:rotate(0deg);}
-.v2{transform:rotate(60deg);}
-.v3{transform:rotate(120deg);}
-.v4{transform:rotate(180deg);}
-.v5{transform:rotate(240deg);}
-.v6{transform:rotate(300deg);}
+.v1{transform:rotate(22.5deg);}
+.v2{transform:rotate(67.5deg);}
+.v3{transform:rotate(112.5deg);}
+.v4{transform:rotate(157.5deg);}
+.v5{transform:rotate(202.5deg);}
+.v6{transform:rotate(247.5deg);}
+.v7{transform:rotate(292.5deg);}
+.v8{transform:rotate(337.5deg);}
+
 
 
 button{
-    padding:15px 40px;
+
+    padding:18px 45px;
+
     background:#ffd700;
+
     border:0;
-    border-radius:12px;
+
+    border-radius:15px;
+
     font-size:20px;
+
     font-weight:bold;
+
 }
 
 
 a{
+
     display:block;
+
     margin-top:30px;
+
     color:#aaa;
+
 }
 
 </style>
 
 </head>
 
+
 <body>
+
 
 <h1>🎰 Roleta Cassino</h1>
 
+
 <div id="saldo"></div>
 
-<div class="area">
+
+<div class="container">
 
 <div id="ponteiro">🔻</div>
+
 
 <div id="roleta">
 
@@ -124,6 +162,8 @@ a{
 <div class="valor v4">R$5</div>
 <div class="valor v5">R$10</div>
 <div class="valor v6">R$50</div>
+<div class="valor v7">R$1</div>
+<div class="valor v8">R$0</div>
 
 </div>
 
@@ -132,32 +172,42 @@ a{
 
 <button onclick="girar()">GIRAR</button>
 
+
 <a href="../index.html">Voltar</a>
+
 
 
 <script>
 
+
 let saldo = Number(localStorage.getItem("saldo") || 2);
 
-let girando=false;
+let girando = false;
 
-let giroAtual=0;
+let rotacao = 0;
 
 
-const premios=[
+
+const premios = [
+
 0,
 1,
 2,
 5,
 10,
-50
+50,
+1,
+0
+
 ];
+
 
 
 function atualizarSaldo(){
 
 document.getElementById("saldo").innerHTML =
 "💰 Saldo: R$ " + saldo.toFixed(2);
+
 
 localStorage.setItem("saldo",saldo);
 
@@ -170,7 +220,9 @@ atualizarSaldo();
 
 function girar(){
 
+
 if(girando) return;
+
 
 
 if(saldo < 1){
@@ -182,54 +234,69 @@ return;
 }
 
 
-girando=true;
+
+girando = true;
 
 
-saldo-=1;
+
+saldo -= 1;
 
 atualizarSaldo();
 
 
-let casa=Math.floor(Math.random()*6);
+
+let casa = Math.floor(Math.random()*premios.length);
 
 
-let grausCasa=60;
+
+let tamanho = 45;
 
 
-let destino=-(casa*grausCasa)-30;
+
+let destino = -(casa*tamanho)-22.5;
 
 
-giroAtual += (360*6)+destino;
+
+rotacao += (360*7)+destino;
+
 
 
 document.getElementById("roleta").style.transform =
-"rotate("+giroAtual+"deg)";
+"rotate("+rotacao+"deg)";
 
 
 
 setTimeout(()=>{
 
 
-let premio=premios[casa];
+let premio = premios[casa];
+
 
 
 saldo += premio;
 
+
 atualizarSaldo();
+
 
 
 alert("🎉 Você ganhou R$ "+premio.toFixed(2));
 
 
+
 girando=false;
 
 
-},7000);
+
+},8200);
+
 
 
 }
 
+
 </script>
+
 
 </body>
 </html>
