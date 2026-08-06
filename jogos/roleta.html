@@ -1,302 +1,124 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Roleta Cassino - ApostaXBet</title>
+<title>Roleta ApostaXBet</title>
 
 <style>
-
 body{
-    background:#050505;
+    background:#080808;
     color:white;
-    font-family:Arial,sans-serif;
+    font-family:Arial;
     text-align:center;
-    padding:20px;
 }
 
 h1{
-    color:#ffd700;
-    text-shadow:0 0 20px #ffd700;
+    color:#d4af37;
 }
 
-#saldo{
-    color:#00ff88;
-    font-size:24px;
-    margin:20px;
-}
-
-
-.container{
-    width:340px;
-    height:340px;
+.area{
+    width:330px;
+    height:330px;
     margin:40px auto;
     position:relative;
 }
 
-
-#ponteiro{
-    position:absolute;
-    top:-25px;
-    left:50%;
-    transform:translateX(-50%);
-    font-size:45px;
-    z-index:10;
-}
-
-
 #roleta{
-
-    width:320px;
-    height:320px;
-
+    width:300px;
+    height:300px;
     border-radius:50%;
-
     border:15px solid #d4af37;
 
-    background:
-    conic-gradient(
-        #111 0deg 45deg,
-        #c00000 45deg 90deg,
-        #111 90deg 135deg,
-        #008000 135deg 180deg,
-        #111 180deg 225deg,
-        #c00000 225deg 270deg,
-        #111 270deg 315deg,
-        #d4af37 315deg 360deg
+    background:conic-gradient(
+        red 0deg 45deg,
+        black 45deg 90deg,
+        gold 90deg 135deg,
+        black 135deg 180deg,
+        green 180deg 225deg,
+        black 225deg 270deg,
+        red 270deg 315deg,
+        black 315deg 360deg
     );
 
-    box-shadow:
-    0 0 25px #ffd700,
-    inset 0 0 20px black;
+    transition:transform 10s cubic-bezier(.15,.8,.15,1);
 
-    transition:transform 8s cubic-bezier(.12,.8,.2,1);
-
-    position:relative;
-
+    box-shadow:0 0 40px #d4af37;
 }
 
-
-.valor{
-
-    position:absolute;
-
-    width:100%;
-    height:100%;
-
-    display:flex;
-    justify-content:center;
-    align-items:flex-start;
-
-    padding-top:25px;
-
-    font-size:22px;
-    font-weight:bold;
-
+.ponteiro{
+    font-size:45px;
 }
-
-
-.v1{transform:rotate(22.5deg);}
-.v2{transform:rotate(67.5deg);}
-.v3{transform:rotate(112.5deg);}
-.v4{transform:rotate(157.5deg);}
-.v5{transform:rotate(202.5deg);}
-.v6{transform:rotate(247.5deg);}
-.v7{transform:rotate(292.5deg);}
-.v8{transform:rotate(337.5deg);}
-
-
 
 button{
-
-    padding:18px 45px;
-
-    background:#ffd700;
-
+    padding:15px 40px;
+    background:#d4af37;
     border:0;
-
     border-radius:15px;
-
-    font-size:20px;
-
     font-weight:bold;
-
 }
-
-
-a{
-
-    display:block;
-
-    margin-top:30px;
-
-    color:#aaa;
-
-}
-
 </style>
 
 </head>
 
-
 <body>
-
 
 <h1>🎰 Roleta Cassino</h1>
 
+<div class="ponteiro">🔻</div>
 
-<div id="saldo"></div>
-
-
-<div class="container">
-
-<div id="ponteiro">🔻</div>
-
-
-<div id="roleta">
-
-<div class="valor v1">R$0</div>
-<div class="valor v2">R$1</div>
-<div class="valor v3">R$2</div>
-<div class="valor v4">R$5</div>
-<div class="valor v5">R$10</div>
-<div class="valor v6">R$50</div>
-<div class="valor v7">R$1</div>
-<div class="valor v8">R$0</div>
-
+<div class="area">
+<div id="roleta"></div>
 </div>
-
-</div>
-
 
 <button onclick="girar()">GIRAR</button>
 
 
-<a href="../index.html">Voltar</a>
-
-
-
 <script>
 
+let girando=false;
+let giro=0;
 
-let saldo = Number(localStorage.getItem("saldo") || 2);
-
-let girando = false;
-
-let rotacao = 0;
-
-
-
-const premios = [
-
-0,
-1,
-2,
-5,
-10,
-50,
-1,
-0
-
+let premios=[
+"R$ 0",
+"R$ 1",
+"R$ 2",
+"R$ 5",
+"R$ 10",
+"R$ 50"
 ];
-
-
-
-function atualizarSaldo(){
-
-document.getElementById("saldo").innerHTML =
-"💰 Saldo: R$ " + saldo.toFixed(2);
-
-
-localStorage.setItem("saldo",saldo);
-
-}
-
-
-atualizarSaldo();
-
 
 
 function girar(){
 
+if(girando)return;
 
-if(girando) return;
-
-
-
-if(saldo < 1){
-
-alert("Saldo insuficiente!");
-
-return;
-
-}
+girando=true;
 
 
-
-girando = true;
-
+let numero=Math.floor(Math.random()*premios.length);
 
 
-saldo -= 1;
-
-atualizarSaldo();
+giro += 360*6 + numero*60;
 
 
-
-let casa = Math.floor(Math.random()*premios.length);
-
-
-
-let tamanho = 45;
-
-
-
-let destino = -(casa*tamanho)-22.5;
-
-
-
-rotacao += (360*7)+destino;
-
-
-
-document.getElementById("roleta").style.transform =
-"rotate("+rotacao+"deg)";
-
+document.getElementById("roleta").style.transform=
+"rotate("+giro+"deg)";
 
 
 setTimeout(()=>{
 
-
-let premio = premios[casa];
-
-
-
-saldo += premio;
-
-
-atualizarSaldo();
-
-
-
-alert("🎉 Você ganhou R$ "+premio.toFixed(2));
-
-
+alert("Resultado: "+premios[numero]);
 
 girando=false;
 
-
-
-},8200);
-
+},10000);
 
 
 }
 
-
 </script>
-
 
 </body>
 </html>
