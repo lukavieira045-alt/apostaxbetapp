@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dice ApostaXBet</title>
+
+
+<style>
+
+*{
+box-sizing:border-box;
+font-family:Arial;
+}
+
+
+body{
+
+margin:0;
+background:#050505;
+color:white;
+text-align:center;
+
+}
+
+
+h1{
+
+color:#ffd700;
+text-shadow:0 0 15px #ffd700;
+
+}
+
+
+
+#saldo{
+
+color:#00ff88;
+font-size:22px;
+margin:20px;
+
+}
+
+
+
+.caixa{
+
+width:90%;
+max-width:400px;
+
+margin:auto;
+
+background:#111;
+
+border:2px solid #ffd700;
+
+border-radius:20px;
+
+padding:20px;
+
+}
+
+
+
+#dado{
+
+font-size:100px;
+
+margin:30px;
+
+}
+
+
+
+#resultado{
+
+font-size:28px;
+
+color:#ffd700;
+
+}
+
+
+
+input{
+
+width:120px;
+
+padding:12px;
+
+border-radius:10px;
+
+text-align:center;
+
+margin:15px;
+
+}
+
+
+
+button{
+
+padding:15px 35px;
+
+background:#ffd700;
+
+border:0;
+
+border-radius:12px;
+
+font-size:18px;
+
+font-weight:bold;
+
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<h1>🎲 Dice</h1>
+
+
+<div id="saldo"></div>
+
+
+<div class="caixa">
+
+
+<div id="dado">
+🎲
+</div>
+
+
+<div id="resultado">
+Escolha sua sorte
+</div>
+
+
+<input id="aposta" type="number" value="1">
+
+
+<br>
+
+
+<button onclick="jogar()">
+JOGAR
+</button>
+
+
+
+</div>
+
+
+
+<script>
+
+
+let saldo =
+Number(localStorage.getItem("saldo") || 1000);
+
+
+
+function atualizar(){
+
+document.getElementById("saldo").innerHTML =
+"💰 Saldo: R$ "+saldo.toFixed(2);
+
+
+localStorage.setItem("saldo",saldo);
+
+}
+
+
+atualizar();
+
+
+
+
+
+function jogar(){
+
+
+let aposta =
+Number(document.getElementById("aposta").value);
+
+
+
+if(aposta<=0 || aposta>saldo){
+
+alert("Saldo inválido");
+
+return;
+
+}
+
+
+
+saldo-=aposta;
+
+
+atualizar();
+
+
+
+let numero =
+Math.floor(Math.random()*6)+1;
+
+
+
+let dados=[
+"⚀",
+"⚁",
+"⚂",
+"⚃",
+"⚄",
+"⚅"
+];
+
+
+
+document.getElementById("dado").innerHTML =
+dados[numero-1];
+
+
+
+if(numero>=4){
+
+
+let premio=aposta*2;
+
+
+saldo+=premio;
+
+
+document.getElementById("resultado").innerHTML =
+"🎉 Ganhou R$ "+premio.toFixed(2);
+
+
+
+}else{
+
+
+document.getElementById("resultado").innerHTML =
+"😢 Perdeu";
+
+
+}
+
+
+
+atualizar();
+
+
+
+}
+
+
+
+</script>
+
+
+</body>
+
+</html>
