@@ -7,6 +7,7 @@
 <title>Roleta - ApostaXBet</title>
 
 <style>
+
 body{
     background:#0f1923;
     color:white;
@@ -34,17 +35,19 @@ h1{
 
 #ponteiro{
     position:absolute;
-    top:-20px;
+    top:-25px;
     left:50%;
     transform:translateX(-50%);
     font-size:35px;
-    z-index:2;
+    z-index:5;
 }
 
 #roleta{
+
     width:270px;
     height:270px;
     border-radius:50%;
+
     background:conic-gradient(
         #00ff88 0deg 45deg,
         #ff4444 45deg 90deg,
@@ -55,70 +58,126 @@ h1{
         #00ff88 270deg 315deg,
         #ff4444 315deg 360deg
     );
+
     border:8px solid white;
-    transition:4s;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    transition:5s cubic-bezier(.17,.67,.12,1);
+
+    position:relative;
+    overflow:hidden;
 }
 
-#texto{
+
+.valor{
+
+    position:absolute;
+    width:100%;
+    height:100%;
+
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+
+    padding-top:25px;
+
     font-size:18px;
     font-weight:bold;
-    color:white;
-    transform:rotate(0deg);
+
 }
+
+
+.v1{transform:rotate(22deg);}
+.v2{transform:rotate(67deg);}
+.v3{transform:rotate(112deg);}
+.v4{transform:rotate(157deg);}
+.v5{transform:rotate(202deg);}
+.v6{transform:rotate(247deg);}
+.v7{transform:rotate(292deg);}
+.v8{transform:rotate(337deg);}
+
 
 button{
+
     padding:15px 35px;
+
     background:#00ff88;
+
     border:0;
+
     border-radius:10px;
+
     font-size:18px;
+
     font-weight:bold;
+
 }
 
+
 a{
+
     display:block;
+
     margin-top:30px;
+
     color:#aaa;
+
 }
+
+
 </style>
 
 </head>
 
+
 <body>
+
 
 <h1>🎡 Roleta da Sorte</h1>
 
+
 <div id="saldo"></div>
+
+
 
 <div class="container">
 
 <div id="ponteiro">🔻</div>
 
+
 <div id="roleta">
-<div id="texto">
-R$1 | R$5 | R$0 | R$10<br>
-R$2 | R$0 | R$50 | R$1
-</div>
+
+<div class="valor v1">R$1</div>
+<div class="valor v2">R$5</div>
+<div class="valor v3">R$0</div>
+<div class="valor v4">R$10</div>
+<div class="valor v5">R$2</div>
+<div class="valor v6">R$0</div>
+<div class="valor v7">R$50</div>
+<div class="valor v8">R$1</div>
+
+
 </div>
 
 </div>
+
 
 
 <button onclick="girar()">GIRAR</button>
 
+
 <a href="../index.html">Voltar</a>
+
 
 
 <script>
 
+
 let saldo = Number(localStorage.getItem("saldo") || 2);
 
-let rodando=false;
+let girando=false;
 
-let premios=[
+
+let valores=[
+
 1,
 5,
 0,
@@ -127,27 +186,39 @@ let premios=[
 0,
 50,
 1
+
 ];
+
 
 
 function atualizarSaldo(){
 
 document.getElementById("saldo").innerHTML=
+
 "💰 Saldo: R$ "+saldo.toFixed(2);
+
 
 localStorage.setItem("saldo",saldo);
 
 }
 
+
 atualizarSaldo();
+
+
+
+let giroAtual=0;
 
 
 
 function girar(){
 
-if(rodando)return;
 
-if(saldo < 1){
+if(girando)return;
+
+
+
+if(saldo<1){
 
 alert("Saldo insuficiente!");
 
@@ -156,48 +227,66 @@ return;
 }
 
 
-rodando=true;
+
+girando=true;
+
 
 saldo-=1;
 
 atualizarSaldo();
 
 
-let roleta=document.getElementById("roleta");
-
 
 let sorte=Math.floor(Math.random()*8);
 
-let graus=(360*5)+(sorte*45)+22;
 
 
-roleta.style.transform=
-"rotate("+graus+"deg)";
+let destino=sorte*45;
+
+
+
+giroAtual += 1800 + destino;
+
+
+
+document.getElementById("roleta").style.transform=
+
+"rotate("+giroAtual+"deg)";
+
+
 
 
 setTimeout(()=>{
 
 
-let premio=premios[sorte];
+let premio=valores[sorte];
 
 
 saldo+=premio;
 
+
 atualizarSaldo();
+
 
 
 alert("🎉 Você ganhou R$ "+premio.toFixed(2));
 
 
-rodando=false;
+
+girando=false;
 
 
-},4000);
+
+},5000);
+
 
 
 }
 
+
+
 </script>
+
 
 </body>
 </html>
