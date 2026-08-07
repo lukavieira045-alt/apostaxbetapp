@@ -1,180 +1,1256 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Mines - ApostaXBet</title>
 
 <style>
-body {
-    background:#0f1923;
+
+*{
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+
+    margin:0;
+
+    min-height:100vh;
+
     color:white;
-    font-family:Arial;
+
     text-align:center;
-    padding:20px;
+
+    overflow-x:hidden;
+
+    background:
+    radial-gradient(circle at 15% 15%,#003d66,transparent 30%),
+    radial-gradient(circle at 85% 20%,#4a0066,transparent 30%),
+    radial-gradient(circle at 50% 100%,#003d2b,transparent 35%),
+    linear-gradient(135deg,#02050a,#090014,#00130e);
+
+    background-size:180% 180%;
+
+    animation:fundo 12s ease-in-out infinite alternate;
+
 }
 
-h1 {
+@keyframes fundo{
+
+    0%{
+        background-position:0% 0%;
+    }
+
+    50%{
+        background-position:100% 50%;
+    }
+
+    100%{
+        background-position:0% 100%;
+    }
+
+}
+
+
+/* =========================
+   LUZES
+========================= */
+
+.luz{
+
+    position:fixed;
+
+    width:280px;
+    height:280px;
+
+    border-radius:50%;
+
+    filter:blur(100px);
+
+    opacity:.35;
+
+    pointer-events:none;
+
+    z-index:-3;
+
+}
+
+.luz1{
+
+    background:#00ff88;
+
+    left:-120px;
+    top:10%;
+
+    animation:luz1 8s infinite alternate;
+
+}
+
+.luz2{
+
+    background:#6a00ff;
+
+    right:-120px;
+    bottom:10%;
+
+    animation:luz2 9s infinite alternate;
+
+}
+
+@keyframes luz1{
+
+    to{
+        transform:translate(170px,100px) scale(1.4);
+    }
+
+}
+
+@keyframes luz2{
+
+    to{
+        transform:translate(-170px,-100px) scale(1.4);
+    }
+
+}
+
+
+/* =========================
+   PARTICULAS
+========================= */
+
+.particulas{
+
+    position:fixed;
+
+    inset:0;
+
+    overflow:hidden;
+
+    pointer-events:none;
+
+    z-index:-2;
+
+}
+
+.particulas span{
+
+    position:absolute;
+
+    bottom:-20px;
+
+    width:4px;
+    height:4px;
+
+    border-radius:50%;
+
+    background:white;
+
+    box-shadow:
+    0 0 8px #00ffcc,
+    0 0 18px #00ff88;
+
+    animation:subir linear infinite;
+
+}
+
+.particulas span:nth-child(1){left:5%;animation-duration:7s}
+.particulas span:nth-child(2){left:15%;animation-duration:10s}
+.particulas span:nth-child(3){left:25%;animation-duration:8s}
+.particulas span:nth-child(4){left:35%;animation-duration:12s}
+.particulas span:nth-child(5){left:45%;animation-duration:9s}
+.particulas span:nth-child(6){left:55%;animation-duration:11s}
+.particulas span:nth-child(7){left:65%;animation-duration:7s}
+.particulas span:nth-child(8){left:75%;animation-duration:10s}
+.particulas span:nth-child(9){left:85%;animation-duration:8s}
+.particulas span:nth-child(10){left:95%;animation-duration:12s}
+
+@keyframes subir{
+
+    0%{
+        transform:translateY(0);
+        opacity:0;
+    }
+
+    20%{
+        opacity:1;
+    }
+
+    100%{
+        transform:translateY(-110vh);
+        opacity:0;
+    }
+
+}
+
+
+/* =========================
+   TITULO
+========================= */
+
+h1{
+
+    margin-top:25px;
+
+    font-size:40px;
+
     color:#00ff88;
+
+    text-shadow:
+    0 0 8px white,
+    0 0 18px #00ff88,
+    0 0 35px #00ff88;
+
 }
 
-#saldo {
+
+/* =========================
+   SALDO
+========================= */
+
+#saldo{
+
+    display:inline-block;
+
     font-size:22px;
+
     color:#00ff88;
-    margin:20px;
+
+    margin:10px 0 20px;
+
+    padding:10px 22px;
+
+    border:1px solid #00ff88;
+
+    border-radius:30px;
+
+    background:rgba(0,0,0,.6);
+
+    box-shadow:
+    0 0 15px rgba(0,255,136,.3);
+
 }
 
-#grid {
+
+/* =========================
+   CAIXA
+========================= */
+
+.painel{
+
+    width:95%;
+
+    max-width:390px;
+
+    margin:auto;
+
+    padding:20px;
+
+    border:1px solid rgba(0,255,136,.45);
+
+    border-radius:25px;
+
+    background:
+    linear-gradient(
+        145deg,
+        rgba(20,30,40,.94),
+        rgba(2,8,14,.97)
+    );
+
+    box-shadow:
+    0 0 30px rgba(0,255,136,.15),
+    0 20px 70px rgba(0,0,0,.7);
+
+    backdrop-filter:blur(12px);
+
+}
+
+
+/* =========================
+   GRID
+========================= */
+
+#grid{
+
     display:grid;
-    grid-template-columns:repeat(3,70px);
-    gap:10px;
+
+    grid-template-columns:
+    repeat(3,82px);
+
+    gap:12px;
+
     justify-content:center;
-    margin:30px;
+
+    margin:25px auto;
+
+    padding:10px;
+
 }
 
-.cell {
-    width:70px;
-    height:70px;
-    background:#1c2530;
-    border:2px solid #2a3b4c;
-    border-radius:8px;
-    font-size:30px;
+
+/* =========================
+   CASA
+========================= */
+
+.cell{
+
+    width:82px;
+    height:82px;
+
+    border-radius:16px;
+
     display:flex;
+
     align-items:center;
     justify-content:center;
+
+    font-size:32px;
+
     cursor:pointer;
+
+    color:#777;
+
+    background:
+
+    linear-gradient(
+        145deg,
+        #182534,
+        #080e16
+    );
+
+    border:1px solid #33485a;
+
+    box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.08),
+    0 8px 15px rgba(0,0,0,.5);
+
+    transition:
+    transform .15s,
+    box-shadow .15s,
+    background .15s;
+
 }
 
-.revealed {
-    background:#00ff88;
+.cell:hover{
+
+    transform:
+    translateY(-3px)
+    scale(1.03);
+
+    border-color:#00ff88;
+
+    box-shadow:
+    0 0 15px rgba(0,255,136,.3),
+    inset 0 2px 5px rgba(255,255,255,.1);
+
 }
 
-.bomb {
-    background:#ff4444;
+
+/* =========================
+   ABRINDO
+========================= */
+
+.cell.abrindo{
+
+    animation:abrir .3s;
+
 }
 
-button {
-    padding:12px 25px;
-    background:#00ff88;
-    border:0;
-    border-radius:8px;
+@keyframes abrir{
+
+    0%{
+        transform:scale(.8) rotateY(90deg);
+    }
+
+    100%{
+        transform:scale(1) rotateY(0);
+    }
+
+}
+
+
+/* =========================
+   DIAMANTE
+========================= */
+
+.revealed{
+
+    background:
+
+    radial-gradient(
+        circle at 35% 25%,
+        white,
+        #00ff88 35%,
+        #008f66 100%
+    );
+
+    border-color:#7affc7;
+
+    color:white;
+
+    box-shadow:
+    0 0 12px #00ff88,
+    0 0 30px rgba(0,255,136,.7),
+    inset 0 0 20px rgba(255,255,255,.2);
+
+    animation:diamante .55s;
+
+}
+
+@keyframes diamante{
+
+    0%{
+        transform:scale(.4);
+        opacity:0;
+    }
+
+    60%{
+        transform:scale(1.15);
+    }
+
+    100%{
+        transform:scale(1);
+        opacity:1;
+    }
+
+}
+
+
+/* =========================
+   BOMBA
+========================= */
+
+.bomb{
+
+    background:
+
+    radial-gradient(
+        circle,
+        #ff7777,
+        #ff1744 50%,
+        #650018
+    );
+
+    border-color:#ff416d;
+
+    box-shadow:
+    0 0 15px #ff1744,
+    0 0 40px rgba(255,0,50,.7);
+
+    animation:explodir .6s;
+
+}
+
+@keyframes explodir{
+
+    0%{
+        transform:scale(.5);
+    }
+
+    35%{
+        transform:scale(1.25) rotate(-5deg);
+    }
+
+    55%{
+        transform:scale(.9) rotate(5deg);
+    }
+
+    75%{
+        transform:scale(1.1);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+
+}
+
+
+/* =========================
+   PREMIO
+========================= */
+
+#premio{
+
+    min-height:35px;
+
+    margin:10px;
+
+    color:#ffd700;
+
+    font-size:22px;
+
     font-weight:bold;
+
+    text-shadow:
+    0 0 12px #ffd700;
+
 }
 
-a {
-    display:block;
-    margin-top:30px;
-    color:#aaa;
+
+/* =========================
+   BOTÃO
+========================= */
+
+button{
+
+    padding:15px 30px;
+
+    border:0;
+
+    border-radius:14px;
+
+    background:
+    linear-gradient(
+        180deg,
+        #5dffb1,
+        #00c978
+    );
+
+    color:#002417;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    box-shadow:
+    0 0 15px rgba(0,255,136,.4);
+
+    transition:.15s;
+
 }
+
+button:active{
+
+    transform:scale(.94);
+
+}
+
+
+/* =========================
+   TELA DE RESULTADO
+========================= */
+
+#resultadoTela{
+
+    position:fixed;
+
+    inset:0;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    background:rgba(0,0,0,.78);
+
+    backdrop-filter:blur(8px);
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:.25s;
+
+    z-index:100;
+
+}
+
+#resultadoTela.mostrar{
+
+    opacity:1;
+
+    pointer-events:auto;
+
+}
+
+
+.resultadoCard{
+
+    width:85%;
+
+    max-width:340px;
+
+    padding:30px 20px;
+
+    border-radius:25px;
+
+    background:
+    linear-gradient(
+        145deg,
+        #10231d,
+        #07100e
+    );
+
+    border:2px solid #00ff88;
+
+    box-shadow:
+    0 0 25px #00ff88,
+    0 0 80px rgba(0,255,136,.3);
+
+    transform:scale(.5);
+
+}
+
+#resultadoTela.mostrar .resultadoCard{
+
+    animation:entrar .45s forwards;
+
+}
+
+@keyframes entrar{
+
+    0%{
+        transform:scale(.5) rotate(-8deg);
+    }
+
+    70%{
+        transform:scale(1.08) rotate(2deg);
+    }
+
+    100%{
+        transform:scale(1) rotate(0);
+    }
+
+}
+
+
+.resultadoTitulo{
+
+    font-size:24px;
+
+    color:#00ff88;
+
+}
+
+
+.resultadoIcone{
+
+    font-size:75px;
+
+    margin:10px;
+
+}
+
+
+.resultadoTexto{
+
+    font-size:25px;
+
+    color:#ffd700;
+
+    font-weight:bold;
+
+    text-shadow:
+    0 0 12px #ffd700;
+
+}
+
+
+.fechar{
+
+    margin-top:20px;
+
+    background:#00ff88;
+
+}
+
+
+/* =========================
+   LINK
+========================= */
+
+a{
+
+    display:block;
+
+    margin-top:25px;
+
+    color:#aaa;
+
+    text-decoration:none;
+
+}
+
+a:hover{
+
+    color:#00ff88;
+
+}
+
+
+/* CELULAR */
+
+@media(max-width:400px){
+
+    #grid{
+
+        grid-template-columns:
+        repeat(3,72px);
+
+        gap:9px;
+
+    }
+
+    .cell{
+
+        width:72px;
+        height:72px;
+
+    }
+
+}
+
 </style>
 
 </head>
 
+
 <body>
 
-<h1>💣 Mines</h1>
+
+<div class="luz luz1"></div>
+<div class="luz luz2"></div>
+
+
+<div class="particulas">
+
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+
+</div>
+
+
+<h1>
+💣 MINES
+</h1>
+
 
 <div id="saldo"></div>
 
+
+<div class="painel">
+
+
 <div id="grid"></div>
 
-<button onclick="iniciarJogo()">Novo Jogo</button>
 
-<a href="../index.html">Voltar</a>
+<div id="premio">
+💎 Encontre os diamantes
+</div>
+
+
+<button onclick="iniciarJogo()">
+🔄 NOVO JOGO
+</button>
+
+
+</div>
+
+
+<a href="../index.html">
+← Voltar
+</a>
+
+
+<!-- TELA DE RESULTADO -->
+
+<div id="resultadoTela">
+
+<div class="resultadoCard">
+
+<div class="resultadoTitulo">
+RESULTADO
+</div>
+
+<div
+class="resultadoIcone"
+id="resultadoIcone"
+>
+💎
+</div>
+
+<div
+class="resultadoTexto"
+id="resultadoTexto"
+>
+Você ganhou!
+</div>
+
+<button
+class="fechar"
+onclick="fecharResultado()"
+>
+CONTINUAR
+</button>
+
+</div>
+
+</div>
 
 
 <script>
 
-let saldo = Number(localStorage.getItem("saldo") || 2);
+
+/*
+========================================
+SALDO
+========================================
+*/
+
+let saldo =
+Number(
+localStorage.getItem("saldo") || 2
+);
+
 let bombas = [];
 
+let jogando = false;
+
+
+/*
+========================================
+ELEMENTOS
+========================================
+*/
+
+const grid =
+document.getElementById("grid");
+
+const premio =
+document.getElementById("premio");
+
+const resultadoTela =
+document.getElementById("resultadoTela");
+
+const resultadoIcone =
+document.getElementById("resultadoIcone");
+
+const resultadoTexto =
+document.getElementById("resultadoTexto");
+
+
+/*
+========================================
+SALDO
+========================================
+*/
 
 function atualizarSaldo(){
 
-document.getElementById("saldo").innerHTML =
-"💰 Saldo: R$ " + saldo.toFixed(2);
+    document.getElementById("saldo").textContent =
+    "💰 Saldo: R$ " +
+    saldo.toFixed(2);
 
-localStorage.setItem("saldo", saldo);
+    localStorage.setItem(
+        "saldo",
+        saldo
+    );
 
 }
 
+
+/*
+========================================
+NOVO JOGO
+========================================
+*/
 
 function iniciarJogo(){
 
-if(saldo < 1){
-alert("Saldo insuficiente!");
-return;
+
+    if(jogando){
+
+        return;
+
+    }
+
+
+    if(saldo < 1){
+
+        alert(
+            "Saldo insuficiente!"
+        );
+
+        return;
+
+    }
+
+
+    /*
+    PAGA 1 REAL
+    */
+
+    saldo -= 1;
+
+    atualizarSaldo();
+
+
+    /*
+    ESTADO
+    */
+
+    jogando = true;
+
+
+    bombas = [];
+
+
+    grid.innerHTML = "";
+
+
+    premio.textContent =
+    "💎 Encontre os diamantes";
+
+
+    resultadoTela.classList.remove(
+        "mostrar"
+    );
+
+
+    /*
+    ====================================
+    SORTEIA 3 BOMBAS
+    ====================================
+    */
+
+    while(
+        bombas.length < 3
+    ){
+
+        let p =
+        Math.floor(
+            Math.random() * 9
+        );
+
+        if(
+            !bombas.includes(p)
+        ){
+
+            bombas.push(p);
+
+        }
+
+    }
+
+
+    /*
+    ====================================
+    CRIA CASAS
+    ====================================
+    */
+
+    for(
+        let i=0;
+        i<9;
+        i++
+    ){
+
+        let cell =
+        document.createElement("div");
+
+
+        cell.className =
+        "cell";
+
+
+        cell.innerText =
+        "?";
+
+
+        cell.onclick =
+        function(){
+
+            abrirCasa(
+                cell,
+                i
+            );
+
+        };
+
+
+        grid.appendChild(
+            cell
+        );
+
+    }
+
 }
 
-saldo -= 1;
+
+/*
+========================================
+ABRIR CASA
+========================================
+*/
+
+function abrirCasa(
+    cell,
+    indice
+){
+
+
+    if(!jogando){
+
+        return;
+
+    }
+
+
+    if(
+        cell.classList.contains(
+            "revealed"
+        ) ||
+
+        cell.classList.contains(
+            "bomb"
+        )
+    ){
+
+        return;
+
+    }
+
+
+    /*
+    ANIMAÇÃO
+    */
+
+    cell.classList.add(
+        "abrindo"
+    );
+
+
+    /*
+    ====================================
+    BOMBA
+    ====================================
+    */
+
+    if(
+        bombas.includes(indice)
+    ){
+
+        cell.classList.remove(
+            "abrindo"
+        );
+
+        cell.classList.add(
+            "bomb"
+        );
+
+        cell.innerText =
+        "💣";
+
+
+        /*
+        MOSTRA TODAS AS BOMBAS
+        */
+
+        revelarBombas();
+
+
+        jogando = false;
+
+
+        premio.textContent =
+        "💥 Você encontrou uma bomba!";
+
+
+        /*
+        TELA
+        */
+
+        setTimeout(function(){
+
+            resultadoIcone.textContent =
+            "💣";
+
+            resultadoTexto.textContent =
+            "BOOM! Você perdeu.";
+
+            resultadoTela.classList.add(
+                "mostrar"
+            );
+
+        },500);
+
+
+        return;
+
+    }
+
+
+    /*
+    ====================================
+    DIAMANTE
+    ====================================
+    */
+
+    setTimeout(function(){
+
+        cell.classList.remove(
+            "abrindo"
+        );
+
+        cell.classList.add(
+            "revealed"
+        );
+
+        cell.innerText =
+        "💎";
+
+
+        /*
+        GANHA 50 CENTAVOS
+        */
+
+        saldo += 0.50;
+
+        atualizarSaldo();
+
+
+        premio.textContent =
+        "💎 + R$ 0,50";
+
+
+        /*
+        VERIFICA SE ABRIU TODAS
+        */
+
+        const abertas =
+        document.querySelectorAll(
+            ".revealed"
+        ).length;
+
+
+        if(
+            abertas >= 6
+        ){
+
+            jogando = false;
+
+
+            premio.textContent =
+            "🏆 Você encontrou todos os diamantes!";
+
+
+            setTimeout(function(){
+
+                resultadoIcone.textContent =
+                "🏆";
+
+                resultadoTexto.textContent =
+                "Você ganhou!";
+
+                resultadoTela.classList.add(
+                    "mostrar"
+                );
+
+            },500);
+
+        }
+
+    },180);
+
+}
+
+
+/*
+========================================
+MOSTRAR BOMBAS
+========================================
+*/
+
+function revelarBombas(){
+
+    const cells =
+    document.querySelectorAll(
+        ".cell"
+    );
+
+
+    bombas.forEach(
+        function(indice){
+
+            if(
+                !cells[indice]
+            ){
+                return;
+            }
+
+
+            setTimeout(
+                function(){
+
+                    if(
+                        !cells[indice]
+                        .classList
+                        .contains("bomb")
+                    ){
+
+                        cells[indice]
+                        .classList.add(
+                            "bomb"
+                        );
+
+                        cells[indice]
+                        .innerText =
+                        "💣";
+
+                    }
+
+                },
+                150 + indice * 80
+            );
+
+        }
+    );
+
+}
+
+
+/*
+========================================
+FECHAR RESULTADO
+========================================
+*/
+
+function fecharResultado(){
+
+    resultadoTela.classList.remove(
+        "mostrar"
+    );
+
+}
+
+
+/*
+========================================
+INICIAR
+========================================
+*/
+
 atualizarSaldo();
 
-
-let grid = document.getElementById("grid");
-grid.innerHTML="";
-
-bombas=[];
-
-
-while(bombas.length < 3){
-
-let p=Math.floor(Math.random()*9);
-
-if(!bombas.includes(p)){
-bombas.push(p);
-}
-
-}
-
-
-for(let i=0;i<9;i++){
-
-let cell=document.createElement("div");
-
-cell.className="cell";
-cell.innerText="?";
-
-
-cell.onclick=function(){
-
-if(this.classList.contains("revealed") ||
-this.classList.contains("bomb")) return;
-
-
-if(bombas.includes(i)){
-
-this.classList.add("bomb");
-this.innerText="💣";
-
-alert("💥 Bomba!");
-
-
-}else{
-
-this.classList.add("revealed");
-this.innerText="💎";
-
-saldo += 0.50;
-atualizarSaldo();
-
-}
-
-};
-
-
-grid.appendChild(cell);
-
-}
-
-
-}
-
-
-atualizarSaldo();
 iniciarJogo();
 
 </script>
 
+
 </body>
+
 </html>
