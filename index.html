@@ -1,160 +1,384 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>ApostaXBet</title>
+  <title>ApostaXBet</title>
 
-    <link rel="stylesheet" href="style.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    <style>
-        .banner-img {
-            width: 100%;
-            max-width: 900px;
-            height: auto;
-            display: block;
-            margin: 0 auto 15px;
-            border-radius: 15px;
-        }
+    body {
+      background: #050505;
+      color: white;
+      font-family: Arial, Helvetica, sans-serif;
+      padding-bottom: 90px;
+    }
 
-        .banner {
-            text-align: center;
-            padding: 20px;
-        }
+    /* SALDO */
+    .saldo {
+      text-align: center;
+      padding: 22px 10px;
+      font-size: 28px;
+      color: #00ff88;
+      border-bottom: 3px solid #d8af28;
+      background: #111;
+    }
 
-        .jogos {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            padding: 15px;
-        }
+    /* BANNER */
+    .banner {
+      width: calc(100% - 30px);
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 30px;
+      border-radius: 28px;
+      text-align: center;
 
-        .card {
-            text-decoration: none;
-            color: inherit;
-            text-align: center;
-        }
+      background: linear-gradient(
+        145deg,
+        #d5af2f,
+        #7b5c00
+      );
 
-        .card img {
-            width: 100%;
-            border-radius: 12px;
-            display: block;
-        }
+      box-shadow:
+        0 0 20px rgba(218, 176, 35, 0.55),
+        inset 0 0 20px rgba(255,255,255,0.08);
+    }
 
-        .card h3 {
-            margin-top: 8px;
-        }
+    .banner img {
+      width: 100%;
+      max-width: 800px;
+      display: block;
+      margin: 0 auto 20px;
+      border-radius: 18px;
+    }
 
-        .botao-demo {
-            padding: 12px 18px;
-            margin: 5px;
-            border: 0;
-            border-radius: 10px;
-            cursor: pointer;
-        }
+    .banner h1 {
+      font-size: 34px;
+      margin-bottom: 8px;
+    }
 
-        .menu {
-            text-align: center;
-            padding: 20px;
-        }
+    .banner p {
+      font-size: 22px;
+    }
 
-        .menu a {
-            margin: 5px;
-        }
-    </style>
+    /* BOTÕES */
+    .botoes {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 25px;
+      width: calc(100% - 50px);
+      max-width: 900px;
+      margin: 30px auto;
+    }
+
+    .botao {
+      border: none;
+      border-radius: 18px;
+      padding: 22px 15px;
+      background: #d8af28;
+      color: #050505;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .botao:active {
+      transform: scale(0.96);
+    }
+
+    /* TÍTULO */
+    .titulo {
+      text-align: center;
+      color: #d8af28;
+      font-size: 38px;
+      margin: 35px 0 25px;
+    }
+
+    /* JOGOS */
+    .jogos {
+      width: calc(100% - 30px);
+      max-width: 950px;
+      margin: auto;
+
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      height: 270px;
+      border: 3px solid #d8af28;
+      border-radius: 28px;
+      background: #151515;
+      color: white;
+      text-decoration: none;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+
+      padding: 15px;
+      overflow: hidden;
+
+      box-shadow: 0 0 10px rgba(216,175,40,0.15);
+      transition: 0.2s;
+    }
+
+    .card:active {
+      transform: scale(0.97);
+    }
+
+    .icone {
+      width: 100%;
+      height: 190px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      font-size: 80px;
+    }
+
+    .card h3 {
+      font-size: 27px;
+      margin-bottom: 5px;
+    }
+
+    /* MENU INFERIOR */
+    .menu {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+
+      height: 80px;
+
+      background: #111;
+      border-top: 3px solid #d8af28;
+
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+
+      z-index: 1000;
+    }
+
+    .menu a {
+      color: white;
+      text-decoration: none;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 19px;
+    }
+
+    .menu a:active {
+      background: #222;
+    }
+
+    /* CELULAR */
+    @media (max-width: 600px) {
+
+      .saldo {
+        font-size: 24px;
+      }
+
+      .banner {
+        padding: 18px;
+        margin-top: 25px;
+      }
+
+      .banner h1 {
+        font-size: 30px;
+      }
+
+      .banner p {
+        font-size: 19px;
+      }
+
+      .botoes {
+        width: calc(100% - 40px);
+        gap: 15px;
+      }
+
+      .botao {
+        font-size: 18px;
+        padding: 20px 8px;
+      }
+
+      .titulo {
+        font-size: 34px;
+      }
+
+      .jogos {
+        width: calc(100% - 30px);
+        gap: 15px;
+      }
+
+      .card {
+        height: 270px;
+      }
+
+      .icone {
+        height: 190px;
+        font-size: 70px;
+      }
+
+      .card h3 {
+        font-size: 23px;
+      }
+
+      .menu {
+        height: 75px;
+      }
+
+      .menu a {
+        font-size: 17px;
+      }
+    }
+
+    /* CELULAR MUITO PEQUENO */
+    @media (max-width: 380px) {
+
+      .jogos {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        height: 250px;
+      }
+
+      .banner h1 {
+        font-size: 25px;
+      }
+
+      .banner p {
+        font-size: 17px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<header class="topo">
+  <!-- SALDO -->
+  <div class="saldo">
+    💰 Saldo: <span id="saldo">R$ 2,00</span>
+  </div>
 
-    <h1>🎰 ApostaXBet</h1>
+  <!-- BANNER -->
+  <section class="banner">
 
-    <div class="saldo">
-        💰 Saldo:
-        <span id="saldo">R$ 2,00</span>
-    </div>
-
-</header>
-
-<section class="banner">
-
+    <!-- SUA IMAGEM DO GITHUB -->
     <img
-        src="img/file_000000009b24820eb29b3df2e7ebd768.png"
-        alt="Banner ApostaXBet"
-        class="banner-img"
+      src="img/file_000000009b24820eb29b3df2e7ebd768.png"
+      alt="Banner ApostaXBet"
+      onerror="this.style.display='none'"
     >
 
-    <h2>Bem-vindo ao ApostaXBet</h2>
+    <h1>Bem-vindo ao ApostaXBet</h1>
 
     <p>🎮 Jogos, diversão e prêmios!</p>
 
-</section>
+  </section>
 
-<div class="botoes">
+
+  <!-- DEPÓSITO / SAQUE -->
+  <div class="botoes">
 
     <button
-        class="botao-demo"
-        onclick="alert('Função demonstrativa.')"
-    >
-        💰 Depositar
+      class="botao"
+      onclick="demo('Depósito')">
+      💰 Depositar
     </button>
 
     <button
-        class="botao-demo"
-        onclick="alert('Função demonstrativa.')"
-    >
-        💸 Sacar
+      class="botao"
+      onclick="demo('Saque')">
+      💸 Sacar
     </button>
 
-</div>
+  </div>
 
-<h2 class="titulo">🎮 Jogos</h2>
 
-<section class="jogos">
+  <!-- TÍTULO -->
+  <h2 class="titulo">
+    🎮 Jogos
+  </h2>
+
+
+  <!-- JOGOS -->
+  <section class="jogos">
 
     <a href="jogos/roleta.html" class="card">
-        <img src="img/roleta.png" alt="Roleta">
-        <h3>Roleta</h3>
+      <div class="icone">🎰</div>
+      <h3>Roleta</h3>
     </a>
+
 
     <a href="jogos/mines.html" class="card">
-        <img src="img/mines.png" alt="Mines">
-        <h3>Mines</h3>
+      <div class="icone">💣</div>
+      <h3>Mines</h3>
     </a>
+
 
     <a href="jogos/crash.html" class="card">
-        <img src="img/crash.png" alt="Crash">
-        <h3>Crash</h3>
+      <div class="icone">🚀</div>
+      <h3>Crash</h3>
     </a>
+
 
     <a href="jogos/plinko.html" class="card">
-        <img src="img/plinko.png" alt="Plinko">
-        <h3>Plinko</h3>
+      <div class="icone">🎯</div>
+      <h3>Plinko</h3>
     </a>
+
 
     <a href="jogos/dice.html" class="card">
-        <img src="img/dice.png" alt="Dice">
-        <h3>Dice</h3>
+      <div class="icone">🎲</div>
+      <h3>Dice</h3>
     </a>
 
-</section>
+  </section>
 
-<nav class="menu">
 
-    <a href="index.html">🏠 Início</a>
+  <!-- MENU -->
+  <nav class="menu">
 
-    <a href="jogos.html">🎮 Jogos</a>
-
-    <a href="#" onclick="alert('Área demonstrativa.')">
-        👤 Conta
+    <a href="index.html">
+      🏠 Início
     </a>
 
-</nav>
+    <a href="#jogos">
+      🎮 Jogos
+    </a>
 
-<script src="saldo.js"></script>
-<script src="script.js"></script>
+    <a href="#" onclick="demo('Conta'); return false;">
+      👤 Conta
+    </a>
+
+  </nav>
+
+
+  <script>
+
+    function demo(nome) {
+      alert(
+        nome +
+        " — função demonstrativa."
+      );
+    }
+
+  </script>
 
 </body>
 </html>
