@@ -3,352 +3,907 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>ApostaXBet</title>
-  <link rel="stylesheet" href="style.css">
 
   <style>
-    .deposito {
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding-bottom: 80px;
+      background: #050505;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .topo {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: #111;
+      border-bottom: 2px solid #d8ad27;
+      padding: 14px 10px;
+      text-align: center;
+    }
+
+    .logo {
+      color: #d8ad27;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .saldo {
+      margin-top: 7px;
+      color: #ffd43b;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    #saldo {
+      color: #00e88a;
+    }
+
+    main {
+      width: 100%;
+      max-width: 700px;
+      margin: auto;
+      padding: 10px;
+    }
+
+    .banner {
+      margin-top: 10px;
+      padding: 10px;
+      background: linear-gradient(145deg, #c59d22, #6f5700);
+      border: 2px solid #d8ad27;
+      border-radius: 22px;
+      box-shadow: 0 0 25px rgba(216,173,39,.35);
+      text-align: center;
+    }
+
+    .banner-img {
+      display: block;
+      width: 100%;
+      max-width: 560px;
+      height: auto;
+      margin: auto;
+      border-radius: 14px;
+    }
+
+    .banner-texto h1 {
+      margin: 14px 0 5px;
+      font-size: 25px;
+    }
+
+    .banner-texto p {
+      margin: 0 0 5px;
+      font-size: 16px;
+    }
+
+    .acoes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .botao {
+      border: 0;
+      border-radius: 14px;
+      padding: 18px 10px;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .ouro {
+      background: #dfb62d;
+      color: #080808;
+    }
+
+    .verde {
+      background: #00e88a;
+      color: #03120a;
+    }
+
+    .titulo {
+      text-align: center;
+      color: #d8ad27;
+      margin: 20px 0;
+    }
+
+    .jogos {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .card {
+      min-height: 175px;
+      background: #151515;
+      border: 2px solid #d8ad27;
+      border-radius: 18px;
+      color: white;
+      text-decoration: none;
+      text-align: center;
+      padding: 20px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card:active {
+      transform: scale(.98);
+    }
+
+    .icone {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .card p {
+      color: #999;
+      font-size: 12px;
+      margin-bottom: 0;
+    }
+
+    /* Áreas de depósito e saque */
+
+    .painel {
       display: none;
       background: #111;
       border: 2px solid #d8ad27;
       border-radius: 20px;
-      padding: 25px 18px;
-      margin-top: 20px;
+      padding: 22px 16px;
+      margin: 20px 0;
       text-align: center;
+      box-shadow: 0 0 20px rgba(216,173,39,.18);
     }
 
-    .deposito.ativo {
+    .painel.ativo {
       display: block;
     }
 
-    .deposito h2 {
-      color: #e4b72c;
-      margin-bottom: 15px;
+    .painel h2 {
+      color: #e5b92f;
+      margin-top: 0;
     }
 
     .valores {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin: 20px 0;
+      margin: 18px 0;
     }
 
     .valor {
-      background: #191919;
+      background: #1b1b1b;
       color: white;
       border: 2px solid #555;
       border-radius: 12px;
-      padding: 15px;
-      font-size: 18px;
+      padding: 15px 8px;
+      font-size: 17px;
       font-weight: bold;
     }
 
     .valor.selecionado {
       background: #d8ad27;
       color: #000;
-      border-color: #fff;
+      border-color: white;
     }
 
-    .pix-box {
+    .pix-area,
+    .saque-area {
       display: none;
-      margin-top: 20px;
     }
 
-    .pix-box.ativo {
+    .pix-area.ativo,
+    .saque-area.ativo {
       display: block;
     }
 
-    .pix {
+    .codigo {
       background: #202020;
+      color: #00e88a;
       border: 1px solid #555;
       border-radius: 10px;
-      padding: 15px;
-      word-break: break-all;
+      padding: 14px;
       margin: 15px 0;
-      color: #00ff88;
+      word-break: break-all;
       font-size: 13px;
     }
 
-    .botao-deposito {
+    .campo {
       width: 100%;
+      padding: 15px;
+      margin: 12px 0;
+      border: 1px solid #555;
+      border-radius: 10px;
+      background: #202020;
+      color: white;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .campo:focus {
+      border-color: #d8ad27;
+    }
+
+    .botao-acao {
+      width: 100%;
+      padding: 15px;
+      margin-top: 8px;
       border: 0;
       border-radius: 12px;
-      padding: 16px;
       background: #00e88a;
-      color: #06120c;
+      color: #03120a;
+      font-size: 16px;
       font-weight: bold;
-      font-size: 17px;
+    }
+
+    .botao-voltar {
+      background: #333;
+      color: white;
       margin-top: 10px;
     }
 
-    .fechar {
-      background: #333;
-      color: white;
+    .aviso {
+      color: #888;
+      font-size: 12px;
+      line-height: 1.5;
     }
 
-    .aviso {
-      color: #999;
-      font-size: 13px;
-      margin-top: 15px;
+    /* Menu inferior */
+
+    .menu {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 30;
+      height: 65px;
+      background: #111;
+      border-top: 2px solid #d8ad27;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .menu a {
+      color: white;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-size: 14px;
+    }
+
+    .menu span {
+      font-size: 20px;
+    }
+
+    .menu small {
+      font-size: 12px;
+    }
+
+    @media (max-width: 380px) {
+
+      .banner-texto h1 {
+        font-size: 21px;
+      }
+
+      .card {
+        min-height: 155px;
+      }
+
+      .icone {
+        font-size: 40px;
+      }
+
     }
   </style>
 </head>
 
 <body>
 
-<header class="topo">
-  <div class="logo">🎰 ApostaXBet</div>
+  <!-- TOPO -->
 
-  <div class="saldo">
-    💰 Saldo:
-    <span id="saldo">R$ 2,00</span>
-  </div>
-</header>
+  <header class="topo">
 
-
-<main>
-
-  <section class="banner">
-
-    <img
-      src="img/file_000000009b24820eb29b3df2e7ebd768.png"
-      alt="Banner ApostaXBet"
-      class="banner-img"
-    >
-
-    <div class="banner-texto">
-      <h1>Bem-vindo ao ApostaXBet</h1>
-      <p>🎮 Jogos, diversão e prêmios!</p>
+    <div class="logo">
+      🎰 ApostaXBet
     </div>
 
-  </section>
-
-
-  <section class="acoes">
-
-    <button
-      class="botao ouro"
-      onclick="abrirDeposito()"
-    >
-      💰 Depositar
-    </button>
-
-    <button
-      class="botao verde"
-      onclick="alert('Área de saque demonstrativa')"
-    >
-      💵 Sacar
-    </button>
-
-  </section>
-
-
-  <!-- DEPÓSITO -->
-
-  <section id="deposito" class="deposito">
-
-    <h2>💰 Depositar</h2>
-
-    <p>Escolha um valor demonstrativo:</p>
-
-    <div class="valores">
-
-      <button
-        class="valor"
-        onclick="selecionarValor(10, this)"
-      >
-        R$ 10
-      </button>
-
-      <button
-        class="valor"
-        onclick="selecionarValor(20, this)"
-      >
-        R$ 20
-      </button>
-
-      <button
-        class="valor"
-        onclick="selecionarValor(50, this)"
-      >
-        R$ 50
-      </button>
-
-      <button
-        class="valor"
-        onclick="selecionarValor(100, this)"
-      >
-        R$ 100
-      </button>
-
+    <div class="saldo">
+      💰 Saldo:
+      <span id="saldo">R$ 2,00</span>
     </div>
 
+  </header>
 
-    <div id="pixBox" class="pix-box">
 
-      <h3>PIX demonstrativo</h3>
+  <main>
 
-      <div class="pix" id="codigoPix">
-        DEMO-PIX-APOSTAXBET
+    <!-- BANNER -->
+
+    <section class="banner">
+
+      <img
+        src="img/file_000000009b24820eb29b3df2e7ebd768.png"
+        alt="Banner ApostaXBet"
+        class="banner-img"
+      >
+
+      <div class="banner-texto">
+
+        <h1>
+          Bem-vindo ao ApostaXBet
+        </h1>
+
+        <p>
+          🎮 Jogos, diversão e prêmios!
+        </p>
+
       </div>
 
+    </section>
+
+
+    <!-- BOTÕES -->
+
+    <section class="acoes">
+
       <button
-        class="botao-deposito"
-        onclick="copiarPix()"
+        class="botao ouro"
+        onclick="abrirDeposito()"
       >
-        📋 Copiar código
+        💰 Depositar
       </button>
+
+      <button
+        class="botao verde"
+        onclick="abrirSaque()"
+      >
+        💵 Sacar
+      </button>
+
+    </section>
+
+
+    <!-- DEPÓSITO -->
+
+    <section
+      id="deposito"
+      class="painel"
+    >
+
+      <h2>
+        💰 Depositar
+      </h2>
+
+      <p>
+        Escolha um valor demonstrativo:
+      </p>
+
+
+      <div class="valores">
+
+        <button
+          class="valor"
+          onclick="selecionarDeposito(10, this)"
+        >
+          R$ 10
+        </button>
+
+        <button
+          class="valor"
+          onclick="selecionarDeposito(20, this)"
+        >
+          R$ 20
+        </button>
+
+        <button
+          class="valor"
+          onclick="selecionarDeposito(50, this)"
+        >
+          R$ 50
+        </button>
+
+        <button
+          class="valor"
+          onclick="selecionarDeposito(100, this)"
+        >
+          R$ 100
+        </button>
+
+      </div>
+
+
+      <div
+        id="pixArea"
+        class="pix-area"
+      >
+
+        <h3>
+          PIX demonstrativo
+        </h3>
+
+        <div
+          id="codigoPix"
+          class="codigo"
+        >
+          DEMO-PIX-APOSTAXBET
+        </div>
+
+        <button
+          class="botao-acao"
+          onclick="copiarPix()"
+        >
+          📋 Copiar código
+        </button>
+
+      </div>
+
 
       <p class="aviso">
         Este código é apenas demonstrativo e não realiza pagamentos.
       </p>
 
-    </div>
+
+      <button
+        class="botao-acao botao-voltar"
+        onclick="fecharDeposito()"
+      >
+        ← Voltar
+      </button>
+
+    </section>
 
 
-    <button
-      class="botao-deposito fechar"
-      onclick="fecharDeposito()"
+    <!-- SAQUE -->
+
+    <section
+      id="saque"
+      class="painel"
     >
-      ← Voltar
-    </button>
 
-  </section>
+      <h2>
+        💵 Sacar
+      </h2>
+
+      <p>
+        Escolha um valor demonstrativo:
+      </p>
 
 
-  <h2 class="titulo">🎮 Jogos</h2>
+      <div class="valores">
+
+        <button
+          class="valor"
+          onclick="selecionarSaque(10, this)"
+        >
+          R$ 10
+        </button>
+
+        <button
+          class="valor"
+          onclick="selecionarSaque(20, this)"
+        >
+          R$ 20
+        </button>
+
+        <button
+          class="valor"
+          onclick="selecionarSaque(50, this)"
+        >
+          R$ 50
+        </button>
+
+        <button
+          class="valor"
+          onclick="selecionarSaque(100, this)"
+        >
+          R$ 100
+        </button>
+
+      </div>
 
 
-  <section class="jogos">
+      <div
+        id="saqueArea"
+        class="saque-area"
+      >
 
-    <a href="jogos/roleta.html" class="card">
-      <div class="icone">🎰</div>
-      <h3>Roleta</h3>
-      <p>Gire a roleta</p>
+        <input
+          id="chavePix"
+          class="campo"
+          type="text"
+          placeholder="Digite uma chave PIX fictícia"
+        >
+
+        <button
+          class="botao-acao"
+          onclick="solicitarSaque()"
+        >
+          💵 Solicitar saque
+        </button>
+
+      </div>
+
+
+      <p class="aviso">
+        Este saque é apenas demonstrativo e não realiza pagamentos.
+      </p>
+
+
+      <button
+        class="botao-acao botao-voltar"
+        onclick="fecharSaque()"
+      >
+        ← Voltar
+      </button>
+
+    </section>
+
+
+    <!-- JOGOS -->
+
+    <h2 class="titulo">
+      🎮 Jogos
+    </h2>
+
+
+    <section class="jogos">
+
+      <a
+        href="jogos/roleta.html"
+        class="card"
+      >
+
+        <div class="icone">
+          🎰
+        </div>
+
+        <h3>
+          Roleta
+        </h3>
+
+        <p>
+          Gire a roleta
+        </p>
+
+      </a>
+
+
+      <a
+        href="jogos/mines.html"
+        class="card"
+      >
+
+        <div class="icone">
+          💣
+        </div>
+
+        <h3>
+          Mines
+        </h3>
+
+        <p>
+          Encontre os diamantes
+        </p>
+
+      </a>
+
+
+      <a
+        href="jogos/crash.html"
+        class="card"
+      >
+
+        <div class="icone">
+          🚀
+        </div>
+
+        <h3>
+          Crash
+        </h3>
+
+        <p>
+          Acompanhe o multiplicador
+        </p>
+
+      </a>
+
+
+      <a
+        href="jogos/plinko.html"
+        class="card"
+      >
+
+        <div class="icone">
+          🎯
+        </div>
+
+        <h3>
+          Plinko
+        </h3>
+
+        <p>
+          Solte a bola
+        </p>
+
+      </a>
+
+
+      <a
+        href="jogos/dice.html"
+        class="card"
+      >
+
+        <div class="icone">
+          🎲
+        </div>
+
+        <h3>
+          Dice
+        </h3>
+
+        <p>
+          Jogue os dados
+        </p>
+
+      </a>
+
+    </section>
+
+  </main>
+
+
+  <!-- MENU -->
+
+  <nav class="menu">
+
+    <a href="index.html">
+      <span>🏠</span>
+      <small>Início</small>
     </a>
 
-    <a href="jogos/mines.html" class="card">
-      <div class="icone">💣</div>
-      <h3>Mines</h3>
-      <p>Encontre os diamantes</p>
+    <a href="jogos.html">
+      <span>🎮</span>
+      <small>Jogos</small>
     </a>
 
-    <a href="jogos/crash.html" class="card">
-      <div class="icone">🚀</div>
-      <h3>Crash</h3>
-      <p>Acompanhe o multiplicador</p>
+    <a
+      href="#"
+      onclick="alert('Área da conta demonstrativa'); return false;"
+    >
+      <span>👤</span>
+      <small>Conta</small>
     </a>
 
-    <a href="jogos/plinko.html" class="card">
-      <div class="icone">🎯</div>
-      <h3>Plinko</h3>
-      <p>Solte a bola</p>
-    </a>
-
-    <a href="jogos/dice.html" class="card">
-      <div class="icone">🎲</div>
-      <h3>Dice</h3>
-      <p>Jogue os dados</p>
-    </a>
-
-  </section>
-
-</main>
+  </nav>
 
 
-<nav class="menu">
+  <script>
 
-  <a href="index.html">
-    <span>🏠</span>
-    <small>Início</small>
-  </a>
-
-  <a href="jogos.html">
-    <span>🎮</span>
-    <small>Jogos</small>
-  </a>
-
-  <a
-    href="#"
-    onclick="alert('Área da conta demonstrativa'); return false;"
-  >
-    <span>👤</span>
-    <small>Conta</small>
-  </a>
-
-</nav>
+    let valorDeposito = 0;
+    let valorSaque = 0;
 
 
-<script>
+    /* =========================
+       DEPÓSITO
+    ========================= */
 
-let valorSelecionado = 0;
+    function abrirDeposito() {
 
+      fecharSaque();
 
-function abrirDeposito() {
+      const painel =
+        document.getElementById("deposito");
 
-  document
-    .getElementById("deposito")
-    .classList.add("ativo");
+      painel.classList.add("ativo");
 
-  document
-    .getElementById("deposito")
-    .scrollIntoView({
-      behavior: "smooth"
-    });
+      painel.scrollIntoView({
+        behavior: "smooth"
+      });
 
-}
-
-
-function fecharDeposito() {
-
-  document
-    .getElementById("deposito")
-    .classList.remove("ativo");
-
-}
+    }
 
 
-function selecionarValor(valor, botao) {
+    function fecharDeposito() {
 
-  valorSelecionado = valor;
+      document
+        .getElementById("deposito")
+        .classList.remove("ativo");
 
-  document
-    .querySelectorAll(".valor")
-    .forEach(function(item) {
+      document
+        .getElementById("pixArea")
+        .classList.remove("ativo");
 
-      item.classList.remove("selecionado");
+      valorDeposito = 0;
 
-    });
-
-  botao.classList.add("selecionado");
-
-  document
-    .getElementById("pixBox")
-    .classList.add("ativo");
-
-}
+    }
 
 
-function copiarPix() {
+    function selecionarDeposito(valor, botao) {
 
-  const codigo =
-    document.getElementById("codigoPix").textContent.trim();
+      valorDeposito = valor;
 
-  navigator.clipboard.writeText(codigo)
-    .then(function() {
+      document
+        .querySelectorAll("#deposito .valor")
+        .forEach(function(item) {
 
-      alert("Código demonstrativo copiado!");
+          item.classList.remove("selecionado");
 
-    })
-    .catch(function() {
+        });
 
-      alert("Não foi possível copiar automaticamente.");
+      botao.classList.add("selecionado");
 
-    });
+      document
+        .getElementById("pixArea")
+        .classList.add("ativo");
 
-}
+    }
 
-</script>
+
+    function copiarPix() {
+
+      const codigo =
+        document
+          .getElementById("codigoPix")
+          .textContent
+          .trim();
+
+      if (
+        navigator.clipboard &&
+        navigator.clipboard.writeText
+      ) {
+
+        navigator.clipboard
+          .writeText(codigo)
+          .then(function() {
+
+            alert(
+              "Código demonstrativo copiado!"
+            );
+
+          })
+          .catch(function() {
+
+            alert(
+              "Não foi possível copiar."
+            );
+
+          });
+
+      } else {
+
+        alert(
+          "Código demonstrativo: " + codigo
+        );
+
+      }
+
+    }
+
+
+    /* =========================
+       SAQUE
+    ========================= */
+
+    function abrirSaque() {
+
+      fecharDeposito();
+
+      const painel =
+        document.getElementById("saque");
+
+      painel.classList.add("ativo");
+
+      painel.scrollIntoView({
+        behavior: "smooth"
+      });
+
+    }
+
+
+    function fecharSaque() {
+
+      document
+        .getElementById("saque")
+        .classList.remove("ativo");
+
+      document
+        .getElementById("saqueArea")
+        .classList.remove("ativo");
+
+      document
+        .getElementById("chavePix")
+        .value = "";
+
+      valorSaque = 0;
+
+    }
+
+
+    function selecionarSaque(valor, botao) {
+
+      valorSaque = valor;
+
+      document
+        .querySelectorAll("#saque .valor")
+        .forEach(function(item) {
+
+          item.classList.remove("selecionado");
+
+        });
+
+      botao.classList.add("selecionado");
+
+      document
+        .getElementById("saqueArea")
+        .classList.add("ativo");
+
+    }
+
+
+    function solicitarSaque() {
+
+      const chave =
+        document
+          .getElementById("chavePix")
+          .value
+          .trim();
+
+
+      if (valorSaque <= 0) {
+
+        alert(
+          "Escolha um valor para o saque."
+        );
+
+        return;
+
+      }
+
+
+      if (!chave) {
+
+        alert(
+          "Digite uma chave PIX fictícia."
+        );
+
+        return;
+
+      }
+
+
+      const valorFormatado =
+        valorSaque
+          .toFixed(2)
+          .replace(".", ",");
+
+
+      alert(
+        "Saque demonstrativo solicitado!\n\n" +
+        "Valor: R$ " +
+        valorFormatado +
+        "\n\n" +
+        "Nenhum pagamento real foi realizado."
+      );
+
+    }
+
+  </script>
 
 </body>
 </html>
