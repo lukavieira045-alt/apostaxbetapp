@@ -5,66 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roleta - ApostaXBet</title>
     <style>
+        * { box-sizing: border-box; }
         body { margin: 0; background: #000; color: white; font-family: Arial, sans-serif; padding-bottom: 90px; }
-        .topo { text-align: center; padding: 25px 10px; background: #111; border-bottom: 2px solid #d9b21f; position: sticky; top: 0; z-index: 100; }
+        
+        /* Topo Fixo com Saldo */
+        .topo { 
+            text-align: center; padding: 25px 10px; background: #111; 
+            border-bottom: 2px solid #d9b21f; position: sticky; top: 0; z-index: 100; 
+        }
         .topo h1 { margin: 0; color: #e6c229; font-size: 24px; }
-        .saldo { margin-top: 8px; color: #00ed91; font-weight: bold; font-size: 18px; }
+        .saldo { margin-top: 8px; font-weight: bold; font-size: 18px; transition: color 0.3s; }
+        
+        /* Container Principal */
         .container { width: 94%; max-width: 600px; margin: 30px auto; text-align: center; }
         
-        /* Estilo da Roleta Simples */
+        /* Área do Jogo */
         .roleta-box {
-            background: #1a1a1a; border-radius: 15px; padding: 30px; 
+            background: #1a1a1a; border-radius: 15px; padding: 30px 20px; 
             border: 1px solid #333; margin-bottom: 20px;
         }
         .resultado {
-            font-size: 40px; font-weight: bold; height: 60px; 
+            font-size: 48px; font-weight: bold; height: 70px; 
             display: flex; align-items: center; justify-content: center;
-            margin: 20px 0; color: #fff;
+            margin: 20px 0; color: #fff; letter-spacing: 2px;
         }
         
-        /* Controles */
-        .controles { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+        /* Botões de Cor */
+        .controles { display: flex; gap: 10px; justify-content: center; margin-bottom: 25px; }
         .btn-cor {
             flex: 1; padding: 15px; border: none; border-radius: 8px; 
-            color: white; font-weight: bold; cursor: pointer; font-size: 16px;
-            opacity: 0.5; transition: all 0.2s;
+            color: white; font-weight: bold; cursor: pointer; font-size: 14px;
+            opacity: 0.4; transition: all 0.2s ease;
         }
-        .btn-cor.ativo { opacity: 1; transform: scale(1.05); box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+        .btn-cor.ativo { opacity: 1; transform: scale(1.05); box-shadow: 0 0 15px rgba(255,255,255,0.15); }
         .btn-vermelho { background: #dc3545; }
-        .btn-preto { background: #222; border: 1px solid #444; }
+        .btn-preto { background: #222; border: 1px solid #555; }
         .btn-verde { background: #28a745; }
         
+        /* Botão de Apostar */
         .btn-apostar {
             width: 100%; padding: 18px; background: #e6c229; color: #000; 
             border: none; border-radius: 8px; font-size: 18px; font-weight: bold; 
-            cursor: pointer; margin-top: 10px;
+            cursor: pointer; transition: transform 0.1s;
         }
-        .btn-apostar:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-apostar:active:not(:disabled) { transform: scale(0.98); }
+        .btn-apostar:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(100%); }
         
+        /* Link de Voltar */
         .btn-voltar {
-            display: inline-block; margin-top: 20px; color: #888; 
-            text-decoration: none; font-size: 14px;
+            display: inline-block; margin-top: 25px; color: #666; 
+            text-decoration: none; font-size: 14px; padding: 10px;
         }
+        .btn-voltar:hover { color: #e6c229; }
     </style>
 </head>
 <body>
 
     <div class="topo">
-        <h1>Roleta</h1>
-        <!-- O script.js vai atualizar este saldo automaticamente -->
+        <h1>🎰 Roleta</h1>
+        <!-- O script.js atualiza este elemento automaticamente -->
         <div class="saldo" id="displaySaldo">R$ 0,00</div>
     </div>
 
     <div class="container">
         <div class="roleta-box">
-            <p style="color: #888; font-size: 14px;">Escolha uma cor e aposte R$ 5,00</p>
+            <p style="color: #888; font-size: 14px; margin-bottom: 20px;">Escolha uma cor e aposte R$ 5,00</p>
             
             <div class="resultado" id="resultadoDisplay">--</div>
             
             <div class="controles">
-                <button class="btn-cor btn-vermelho" onclick="selecionarCor('vermelho', this)">Vermelho</button>
-                <button class="btn-cor btn-verde" onclick="selecionarCor('verde', this)">Verde</button>
-                <button class="btn-cor btn-preto" onclick="selecionarCor('preto', this)">Preto</button>
+                <button class="btn-cor btn-vermelho" onclick="selecionarCor('vermelho', this)">Vermelho (x2)</button>
+                <button class="btn-cor btn-verde" onclick="selecionarCor('verde', this)">Verde (x14)</button>
+                <button class="btn-cor btn-preto" onclick="selecionarCor('preto', this)">Preto (x2)</button>
             </div>
             
             <button id="btnApostar" class="btn-apostar" onclick="girarRoleta()" disabled>
@@ -75,7 +87,7 @@
         <a href="../index.html" class="btn-voltar">← Voltar para Lobby</a>
     </div>
 
-    <!-- ️ IMPORTANTE: Caminho correto para voltar uma pasta e buscar o script.js -->
+    <!-- ⚠️ IMPORTANTE: Importa o sistema de saldo da pasta raiz -->
     <script src="../script.js"></script>
 
     <script>
@@ -83,42 +95,50 @@
         const VALOR_APOSTA = 5;
 
         function selecionarCor(cor, botao) {
+            // Remove seleção anterior
             document.querySelectorAll('.btn-cor').forEach(b => b.classList.remove('ativo'));
+            // Adiciona nova seleção
             botao.classList.add('ativo');
             corSelecionada = cor;
+            // Habilita botão de apostar
             document.getElementById('btnApostar').disabled = false;
         }
 
         function girarRoleta() {
-            // 🔒 VERIFICAÇÃO DE SALDO INTEGRADA
-            // Se retornar false, o modal aparece e a função PARA aqui
+            // 🔒 PROTEÇÃO DE SALDO INTEGRADA
+            // Se o saldo for insuficiente, o modal aparece e a função PARA aqui
             if (!verificarAcessoJogo(VALOR_APOSTA, "Roleta")) return;
 
             const btn = document.getElementById('btnApostar');
             const display = document.getElementById('resultadoDisplay');
             
+            // Estado de carregamento
             btn.disabled = true;
-            display.innerText = "Girando...";
+            display.innerText = "GIRANDO...";
             display.style.color = "#fff";
 
-            // Simulação do giro (2 segundos)
+            // Simulação do giro (2 segundos de suspense)
             setTimeout(() => {
                 const cores = ['vermelho', 'preto', 'verde'];
-                // Peso maior para vermelho/preto, menor para verde
+                // Probabilidades: 45% Vermelho, 45% Preto, 10% Verde
                 const rand = Math.random();
                 let resultado = rand < 0.45 ? 'vermelho' : (rand < 0.90 ? 'preto' : 'verde');
                 
+                // Exibe resultado
                 display.innerText = resultado.toUpperCase();
-                display.style.color = resultado === 'vermelho' ? '#dc3545' : (resultado === 'verde' ? '#28a745' : '#aaa');
+                const coresMap = { 'vermelho': '#dc3545', 'verde': '#28a745', 'preto': '#aaa' };
+                display.style.color = coresMap[resultado];
 
-                // Lógica de Vitória/Derrota
+                // Lógica de Vitória ou Derrota
                 if (resultado === corSelecionada) {
-                    const ganho = corSelecionada === 'verde' ? VALOR_APOSTA * 14 : VALOR_APOSTA * 2;
-                    adicionarSaldo(ganho); // Usa a função do script.js
-                    alert(`🎉 Você ganhou R$ ${ganho},00!`);
+                    const multiplicador = corSelecionada === 'verde' ? 14 : 2;
+                    const ganho = VALOR_APOSTA * multiplicador;
+                    adicionarSaldo(ganho); // Usa função global do script.js
+                    alert(`🎉 PARABÉNS! Você ganhou R$ ${ganho},00!`);
                 } else {
-                    descontarSaldo(VALOR_APOSTA); // Usa a função do script.js
-                    // O saldo já foi descontado, se ficar < 10, na próxima vez será bloqueado
+                    descontarSaldo(VALOR_APOSTA); // Usa função global do script.js
+                    // Se após perder o saldo cair abaixo de R$ 10, 
+                    // na próxima tentativa o jogo será bloqueado automaticamente
                 }
                 
                 btn.disabled = false;
