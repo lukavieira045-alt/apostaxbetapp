@@ -70,6 +70,7 @@
             width: 90%;
             max-width: 350px;
             color: #333;
+            position: relative;
         }
         .modal-conteudo h3 { margin-top: 0; color: #111; }
         .modal-conteudo img { max-width: 100%; height: auto; border-radius: 8px; margin: 15px 0; }
@@ -80,6 +81,38 @@
             margin-bottom: 10px; 
             display: block;
         }
+        
+        /* Área de Copia e Cola */
+        .area-copia {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 15px 0;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 12px;
+            color: #555;
+            max-height: 60px;
+            overflow-y: auto;
+            border: 1px dashed #ccc;
+        }
+        .btn-copiar {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .btn-copiar:active { transform: scale(0.98); }
+        
         .btn-fechar {
             background: #dc3545;
             color: white;
@@ -88,7 +121,7 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
-            margin-top: 10px;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -120,25 +153,33 @@
     <!-- JANELA DO QR CODE (MODAL) -->
     <div id="modalPix" class="modal-pix" onclick="if(event.target === this) fecharModal()">
         <div class="modal-conteudo">
-            <h3>Escaneie o QR Code</h3>
+            <h3>Escaneie ou Copie</h3>
             <span id="valorDisplay" class="valor-selecionado"></span>
+            
             <img src="img/qrcode.png" alt="QR Code PIX">
-            <p style="font-size: 14px; color: #666;">Após o pagamento, o saldo será creditado automaticamente.</p>
+            
+            <!-- ÁREA DE COPIA E COLA -->
+            <div class="area-copia" id="textoPix">
+                00020126580014BR.GOV.BCB.PIX0136SEU-EMAIL-OU-CHAVE-AQUI@EXEMPLO.COM520400005303986540510.005802BR5913APOSTAXBET6008SAO PAULO62070503***6304E2CA
+            </div>
+            
+            <button class="btn-copiar" onclick="copiarChave()">
+                📋 Copiar Código PIX
+            </button>
+            
+            <p style="font-size: 12px; color: #888; margin: 5px 0;">Após o pagamento, o saldo será creditado automaticamente.</p>
             <button class="btn-fechar" onclick="fecharModal()">Fechar</button>
         </div>
     </div>
 
     <script>
         let valorAtual = 0;
+        // ⚠️ SUBSTITUA ESTE TEXTO PELA SUA CHAVE PIX REAL OU CÓDIGO COPIA E COLA
+        const chavePixReal = "00020126580014BR.GOV.BCB.PIX0136SEU-EMAIL-OU-CHAVE-AQUI@EXEMPLO.COM520400005303986540510.005802BR5913APOSTAXBET6008SAO PAULO62070503***6304E2CA";
 
         function selecionarValor(botao, valor) {
-            // Remove a classe 'ativo' de todos os botões
             document.querySelectorAll('.btn-valor').forEach(b => b.classList.remove('ativo'));
-            
-            // Adiciona a classe 'ativo' ao botão clicado
             botao.classList.add('ativo');
-            
-            // Atualiza o valor e habilita o botão principal
             valorAtual = valor;
             const btnDepositar = document.getElementById('btnDepositar');
             btnDepositar.disabled = false;
@@ -149,12 +190,30 @@
         function abrirModal() {
             if (valorAtual > 0) {
                 document.getElementById('valorDisplay').innerText = `Valor: R$ ${valorAtual},00`;
+                // Atualiza o texto na área de cópia com o valor real (opcional, depende do seu gateway)
+                document.getElementById('textoPix').innerText = chavePixReal; 
                 document.getElementById('modalPix').style.display = 'flex';
             }
         }
 
         function fecharModal() {
             document.getElementById('modalPix').style.display = 'none';
+        }
+
+        function copiarChave() {
+            const texto = document.getElementById('textoPix').innerText;
+            navigator.clipboard.writeText(texto).then(() => {
+                const btn = document.querySelector('.btn-copiar');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = "✅ Copiado!";
+                btn.style.background = "#28a745";
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = "#007bff";
+                }, 2000);
+            }).catch(err => {
+                alert("Erro ao copiar. Tente selecionar e copiar manualmente.");
+            });
         }
     </script>
 
