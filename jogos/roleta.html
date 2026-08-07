@@ -1,6 +1,8 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -8,29 +10,219 @@
 
 <style>
 
-body{
-    background:#050505;
-    color:white;
-    font-family:Arial, sans-serif;
-    text-align:center;
+*{
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
 }
+
+body{
+    margin:0;
+    min-height:100vh;
+    color:white;
+    text-align:center;
+    overflow-x:hidden;
+
+    background:
+    radial-gradient(circle at 15% 15%,#003d66,transparent 30%),
+    radial-gradient(circle at 85% 20%,#550020,transparent 30%),
+    radial-gradient(circle at 50% 100%,#493000,transparent 35%),
+    linear-gradient(135deg,#020207,#11000b,#00151b);
+
+    background-size:180% 180%;
+    animation:fundo 12s ease-in-out infinite alternate;
+}
+
+@keyframes fundo{
+    0%{background-position:0% 0%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 100%}
+}
+
+
+/* LUZES */
+
+.luz{
+    position:fixed;
+    width:280px;
+    height:280px;
+    border-radius:50%;
+    filter:blur(100px);
+    opacity:.35;
+    pointer-events:none;
+    z-index:-3;
+}
+
+.luz1{
+    background:#ff003c;
+    left:-120px;
+    top:10%;
+    animation:luz1 8s infinite alternate;
+}
+
+.luz2{
+    background:#0066ff;
+    right:-120px;
+    bottom:10%;
+    animation:luz2 9s infinite alternate;
+}
+
+@keyframes luz1{
+    to{
+        transform:translate(170px,100px) scale(1.4);
+    }
+}
+
+@keyframes luz2{
+    to{
+        transform:translate(-170px,-100px) scale(1.4);
+    }
+}
+
+
+/* PARTICULAS */
+
+.particulas{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+    z-index:-2;
+}
+
+.particulas span{
+    position:absolute;
+    bottom:-20px;
+    width:4px;
+    height:4px;
+    border-radius:50%;
+    background:#ffd700;
+    box-shadow:
+    0 0 8px #ffd700,
+    0 0 18px #ff5500;
+    animation:subir linear infinite;
+}
+
+.particulas span:nth-child(1){left:5%;animation-duration:7s}
+.particulas span:nth-child(2){left:15%;animation-duration:10s}
+.particulas span:nth-child(3){left:25%;animation-duration:8s}
+.particulas span:nth-child(4){left:35%;animation-duration:12s}
+.particulas span:nth-child(5){left:45%;animation-duration:9s}
+.particulas span:nth-child(6){left:55%;animation-duration:11s}
+.particulas span:nth-child(7){left:65%;animation-duration:7s}
+.particulas span:nth-child(8){left:75%;animation-duration:10s}
+.particulas span:nth-child(9){left:85%;animation-duration:8s}
+.particulas span:nth-child(10){left:95%;animation-duration:12s}
+
+@keyframes subir{
+    0%{
+        transform:translateY(0);
+        opacity:0;
+    }
+
+    20%{
+        opacity:1;
+    }
+
+    100%{
+        transform:translateY(-110vh);
+        opacity:0;
+    }
+}
+
+
+/* TITULO */
 
 h1{
+    margin-top:25px;
+    font-size:36px;
     color:#ffd700;
-    text-shadow:0 0 15px #ffd700;
+
+    text-shadow:
+    0 0 8px white,
+    0 0 18px #ffd700,
+    0 0 35px #ff6600;
 }
+
+
+/* SALDO */
 
 #saldo{
+    display:inline-block;
+
     color:#00ff88;
     font-size:22px;
-    margin:15px;
+
+    margin:10px 0;
+
+    padding:10px 22px;
+
+    border:1px solid #00ff88;
+    border-radius:30px;
+
+    background:rgba(0,0,0,.65);
+
+    box-shadow:
+    0 0 15px rgba(0,255,136,.3);
 }
 
+
+/* PAINEL */
+
+.painel{
+    width:95%;
+    max-width:420px;
+
+    margin:auto;
+    padding:15px 10px 25px;
+
+    border:1px solid rgba(255,215,0,.4);
+    border-radius:28px;
+
+    background:
+    linear-gradient(
+        145deg,
+        rgba(25,20,20,.94),
+        rgba(5,5,10,.97)
+    );
+
+    box-shadow:
+    0 0 30px rgba(255,215,0,.15),
+    0 20px 70px rgba(0,0,0,.8);
+
+    backdrop-filter:blur(10px);
+}
+
+
+/* BONUS */
+
+.bonus{
+    display:inline-block;
+
+    margin:8px auto 15px;
+    padding:8px 14px;
+
+    border-radius:20px;
+
+    color:#ffd700;
+
+    background:rgba(255,215,0,.08);
+
+    border:1px solid rgba(255,215,0,.3);
+
+    font-size:13px;
+}
+
+
+/* ÁREA */
 
 .area{
     width:340px;
     height:380px;
-    margin:40px auto;
+
+    max-width:100%;
+
+    margin:10px auto;
+
     position:relative;
 }
 
@@ -38,27 +230,54 @@ h1{
 /* PONTEIRO */
 
 #ponteiro{
-
     position:absolute;
+
     top:-5px;
     left:50%;
 
     transform:translateX(-50%);
 
-    z-index:999;
+    z-index:20;
 
-    color:red;
+    color:#ff1744;
 
-    font-size:60px;
-
-    font-weight:bold;
+    font-size:55px;
 
     text-shadow:
     0 0 10px red,
-    0 0 20px red;
-
+    0 0 25px red;
 }
 
+
+/* BASE */
+
+.base{
+    position:absolute;
+
+    width:320px;
+    height:320px;
+
+    left:50%;
+    top:45px;
+
+    transform:translateX(-50%);
+
+    border-radius:50%;
+
+    background:
+    radial-gradient(
+        circle,
+        #111 0 12%,
+        #ffd700 13% 16%,
+        #422900 17% 20%,
+        #d4af37 21% 100%
+    );
+
+    box-shadow:
+    0 0 20px #ffd700,
+    0 0 45px rgba(255,215,0,.5),
+    0 20px 35px rgba(0,0,0,.8);
+}
 
 
 /* ROLETA */
@@ -67,44 +286,68 @@ h1{
 
     position:absolute;
 
-    top:45px;
-    left:20px;
+    width:280px;
+    height:280px;
 
-    width:300px;
-    height:300px;
+    left:50%;
+    top:50%;
+
+    transform:
+    translate(-50%,-50%)
+    rotate(0deg);
 
     border-radius:50%;
 
-    border:15px solid #d4af37;
-
+    border:9px solid #d4af37;
 
     background:
     conic-gradient(
-        #d00000 0deg 60deg,
+        #c80018 0deg 60deg,
         #111 60deg 120deg,
-        #008000 120deg 180deg,
+        #07852d 120deg 180deg,
         #111 180deg 240deg,
-        #d4af37 240deg 300deg,
+        #d49a00 240deg 300deg,
         #111 300deg 360deg
     );
 
+    box-shadow:
+    inset 0 0 30px #000,
+    0 0 20px #ffd700;
 
     transition:
-    transform 12s cubic-bezier(.15,.8,.15,1);
-
-
-    box-shadow:
-    0 0 40px #ffd700,
-    inset 0 0 30px #000;
-
+    transform 6s cubic-bezier(.12,.78,.15,1);
 }
 
 
+/* LINHAS */
 
-/* PRÊMIOS */
+.linha{
+    position:absolute;
+
+    width:2px;
+    height:130px;
+
+    left:50%;
+    top:50%;
+
+    background:#ffd700;
+
+    transform-origin:top center;
+
+    box-shadow:0 0 5px #ffd700;
+}
+
+.linha1{transform:rotate(0deg)}
+.linha2{transform:rotate(60deg)}
+.linha3{transform:rotate(120deg)}
+.linha4{transform:rotate(180deg)}
+.linha5{transform:rotate(240deg)}
+.linha6{transform:rotate(300deg)}
+
+
+/* NÚMEROS */
 
 .premio{
-
     position:absolute;
 
     width:100%;
@@ -113,77 +356,233 @@ h1{
     display:flex;
 
     justify-content:center;
-
     align-items:flex-start;
 
-    padding-top:25px;
+    padding-top:20px;
 
-    font-size:20px;
-
+    font-size:18px;
     font-weight:bold;
 
+    color:white;
+
+    text-shadow:
+    0 2px 4px #000;
 }
 
-
-.p1{transform:rotate(30deg);}
-.p2{transform:rotate(90deg);}
-.p3{transform:rotate(150deg);}
-.p4{transform:rotate(210deg);}
-.p5{transform:rotate(270deg);}
-.p6{transform:rotate(330deg);}
-
+.p1{transform:rotate(30deg)}
+.p2{transform:rotate(90deg)}
+.p3{transform:rotate(150deg)}
+.p4{transform:rotate(210deg)}
+.p5{transform:rotate(270deg)}
+.p6{transform:rotate(330deg)}
 
 
 /* CENTRO */
 
 .centro{
-
     position:absolute;
 
-    top:115px;
+    width:65px;
+    height:65px;
 
-    left:115px;
+    left:50%;
+    top:50%;
 
-    width:70px;
-
-    height:70px;
-
-
-    background:#111;
-
-    border:5px solid #ffd700;
+    transform:translate(-50%,-50%);
 
     border-radius:50%;
 
-
     display:flex;
-
+    align-items:center;
     justify-content:center;
 
-    align-items:center;
+    background:
+    radial-gradient(circle,#555,#111 60%,#000);
 
-    font-size:30px;
+    border:5px solid #ffd700;
 
+    font-size:28px;
+
+    box-shadow:
+    0 0 15px #ffd700,
+    inset 0 0 15px #000;
+
+    z-index:5;
 }
 
 
+/* BRILHO */
+
+.girando{
+    filter:brightness(1.25);
+}
+
+
+/* RESULTADO */
+
+#resultado{
+    min-height:35px;
+
+    margin:5px;
+
+    font-size:22px;
+
+    color:#ffd700;
+
+    font-weight:bold;
+
+    text-shadow:0 0 12px #ffd700;
+}
+
+
+/* BOTÃO */
 
 button{
 
-    padding:18px 50px;
-
-    background:#ffd700;
+    padding:16px 38px;
 
     border:0;
 
     border-radius:15px;
 
-    font-size:20px;
+    background:
+    linear-gradient(
+        180deg,
+        #ffe66b,
+        #ffb000
+    );
+
+    color:#211600;
+
+    font-size:18px;
 
     font-weight:bold;
 
+    box-shadow:
+    0 0 15px #ffd700;
+
+    cursor:pointer;
 }
 
+button:active{
+    transform:scale(.94);
+}
+
+button:disabled{
+    opacity:.5;
+}
+
+
+/* TELA RESULTADO */
+
+#tela{
+
+    position:fixed;
+
+    inset:0;
+
+    display:flex;
+
+    justify-content:center;
+    align-items:center;
+
+    background:rgba(0,0,0,.8);
+
+    backdrop-filter:blur(8px);
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:.25s;
+
+    z-index:100;
+}
+
+#tela.mostrar{
+    opacity:1;
+    pointer-events:auto;
+}
+
+
+.card{
+
+    width:85%;
+    max-width:330px;
+
+    padding:30px 20px;
+
+    border-radius:25px;
+
+    background:
+    linear-gradient(
+        145deg,
+        #211a06,
+        #080807
+    );
+
+    border:2px solid #ffd700;
+
+    box-shadow:
+    0 0 30px #ffd700,
+    0 0 80px rgba(255,150,0,.4);
+
+    transform:scale(.5);
+}
+
+#tela.mostrar .card{
+    animation:entrada .4s forwards;
+}
+
+@keyframes entrada{
+
+    0%{
+        transform:scale(.5);
+    }
+
+    70%{
+        transform:scale(1.08);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+}
+
+
+#numeroResultado{
+
+    font-size:60px;
+
+    margin:10px;
+
+    color:#ffd700;
+
+    font-weight:bold;
+
+    text-shadow:
+    0 0 15px #ffd700,
+    0 0 35px #ff7700;
+}
+
+
+#premioResultado{
+    font-size:22px;
+    color:white;
+}
+
+
+/* CELULAR */
+
+@media(max-width:380px){
+
+    .area{
+        transform:scale(.9);
+        transform-origin:top center;
+        margin-bottom:-30px;
+    }
+
+}
 
 </style>
 
@@ -193,10 +592,41 @@ button{
 <body>
 
 
-<h1>🎰 Roleta Cassino</h1>
+<div class="luz luz1"></div>
+<div class="luz luz2"></div>
+
+
+<div class="particulas">
+
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+
+</div>
+
+
+<h1>🎰 Roleta ApostaXBet</h1>
 
 
 <div id="saldo"></div>
+
+
+<div class="painel">
+
+
+<div class="bonus">
+
+🎁 BÔNUS:
+R$0 • R$1 • R$2 • R$5 • R$10 • R$50
+
+</div>
 
 
 <div class="area">
@@ -207,7 +637,18 @@ button{
 </div>
 
 
+<div class="base">
+
+
 <div id="roleta">
+
+
+<div class="linha linha1"></div>
+<div class="linha linha2"></div>
+<div class="linha linha3"></div>
+<div class="linha linha4"></div>
+<div class="linha linha5"></div>
+<div class="linha linha6"></div>
 
 
 <div class="premio p1">R$0</div>
@@ -221,3 +662,474 @@ button{
 <div class="centro">
 🎰
 </div>
+
+
+</div>
+
+</div>
+
+</div>
+
+
+<div id="resultado">
+🎰 Clique para girar
+</div>
+
+
+<button id="botao" onclick="girar()">
+🎰 GIRAR
+</button>
+
+
+</div>
+
+
+<!-- TELA -->
+
+<div id="tela">
+
+<div class="card">
+
+<div style="color:#00ff88;font-size:22px;">
+🎉 RESULTADO
+</div>
+
+
+<div id="numeroResultado">
+R$ 0
+</div>
+
+
+<div id="premioResultado">
+Boa sorte!
+</div>
+
+
+<br>
+
+
+<button onclick="fecharTela()">
+CONTINUAR
+</button>
+
+
+</div>
+
+</div>
+
+
+<script>
+
+
+/* SALDO */
+
+let saldo =
+Number(
+localStorage.getItem("saldo") || 2
+);
+
+
+function atualizarSaldo(){
+
+    document.getElementById("saldo").innerHTML =
+    "💰 Saldo: R$ " +
+    saldo.toFixed(2);
+
+    localStorage.setItem(
+        "saldo",
+        saldo
+    );
+
+}
+
+atualizarSaldo();
+
+
+/* ELEMENTOS */
+
+const roleta =
+document.getElementById("roleta");
+
+const botao =
+document.getElementById("botao");
+
+const resultado =
+document.getElementById("resultado");
+
+const tela =
+document.getElementById("tela");
+
+const numeroResultado =
+document.getElementById("numeroResultado");
+
+const premioResultado =
+document.getElementById("premioResultado");
+
+
+/* PRÊMIOS */
+
+const premios = [
+    0,
+    1,
+    2,
+    5,
+    10,
+    50
+];
+
+
+/* CONTROLE */
+
+let girando = false;
+
+let rotacao = 0;
+
+
+/* ÁUDIO */
+
+let audio = null;
+
+
+function tocarSom(freq,duracao){
+
+    try{
+
+        if(!audio){
+
+            audio =
+            new (
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+        }
+
+        if(audio.state === "suspended"){
+            audio.resume();
+        }
+
+        let oscilador =
+        audio.createOscillator();
+
+        let ganho =
+        audio.createGain();
+
+        oscilador.frequency.value =
+        freq;
+
+        oscilador.type =
+        "sine";
+
+        ganho.gain.setValueAtTime(
+            .08,
+            audio.currentTime
+        );
+
+        ganho.gain.exponentialRampToValueAtTime(
+            .001,
+            audio.currentTime + duracao
+        );
+
+        oscilador.connect(ganho);
+
+        ganho.connect(
+            audio.destination
+        );
+
+        oscilador.start();
+
+        oscilador.stop(
+            audio.currentTime + duracao
+        );
+
+    }
+    catch(e){
+
+        /* Se o navegador bloquear áudio,
+           o jogo continua normalmente. */
+
+    }
+
+}
+
+
+/* GIRAR */
+
+function girar(){
+
+    if(girando){
+        return;
+    }
+
+
+    if(saldo < 1){
+
+        alert("Saldo insuficiente!");
+
+        return;
+    }
+
+
+    /* Paga a rodada */
+
+    saldo -= 1;
+
+    atualizarSaldo();
+
+
+    girando = true;
+
+    botao.disabled = true;
+
+    roleta.classList.add("girando");
+
+
+    resultado.innerHTML =
+    "🎰 Girando...";
+
+
+    tocarSom(220,.12);
+
+
+    /*
+    Escolhe resultado
+    */
+
+    let indice =
+    Math.floor(
+        Math.random() * premios.length
+    );
+
+
+    let premio =
+    premios[indice];
+
+
+    /*
+    Cada espaço possui 60 graus.
+    */
+
+    let centro =
+    indice * 60 + 30;
+
+
+    /*
+    O ponteiro está em cima.
+    */
+
+    let alvo =
+    360 - centro;
+
+
+    /*
+    Gira de 5 a 7 voltas.
+    */
+
+    let voltas =
+    5 + Math.floor(
+        Math.random() * 3
+    );
+
+
+    /*
+    Mantém a rotação crescente.
+    */
+
+    let resto =
+    rotacao % 360;
+
+
+    let ajuste =
+    alvo - resto;
+
+
+    if(ajuste < 0){
+        ajuste += 360;
+    }
+
+
+    rotacao +=
+    voltas * 360 +
+    ajuste;
+
+
+    /*
+    Aplica giro.
+    */
+
+    roleta.style.transform =
+    "translate(-50%,-50%) rotate(" +
+    rotacao +
+    "deg)";
+
+
+    /*
+    Sons simples durante o giro.
+    */
+
+    let sons = 0;
+
+
+    let somIntervalo =
+    setInterval(function(){
+
+        if(!girando){
+
+            clearInterval(
+                somIntervalo
+            );
+
+            return;
+        }
+
+
+        tocarSom(
+            180 + sons * 8,
+            .05
+        );
+
+
+        sons++;
+
+    },180);
+
+
+    /*
+    Finaliza exatamente depois
+    da animação.
+    */
+
+    setTimeout(function(){
+
+        clearInterval(
+            somIntervalo
+        );
+
+
+        finalizar(
+            premio
+        );
+
+    },6100);
+
+}
+
+
+/* FINALIZA */
+
+function finalizar(premio){
+
+    girando = false;
+
+    roleta.classList.remove(
+        "girando"
+    );
+
+
+    /*
+    Adiciona prêmio
+    */
+
+    saldo += premio;
+
+    atualizarSaldo();
+
+
+    /*
+    Texto
+    */
+
+    resultado.innerHTML =
+    "🎉 Caiu em R$ " +
+    premio.toFixed(2);
+
+
+    /*
+    Som de vitória
+    */
+
+    if(premio > 0){
+
+        tocarSom(523,.18);
+
+        setTimeout(
+            function(){
+                tocarSom(659,.18);
+            },
+            150
+        );
+
+        setTimeout(
+            function(){
+                tocarSom(784,.25);
+            },
+            300
+        );
+
+    }
+    else{
+
+        tocarSom(150,.25);
+
+    }
+
+
+    /*
+    Tela
+    */
+
+    setTimeout(function(){
+
+        numeroResultado.innerHTML =
+        "R$ " +
+        premio.toFixed(2);
+
+
+        if(premio >= 10){
+
+            premioResultado.innerHTML =
+            "🔥 BÔNUS ESPECIAL!";
+
+        }
+        else if(premio > 0){
+
+            premioResultado.innerHTML =
+            "🎁 Você ganhou um prêmio!";
+
+        }
+        else{
+
+            premioResultado.innerHTML =
+            "😅 Não foi dessa vez.";
+
+        }
+
+
+        tela.classList.add(
+            "mostrar"
+        );
+
+
+    },300);
+
+
+    botao.disabled = false;
+
+}
+
+
+/* FECHAR */
+
+function fecharTela(){
+
+    tela.classList.remove(
+        "mostrar"
+    );
+
+}
+
+</script>
+
+</body>
+
+</html>
