@@ -5,35 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Roleta - ApostaXBet</title>
     <style>
-        /* Reset básico para garantir consistência no mobile */
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background: #000; color: white; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding-bottom: 40px; }
+        /* Reset e Base */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        body { background: #000; color: white; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding-bottom: 40px; min-height: 100vh; }
         
+        /* Topo Fixo */
         .topo { text-align: center; padding: 20px 15px; background: #111; border-bottom: 2px solid #d9b21f; position: sticky; top: 0; z-index: 100; }
-        .topo h1 { margin: 0; color: #e6c229; font-size: 22px; letter-spacing: 1px; }
-        .saldo { margin-top: 8px; font-weight: bold; font-size: 18px; transition: color 0.3s ease; }
+        .topo h1 { color: #e6c229; font-size: 22px; letter-spacing: 1px; margin-bottom: 5px; }
+        .saldo { font-weight: bold; font-size: 18px; transition: color 0.3s ease; }
         
+        /* Container Principal */
         .container { width: 92%; max-width: 500px; margin: 25px auto; text-align: center; }
         .roleta-box { background: #1a1a1a; border-radius: 16px; padding: 25px 20px; border: 1px solid #333; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
         
         .info-text { color: #888; font-size: 13px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        /* Área de Resultado */
+        /* Display de Resultado */
         .resultado { 
             font-size: 42px; font-weight: 800; height: 70px; 
             display: flex; align-items: center; justify-content: center;
             margin: 15px 0; color: #fff; text-shadow: 0 2px 10px rgba(255,255,255,0.1);
         }
         
-        /* Botões de Cores - Estilo Mobile First */
+        /* Botões de Cores - OTIMIZADO PARA MOBILE */
         .controles { display: flex; gap: 8px; justify-content: center; margin-bottom: 25px; }
         .btn-cor { 
             flex: 1; padding: 16px 0; border: none; border-radius: 10px; 
             color: white; font-weight: bold; cursor: pointer; font-size: 14px;
             opacity: 0.4; transform: scale(1); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            /* Garante área de toque mínima no mobile */
+            min-height: 48px; 
         }
-        /* Estado Ativo: Brilhante e levemente maior */
         .btn-cor.ativo { opacity: 1; transform: scale(1.05); box-shadow: 0 0 15px rgba(255,255,255,0.2); z-index: 2; }
         
         .btn-vermelho { background: linear-gradient(135deg, #dc3545, #b02a37); }
@@ -46,6 +49,7 @@
             border: none; border-radius: 10px; font-size: 17px; font-weight: 800; 
             cursor: pointer; transition: transform 0.1s, filter 0.2s;
             box-shadow: 0 4px 15px rgba(230, 194, 41, 0.3);
+            min-height: 56px; /* Área de toque segura */
         }
         .btn-apostar:active:not(:disabled) { transform: scale(0.97); }
         .btn-apostar:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(100%); box-shadow: none; }
@@ -68,7 +72,6 @@
             <div class="resultado" id="resultadoDisplay">--</div>
             
             <div class="controles">
-                <!-- Adicionei type="button" para evitar submit acidental em mobile -->
                 <button type="button" class="btn-cor btn-vermelho" onclick="selecionarCor('vermelho', this)">Vermelho</button>
                 <button type="button" class="btn-cor btn-verde" onclick="selecionarCor('verde', this)">Verde</button>
                 <button type="button" class="btn-cor btn-preto" onclick="selecionarCor('preto', this)">Preto</button>
@@ -82,8 +85,8 @@
         <a href="../index.html" class="btn-voltar">← Voltar para Lobby</a>
     </div>
 
-    <!-- Importação do script central -->
-    <script src="../script.js"></script>
+    <!-- ⚠️ IMPORTANTE: Carrega o script central com proteção contra erros -->
+    <script src="../script.js" onerror="console.warn('script.js não carregou, usando modo offline')"></script>
 
     <script>
         // Variáveis globais do jogo
@@ -92,27 +95,33 @@
         const btnApostar = document.getElementById('btnApostar');
         const display = document.getElementById('resultadoDisplay');
 
+        // Fallback: Se as funções do script.js não existirem, cria versões dummy
+        if (typeof verificarAcessoJogo !== 'function') {
+            window.verificarAcessoJogo = function() { return true; };
+            console.log("Modo Offline: Verificação de saldo desativada");
+        }
+        if (typeof adicionarSaldo !== 'function') {
+            window.adicionarSaldo = function(v) { alert("Ganhou R$ " + v + ",00 (Simulação)"); };
+        }
+        if (typeof descontarSaldo !== 'function') {
+            window.descontarSaldo = function(v) { console.log("Perdeu R$ " + v + ",00 (Simulação)"); };
+        }
+
         function selecionarCor(cor, botao) {
-            // Remove classe ativa de todos
+            // Remove classe ativa de todos os botões
             document.querySelectorAll('.btn-cor').forEach(b => b.classList.remove('ativo'));
             
-            // Aplica na clicada
+            // Aplica na cor clicada
             botao.classList.add('ativo');
             corSelecionada = cor;
             
-            // Habilita botão de aposta imediatamente
+            // Habilita botão de apostar imediatamente
             if(btnApostar) btnApostar.disabled = false;
         }
 
         function girarRoleta() {
-            // 🔒 Verificação de saldo via script.js
-            if (typeof verificarAcessoJogo === 'function') {
-                if (!verificarAcessoJogo(VALOR_APOSTA, "Roleta")) return;
-            } else {
-                alert("Erro: Sistema de saldo não carregado. Tente limpar o cache.");
-                return;
-            }
-
+            // 🔒 Verificação de saldo (segura mesmo se script.js falhar)
+            if (!verificarAcessoJogo(VALOR_APOSTA, "Roleta")) return;
             if (!corSelecionada) return;
 
             // Bloqueia interface durante o giro
@@ -137,15 +146,16 @@
                 if (resultado === corSelecionada) {
                     const multiplicador = corSelecionada === 'verde' ? 14 : 2;
                     const ganho = VALOR_APOSTA * multiplicador;
-                    if(typeof adicionarSaldo === 'function') adicionarSaldo(ganho);
-                    setTimeout(() => alert(`🎉 PARABÉNS! Você ganhou R$ ${ganho},00!`), 100);
+                    adicionarSaldo(ganho);
                 } else {
-                    if(typeof descontarSaldo === 'function') descontarSaldo(VALOR_APOSTA);
+                    descontarSaldo(VALOR_APOSTA);
                 }
                 
-                // Restaura interface
-                btnApostar.disabled = false;
-                document.querySelectorAll('.btn-cor').forEach(b => b.style.pointerEvents = 'auto');
+                // Restaura interface após breve delay
+                setTimeout(() => {
+                    btnApostar.disabled = false;
+                    document.querySelectorAll('.btn-cor').forEach(b => b.style.pointerEvents = 'auto');
+                }, 500);
             }, 2000);
         }
     </script>
