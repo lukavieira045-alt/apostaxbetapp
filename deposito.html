@@ -9,7 +9,7 @@
         body { margin: 0; background: #000; color: white; font-family: Arial, sans-serif; padding-bottom: 90px; }
         .topo { text-align: center; padding: 25px 10px; background: #111; border-bottom: 2px solid #d9b21f; }
         .topo h1 { margin: 0; color: #e6c229; font-size: 28px; }
-        .saldo { margin-top: 8px; color: #00ed91; font-weight: bold; }
+        .saldo { margin-top: 8px; color: #00ed91; font-weight: bold; font-size: 18px; }
         .container { width: 94%; max-width: 600px; margin: 25px auto; }
         
         /* Estilos dos Botões de Valor */
@@ -21,7 +21,7 @@
         }
         .btn-valor {
             flex: 1;
-            min-width: 80px;
+            min-width: 70px;
             padding: 12px;
             background: #222;
             border: 1px solid #444;
@@ -113,6 +113,20 @@
         }
         .btn-copiar:active { transform: scale(0.98); }
         
+        .btn-confirmar {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+            width: 100%;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .btn-confirmar:active { transform: scale(0.98); }
+        
         .btn-fechar {
             background: #dc3545;
             color: white;
@@ -121,7 +135,7 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
-            margin-top: 5px;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -129,15 +143,16 @@
 
     <div class="topo">
         <h1>ApostaXBet</h1>
-        <div class="saldo">Saldo: R$ 0,00</div>
+        <div class="saldo" id="displaySaldo">Saldo: R$ 0,00</div>
     </div>
 
     <div class="container">
         <h2>Recarregar Saldo</h2>
         <p>Escolha um valor para depositar via PIX:</p>
         
-        <!-- BOTÕES DE VALORES RÁPIDOS -->
+        <!-- BOTÕES DE VALORES RÁPIDOS (AGORA COM R$ 10) -->
         <div class="valores-rapidos">
+            <button class="btn-valor" onclick="selecionarValor(this, 10)">R$ 10</button>
             <button class="btn-valor" onclick="selecionarValor(this, 20)">R$ 20</button>
             <button class="btn-valor" onclick="selecionarValor(this, 50)">R$ 50</button>
             <button class="btn-valor" onclick="selecionarValor(this, 100)">R$ 100</button>
@@ -160,23 +175,48 @@
             
             <!-- ÁREA DE COPIA E COLA -->
             <div class="area-copia" id="textoPix">
-                00020126580014BR.GOV.BCB.PIX0136SEU-EMAIL-OU-CHAVE-AQUI@EXEMPLO.COM520400005303986540510.005802BR5913APOSTAXBET6008SAO PAULO62070503***6304E2CA
+                <!-- O código será inserido aqui pelo JavaScript -->
             </div>
             
             <button class="btn-copiar" onclick="copiarChave()">
                 📋 Copiar Código PIX
             </button>
             
-            <p style="font-size: 12px; color: #888; margin: 5px 0;">Após o pagamento, o saldo será creditado automaticamente.</p>
+            <!-- BOTÃO DE CONFIRMAÇÃO DE PAGAMENTO -->
+            <button class="btn-confirmar" onclick="confirmarPagamento()">
+                ✅ Já realizei o pagamento
+            </button>
+            
+            <p style="font-size: 12px; color: #888; margin: 10px 0;">Após confirmar, o saldo será creditado.</p>
             <button class="btn-fechar" onclick="fecharModal()">Fechar</button>
         </div>
     </div>
 
     <script>
         let valorAtual = 0;
-        // ⚠️ SUBSTITUA ESTE TEXTO PELA SUA CHAVE PIX REAL OU CÓDIGO COPIA E COLA
-        const chavePixReal = "00020101021126450014BR.GOV.BCB.PIX0123lukavieira045@gmail.com5204000053039865802BR5925Lucas Vieira Campos de Je6009SAO PAULO62080504daqr63044F93"
+        // ⚠️ SUBSTITUA PELO SEU CÓDIGO PIX REAL
+        const chavePixReal = "00020101021126450014BR.GOV.BCB.PIX0123lukavieira045@gmail.com5204000053039865802BR5925Luka Vieira0456008Sao Paulo62070503***6304XXXX";
 
+        // --- SISTEMA DE SALDO ---
+        function carregarSaldo() {
+            let saldo = localStorage.getItem('apostaXBet_saldo');
+            if (!saldo) {
+                saldo = 0;
+                localStorage.setItem('apostaXBet_saldo', 0);
+            }
+            document.getElementById('displaySaldo').innerText = `Saldo: R$ ${parseFloat(saldo).toFixed(2).replace('.', ',')}`;
+        }
+
+        function adicionarSaldo(valor) {
+            let saldoAtual = parseFloat(localStorage.getItem('apostaXBet_saldo')) || 0;
+            let novoSaldo = saldoAtual + valor;
+            localStorage.setItem('apostaXBet_saldo', novoSaldo);
+            carregarSaldo();
+            alert(`✅ Depósito de R$ ${valor},00 recebido com sucesso!`);
+            fecharModal();
+        }
+
+        // --- FUNÇÕES DA MODAL ---
         function selecionarValor(botao, valor) {
             document.querySelectorAll('.btn-valor').forEach(b => b.classList.remove('ativo'));
             botao.classList.add('ativo');
@@ -190,7 +230,6 @@
         function abrirModal() {
             if (valorAtual > 0) {
                 document.getElementById('valorDisplay').innerText = `Valor: R$ ${valorAtual},00`;
-                // Atualiza o texto na área de cópia com o valor real (opcional, depende do seu gateway)
                 document.getElementById('textoPix').innerText = chavePixReal; 
                 document.getElementById('modalPix').style.display = 'flex';
             }
@@ -215,6 +254,15 @@
                 alert("Erro ao copiar. Tente selecionar e copiar manualmente.");
             });
         }
+
+        function confirmarPagamento() {
+            if (confirm(`Confirmar depósito de R$ ${valorAtual},00?`)) {
+                adicionarSaldo(valorAtual);
+            }
+        }
+
+        // Inicializa o saldo ao carregar a página
+        window.onload = carregarSaldo;
     </script>
 
 </body>
