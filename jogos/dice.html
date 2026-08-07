@@ -1,41 +1,815 @@
-<!-- TROQUE SOMENTE O SCRIPT ANTIGO POR ESTE -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dice ApostaXBet</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+html,body{
+    margin:0;
+    padding:0;
+    min-height:100%;
+}
+
+body{
+
+    color:white;
+    text-align:center;
+    overflow-x:hidden;
+
+    background:
+    radial-gradient(circle at 15% 15%,#0066ff 0,transparent 25%),
+    radial-gradient(circle at 85% 20%,#e600ff 0,transparent 25%),
+    radial-gradient(circle at 50% 100%,#ff0066 0,transparent 30%),
+    linear-gradient(135deg,#02020c,#09001c,#00132c);
+
+    background-size:180% 180%;
+
+    animation:fundo 12s ease-in-out infinite alternate;
+}
+
+@keyframes fundo{
+
+    0%{
+        background-position:0% 0%;
+    }
+
+    50%{
+        background-position:100% 50%;
+    }
+
+    100%{
+        background-position:0% 100%;
+    }
+
+}
+
+
+/* LUZES */
+
+.luz{
+
+    position:fixed;
+
+    width:280px;
+    height:280px;
+
+    border-radius:50%;
+
+    filter:blur(90px);
+
+    opacity:.45;
+
+    pointer-events:none;
+
+    z-index:-2;
+}
+
+.luz1{
+
+    background:#0066ff;
+
+    left:-100px;
+    top:15%;
+
+    animation:moveluz1 8s infinite alternate;
+}
+
+.luz2{
+
+    background:#ff0088;
+
+    right:-100px;
+    top:40%;
+
+    animation:moveluz2 9s infinite alternate;
+}
+
+.luz3{
+
+    background:#7b00ff;
+
+    left:30%;
+    bottom:-180px;
+
+    animation:moveluz3 7s infinite alternate;
+}
+
+@keyframes moveluz1{
+
+    to{
+        transform:translate(180px,100px) scale(1.3);
+    }
+
+}
+
+@keyframes moveluz2{
+
+    to{
+        transform:translate(-150px,-80px) scale(1.4);
+    }
+
+}
+
+@keyframes moveluz3{
+
+    to{
+        transform:translate(80px,-100px) scale(1.3);
+    }
+
+}
+
+
+/* PARTÍCULAS */
+
+.particulas{
+
+    position:fixed;
+
+    inset:0;
+
+    overflow:hidden;
+
+    pointer-events:none;
+
+    z-index:-1;
+}
+
+.particulas i{
+
+    position:absolute;
+
+    bottom:-20px;
+
+    width:4px;
+    height:4px;
+
+    border-radius:50%;
+
+    background:white;
+
+    box-shadow:
+    0 0 10px #00ccff,
+    0 0 20px #ff00aa;
+
+    animation:particula linear infinite;
+}
+
+.particulas i:nth-child(1){left:5%;animation-duration:7s}
+.particulas i:nth-child(2){left:15%;animation-duration:11s}
+.particulas i:nth-child(3){left:25%;animation-duration:8s}
+.particulas i:nth-child(4){left:35%;animation-duration:13s}
+.particulas i:nth-child(5){left:45%;animation-duration:9s}
+.particulas i:nth-child(6){left:55%;animation-duration:12s}
+.particulas i:nth-child(7){left:65%;animation-duration:8s}
+.particulas i:nth-child(8){left:75%;animation-duration:10s}
+.particulas i:nth-child(9){left:85%;animation-duration:7s}
+.particulas i:nth-child(10){left:95%;animation-duration:12s}
+
+@keyframes particula{
+
+    0%{
+        transform:translateY(0) scale(.3);
+        opacity:0;
+    }
+
+    20%{
+        opacity:1;
+    }
+
+    100%{
+        transform:translateY(-110vh) scale(1.8);
+        opacity:0;
+    }
+
+}
+
+
+/* TÍTULO */
+
+.titulo{
+
+    margin-top:25px;
+
+    font-size:46px;
+
+    font-weight:900;
+
+    letter-spacing:5px;
+
+    color:#ffd21c;
+
+    text-shadow:
+    0 0 5px white,
+    0 0 15px #ffd21c,
+    0 0 35px #ff8c00;
+}
+
+
+/* SALDO */
+
+#saldo{
+
+    display:inline-block;
+
+    margin:15px auto 20px;
+
+    padding:12px 25px;
+
+    border:1px solid rgba(0,255,150,.6);
+
+    border-radius:30px;
+
+    background:rgba(0,0,0,.6);
+
+    color:#00ff91;
+
+    font-size:21px;
+
+    font-weight:bold;
+
+    box-shadow:
+    0 0 15px rgba(0,255,150,.25);
+}
+
+
+/* CAIXA */
+
+.caixa{
+
+    width:92%;
+
+    max-width:440px;
+
+    margin:auto;
+
+    padding:25px 18px 30px;
+
+    border:1px solid rgba(255,215,0,.8);
+
+    border-radius:28px;
+
+    background:
+    linear-gradient(
+        145deg,
+        rgba(20,20,35,.94),
+        rgba(3,4,15,.96)
+    );
+
+    box-shadow:
+    0 0 20px rgba(255,215,0,.25),
+    0 0 70px rgba(0,100,255,.18),
+    0 25px 70px rgba(0,0,0,.7);
+
+    backdrop-filter:blur(12px);
+}
+
+
+/* ÁREA DO DADO */
+
+.area-dado{
+
+    height:290px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    position:relative;
+}
+
+
+/* SOMBRA DO DADO */
+
+.sombra{
+
+    position:absolute;
+
+    bottom:35px;
+
+    left:50%;
+
+    width:150px;
+
+    height:35px;
+
+    border-radius:50%;
+
+    background:#000;
+
+    filter:blur(15px);
+
+    opacity:.7;
+
+    transform:translateX(-50%);
+}
+
+
+/* DADO */
+
+#dado{
+
+    display:block;
+
+    font-family:
+    "Noto Color Emoji",
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    sans-serif;
+
+    font-size:150px;
+
+    line-height:1;
+
+    width:max-content;
+
+    user-select:none;
+
+    transform:rotate(0deg) translateY(0) scale(1);
+
+    filter:
+    drop-shadow(0 20px 12px rgba(0,0,0,.8))
+    drop-shadow(0 0 20px rgba(255,215,0,.3));
+
+    will-change:transform;
+
+}
+
+
+/* ROLAGEM */
+
+#dado.rolando{
+
+    animation:rolar 1.8s ease-in-out;
+
+}
+
+@keyframes rolar{
+
+    0%{
+        transform:
+        translateY(0)
+        rotate(0deg)
+        scale(1);
+    }
+
+    15%{
+        transform:
+        translateY(-45px)
+        rotate(140deg)
+        scale(1.08);
+    }
+
+    30%{
+        transform:
+        translateY(5px)
+        rotate(300deg)
+        scale(1.15);
+    }
+
+    45%{
+        transform:
+        translateY(-55px)
+        rotate(470deg)
+        scale(1.10);
+    }
+
+    60%{
+        transform:
+        translateY(0)
+        rotate(650deg)
+        scale(1.15);
+    }
+
+    75%{
+        transform:
+        translateY(-25px)
+        rotate(810deg)
+        scale(1.07);
+    }
+
+    90%{
+        transform:
+        translateY(0)
+        rotate(950deg)
+        scale(1.03);
+    }
+
+    100%{
+        transform:
+        translateY(0)
+        rotate(1080deg)
+        scale(1);
+    }
+
+}
+
+
+/* EFEITO FINAL */
+
+#dado.parou{
+
+    animation:parou .35s ease-out;
+
+}
+
+@keyframes parou{
+
+    0%{
+        transform:scale(.9);
+    }
+
+    60%{
+        transform:scale(1.1);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+
+}
+
+
+/* RESULTADO */
+
+#resultado{
+
+    min-height:38px;
+
+    margin:5px 0 20px;
+
+    font-size:24px;
+
+    font-weight:bold;
+
+    color:#ffd21c;
+
+    text-shadow:0 0 12px #ffd21c;
+}
+
+.vitoria{
+
+    color:#00ff91 !important;
+
+    text-shadow:
+    0 0 10px #00ff91,
+    0 0 30px #00ff91 !important;
+}
+
+.derrota{
+
+    color:#ff416d !important;
+
+    text-shadow:
+    0 0 15px #ff416d !important;
+}
+
+
+/* INPUT */
+
+label{
+
+    display:block;
+
+    color:#aaa;
+
+    font-size:14px;
+
+    margin-bottom:5px;
+}
+
+input{
+
+    width:170px;
+
+    padding:14px;
+
+    border-radius:13px;
+
+    border:2px solid #444;
+
+    background:#050505;
+
+    color:white;
+
+    font-size:21px;
+
+    font-weight:bold;
+
+    text-align:center;
+
+    outline:none;
+}
+
+input:focus{
+
+    border-color:#ffd21c;
+
+    box-shadow:
+    0 0 10px #ffd21c;
+}
+
+
+/* BOTÃO */
+
+button{
+
+    width:90%;
+
+    max-width:320px;
+
+    margin-top:15px;
+
+    padding:17px;
+
+    border:2px solid #ffe78a;
+
+    border-radius:16px;
+
+    background:
+    linear-gradient(
+        180deg,
+        #ffe66b,
+        #ffb000
+    );
+
+    color:#211600;
+
+    font-size:22px;
+
+    font-weight:900;
+
+    cursor:pointer;
+
+    box-shadow:
+    0 0 12px #ffd21c,
+    0 0 35px rgba(255,170,0,.45);
+
+    transition:.2s;
+}
+
+button:active{
+
+    transform:scale(.95);
+}
+
+button:disabled{
+
+    opacity:.55;
+
+    cursor:not-allowed;
+}
+
+
+/* INFORMAÇÕES */
+
+.info{
+
+    margin-top:25px;
+
+    padding-top:18px;
+
+    border-top:1px solid rgba(255,255,255,.12);
+
+    font-size:14px;
+
+    line-height:1.7;
+}
+
+.ganha{
+
+    color:#00ff91;
+}
+
+.perde{
+
+    color:#ff416d;
+}
+
+
+/* CELULAR */
+
+@media(max-width:450px){
+
+    .titulo{
+        font-size:38px;
+    }
+
+    .caixa{
+        width:94%;
+    }
+
+    .area-dado{
+        height:260px;
+    }
+
+    #dado{
+        font-size:125px;
+    }
+
+    button{
+        width:95%;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="luz luz1"></div>
+<div class="luz luz2"></div>
+<div class="luz luz3"></div>
+
+
+<div class="particulas">
+
+<i></i>
+<i></i>
+<i></i>
+<i></i>
+<i></i>
+<i></i>
+<i></i>
+<i></i>
+<i></i>
+<i></i>
+
+</div>
+
+
+<h1 class="titulo">
+
+🎲 DICE
+
+</h1>
+
+
+<div id="saldo"></div>
+
+
+<div class="caixa">
+
+
+<div class="area-dado">
+
+
+<div class="sombra"></div>
+
+
+<!-- DADO FIXO -->
+
+<div id="dado">🎲</div>
+
+
+</div>
+
+
+<div id="resultado">
+
+Escolha sua sorte
+
+</div>
+
+
+<label>
+
+VALOR DA APOSTA
+
+</label>
+
+
+<input
+id="aposta"
+type="number"
+value="1"
+min="0.10"
+step="0.10"
+>
+
+
+<br>
+
+
+<button
+id="botao"
+onclick="jogar()"
+>
+
+🎲 JOGAR
+
+</button>
+
+
+<div class="info">
+
+<div class="ganha">
+
+🎉 4, 5 ou 6 = GANHA 2X
+
+</div>
+
+<div class="perde">
+
+😢 1, 2 ou 3 = PERDE
+
+</div>
+
+</div>
+
+
+</div>
+
 
 <script>
+
+/*
+====================================
+DICE
+====================================
+*/
+
 
 let saldo =
 Number(localStorage.getItem("saldo") || 1000);
 
+
+/* ATUALIZA SALDO */
+
 function atualizar(){
 
-    document.getElementById("saldo").innerHTML =
-        "💰 Saldo: R$ " + saldo.toFixed(2);
+    const saldoElemento =
+    document.getElementById("saldo");
 
-    localStorage.setItem("saldo", saldo);
+    saldoElemento.textContent =
+    "💰 Saldo: R$ " +
+    saldo.toFixed(2);
+
+    localStorage.setItem(
+        "saldo",
+        saldo
+    );
+
 }
+
+
+/* INICIA */
 
 atualizar();
 
 
+/* JOGAR */
+
 function jogar(){
 
-    const aposta =
-        Number(document.getElementById("aposta").value);
+    const apostaElemento =
+    document.getElementById("aposta");
 
     const botao =
-        document.getElementById("botao");
+    document.getElementById("botao");
 
     const dado =
-        document.getElementById("dado");
+    document.getElementById("dado");
 
     const resultado =
-        document.getElementById("resultado");
+    document.getElementById("resultado");
 
 
-    /* VERIFICA APOSTA */
+    const aposta =
+    Number(apostaElemento.value);
 
-    if(!Number.isFinite(aposta) || aposta < 0.10){
 
-        alert("A aposta mínima é R$ 0,10.");
+    /* VALIDAÇÃO */
+
+    if(!Number.isFinite(aposta)){
+
+        alert("Digite um valor válido.");
+
+        return;
+    }
+
+
+    if(aposta < 0.10){
+
+        alert(
+        "A aposta mínima é R$ 0,10."
+        );
 
         return;
     }
@@ -43,125 +817,124 @@ function jogar(){
 
     if(aposta > saldo){
 
-        alert("Saldo insuficiente.");
+        alert(
+        "Saldo insuficiente."
+        );
 
         return;
     }
 
 
-    /* BLOQUEIA O BOTÃO */
+    /* BLOQUEIA */
 
     botao.disabled = true;
 
 
-    /* DESCONTA APOSTA */
+    /* DESCONTA */
 
     saldo -= aposta;
 
     atualizar();
 
 
-    /* TEXTO */
+    /* MENSAGEM */
 
     resultado.className = "";
 
-    resultado.innerHTML =
-        "🎲 ROLANDO...";
+    resultado.textContent =
+    "🎲 ROLANDO...";
 
 
     /*
-       GARANTE QUE O DADO CONTINUE
-       SENDO O EMOJI 🎲
+    O DADO NUNCA É TROCAD0.
+    ELE CONTINUA SENDO 🎲.
     */
-
-    dado.innerHTML = "🎲";
-
-
-    /* REINICIA A ANIMAÇÃO */
 
     dado.classList.remove("rolando");
 
-    dado.classList.remove("final");
+    dado.classList.remove("parou");
+
+
+    /*
+    Reinicia a animação.
+    */
 
     void dado.offsetWidth;
 
 
-    /* COMEÇA A ROLAR */
+    /*
+    COMEÇA A GIRAR
+    */
 
     dado.classList.add("rolando");
 
 
     /*
-       SORTEIA O RESULTADO
+    SORTEIA O RESULTADO
     */
 
     const numero =
-        Math.floor(Math.random() * 6) + 1;
+    Math.floor(Math.random() * 6) + 1;
 
 
     /*
-       ESPERA A ANIMAÇÃO TERMINAR
+    ESPERA A ROLAGEM
     */
 
     setTimeout(function(){
+
 
         dado.classList.remove("rolando");
 
 
         /*
-           MANTÉM O EMOJI 🎲
+        PEQUENO EFEITO AO PARAR
         */
 
-        dado.innerHTML = "🎲";
-
-
-        /*
-           PEQUENO EFEITO AO PARAR
-        */
-
-        dado.classList.add("final");
+        dado.classList.add("parou");
 
 
         setTimeout(function(){
 
-            dado.classList.remove("final");
+            dado.classList.remove("parou");
 
-        },450);
+        },350);
 
 
         /*
-           VERIFICA RESULTADO
+        RESULTADO
         */
 
         if(numero >= 4){
 
             const premio =
-                aposta * 2;
+            aposta * 2;
 
 
             saldo += premio;
 
 
             resultado.className =
-                "vitoria";
+            "vitoria";
 
 
-            resultado.innerHTML =
-                "🎉 GANHOU R$ " +
-                premio.toFixed(2) +
-                " — DADO: " +
-                numero;
+            resultado.textContent =
+            "🎉 GANHOU R$ " +
+            premio.toFixed(2) +
+            " — DADO: " +
+            numero;
 
+        }
 
-        }else{
+        else{
 
             resultado.className =
-                "derrota";
+            "derrota";
 
 
-            resultado.innerHTML =
-                "😢 PERDEU — DADO: " +
-                numero;
+            resultado.textContent =
+            "😢 PERDEU — DADO: " +
+            numero;
 
         }
 
@@ -169,7 +942,9 @@ function jogar(){
         atualizar();
 
 
-        /* LIBERA BOTÃO */
+        /*
+        LIBERA BOTÃO
+        */
 
         botao.disabled = false;
 
@@ -179,3 +954,8 @@ function jogar(){
 }
 
 </script>
+
+
+</body>
+
+</html>
