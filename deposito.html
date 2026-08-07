@@ -113,20 +113,6 @@
         }
         .btn-copiar:active { transform: scale(0.98); }
         
-        .btn-confirmar {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 15px;
-            width: 100%;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-        .btn-confirmar:active { transform: scale(0.98); }
-        
         .btn-fechar {
             background: #dc3545;
             color: white;
@@ -150,7 +136,7 @@
         <h2>Recarregar Saldo</h2>
         <p>Escolha um valor para depositar via PIX:</p>
         
-        <!-- BOTÕES DE VALORES RÁPIDOS (AGORA COM R$ 10) -->
+        <!-- BOTÕES DE VALORES RÁPIDOS -->
         <div class="valores-rapidos">
             <button class="btn-valor" onclick="selecionarValor(this, 10)">R$ 10</button>
             <button class="btn-valor" onclick="selecionarValor(this, 20)">R$ 20</button>
@@ -161,7 +147,7 @@
 
         <!-- BOTÃO DE DEPOSITAR -->
         <button id="btnDepositar" class="btn-pix" onclick="abrirModal()" disabled style="opacity: 0.6;">
-            💰 Depositar via PIX
+             Depositar via PIX
         </button>
     </div>
 
@@ -182,12 +168,7 @@
                 📋 Copiar Código PIX
             </button>
             
-            <!-- BOTÃO DE CONFIRMAÇÃO DE PAGAMENTO -->
-            <button class="btn-confirmar" onclick="confirmarPagamento()">
-                ✅ Já realizei o pagamento
-            </button>
-            
-            <p style="font-size: 12px; color: #888; margin: 10px 0;">Após confirmar, o saldo será creditado.</p>
+            <p style="font-size: 12px; color: #888; margin: 10px 0;">O saldo será creditado automaticamente após a compensação bancária.</p>
             <button class="btn-fechar" onclick="fecharModal()">Fechar</button>
         </div>
     </div>
@@ -205,15 +186,6 @@
                 localStorage.setItem('apostaXBet_saldo', 0);
             }
             document.getElementById('displaySaldo').innerText = `Saldo: R$ ${parseFloat(saldo).toFixed(2).replace('.', ',')}`;
-        }
-
-        function adicionarSaldo(valor) {
-            let saldoAtual = parseFloat(localStorage.getItem('apostaXBet_saldo')) || 0;
-            let novoSaldo = saldoAtual + valor;
-            localStorage.setItem('apostaXBet_saldo', novoSaldo);
-            carregarSaldo();
-            alert(`✅ Depósito de R$ ${valor},00 recebido com sucesso!`);
-            fecharModal();
         }
 
         // --- FUNÇÕES DA MODAL ---
@@ -253,12 +225,6 @@
             }).catch(err => {
                 alert("Erro ao copiar. Tente selecionar e copiar manualmente.");
             });
-        }
-
-        function confirmarPagamento() {
-            if (confirm(`Confirmar depósito de R$ ${valorAtual},00?`)) {
-                adicionarSaldo(valorAtual);
-            }
         }
 
         // Inicializa o saldo ao carregar a página
