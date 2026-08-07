@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -8,99 +10,789 @@
 
 <style>
 
-body{
-    margin:0;
-    background:#050505;
-    color:white;
-    font-family:Arial;
-    text-align:center;
+/* =========================
+   BASE
+========================= */
+
+*{
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
 }
+
+body{
+
+    margin:0;
+
+    min-height:100vh;
+
+    background:
+    radial-gradient(circle at 20% 20%,#002b55,transparent 30%),
+    radial-gradient(circle at 80% 70%,#33002f,transparent 30%),
+    linear-gradient(135deg,#02030a,#080014,#001322);
+
+    background-size:180% 180%;
+
+    animation:fundo 10s ease-in-out infinite alternate;
+
+    color:white;
+
+    text-align:center;
+
+    overflow-x:hidden;
+}
+
+@keyframes fundo{
+
+    0%{
+        background-position:0% 0%;
+    }
+
+    50%{
+        background-position:100% 50%;
+    }
+
+    100%{
+        background-position:0% 100%;
+    }
+
+}
+
+
+/* =========================
+   LUZ DE FUNDO
+========================= */
+
+.luz{
+
+    position:fixed;
+
+    width:280px;
+    height:280px;
+
+    border-radius:50%;
+
+    filter:blur(100px);
+
+    opacity:.35;
+
+    pointer-events:none;
+
+    z-index:-3;
+
+}
+
+.luz1{
+
+    background:#0066ff;
+
+    left:-120px;
+    top:10%;
+
+    animation:luz1 8s infinite alternate;
+
+}
+
+.luz2{
+
+    background:#ff0088;
+
+    right:-120px;
+    bottom:10%;
+
+    animation:luz2 9s infinite alternate;
+
+}
+
+@keyframes luz1{
+
+    to{
+        transform:translate(180px,100px) scale(1.4);
+    }
+
+}
+
+@keyframes luz2{
+
+    to{
+        transform:translate(-180px,-100px) scale(1.4);
+    }
+
+}
+
+
+/* =========================
+   PARTICULAS
+========================= */
+
+.particulas{
+
+    position:fixed;
+
+    inset:0;
+
+    overflow:hidden;
+
+    pointer-events:none;
+
+    z-index:-2;
+
+}
+
+.particulas span{
+
+    position:absolute;
+
+    bottom:-20px;
+
+    width:4px;
+    height:4px;
+
+    border-radius:50%;
+
+    background:#00ffcc;
+
+    box-shadow:
+    0 0 8px #00ffcc,
+    0 0 18px #0088ff;
+
+    animation:subir linear infinite;
+
+}
+
+.particulas span:nth-child(1){
+    left:5%;
+    animation-duration:6s;
+}
+
+.particulas span:nth-child(2){
+    left:15%;
+    animation-duration:9s;
+}
+
+.particulas span:nth-child(3){
+    left:25%;
+    animation-duration:7s;
+}
+
+.particulas span:nth-child(4){
+    left:35%;
+    animation-duration:11s;
+}
+
+.particulas span:nth-child(5){
+    left:45%;
+    animation-duration:8s;
+}
+
+.particulas span:nth-child(6){
+    left:55%;
+    animation-duration:10s;
+}
+
+.particulas span:nth-child(7){
+    left:65%;
+    animation-duration:7s;
+}
+
+.particulas span:nth-child(8){
+    left:75%;
+    animation-duration:9s;
+}
+
+.particulas span:nth-child(9){
+    left:85%;
+    animation-duration:6s;
+}
+
+.particulas span:nth-child(10){
+    left:95%;
+    animation-duration:12s;
+}
+
+@keyframes subir{
+
+    0%{
+        transform:translateY(0);
+        opacity:0;
+    }
+
+    20%{
+        opacity:1;
+    }
+
+    100%{
+        transform:translateY(-110vh);
+        opacity:0;
+    }
+
+}
+
+
+/* =========================
+   TITULO
+========================= */
 
 h1{
+
+    margin-top:25px;
+
     color:#ffd700;
-    text-shadow:0 0 15px #ffd700;
+
+    font-size:38px;
+
+    text-shadow:
+    0 0 8px #fff,
+    0 0 18px #ffd700,
+    0 0 35px #ff8800;
+
 }
+
+
+/* =========================
+   SALDO
+========================= */
 
 #saldo{
+
+    display:inline-block;
+
     color:#00ff88;
+
     font-size:22px;
-    margin:15px;
+
+    margin:10px 15px 20px;
+
+    padding:10px 20px;
+
+    border:1px solid #00ff88;
+
+    border-radius:30px;
+
+    background:rgba(0,0,0,.55);
+
+    box-shadow:
+    0 0 15px rgba(0,255,136,.25);
+
 }
+
+
+/* =========================
+   CAIXA
+========================= */
 
 .box{
-    width:90%;
-    max-width:400px;
+
+    width:92%;
+
+    max-width:430px;
+
     margin:auto;
-    background:#111;
+
+    background:
+    linear-gradient(
+        145deg,
+        rgba(20,25,40,.95),
+        rgba(3,5,15,.97)
+    );
+
     border:2px solid #ffd700;
-    border-radius:20px;
+
+    border-radius:25px;
+
     padding:20px;
+
+    box-shadow:
+    0 0 25px rgba(255,215,0,.25),
+    0 20px 70px rgba(0,0,0,.7);
+
+    backdrop-filter:blur(10px);
+
 }
+
+
+/* =========================
+   MULTIPLICADOR
+========================= */
 
 #numero{
-    font-size:55px;
+
+    font-size:58px;
+
+    font-weight:900;
+
     color:#00ff88;
+
+    margin:5px 0 15px;
+
+    text-shadow:
+    0 0 8px #00ff88,
+    0 0 25px #00ff88;
+
+    transition:.1s;
+
 }
+
+
+/* BRILHO DO NUMERO */
+
+#numero.subindo{
+
+    animation:pulsar .35s infinite alternate;
+
+}
+
+@keyframes pulsar{
+
+    from{
+        transform:scale(1);
+    }
+
+    to{
+        transform:scale(1.05);
+
+        text-shadow:
+        0 0 12px #00ff88,
+        0 0 35px #00ff88;
+    }
+
+}
+
+
+/* =========================
+   ÁREA DO CRASH
+========================= */
 
 .area{
-    height:220px;
-    background:linear-gradient(#000,#101010);
-    border-radius:15px;
+
+    height:280px;
+
+    background:
+
+    radial-gradient(
+        circle at 20% 80%,
+        rgba(0,255,136,.18),
+        transparent 30%
+    ),
+
+    radial-gradient(
+        circle at 80% 20%,
+        rgba(0,100,255,.20),
+        transparent 35%
+    ),
+
+    linear-gradient(
+        160deg,
+        #020711,
+        #050014
+    );
+
+    border-radius:18px;
+
     overflow:hidden;
+
     position:relative;
-    border:1px solid #333;
+
+    border:1px solid rgba(0,255,136,.35);
+
+    box-shadow:
+    inset 0 0 40px rgba(0,0,0,.8);
+
 }
 
+
+/* =========================
+   EFEITO DE ENERGIA
+========================= */
+
+#energia{
+
+    position:absolute;
+
+    width:180px;
+    height:180px;
+
+    border-radius:50%;
+
+    background:
+    radial-gradient(
+        circle,
+        rgba(0,255,136,.55),
+        rgba(0,150,255,.15),
+        transparent 70%
+    );
+
+    filter:blur(15px);
+
+    left:5px;
+
+    bottom:0;
+
+    opacity:.2;
+
+    transform:scale(.7);
+
+    transition:
+    transform .15s,
+    opacity .15s;
+
+}
+
+
+/* =========================
+   GRADE
+========================= */
+
+.grade{
+
+    position:absolute;
+
+    inset:0;
+
+    opacity:.13;
+
+    background-image:
+
+    linear-gradient(
+        rgba(0,255,136,.35) 1px,
+        transparent 1px
+    ),
+
+    linear-gradient(
+        90deg,
+        rgba(0,255,136,.35) 1px,
+        transparent 1px
+    );
+
+    background-size:35px 35px;
+
+}
+
+
+/* =========================
+   LINHA
+========================= */
 
 #linha{
+
     position:absolute;
-    width:4px;
+
+    width:5px;
+
     height:0;
-    background:#00ff88;
+
+    background:
+    linear-gradient(
+        to top,
+        #00ff88,
+        #00ffff
+    );
+
     bottom:20px;
-    left:50px;
+
+    left:55px;
+
+    transform-origin:bottom center;
+
     transform:rotate(-35deg);
-    box-shadow:0 0 15px #00ff88;
+
+    border-radius:10px;
+
+    box-shadow:
+    0 0 8px #00ff88,
+    0 0 20px #00ff88,
+    0 0 35px #00ffff;
+
+    transition:
+    height .12s,
+    left .12s;
+
 }
 
+
+/* =========================
+   FOGUETE
+========================= */
 
 #foguete{
+
     position:absolute;
+
     bottom:20px;
+
     left:40px;
-    font-size:60px;
-    transition:.15s;
+
+    font-size:58px;
+
+    z-index:5;
+
+    filter:
+    drop-shadow(0 0 8px #ff6600)
+    drop-shadow(0 0 18px #ff2200);
+
+    transition:
+
+    bottom .12s,
+    left .12s;
+
 }
 
+
+/* =========================
+   FOGO DO FOGUETE
+========================= */
+
+#fogo{
+
+    position:absolute;
+
+    left:42px;
+
+    bottom:8px;
+
+    font-size:32px;
+
+    z-index:4;
+
+    opacity:0;
+
+    filter:
+    drop-shadow(0 0 8px #ffcc00)
+    drop-shadow(0 0 15px #ff4400);
+
+    transition:.1s;
+
+}
+
+#fogo.ativo{
+
+    opacity:1;
+
+    animation:fogo .12s infinite alternate;
+
+}
+
+@keyframes fogo{
+
+    from{
+        transform:scale(.8);
+    }
+
+    to{
+        transform:scale(1.2);
+    }
+
+}
+
+
+/* =========================
+   CRASH
+========================= */
+
+.area.crash{
+
+    animation:tremer .35s;
+
+    border-color:#ff1744;
+
+    box-shadow:
+    0 0 25px #ff1744,
+    inset 0 0 50px rgba(255,0,40,.4);
+
+}
+
+@keyframes tremer{
+
+    0%{
+        transform:translateX(0);
+    }
+
+    25%{
+        transform:translateX(-8px);
+    }
+
+    50%{
+        transform:translateX(8px);
+    }
+
+    75%{
+        transform:translateX(-5px);
+    }
+
+    100%{
+        transform:translateX(0);
+    }
+
+}
+
+
+/* =========================
+   INPUT
+========================= */
 
 input{
-    width:100px;
-    padding:10px;
+
+    width:110px;
+
+    padding:12px;
+
     margin:15px;
+
     border-radius:10px;
+
+    border:2px solid #444;
+
+    background:#050505;
+
+    color:white;
+
+    font-size:19px;
+
+    text-align:center;
+
 }
 
+
+/* =========================
+   BOTÕES
+========================= */
 
 button{
-    padding:15px 30px;
+
+    padding:15px 28px;
+
+    margin:4px;
+
     border:0;
+
     border-radius:12px;
-    background:#ffd700;
+
+    background:
+    linear-gradient(
+        180deg,
+        #ffe66b,
+        #ffb000
+    );
+
+    color:#211600;
+
     font-weight:bold;
+
     font-size:18px;
+
+    box-shadow:
+    0 0 12px rgba(255,215,0,.45);
+
+    cursor:pointer;
+
 }
 
+button:active{
+
+    transform:scale(.95);
+
+}
+
+button:disabled{
+
+    opacity:.5;
+
+}
 
 .sacar{
-    background:#00ff88;
+
+    background:
+    linear-gradient(
+        180deg,
+        #66ffbb,
+        #00cc77
+    );
+
+    color:#001f12;
+
 }
 
+
+/* =========================
+   HISTÓRICO
+========================= */
 
 #historico{
+
     margin-top:20px;
+
+    padding-top:15px;
+
+    border-top:1px solid rgba(255,255,255,.12);
+
     color:#aaa;
+
+    line-height:2;
+
 }
 
+
+/* =========================
+   MENSAGEM CRASH
+========================= */
+
+#mensagem{
+
+    min-height:25px;
+
+    margin-top:8px;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+}
+
+.mensagemCrash{
+
+    color:#ff416d;
+
+    text-shadow:
+    0 0 12px #ff1744;
+
+}
+
+.mensagemSaque{
+
+    color:#00ff88;
+
+    text-shadow:
+    0 0 12px #00ff88;
+
+}
+
+
+/* =========================
+   CELULAR
+========================= */
+
+@media(max-width:450px){
+
+    h1{
+        font-size:32px;
+    }
+
+    .box{
+        width:94%;
+    }
+
+    .area{
+        height:270px;
+    }
+
+    #numero{
+        font-size:52px;
+    }
+
+    #foguete{
+        font-size:52px;
+    }
+
+}
 
 </style>
 
@@ -110,7 +802,33 @@ button{
 <body>
 
 
-<h1>🚀 Crash ApostaXBet</h1>
+<!-- LUZES -->
+
+<div class="luz luz1"></div>
+<div class="luz luz2"></div>
+
+
+<!-- PARTÍCULAS -->
+
+<div class="particulas">
+
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+
+</div>
+
+
+<h1>
+🚀 Crash ApostaXBet
+</h1>
 
 
 <div id="saldo"></div>
@@ -119,210 +837,619 @@ button{
 <div class="box">
 
 
+<!-- MULTIPLICADOR -->
+
 <div id="numero">
 1.00x
 </div>
 
 
-<div class="area">
+<!-- ÁREA -->
+
+<div class="area" id="area">
+
+
+<div class="grade"></div>
+
+
+<div id="energia"></div>
+
 
 <div id="linha"></div>
+
+
+<div id="fogo">
+🔥
+</div>
+
 
 <div id="foguete">
 🚀
 </div>
 
+
 </div>
 
 
-<input id="aposta" type="number" value="1">
+<div id="mensagem"></div>
+
+
+<input
+id="aposta"
+type="number"
+value="1"
+min="0.10"
+step="0.10"
+>
 
 
 <br>
 
 
-<button onclick="jogar()">
-JOGAR
+<button
+id="jogarBtn"
+onclick="jogar()"
+>
+
+🚀 JOGAR
+
 </button>
 
 
-<button class="sacar" onclick="sacar()">
-SACAR
+<button
+class="sacar"
+id="sacarBtn"
+onclick="sacar()"
+>
+
+💰 SACAR
+
 </button>
 
 
 <div id="historico">
+
 Últimas rodadas:
-</div>
-
 
 </div>
 
+
+</div>
 
 
 <script>
 
 
-let saldo=Number(localStorage.getItem("saldo")||2);
+/*
+========================================
+SALDO
+========================================
+*/
 
-let rodando=false;
-
-let valor=1;
-
-let aposta=0;
-
-let queda;
-
-let tempo;
-
-
-let historico=[];
+let saldo =
+Number(
+localStorage.getItem("saldo") || 2
+);
 
 
+/*
+========================================
+VARIÁVEIS
+========================================
+*/
+
+let rodando = false;
+
+let valor = 1;
+
+let aposta = 0;
+
+let queda = 0;
+
+let tempo = null;
+
+let historico = [];
+
+
+/*
+========================================
+ELEMENTOS
+========================================
+*/
+
+const numero =
+document.getElementById("numero");
+
+const foguete =
+document.getElementById("foguete");
+
+const linha =
+document.getElementById("linha");
+
+const energia =
+document.getElementById("energia");
+
+const fogo =
+document.getElementById("fogo");
+
+const area =
+document.getElementById("area");
+
+const mensagem =
+document.getElementById("mensagem");
+
+const jogarBtn =
+document.getElementById("jogarBtn");
+
+const sacarBtn =
+document.getElementById("sacarBtn");
+
+
+/*
+========================================
+SALDO
+========================================
+*/
 
 function atualizar(){
 
-document.getElementById("saldo").innerHTML=
-"💰 Saldo: R$ "+saldo.toFixed(2);
+    document.getElementById("saldo").innerHTML =
+    "💰 Saldo: R$ " +
+    saldo.toFixed(2);
 
-localStorage.setItem("saldo",saldo);
+    localStorage.setItem(
+        "saldo",
+        saldo
+    );
 
 }
 
 atualizar();
 
 
+/*
+========================================
+JOGAR
+========================================
+*/
 
 function jogar(){
 
 
-if(rodando)return;
+    if(rodando){
+        return;
+    }
 
 
-aposta=Number(document.getElementById("aposta").value);
+    aposta =
+    Number(
+        document.getElementById("aposta").value
+    );
 
 
-if(aposta<=0 || aposta>saldo){
+    /*
+    VALIDAÇÃO
+    */
 
-alert("Saldo inválido");
-return;
+    if(
+        !Number.isFinite(aposta) ||
+        aposta <= 0 ||
+        aposta > saldo
+    ){
+
+        alert("Saldo ou aposta inválida.");
+
+        return;
+    }
+
+
+    /*
+    DESCONTA APOSTA
+    */
+
+    saldo -= aposta;
+
+    atualizar();
+
+
+    /*
+    COMEÇA
+    */
+
+    valor = 1;
+
+    /*
+    Mantém o limite de Crash
+    */
+
+    queda =
+    Math.random() * 5 + 1;
+
+
+    rodando = true;
+
+
+    mensagem.className = "";
+
+    mensagem.innerHTML = "";
+
+
+    area.classList.remove("crash");
+
+    numero.classList.add("subindo");
+
+    fogo.classList.add("ativo");
+
+
+    jogarBtn.disabled = true;
+
+
+    /*
+    ================================
+    ANIMAÇÃO
+    ================================
+    */
+
+    tempo =
+    setInterval(function(){
+
+
+        /*
+        AUMENTA MULTIPLICADOR
+        */
+
+        valor += 0.05;
+
+
+        numero.innerHTML =
+        valor.toFixed(2) + "x";
+
+
+        /*
+        ================================
+        POSIÇÃO DO FOGUETE
+        ================================
+        */
+
+        let altura =
+        20 + valor * 25;
+
+
+        /*
+        Limita dentro da área
+        */
+
+        if(altura > 190){
+            altura = 190;
+        }
+
+
+        foguete.style.bottom =
+        altura + "px";
+
+
+        /*
+        ================================
+        LINHA
+        ================================
+        */
+
+        let tamanhoLinha =
+        valor * 35;
+
+
+        if(tamanhoLinha > 230){
+            tamanhoLinha = 230;
+        }
+
+
+        linha.style.height =
+        tamanhoLinha + "px";
+
+
+        /*
+        ================================
+        MOVIMENTO HORIZONTAL
+        ================================
+        */
+
+        let esquerda =
+        40 + (valor - 1) * 9;
+
+
+        if(esquerda > 280){
+            esquerda = 280;
+        }
+
+
+        foguete.style.left =
+        esquerda + "px";
+
+
+        linha.style.left =
+        (esquerda + 15) + "px";
+
+
+        /*
+        ================================
+        ENERGIA NO FUNDO
+        ================================
+        */
+
+        let escala =
+        0.7 + valor * 0.08;
+
+
+        if(escala > 2.5){
+            escala = 2.5;
+        }
+
+
+        energia.style.transform =
+        "scale(" + escala + ")";
+
+
+        energia.style.opacity =
+        Math.min(
+            0.2 + valor * 0.04,
+            0.8
+        );
+
+
+        /*
+        ================================
+        CRASH
+        ================================
+        */
+
+        if(valor >= queda){
+
+            finalizarCrash();
+
+        }
+
+
+    },100);
 
 }
 
 
-saldo-=aposta;
-
-atualizar();
-
-
-valor=1;
-
-queda=Math.random()*5+1;
-
-
-rodando=true;
-
-
-tempo=setInterval(()=>{
-
-
-valor+=0.05;
-
-
-document.getElementById("numero").innerHTML=
-valor.toFixed(2)+"x";
-
-
-document.getElementById("foguete").style.bottom=
-20+valor*12+"px";
-
-
-document.getElementById("linha").style.height=
-valor*30+"px";
-
-
-
-if(valor>=queda){
-
-
-finalizar();
-
-
-}
-
-
-},120);
-
-
-}
-
-
+/*
+========================================
+SACAR
+========================================
+*/
 
 function sacar(){
 
 
-if(!rodando)return;
+    if(!rodando){
+
+        return;
+    }
 
 
-let premio=aposta*valor;
+    /*
+    CALCULA PRÊMIO
+    */
+
+    let premio =
+    aposta * valor;
 
 
-saldo+=premio;
+    /*
+    DEVOLVE PARA SALDO
+    */
+
+    saldo += premio;
 
 
-atualizar();
+    atualizar();
 
 
-alert("🎉 Ganhou R$ "+premio.toFixed(2));
+    /*
+    MENSAGEM
+    */
+
+    mensagem.className =
+    "mensagemSaque";
 
 
-finalizar();
+    mensagem.innerHTML =
+    "🎉 Saque de R$ " +
+    premio.toFixed(2);
 
 
+    /*
+    REGISTRA
+    */
+
+    adicionarHistorico(
+        valor.toFixed(2) + "x"
+    );
+
+
+    /*
+    PARA
+    */
+
+    pararJogo();
+
+}
+
+
+/*
+========================================
+CRASH
+========================================
+*/
+
+function finalizarCrash(){
+
+
+    clearInterval(tempo);
+
+
+    rodando = false;
+
+
+    numero.classList.remove("subindo");
+
+    fogo.classList.remove("ativo");
+
+
+    area.classList.add("crash");
+
+
+    numero.style.color =
+    "#ff416d";
+
+
+    numero.style.textShadow =
+    "0 0 10px #ff1744,0 0 30px #ff1744";
+
+
+    mensagem.className =
+    "mensagemCrash";
+
+
+    mensagem.innerHTML =
+    "💥 CRASH em " +
+    valor.toFixed(2) +
+    "x";
+
+
+    adicionarHistorico(
+        valor.toFixed(2) + "x"
+    );
+
+
+    jogarBtn.disabled = false;
+
+
+    /*
+    VOLTA AO NORMAL DEPOIS
+    */
+
+    setTimeout(function(){
+
+        numero.style.color =
+        "";
+
+        numero.style.textShadow =
+        "";
+
+        area.classList.remove("crash");
+
+        foguete.style.bottom =
+        "20px";
+
+        foguete.style.left =
+        "40px";
+
+        linha.style.height =
+        "0px";
+
+        linha.style.left =
+        "55px";
+
+        energia.style.transform =
+        "scale(.7)";
+
+        energia.style.opacity =
+        ".2";
+
+        numero.innerHTML =
+        "1.00x";
+
+    },900);
 
 }
 
 
+/*
+========================================
+PARAR JOGO
+========================================
+*/
 
-function finalizar(){
-
-
-clearInterval(tempo);
-
-
-historico.unshift(valor.toFixed(2)+"x");
-
-
-if(historico.length>5)
-historico.pop();
+function pararJogo(){
 
 
-
-document.getElementById("historico").innerHTML=
-"Últimas rodadas:<br>"+
-historico.join(" | ");
+    clearInterval(tempo);
 
 
-
-rodando=false;
-
-
-valor=1;
+    rodando = false;
 
 
-document.getElementById("numero").innerHTML="1.00x";
+    numero.classList.remove("subindo");
+
+    fogo.classList.remove("ativo");
 
 
-document.getElementById("linha").style.height="0px";
+    foguete.style.bottom =
+    "20px";
+
+    foguete.style.left =
+    "40px";
 
 
-document.getElementById("foguete").style.bottom="20px";
+    linha.style.height =
+    "0px";
 
+    linha.style.left =
+    "55px";
+
+
+    energia.style.transform =
+    "scale(.7)";
+
+    energia.style.opacity =
+    ".2";
+
+
+    numero.innerHTML =
+    "1.00x";
+
+
+    jogarBtn.disabled = false;
 
 }
 
+
+/*
+========================================
+HISTÓRICO
+========================================
+*/
+
+function adicionarHistorico(valorHistorico){
+
+
+    historico.unshift(
+        valorHistorico
+    );
+
+
+    if(historico.length > 5){
+
+        historico.pop();
+
+    }
+
+
+    document.getElementById(
+        "historico"
+    ).innerHTML =
+
+    "Últimas rodadas:<br>" +
+
+    historico.join(" | ");
+
+}
 
 </script>
 
 </body>
+
 </html>
