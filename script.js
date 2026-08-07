@@ -1,86 +1,92 @@
-// script.js - Gerenciamento Central de Saldo e Acesso aos Jogos
-// Chave usada no localStorage: 'apostaXBet_saldo'
+// script.js - Gerenciamento de Saldo e Acesso (Versão Suave)
 
-/**
- * Carrega o saldo do localStorage e atualiza todos os elementos 
- * com id="displaySaldo" ou class="saldo" na página.
- */
+// Função para atualizar o saldo na tela
 function carregarSaldoDisplay() {
     let saldo = localStorage.getItem('apostaXBet_saldo');
-    
-    // Se não existir saldo salvo, inicia com 0
     if (!saldo) {
         saldo = 0;
         localStorage.setItem('apostaXBet_saldo', 0);
     }
     
     const valorFormatado = parseFloat(saldo).toFixed(2).replace('.', ',');
-    
-    // Atualiza qualquer elemento na página que tenha id="displaySaldo" OU class="saldo"
     const displays = document.querySelectorAll('#displaySaldo, .saldo');
+    
     displays.forEach(el => {
-        el.innerText = `Saldo: R$ ${valorFormatado}`;
+        el.innerText = `R$ ${valorFormatado}`;
+        // Muda a cor se o saldo estiver baixo (opcional)
+        if (parseFloat(saldo) < 10) {
+            el.style.color = '#ff4d4d'; // Vermelho se tiver pouco
+        } else {
+            el.style.color = '#00ed91'; // Verde normal
+        }
     });
     
     return parseFloat(saldo);
 }
 
-/**
- * Adiciona um valor ao saldo (usado após confirmação de depósito).
- * @param {number} valor - Valor a ser adicionado
- */
+// Adicionar saldo (Depósito)
 function adicionarSaldo(valor) {
     let saldoAtual = parseFloat(localStorage.getItem('apostaXBet_saldo')) || 0;
-    let novoSaldo = saldoAtual + valor;
-    
-    localStorage.setItem('apostaXBet_saldo', novoSaldo);
+    localStorage.setItem('apostaXBet_saldo', saldoAtual + valor);
     carregarSaldoDisplay();
-    
-    alert(`✅ Depósito de R$ ${valor},00 recebido com sucesso!`);
 }
 
-/**
- * Desconta um valor do saldo (usado quando o usuário perde uma aposta).
- * @param {number} valor - Valor a ser descontado
- */
+// Descontar saldo (Perda/Aposta)
 function descontarSaldo(valor) {
     let saldoAtual = parseFloat(localStorage.getItem('apostaXBet_saldo')) || 0;
-    // Garante que o saldo nunca fique negativo
     let novoSaldo = Math.max(0, saldoAtual - valor);
-    
     localStorage.setItem('apostaXBet_saldo', novoSaldo);
     carregarSaldoDisplay();
 }
 
-/**
- * VERIFICA SE O USUÁRIO PODE JOGAR.
- * Bloqueia o acesso se o saldo for menor que R$ 10,00 
- * ou insuficiente para o valor da aposta.
- * 
- * @param {number} custoAposta - Valor necessário para fazer a aposta
- * @returns {boolean} true se liberado, false se bloqueado
- */
-function verificarAcessoJogo(custoAposta) {
+// --- NOVA LÓGICA DE VERIFICAÇÃO (SEM REDIRECIONAMENTO AUTOMÁTICO) ---
+function verificarAcessoJogo(custoAposta, nomeJogo) {
     let saldo = parseFloat(localStorage.getItem('apostaXBet_saldo')) || 0;
     
-    // Regra 1: Saldo mínimo de R$ 10,00 para acessar qualquer jogo
-    if (saldo < 10) {
-        alert("🔒 ACESSO BLOQUEADO!\n\nVocê precisa ter no mínimo R$ 10,00 em saldo para jogar.\nFaça um depósito para continuar.");
-        window.location.href = 'deposito.html'; // Redireciona para a página de depósito
+    // Se não tem saldo nem para a aposta
+    if (saldo < custoAposta) {
+        // Cria um modal bonito em vez de alert
+        criarModalAviso(custoAposta, saldo, nomeJogo);
         return false; 
     }
     
-    // Regra 2: Saldo suficiente para cobrir o valor desta aposta específica
-    if (saldo < custoAposta) {
-        alert(`⚠️ SALDO INSUFICIENTE!\n\nCusto da aposta: R$ ${custoAposta},00\nSeu saldo atual: R$ ${saldo.toFixed(2)}\n\nDeposite mais para continuar jogando.`);
-        return false;
-    }
-    
-    // Se passou pelas duas verificações, libera o jogo
-    return true; 
+    return true; // Liberado
 }
 
-// Executa automaticamente ao carregar qualquer página que importe este script
+// Função auxiliar para criar o Modal de Aviso Bonito
+function criarModalAviso(custo, saldoAtual, nomeJogo) {
+    // Remove modal antigo se existir
+    const oldModal = document.getElementById('modalAvisoSaldo');
+    if (oldModal) oldModal.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'modalAvisoSaldo';
+    modal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.8); z-index: 9999;
+        display: flex; justify-content: center; align-items: center;
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: #1a1a1a; padding: 25px; border-radius: 15px; text-align: center; max-width: 300px; border: 1px solid #e6c229; color: white;">
+            <h3 style="color: #e6c229; margin-top: 0;">⚠️ Saldo Insuficiente</h3>
+            <p style="font-size: 14px; color: #ccc;">
+                Para jogar <strong>${nomeJogo}</strong> você precisa de <strong>R$ ${custo},00</strong>.<br>
+                Seu saldo atual: <strong>R$ ${saldoAtual.toFixed(2)}</strong>
+            </p>
+            <button onclick="window.location.href='deposito.html'" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; width: 100%; margin-bottom: 10px; cursor: pointer; font-weight: bold;">
+                💰 Depositar Agora
+            </button>
+            <button onclick="document.getElementById('modalAvisoSaldo').remove()" style="background: transparent; color: #888; border: 1px solid #444; padding: 8px 20px; border-radius: 5px; width: 100%; cursor: pointer;">
+                Cancelar
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+// Inicializa ao carregar a página
 if (typeof window !== 'undefined') {
     window.addEventListener('DOMContentLoaded', carregarSaldoDisplay);
 }
