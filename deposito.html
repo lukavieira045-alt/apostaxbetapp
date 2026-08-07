@@ -1,265 +1,94 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Depositar - ApostaXBet</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; background: #000; color: white; font-family: Arial, sans-serif; padding-bottom: 90px; }
+        .topo { text-align: center; padding: 25px 10px; background: #111; border-bottom: 2px solid #d9b21f; }
+        .topo h1 { margin: 0; color: #e6c229; font-size: 28px; }
+        .saldo { margin-top: 8px; color: #00ed91; font-weight: bold; }
+        .container { width: 94%; max-width: 600px; margin: 25px auto; }
+        
+        /* Estilos do Botão PIX */
+        .btn-pix {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            font-size: 18px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .btn-pix:active { transform: scale(0.98); }
 
-<title>Depositar - ApostaXBet</title>
-
-<style>
-* {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-    background: #000;
-    color: white;
-    font-family: Arial, sans-serif;
-    padding-bottom: 90px;
-}
-
-.topo {
-    text-align: center;
-    padding: 25px 10px;
-    background: #111;
-    border-bottom: 2px solid #d9b21f;
-}
-
-.topo h1 {
-    margin: 0;
-    color: #e6c229;
-    font-size: 28px;
-}
-
-.saldo {
-    margin-top: 8px;
-    color: #00ed91;
-    font-weight: bold;
-}
-
-.container {
-    width: 94%;
-    max-width: 600px;
-    margin: 25px auto;
-}
-
-.card {
-    background: #151515;
-    border: 2px solid #d9b21f;
-    border-radius: 20px;
-    padding: 22px;
-}
-
-h2 {
-    text-align: center;
-    color: #e6c229;
-}
-
-.info {
-    text-align: center;
-    color: #aaa;
-    line-height: 1.5;
-}
-
-.valores {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin: 25px 0;
-}
-
-.valor {
-    padding: 18px 10px;
-    background: #202020;
-    color: white;
-    border: 2px solid #d9b21f;
-    border-radius: 12px;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.valor:active {
-    background: #d9b21f;
-    color: #000;
-}
-
-.resultado {
-    display: none;
-    margin-top: 20px;
-    padding-top: 15px;
-    border-top: 1px solid #333;
-    text-align: center;
-}
-
-.valor-escolhido {
-    color: #00ed91;
-    font-size: 22px;
-    font-weight: bold;
-}
-
-.codigo {
-    margin: 15px 0;
-    padding: 15px;
-    background: #080808;
-    border: 1px solid #444;
-    border-radius: 10px;
-    color: #00ed91;
-    word-break: break-all;
-    font-size: 13px;
-}
-
-.copiar {
-    width: 100%;
-    padding: 15px;
-    border: 0;
-    border-radius: 12px;
-    background: #00df8a;
-    color: #000;
-    font-size: 17px;
-    font-weight: bold;
-}
-
-.voltar {
-    display: block;
-    margin-top: 22px;
-    padding: 15px;
-    text-align: center;
-    background: #d9b21f;
-    color: #000;
-    text-decoration: none;
-    border-radius: 12px;
-    font-weight: bold;
-}
-
-.aviso {
-    color: #777;
-    font-size: 12px;
-    line-height: 1.5;
-    margin-top: 18px;
-}
-</style>
+        /* Estilos da Janela Modal (QR Code) */
+        .modal-pix {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-conteudo {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            width: 90%;
+            max-width: 350px;
+            color: #333;
+            position: relative;
+        }
+        .modal-conteudo h3 { margin-top: 0; color: #111; }
+        .modal-conteudo img { max-width: 100%; height: auto; border-radius: 8px; margin: 15px 0; }
+        .btn-fechar {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+    </style>
 </head>
-
 <body>
 
-<header class="topo">
-
-    <h1>🎰 ApostaXBet</h1>
-
-    <div class="saldo">
-        💰 Saldo: R$ 2,00
+    <div class="topo">
+        <h1>ApostaXBet</h1>
+        <div class="saldo">Saldo: R$ 0,00</div>
     </div>
 
-</header>
+    <div class="container">
+        <h2>Recarregar Saldo</h2>
+        <p>Escolha um valor para depositar via PIX:</p>
+        
+        <!-- BOTÃO DE DEPOSITAR -->
+        <button class="btn-pix" onclick="document.getElementById('modalPix').style.display='flex'">
+            💰 Depositar via PIX
+        </button>
+    </div>
 
-<main class="container">
-
-    <section class="card">
-
-        <h2>💰 Depositar</h2>
-
-        <p class="info">
-            Escolha um valor para gerar um código
-            demonstrativo de depósito.
-        </p>
-
-        <div class="valores">
-
-            <button class="valor" onclick="gerarDeposito(10)">
-                R$ 10
-            </button>
-
-            <button class="valor" onclick="gerarDeposito(20)">
-                R$ 20
-            </button>
-
-            <button class="valor" onclick="gerarDeposito(50)">
-                R$ 50
-            </button>
-
-            <button class="valor" onclick="gerarDeposito(100)">
-                R$ 100
-            </button>
-
+    <!-- JANELA DO QR CODE (MODAL) -->
+    <div id="modalPix" class="modal-pix" onclick="if(event.target === this) this.style.display='none'">
+        <div class="modal-conteudo">
+            <h3>Escaneie o QR Code</h3>
+            <!-- CAMINHO DA IMAGEM: pasta img + nome qrcode.png -->
+            <img src="img/qrcode.png" alt="QR Code PIX">
+            <p style="font-size: 14px; color: #666;">Após o pagamento, o saldo será creditado automaticamente.</p>
+            <button class="btn-fechar" onclick="document.getElementById('modalPix').style.display='none'">Fechar</button>
         </div>
-
-        <div id="resultado" class="resultado">
-
-            <h3>Depósito</h3>
-
-            <p>Valor selecionado:</p>
-
-            <div id="valorEscolhido" class="valor-escolhido">
-                R$ 0,00
-            </div>
-
-            <div id="codigo" class="codigo">
-                -
-            </div>
-
-            <button class="copiar" onclick="copiarCodigo()">
-                📋 Copiar código
-            </button>
-
-            <p class="aviso">
-                Este código é apenas demonstrativo.
-                Não realiza pagamentos reais.
-            </p>
-
-        </div>
-
-        <a href="index.html" class="voltar">
-            ← Voltar para o início
-        </a>
-
-    </section>
-
-</main>
-
-<script>
-
-function gerarDeposito(valor) {
-
-    const valorFormatado = valor.toLocaleString("pt-BR", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-
-    document.getElementById("valorEscolhido").textContent =
-        "R$ " + valorFormatado;
-
-    document.getElementById("codigo").textContent =
-        "DEMO-APOSTAXBET-" +
-        Math.floor(100000 + Math.random() * 900000);
-
-    document.getElementById("resultado").style.display =
-        "block";
-}
-
-function copiarCodigo() {
-
-    const codigo =
-        document.getElementById("codigo").textContent;
-
-    if (navigator.clipboard) {
-
-        navigator.clipboard.writeText(codigo)
-        .then(function() {
-            alert("Código copiado!");
-        })
-        .catch(function() {
-            alert(codigo);
-        });
-
-    } else {
-
-        alert(codigo);
-
-    }
-}
-
-</script>
+    </div>
 
 </body>
 </html>
