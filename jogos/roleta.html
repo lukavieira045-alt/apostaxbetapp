@@ -2,95 +2,150 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Roleta - ApostaXBet</title>
     <style>
-        body { margin: 0; background: #000; color: white; font-family: Arial, sans-serif; padding-bottom: 50px; }
-        .topo { text-align: center; padding: 20px; background: #111; border-bottom: 2px solid #d9b21f; position: sticky; top: 0; z-index: 100; }
-        .topo h1 { margin: 0; color: #e6c229; font-size: 24px; }
-        .saldo { margin-top: 5px; font-weight: bold; font-size: 18px; }
+        /* Reset básico para garantir consistência no mobile */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; background: #000; color: white; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding-bottom: 40px; }
         
-        .container { width: 90%; max-width: 500px; margin: 30px auto; text-align: center; }
-        .roleta-box { background: #1a1a1a; border-radius: 15px; padding: 20px; border: 1px solid #333; }
+        .topo { text-align: center; padding: 20px 15px; background: #111; border-bottom: 2px solid #d9b21f; position: sticky; top: 0; z-index: 100; }
+        .topo h1 { margin: 0; color: #e6c229; font-size: 22px; letter-spacing: 1px; }
+        .saldo { margin-top: 8px; font-weight: bold; font-size: 18px; transition: color 0.3s ease; }
         
-        .resultado { font-size: 40px; font-weight: bold; height: 60px; display: flex; align-items: center; justify-content: center; margin: 20px 0; color: #fff; }
+        .container { width: 92%; max-width: 500px; margin: 25px auto; text-align: center; }
+        .roleta-box { background: #1a1a1a; border-radius: 16px; padding: 25px 20px; border: 1px solid #333; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
         
-        .controles { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
-        .btn-cor { flex: 1; padding: 15px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; opacity: 0.5; transition: 0.2s; }
-        .btn-cor.ativo { opacity: 1; transform: scale(1.05); box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+        .info-text { color: #888; font-size: 13px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        .btn-vermelho { background: #dc3545; }
-        .btn-preto { background: #222; border: 1px solid #555; }
-        .btn-verde { background: #28a745; }
+        /* Área de Resultado */
+        .resultado { 
+            font-size: 42px; font-weight: 800; height: 70px; 
+            display: flex; align-items: center; justify-content: center;
+            margin: 15px 0; color: #fff; text-shadow: 0 2px 10px rgba(255,255,255,0.1);
+        }
         
-        .btn-apostar { width: 100%; padding: 15px; background: #e6c229; color: #000; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-apostar:disabled { opacity: 0.5; cursor: not-allowed; }
+        /* Botões de Cores - Estilo Mobile First */
+        .controles { display: flex; gap: 8px; justify-content: center; margin-bottom: 25px; }
+        .btn-cor { 
+            flex: 1; padding: 16px 0; border: none; border-radius: 10px; 
+            color: white; font-weight: bold; cursor: pointer; font-size: 14px;
+            opacity: 0.4; transform: scale(1); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        /* Estado Ativo: Brilhante e levemente maior */
+        .btn-cor.ativo { opacity: 1; transform: scale(1.05); box-shadow: 0 0 15px rgba(255,255,255,0.2); z-index: 2; }
         
-        .btn-voltar { display: inline-block; margin-top: 20px; color: #666; text-decoration: none; }
+        .btn-vermelho { background: linear-gradient(135deg, #dc3545, #b02a37); }
+        .btn-preto { background: linear-gradient(135deg, #333, #1a1a1a); border: 1px solid #555; }
+        .btn-verde { background: linear-gradient(135deg, #28a745, #1e7e34); }
+        
+        /* Botão de Apostar */
+        .btn-apostar { 
+            width: 100%; padding: 18px; background: #e6c229; color: #000; 
+            border: none; border-radius: 10px; font-size: 17px; font-weight: 800; 
+            cursor: pointer; transition: transform 0.1s, filter 0.2s;
+            box-shadow: 0 4px 15px rgba(230, 194, 41, 0.3);
+        }
+        .btn-apostar:active:not(:disabled) { transform: scale(0.97); }
+        .btn-apostar:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(100%); box-shadow: none; }
+        
+        .btn-voltar { display: inline-block; margin-top: 25px; color: #555; text-decoration: none; font-size: 13px; padding: 10px; }
+        .btn-voltar:hover { color: #e6c229; }
     </style>
 </head>
 <body>
 
     <div class="topo">
-        <h1> Roleta</h1>
+        <h1>🎰 ROLETA</h1>
         <div class="saldo" id="displaySaldo">R$ 0,00</div>
     </div>
 
     <div class="container">
         <div class="roleta-box">
-            <p style="color: #888; font-size: 14px;">Escolha uma cor e aposte R$ 5,00</p>
+            <p class="info-text">Escolha uma cor e aposte R$ 5,00</p>
+            
             <div class="resultado" id="resultadoDisplay">--</div>
             
             <div class="controles">
-                <button class="btn-cor btn-vermelho" onclick="selecionarCor('vermelho', this)">Vermelho</button>
-                <button class="btn-cor btn-verde" onclick="selecionarCor('verde', this)">Verde</button>
-                <button class="btn-cor btn-preto" onclick="selecionarCor('preto', this)">Preto</button>
+                <!-- Adicionei type="button" para evitar submit acidental em mobile -->
+                <button type="button" class="btn-cor btn-vermelho" onclick="selecionarCor('vermelho', this)">Vermelho</button>
+                <button type="button" class="btn-cor btn-verde" onclick="selecionarCor('verde', this)">Verde</button>
+                <button type="button" class="btn-cor btn-preto" onclick="selecionarCor('preto', this)">Preto</button>
             </div>
             
-            <button id="btnApostar" class="btn-apostar" onclick="girarRoleta()" disabled>Apostar R$ 5,00</button>
+            <button type="button" id="btnApostar" class="btn-apostar" onclick="girarRoleta()" disabled>
+                APOSTAR R$ 5,00
+            </button>
         </div>
+        
         <a href="../index.html" class="btn-voltar">← Voltar para Lobby</a>
     </div>
 
-    <!-- Caminho correto para buscar o script na pasta de cima -->
+    <!-- Importação do script central -->
     <script src="../script.js"></script>
 
     <script>
+        // Variáveis globais do jogo
         let corSelecionada = null;
         const VALOR_APOSTA = 5;
+        const btnApostar = document.getElementById('btnApostar');
+        const display = document.getElementById('resultadoDisplay');
 
         function selecionarCor(cor, botao) {
+            // Remove classe ativa de todos
             document.querySelectorAll('.btn-cor').forEach(b => b.classList.remove('ativo'));
+            
+            // Aplica na clicada
             botao.classList.add('ativo');
             corSelecionada = cor;
-            document.getElementById('btnApostar').disabled = false;
+            
+            // Habilita botão de aposta imediatamente
+            if(btnApostar) btnApostar.disabled = false;
         }
 
         function girarRoleta() {
-            // Verifica saldo antes de tudo
-            if (!verificarAcessoJogo(VALOR_APOSTA, "Roleta")) return;
+            // 🔒 Verificação de saldo via script.js
+            if (typeof verificarAcessoJogo === 'function') {
+                if (!verificarAcessoJogo(VALOR_APOSTA, "Roleta")) return;
+            } else {
+                alert("Erro: Sistema de saldo não carregado. Tente limpar o cache.");
+                return;
+            }
 
-            const btn = document.getElementById('btnApostar');
-            const display = document.getElementById('resultadoDisplay');
-            
-            btn.disabled = true;
-            display.innerText = "Girando...";
-            
+            if (!corSelecionada) return;
+
+            // Bloqueia interface durante o giro
+            btnApostar.disabled = true;
+            document.querySelectorAll('.btn-cor').forEach(b => b.style.pointerEvents = 'none');
+            display.innerText = "GIRANDO...";
+            display.style.color = "#fff";
+            display.style.textShadow = "0 0 10px rgba(255,255,255,0.5)";
+
+            // Simulação de 2 segundos
             setTimeout(() => {
                 const rand = Math.random();
                 let resultado = rand < 0.45 ? 'vermelho' : (rand < 0.90 ? 'preto' : 'verde');
                 
+                // Atualiza visual do resultado
                 display.innerText = resultado.toUpperCase();
-                display.style.color = resultado === 'vermelho' ? '#dc3545' : (resultado === 'verde' ? '#28a745' : '#aaa');
+                const coresMap = { 'vermelho': '#ff4d4d', 'verde': '#00ed91', 'preto': '#aaaaaa' };
+                display.style.color = coresMap[resultado];
+                display.style.textShadow = `0 0 20px ${coresMap[resultado]}`;
 
+                // Lógica de pagamento/perda
                 if (resultado === corSelecionada) {
-                    const ganho = corSelecionada === 'verde' ? VALOR_APOSTA * 14 : VALOR_APOSTA * 2;
-                    adicionarSaldo(ganho);
-                    alert(`🎉 Ganhou R$ ${ganho},00!`);
+                    const multiplicador = corSelecionada === 'verde' ? 14 : 2;
+                    const ganho = VALOR_APOSTA * multiplicador;
+                    if(typeof adicionarSaldo === 'function') adicionarSaldo(ganho);
+                    setTimeout(() => alert(`🎉 PARABÉNS! Você ganhou R$ ${ganho},00!`), 100);
                 } else {
-                    descontarSaldo(VALOR_APOSTA);
+                    if(typeof descontarSaldo === 'function') descontarSaldo(VALOR_APOSTA);
                 }
-                btn.disabled = false;
+                
+                // Restaura interface
+                btnApostar.disabled = false;
+                document.querySelectorAll('.btn-cor').forEach(b => b.style.pointerEvents = 'auto');
             }, 2000);
         }
     </script>
