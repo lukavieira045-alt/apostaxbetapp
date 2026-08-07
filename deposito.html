@@ -12,7 +12,32 @@
         .saldo { margin-top: 8px; color: #00ed91; font-weight: bold; }
         .container { width: 94%; max-width: 600px; margin: 25px auto; }
         
-        /* Estilos do Botão PIX */
+        /* Estilos dos Botões de Valor */
+        .valores-rapidos {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .btn-valor {
+            flex: 1;
+            min-width: 80px;
+            padding: 12px;
+            background: #222;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .btn-valor:hover, .btn-valor.ativo {
+            background: #e6c229;
+            color: #000;
+            border-color: #e6c229;
+        }
+
+        /* Estilos do Botão PIX Principal */
         .btn-pix {
             display: block;
             width: 100%;
@@ -23,7 +48,6 @@
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            margin-top: 20px;
             font-weight: bold;
         }
         .btn-pix:active { transform: scale(0.98); }
@@ -46,10 +70,16 @@
             width: 90%;
             max-width: 350px;
             color: #333;
-            position: relative;
         }
         .modal-conteudo h3 { margin-top: 0; color: #111; }
         .modal-conteudo img { max-width: 100%; height: auto; border-radius: 8px; margin: 15px 0; }
+        .valor-selecionado { 
+            font-size: 20px; 
+            color: #28a745; 
+            font-weight: bold; 
+            margin-bottom: 10px; 
+            display: block;
+        }
         .btn-fechar {
             background: #dc3545;
             color: white;
@@ -73,22 +103,49 @@
         <h2>Recarregar Saldo</h2>
         <p>Escolha um valor para depositar via PIX:</p>
         
+        <!-- BOTÕES DE VALORES RÁPIDOS -->
+        <div class="valores-rapidos">
+            <button class="btn-valor" onclick="selecionarValor(this, 20)">R$ 20</button>
+            <button class="btn-valor" onclick="selecionarValor(this, 50)">R$ 50</button>
+            <button class="btn-valor" onclick="selecionarValor(this, 100)">R$ 100</button>
+            <button class="btn-valor" onclick="selecionarValor(this, 200)">R$ 200</button>
+        </div>
+
         <!-- BOTÃO DE DEPOSITAR -->
-        <button class="btn-pix" onclick="document.getElementById('modalPix').style.display='flex'">
+        <button id="btnDepositar" class="btn-pix" onclick="abrirModal()" disabled style="opacity: 0.6;">
             💰 Depositar via PIX
         </button>
     </div>
 
     <!-- JANELA DO QR CODE (MODAL) -->
-    <div id="modalPix" class="modal-pix" onclick="if(event.target === this) this.style.display='none'">
+    <div id="modalPix" class="modal-pix" onclick="if(event.target === this) fecharModal()">
         <div class="modal-conteudo">
             <h3>Escaneie o QR Code</h3>
-            <!-- CAMINHO DA IMAGEM: pasta img + nome qrcode.png -->
+            <span id="valorDisplay" class="valor-selecionado"></span>
             <img src="img/qrcode.png" alt="QR Code PIX">
             <p style="font-size: 14px; color: #666;">Após o pagamento, o saldo será creditado automaticamente.</p>
-            <button class="btn-fechar" onclick="document.getElementById('modalPix').style.display='none'">Fechar</button>
+            <button class="btn-fechar" onclick="fecharModal()">Fechar</button>
         </div>
     </div>
 
-</body>
-</html>
+    <script>
+        let valorAtual = 0;
+
+        function selecionarValor(botao, valor) {
+            // Remove a classe 'ativo' de todos os botões
+            document.querySelectorAll('.btn-valor').forEach(b => b.classList.remove('ativo'));
+            
+            // Adiciona a classe 'ativo' ao botão clicado
+            botao.classList.add('ativo');
+            
+            // Atualiza o valor e habilita o botão principal
+            valorAtual = valor;
+            const btnDepositar = document.getElementById('btnDepositar');
+            btnDepositar.disabled = false;
+            btnDepositar.style.opacity = '1';
+            btnDepositar.innerHTML = `💰 Depositar R$ ${valor},00 via PIX`;
+        }
+
+        function abrirModal() {
+            if (valorAtual > 0) {
+                document.getElementById('valorDisplay').innerText = `Valor: R$ ${valorAtual},00`;
