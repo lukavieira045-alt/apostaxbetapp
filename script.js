@@ -1,4 +1,5 @@
-// saldo.js - Gerenciamento Central de Saldo e Acesso aos Jogos
+// script.js - Gerenciamento Central de Saldo e Acesso aos Jogos
+// Chave usada no localStorage: 'apostaXBet_saldo'
 
 /**
  * Carrega o saldo do localStorage e atualiza todos os elementos 
