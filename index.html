@@ -3,132 +3,352 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>ApostaXBet</title>
-
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    .deposito {
+      display: none;
+      background: #111;
+      border: 2px solid #d8ad27;
+      border-radius: 20px;
+      padding: 25px 18px;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .deposito.ativo {
+      display: block;
+    }
+
+    .deposito h2 {
+      color: #e4b72c;
+      margin-bottom: 15px;
+    }
+
+    .valores {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .valor {
+      background: #191919;
+      color: white;
+      border: 2px solid #555;
+      border-radius: 12px;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .valor.selecionado {
+      background: #d8ad27;
+      color: #000;
+      border-color: #fff;
+    }
+
+    .pix-box {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .pix-box.ativo {
+      display: block;
+    }
+
+    .pix {
+      background: #202020;
+      border: 1px solid #555;
+      border-radius: 10px;
+      padding: 15px;
+      word-break: break-all;
+      margin: 15px 0;
+      color: #00ff88;
+      font-size: 13px;
+    }
+
+    .botao-deposito {
+      width: 100%;
+      border: 0;
+      border-radius: 12px;
+      padding: 16px;
+      background: #00e88a;
+      color: #06120c;
+      font-weight: bold;
+      font-size: 17px;
+      margin-top: 10px;
+    }
+
+    .fechar {
+      background: #333;
+      color: white;
+    }
+
+    .aviso {
+      color: #999;
+      font-size: 13px;
+      margin-top: 15px;
+    }
+  </style>
 </head>
 
 <body>
 
-  <!-- TOPO -->
-  <header class="topo">
-    <div class="logo">🎰 ApostaXBet</div>
+<header class="topo">
+  <div class="logo">🎰 ApostaXBet</div>
 
-    <div class="saldo">
-      💰 Saldo:
-      <span id="saldo">R$ 2,00</span>
+  <div class="saldo">
+    💰 Saldo:
+    <span id="saldo">R$ 2,00</span>
+  </div>
+</header>
+
+
+<main>
+
+  <section class="banner">
+
+    <img
+      src="img/file_000000009b24820eb29b3df2e7ebd768.png"
+      alt="Banner ApostaXBet"
+      class="banner-img"
+    >
+
+    <div class="banner-texto">
+      <h1>Bem-vindo ao ApostaXBet</h1>
+      <p>🎮 Jogos, diversão e prêmios!</p>
     </div>
-  </header>
+
+  </section>
 
 
-  <!-- CONTEÚDO -->
-  <main>
+  <section class="acoes">
 
-    <!-- BANNER -->
-    <section class="banner">
+    <button
+      class="botao ouro"
+      onclick="abrirDeposito()"
+    >
+      💰 Depositar
+    </button>
 
-      <img
-        src="img/file_000000009b24820eb29b3df2e7ebd768.png"
-        alt="Banner ApostaXBet"
-        class="banner-img"
+    <button
+      class="botao verde"
+      onclick="alert('Área de saque demonstrativa')"
+    >
+      💵 Sacar
+    </button>
+
+  </section>
+
+
+  <!-- DEPÓSITO -->
+
+  <section id="deposito" class="deposito">
+
+    <h2>💰 Depositar</h2>
+
+    <p>Escolha um valor demonstrativo:</p>
+
+    <div class="valores">
+
+      <button
+        class="valor"
+        onclick="selecionarValor(10, this)"
       >
+        R$ 10
+      </button>
 
-      <div class="banner-texto">
-        <h1>Bem-vindo ao ApostaXBet</h1>
-        <p>🎮 Jogos, diversão e prêmios!</p>
+      <button
+        class="valor"
+        onclick="selecionarValor(20, this)"
+      >
+        R$ 20
+      </button>
+
+      <button
+        class="valor"
+        onclick="selecionarValor(50, this)"
+      >
+        R$ 50
+      </button>
+
+      <button
+        class="valor"
+        onclick="selecionarValor(100, this)"
+      >
+        R$ 100
+      </button>
+
+    </div>
+
+
+    <div id="pixBox" class="pix-box">
+
+      <h3>PIX demonstrativo</h3>
+
+      <div class="pix" id="codigoPix">
+        DEMO-PIX-APOSTAXBET
       </div>
 
-    </section>
-
-
-    <!-- BOTÕES -->
-    <section class="acoes">
-
       <button
-        class="botao ouro"
-        onclick="alert('Área de depósito')"
+        class="botao-deposito"
+        onclick="copiarPix()"
       >
-        💰 Depositar
+        📋 Copiar código
       </button>
 
-      <button
-        class="botao verde"
-        onclick="alert('Área de saque')"
-      >
-        💵 Sacar
-      </button>
+      <p class="aviso">
+        Este código é apenas demonstrativo e não realiza pagamentos.
+      </p>
 
-    </section>
+    </div>
 
 
-    <!-- JOGOS -->
-    <h2 class="titulo">🎮 Jogos</h2>
+    <button
+      class="botao-deposito fechar"
+      onclick="fecharDeposito()"
+    >
+      ← Voltar
+    </button>
 
-    <section class="jogos">
-
-      <a href="jogos/roleta.html" class="card">
-        <div class="icone">🎰</div>
-        <h3>Roleta</h3>
-        <p>Gire a roleta</p>
-      </a>
+  </section>
 
 
-      <a href="jogos/mines.html" class="card">
-        <div class="icone">💣</div>
-        <h3>Mines</h3>
-        <p>Encontre os diamantes</p>
-      </a>
+  <h2 class="titulo">🎮 Jogos</h2>
 
 
-      <a href="jogos/crash.html" class="card">
-        <div class="icone">🚀</div>
-        <h3>Crash</h3>
-        <p>Acompanhe o multiplicador</p>
-      </a>
+  <section class="jogos">
 
-
-      <a href="jogos/plinko.html" class="card">
-        <div class="icone">🎯</div>
-        <h3>Plinko</h3>
-        <p>Solte a bola</p>
-      </a>
-
-
-      <a href="jogos/dice.html" class="card">
-        <div class="icone">🎲</div>
-        <h3>Dice</h3>
-        <p>Jogue os dados</p>
-      </a>
-
-    </section>
-
-  </main>
-
-
-  <!-- MENU INFERIOR -->
-  <nav class="menu">
-
-    <a href="index.html">
-      <span>🏠</span>
-      <small>Início</small>
+    <a href="jogos/roleta.html" class="card">
+      <div class="icone">🎰</div>
+      <h3>Roleta</h3>
+      <p>Gire a roleta</p>
     </a>
 
-    <a href="jogos.html">
-      <span>🎮</span>
-      <small>Jogos</small>
+    <a href="jogos/mines.html" class="card">
+      <div class="icone">💣</div>
+      <h3>Mines</h3>
+      <p>Encontre os diamantes</p>
     </a>
 
-    <a href="#" onclick="alert('Área da conta')">
-      <span>👤</span>
-      <small>Conta</small>
+    <a href="jogos/crash.html" class="card">
+      <div class="icone">🚀</div>
+      <h3>Crash</h3>
+      <p>Acompanhe o multiplicador</p>
     </a>
 
-  </nav>
+    <a href="jogos/plinko.html" class="card">
+      <div class="icone">🎯</div>
+      <h3>Plinko</h3>
+      <p>Solte a bola</p>
+    </a>
+
+    <a href="jogos/dice.html" class="card">
+      <div class="icone">🎲</div>
+      <h3>Dice</h3>
+      <p>Jogue os dados</p>
+    </a>
+
+  </section>
+
+</main>
 
 
-  <script src="saldo.js"></script>
-  <script src="script.js"></script>
+<nav class="menu">
+
+  <a href="index.html">
+    <span>🏠</span>
+    <small>Início</small>
+  </a>
+
+  <a href="jogos.html">
+    <span>🎮</span>
+    <small>Jogos</small>
+  </a>
+
+  <a
+    href="#"
+    onclick="alert('Área da conta demonstrativa'); return false;"
+  >
+    <span>👤</span>
+    <small>Conta</small>
+  </a>
+
+</nav>
+
+
+<script>
+
+let valorSelecionado = 0;
+
+
+function abrirDeposito() {
+
+  document
+    .getElementById("deposito")
+    .classList.add("ativo");
+
+  document
+    .getElementById("deposito")
+    .scrollIntoView({
+      behavior: "smooth"
+    });
+
+}
+
+
+function fecharDeposito() {
+
+  document
+    .getElementById("deposito")
+    .classList.remove("ativo");
+
+}
+
+
+function selecionarValor(valor, botao) {
+
+  valorSelecionado = valor;
+
+  document
+    .querySelectorAll(".valor")
+    .forEach(function(item) {
+
+      item.classList.remove("selecionado");
+
+    });
+
+  botao.classList.add("selecionado");
+
+  document
+    .getElementById("pixBox")
+    .classList.add("ativo");
+
+}
+
+
+function copiarPix() {
+
+  const codigo =
+    document.getElementById("codigoPix").textContent.trim();
+
+  navigator.clipboard.writeText(codigo)
+    .then(function() {
+
+      alert("Código demonstrativo copiado!");
+
+    })
+    .catch(function() {
+
+      alert("Não foi possível copiar automaticamente.");
+
+    });
+
+}
+
+</script>
 
 </body>
 </html>
