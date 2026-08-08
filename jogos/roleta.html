@@ -2,605 +2,325 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>Roleta de Relâmpagos - ApostaXBet</title>
+<title>Roleta Neon - ApostaXBet</title>
 
 <style>
 *{
     box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
     margin:0;
     padding:0;
-    -webkit-tap-highlight-color:transparent;
 }
 
 body{
-    background:
-    radial-gradient(circle at 50% 30%,#18231f,#070a0a 45%,#020303 85%);
+    background:#050505;
     color:white;
-    font-family:Arial,sans-serif;
+    font-family:'Segoe UI',system-ui,sans-serif;
     min-height:100vh;
+    padding-bottom:40px;
     overflow-x:hidden;
-    padding-bottom:30px;
 }
 
 .topo{
-    height:58px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 14px;
-    background:#050708;
-    border-bottom:1px solid #292929;
+    text-align:center;
+    padding:20px 15px;
+    background:rgba(10,10,10,.95);
+    border-bottom:1px solid rgba(0,255,255,.2);
+    position:sticky;
+    top:0;
+    z-index:100;
+    backdrop-filter:blur(10px);
 }
 
-.logo{
-    color:#f5d76e;
-    font-weight:900;
-    letter-spacing:1px;
+.topo h1{
+    color:#00ffff;
+    font-size:22px;
+    margin-bottom:5px;
+    letter-spacing:2px;
+    text-shadow:0 0 10px rgba(0,255,255,.6);
 }
 
-.saldo-topo{
-    text-align:right;
-}
-
-.saldo-label{
-    font-size:9px;
-    color:#777;
-}
-
-#displaySaldo{
-    color:#ffe34f;
+.saldo{
     font-weight:bold;
-    font-size:16px;
+    font-size:18px;
 }
 
 .container{
-    width:100%;
-    max-width:520px;
-    margin:auto;
-    padding:10px 8px 40px;
-}
-
-.lobby{
-    position:absolute;
-    top:68px;
-    left:7px;
-    width:60px;
-    height:60px;
-    border:1px solid #777;
-    border-radius:10px;
-    background:#090b0c;
-    color:white;
-    text-decoration:none;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    font-size:10px;
-    z-index:30;
-}
-
-.lobby-icon{
-    font-size:27px;
-}
-
-.titulo{
+    width:92%;
+    max-width:500px;
+    margin:20px auto;
     text-align:center;
-    margin-top:10px;
-    color:#d8c36a;
-    font-size:13px;
-    letter-spacing:3px;
-    font-weight:bold;
 }
 
-.subtitulo{
-    text-align:center;
-    color:#555;
-    font-size:9px;
-    letter-spacing:2px;
-    margin:5px 0 10px;
+.roleta-box{
+    background:rgba(20,20,20,.8);
+    border-radius:20px;
+    padding:25px 15px;
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:0 0 30px rgba(0,0,0,.8);
 }
 
-/* ROLETA */
+.info-text{
+    color:#777;
+    font-size:11px;
+    margin-bottom:18px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+/* ÁREA DA ROLETA */
 
 .roleta-area{
     position:relative;
-    width:100%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    margin-bottom:10px;
+    width:310px;
+    height:310px;
+    max-width:90vw;
+    max-height:90vw;
+    margin:0 auto 20px;
 }
 
-.roleta{
-    width:min(92vw,390px);
-    height:min(92vw,390px);
-    border-radius:50%;
-    position:relative;
-
-    border:5px solid #d7ae31;
-
-    background:
-    radial-gradient(
-        circle,
-        #1b2925 0 15%,
-        #060a09 16% 23%,
-        transparent 24%
-    );
-
-    box-shadow:
-    0 0 8px #ffd84a,
-    0 0 25px rgba(255,205,45,.45),
-    0 0 55px rgba(255,190,20,.2),
-    inset 0 0 25px #000;
-
-    transition:
-    transform 4.5s cubic-bezier(.08,.75,.12,1);
-
-    overflow:hidden;
-}
-
-.roleta::before{
-    content:"";
+.seta-indicadora{
     position:absolute;
-    inset:7px;
-    border-radius:50%;
-    border:12px solid #101a21;
-    box-shadow:
-    inset 0 0 8px #000,
-    0 0 4px #000;
-    z-index:3;
-}
-
-.roleta::after{
-    content:"";
-    position:absolute;
-    inset:28px;
-    border-radius:50%;
-
-    background:
-    repeating-conic-gradient(
-        from 0deg,
-        rgba(255,225,100,.7) 0deg 1deg,
-        transparent 1deg 18deg
-    );
-
-    z-index:2;
-}
-
-.roleta-inner{
-    position:absolute;
-    inset:30px;
-    border-radius:50%;
-
-    background:
-    repeating-conic-gradient(
-        #28645b 0deg 9deg,
-        #668c82 9deg 18deg
-    );
-
-    box-shadow:
-    inset 0 0 35px rgba(0,0,0,.85),
-    inset 0 0 8px #ffe05b;
-}
-
-.numeros{
-    position:absolute;
-    inset:0;
-    z-index:7;
-}
-
-.numero{
-    position:absolute;
-    left:50%;
-    top:50%;
-
-    width:32px;
-    height:32px;
-
-    margin-left:-16px;
-    margin-top:-16px;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    color:#e9d17b;
-    font-size:13px;
-    font-weight:bold;
-
-    text-shadow:
-    0 1px 2px #000,
-    0 0 5px rgba(255,210,70,.4);
-}
-
-.centro{
-    position:absolute;
-    left:50%;
-    top:50%;
-
-    transform:translate(-50%,-50%);
-
-    width:82px;
-    height:82px;
-
-    border-radius:50%;
-
-    background:
-    radial-gradient(circle,#283d38,#08100e 65%,#020303);
-
-    border:4px solid #d5ad36;
-
-    z-index:12;
-
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-
-    box-shadow:
-    0 0 15px rgba(255,211,53,.55),
-    inset 0 0 15px #000;
-}
-
-.centro strong{
-    color:#ffe36a;
-    font-size:18px;
-    letter-spacing:2px;
-}
-
-.centro span{
-    color:#777;
-    font-size:8px;
-    letter-spacing:2px;
-}
-
-.ponteiro{
-    position:absolute;
-    z-index:20;
-    top:-3px;
+    top:-5px;
     left:50%;
     transform:translateX(-50%);
-
     width:0;
     height:0;
-
     border-left:13px solid transparent;
     border-right:13px solid transparent;
-    border-top:27px solid white;
-
-    filter:
-    drop-shadow(0 0 4px white)
-    drop-shadow(0 0 9px #ffe66b);
+    border-top:25px solid white;
+    z-index:20;
+    filter:drop-shadow(0 0 6px white);
 }
 
-/* RELÂMPAGOS */
-
-.raio{
+.roda-container{
     position:absolute;
-    width:100px;
-    height:4px;
-    background:white;
-    opacity:.7;
-    z-index:18;
-
+    inset:0;
+    border-radius:50%;
+    border:6px solid #222;
+    overflow:hidden;
     box-shadow:
-    0 0 5px white,
-    0 0 15px #dfffca;
+        0 0 25px #000,
+        0 0 45px rgba(0,255,255,.15),
+        inset 0 0 20px #000;
 
-    animation:piscar .7s infinite alternate;
+    transition:
+        transform 4s cubic-bezier(.12,.8,.18,1);
 }
 
-.raio1{
-    left:4px;
-    bottom:50px;
-    transform:rotate(-35deg);
-}
-
-.raio2{
-    right:4px;
-    top:65px;
-    transform:rotate(35deg);
-}
-
-.raio3{
-    left:45px;
-    top:20px;
-    width:70px;
-    transform:rotate(65deg);
-}
-
-@keyframes piscar{
-    from{
-        opacity:.2;
-    }
-    to{
-        opacity:1;
-    }
-}
-
-/* RESULTADO */
-
-.resultado{
-    height:42px;
-    text-align:center;
-    color:#ddd;
-    font-size:18px;
-    font-weight:900;
-    text-shadow:0 0 10px currentColor;
-}
-
-/* PAINEL */
-
-.painel{
-    position:relative;
-    padding:16px 12px 13px;
-
-    background:
-    linear-gradient(145deg,#0d1113,#050708);
-
-    border:1px solid #77642d;
-
-    box-shadow:
-    0 0 15px rgba(0,0,0,.9),
-    inset 0 0 15px rgba(255,200,50,.05);
-}
-
-.ficha-area{
-    height:38px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    margin-bottom:5px;
-}
-
-.ficha{
-    width:40px;
-    height:40px;
+.roda-segmentos{
+    position:absolute;
+    inset:0;
     border-radius:50%;
 
-    background:
-    radial-gradient(
-        circle,
-        #555 0 45%,
-        #eee 46% 54%,
-        #666 55% 70%,
-        #eee 71% 74%,
-        #333 75%
+    background:conic-gradient(
+        #e63946 0deg 20deg,
+        #151515 20deg 40deg,
+        #00b879 40deg 60deg,
+        #e63946 60deg 80deg,
+        #151515 80deg 100deg,
+        #00b879 100deg 120deg,
+        #e63946 120deg 140deg,
+        #151515 140deg 160deg,
+        #00b879 160deg 180deg,
+        #e63946 180deg 200deg,
+        #151515 200deg 220deg,
+        #00b879 220deg 240deg,
+        #e63946 240deg 260deg,
+        #151515 260deg 280deg,
+        #00b879 280deg 300deg,
+        #e63946 300deg 320deg,
+        #151515 320deg 340deg,
+        #00b879 340deg 360deg
     );
+}
 
-    border:2px solid #eee;
+/* LINHAS DOS SEGMENTOS */
 
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    color:white;
-    font-size:9px;
-    font-weight:bold;
-
-    text-shadow:0 1px 2px #000;
-
-    box-shadow:
-    0 0 8px rgba(255,255,255,.3),
-    0 2px 4px #000;
+.roda-segmentos::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    background:
+        repeating-conic-gradient(
+            transparent 0deg 19.5deg,
+            rgba(255,255,255,.65) 19.5deg 20deg
+        );
 }
 
 /* VALORES */
 
 .valores{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:5px;
-    margin-bottom:8px;
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    z-index:5;
 }
 
-.btn-valor{
-    height:39px;
-    border:1px solid #5c4d26;
-    background:#090b0c;
-    color:#aaa;
-    border-radius:4px;
-    font-size:12px;
-    font-weight:bold;
-}
-
-.btn-valor.ativo{
-    color:#ffe36a;
-    border-color:#ffe36a;
-
-    box-shadow:
-    0 0 10px rgba(255,215,60,.35),
-    inset 0 0 12px rgba(255,215,60,.1);
-}
-
-/* GRADE */
-
-.grade{
-    display:grid;
-    grid-template-columns:repeat(5,1fr);
-    border-left:1px solid #967c36;
-    border-top:1px solid #967c36;
-}
-
-.casa{
-    min-height:55px;
+.valor{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:54px;
+    height:25px;
+    margin-left:-27px;
+    margin-top:-12px;
 
     display:flex;
     align-items:center;
     justify-content:center;
 
-    color:#b5a76e;
-
-    border-right:1px solid #967c36;
-    border-bottom:1px solid #967c36;
-
-    background:
-    linear-gradient(145deg,#000,#101212);
-
-    position:relative;
-
-    font-size:18px;
-}
-
-.casa.selecionada{
-    color:#ffe46a;
-
-    background:
-    radial-gradient(
-        circle,
-        rgba(255,210,50,.28),
-        rgba(255,190,30,.03)
-    );
-
-    box-shadow:
-    inset 0 0 15px rgba(255,215,60,.25);
-}
-
-/* CORES */
-
-.cores{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:5px;
-    margin-top:8px;
-}
-
-.btn-cor{
-    min-height:48px;
-
-    border:1px solid #62532a;
-    background:#090b0c;
-
-    color:#aaa;
-
-    border-radius:4px;
-
     font-size:12px;
-    font-weight:bold;
-}
-
-.btn-cor.ativo{
-    border-color:#ffe05b;
-    color:#fff;
-
-    box-shadow:
-    0 0 10px rgba(255,215,60,.4),
-    inset 0 0 12px rgba(255,215,60,.1);
-}
-
-.vermelho.ativo{
-    color:#ff4141;
-}
-
-.preto.ativo{
-    color:#eee;
-}
-
-.verde.ativo{
-    color:#48ff9a;
-}
-
-/* APOSTAR */
-
-.btn-apostar{
-    width:100%;
-    height:54px;
-
-    margin-top:9px;
-
-    border:1px solid #d5af3d;
-
-    background:
-    linear-gradient(180deg,#332b12,#171306);
-
-    color:#f5d76b;
-
-    font-size:16px;
     font-weight:900;
+    color:white;
 
-    letter-spacing:2px;
+    text-shadow:
+        0 0 4px #000,
+        0 0 7px #000;
 
-    border-radius:4px;
+    transform:
+        rotate(var(--angulo))
+        translateY(-112px)
+        rotate(calc(var(--angulo) * -1));
+}
+
+/* CENTRO */
+
+.roda-centro{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+
+    width:65px;
+    height:65px;
+
+    background:#090909;
+    border-radius:50%;
+
+    border:3px solid #e6c229;
+
+    z-index:10;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-weight:bold;
+    color:#e6c229;
+
+    font-size:13px;
 
     box-shadow:
-    0 0 12px rgba(255,215,60,.18),
-    inset 0 0 10px #000;
+        0 0 10px rgba(230,194,41,.5),
+        inset 0 0 12px #000;
 }
 
-.btn-apostar:disabled{
-    opacity:.35;
-    filter:grayscale(1);
+/* RESULTADO */
+
+.resultado-texto{
+    font-size:25px;
+    font-weight:900;
+    min-height:35px;
+    margin-bottom:15px;
+
+    text-shadow:0 0 12px currentColor;
+
+    opacity:0;
+    transition:opacity .3s;
 }
 
-/* INFORMAÇÕES */
-
-.info{
-    display:flex;
-    justify-content:space-between;
-
-    margin-top:9px;
-
-    color:#aaa;
-    font-size:12px;
-}
-
-.info strong{
-    color:#ffe04f;
-}
-
-.mensagem{
-    text-align:center;
-    color:#555;
-    font-size:9px;
-    margin-top:8px;
+.resultado-texto.visivel{
+    opacity:1;
 }
 
 /* BOTÕES */
 
-.repeat-btn,
-.menu-btn{
-    position:fixed;
-    bottom:15px;
-
-    width:52px;
-    height:52px;
-
-    border-radius:50%;
-
-    border:1px solid #777;
-    background:#090b0c;
-
-    color:#ddd;
-    font-size:23px;
-
-    z-index:40;
+.controles{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+    margin-bottom:20px;
 }
 
-.repeat-btn{
-    left:8px;
+.btn-cor{
+    flex:1;
+    padding:14px 0;
+
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:10px;
+
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    font-size:13px;
+
+    opacity:.4;
+    transition:.3s;
+
+    background:rgba(255,255,255,.03);
 }
 
-.menu-btn{
-    right:8px;
+.btn-cor.ativo{
+    opacity:1;
+    transform:scale(1.05);
+    box-shadow:0 0 15px currentColor;
 }
 
-@media(max-width:360px){
+.btn-vermelho{color:#ff4d4d;}
+.btn-verde{color:#00ed91;}
+.btn-preto{color:#aaa;}
 
-    .roleta{
-        width:310px;
-        height:310px;
+.btn-apostar{
+    width:100%;
+    padding:16px;
+
+    background:transparent;
+    color:#e6c229;
+
+    border:2px solid #e6c229;
+    border-radius:10px;
+
+    font-size:16px;
+    font-weight:900;
+
+    cursor:pointer;
+
+    min-height:50px;
+
+    box-shadow:0 0 15px rgba(230,194,41,.15);
+}
+
+.btn-apostar:disabled{
+    opacity:.2;
+    cursor:not-allowed;
+    border-color:#333;
+    color:#333;
+    box-shadow:none;
+}
+
+.btn-voltar{
+    display:inline-block;
+    margin-top:20px;
+    color:#444;
+    text-decoration:none;
+    font-size:12px;
+}
+
+@media(max-width:350px){
+    .roleta-area{
+        width:280px;
+        height:280px;
     }
 
-    .numero{
-        font-size:11px;
-    }
-
-    .casa{
-        min-height:48px;
-        font-size:16px;
+    .valor{
+        transform:
+            rotate(var(--angulo))
+            translateY(-100px)
+            rotate(calc(var(--angulo) * -1));
     }
 }
 </style>
@@ -609,259 +329,168 @@ body{
 <body>
 
 <div class="topo">
-
-    <div class="logo">
-        ⚡ APOSTAXBET
-    </div>
-
-    <div class="saldo-topo">
-        <div class="saldo-label">SALDO</div>
-        <div id="displaySaldo">R$ 0,00</div>
-    </div>
-
+    <h1>🎰 ROLETA NEON</h1>
+    <div class="saldo" id="displaySaldo">R$ 0,00</div>
 </div>
-
-
-<a href="../index.html" class="lobby">
-    <div class="lobby-icon">⌂</div>
-    Lobby
-</a>
-
 
 <div class="container">
 
-    <div class="titulo">
-        ROLETA DE RELÂMPAGOS
-    </div>
+<div class="roleta-box">
 
-    <div class="subtitulo">
-        ESCOLHA O VALOR E A COR
-    </div>
+<p class="info-text">
+    Escolha uma cor e gire a roleta
+</p>
 
+<div class="roleta-area">
 
-    <!-- ROLETA -->
+    <div class="seta-indicadora"></div>
 
-    <div class="roleta-area">
+    <div class="roda-container" id="rodaVisual">
 
-        <div class="ponteiro"></div>
+        <div class="roda-segmentos"></div>
 
-        <div class="raio raio1"></div>
-        <div class="raio raio2"></div>
-        <div class="raio raio3"></div>
+        <div class="valores" id="valoresRoleta"></div>
 
-        <div class="roleta" id="roleta">
-
-            <div class="roleta-inner"></div>
-
-            <div class="numeros" id="numeros"></div>
-
-            <div class="centro">
-                <strong>AX</strong>
-                <span>ROULETTE</span>
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <div class="resultado" id="resultado">
-        ESCOLHA SUA APOSTA
-    </div>
-
-
-    <div class="painel">
-
-        <!-- FICHA -->
-
-        <div class="ficha-area">
-
-            <div class="ficha" id="fichaDisplay">
-                0,50
-            </div>
-
-        </div>
-
-
-        <!-- VALORES -->
-
-        <div class="valores">
-
-            <button
-                class="btn-valor ativo"
-                onclick="selecionarValor(0.50,this)">
-                R$ 0,50
-            </button>
-
-            <button
-                class="btn-valor"
-                onclick="selecionarValor(1,this)">
-                R$ 1
-            </button>
-
-            <button
-                class="btn-valor"
-                onclick="selecionarValor(2,this)">
-                R$ 2
-            </button>
-
-            <button
-                class="btn-valor"
-                onclick="selecionarValor(5,this)">
-                R$ 5
-            </button>
-
-        </div>
-
-
-        <!-- NÚMEROS -->
-
-        <div class="grade">
-
-            <div class="casa">1</div>
-            <div class="casa">2</div>
-            <div class="casa">3</div>
-            <div class="casa">4</div>
-            <div class="casa">5</div>
-
-            <div class="casa">6</div>
-            <div class="casa">7</div>
-            <div class="casa">8</div>
-            <div class="casa">9</div>
-            <div class="casa">10</div>
-
-            <div class="casa">11</div>
-            <div class="casa">12</div>
-            <div class="casa">13</div>
-            <div class="casa">14</div>
-            <div class="casa">15</div>
-
-            <div class="casa">16</div>
-            <div class="casa">17</div>
-            <div class="casa">18</div>
-            <div class="casa">19</div>
-            <div class="casa">20</div>
-
-        </div>
-
-
-        <!-- CORES -->
-
-        <div class="cores">
-
-            <button
-                class="btn-cor vermelho"
-                onclick="selecionarCor('vermelho',this)">
-                🔴 VERMELHO
-            </button>
-
-            <button
-                class="btn-cor preto"
-                onclick="selecionarCor('preto',this)">
-                ⚫ PRETO
-            </button>
-
-            <button
-                class="btn-cor verde"
-                onclick="selecionarCor('verde',this)">
-                🟢 VERDE
-            </button>
-
-        </div>
-
-
-        <!-- APOSTAR -->
-
-        <button
-            id="btnApostar"
-            class="btn-apostar"
-            onclick="girarRoleta()"
-            disabled>
-
-            ESCOLHA UMA COR
-
-        </button>
-
-
-        <div class="info">
-
-            <span>
-                Aposta:
-                <strong id="apostaInfo">R$ 0,50</strong>
-            </span>
-
-            <span>
-                Saldo:
-                <strong id="saldoPainel">R$ 0,00</strong>
-            </span>
-
-        </div>
-
-
-        <div class="mensagem">
-            MODO DE TESTE • SALDO LOCAL
+        <div class="roda-centro">
+            AX
         </div>
 
     </div>
 
 </div>
 
+<div class="resultado-texto" id="resultadoDisplay">
+    --
+</div>
+
+<div class="controles">
 
 <button
-    class="repeat-btn"
-    onclick="repetirAposta()">
-    ↻
+    type="button"
+    class="btn-cor btn-vermelho"
+    onclick="selecionarCor('vermelho',this)">
+    Vermelho
 </button>
-
 
 <button
-    class="menu-btn"
-    onclick="abrirMenu()">
-    ☰
+    type="button"
+    class="btn-cor btn-verde"
+    onclick="selecionarCor('verde',this)">
+    Verde
 </button>
 
+<button
+    type="button"
+    class="btn-cor btn-preto"
+    onclick="selecionarCor('preto',this)">
+    Preto
+</button>
+
+</div>
+
+<button
+    type="button"
+    id="btnApostar"
+    class="btn-apostar"
+    onclick="girarRoleta()"
+    disabled>
+
+    GIRAR ROLETA
+
+</button>
+
+</div>
+
+<a href="../index.html" class="btn-voltar">
+    ← Voltar para Lobby
+</a>
+
+</div>
 
 <script>
 
-/* =====================================================
-   CONFIGURAÇÃO
-===================================================== */
+const VALOR_APOSTA = 5;
 
-let valorAposta = 0.50;
 let corSelecionada = null;
 let rotacaoAtual = 0;
-let girando = false;
-
-const roleta =
-    document.getElementById("roleta");
-
-const resultado =
-    document.getElementById("resultado");
 
 const btnApostar =
     document.getElementById("btnApostar");
 
+const display =
+    document.getElementById("resultadoDisplay");
+
 const saldoEl =
     document.getElementById("displaySaldo");
 
-const saldoPainel =
-    document.getElementById("saldoPainel");
+const roda =
+    document.getElementById("rodaVisual");
 
-const apostaInfo =
-    document.getElementById("apostaInfo");
-
-const fichaDisplay =
-    document.getElementById("fichaDisplay");
+const valoresRoleta =
+    document.getElementById("valoresRoleta");
 
 
-/* =====================================================
+/* =========================
+   VALORES DAS 18 CASAS
+========================= */
+
+const valores = [
+    0.40,
+    0.50,
+    0.60,
+    0.70,
+    0.80,
+    0.90,
+    1.00,
+    0.40,
+    0.50,
+    0.60,
+    0.70,
+    0.80,
+    0.90,
+    1.00,
+    0.40,
+    0.60,
+    0.80,
+    1.00
+];
+
+
+/* =========================
+   CRIA OS VALORES NA ROLETA
+========================= */
+
+valores.forEach((valor,index)=>{
+
+    const el =
+        document.createElement("div");
+
+    el.className="valor";
+
+    const angulo =
+        index * 20 + 10;
+
+    el.style.setProperty(
+        "--angulo",
+        angulo + "deg"
+    );
+
+    el.innerText =
+        "R$ " +
+        valor.toFixed(2).replace(".",",");
+
+    valoresRoleta.appendChild(el);
+
+});
+
+
+/* =========================
    SALDO
-===================================================== */
+========================= */
 
 function getSaldo(){
 
     try{
-
         return parseFloat(
             localStorage.getItem(
                 "apostaXBet_saldo"
@@ -871,9 +500,7 @@ function getSaldo(){
     }catch(e){
 
         return 0;
-
     }
-
 }
 
 
@@ -883,512 +510,186 @@ function setSaldo(valor){
 
         localStorage.setItem(
             "apostaXBet_saldo",
-            Math.max(0,valor).toFixed(2)
+            valor
         );
 
     }catch(e){}
-
 }
 
 
-function atualizarSaldo(){
+function atualizarSaldoUI(){
 
-    const saldo = getSaldo();
+    const saldo=getSaldo();
 
-    const texto =
+    saldoEl.innerText =
         "R$ " +
         saldo.toFixed(2).replace(".",",");
 
-    saldoEl.innerText = texto;
-
-    saldoPainel.innerText = texto;
-
-    if(saldo < valorAposta){
-
-        saldoEl.style.color =
-            "#ff4141";
-
-    }else{
-
-        saldoEl.style.color =
-            "#ffe34f";
-
-    }
-
+    saldoEl.style.color =
+        saldo < 5
+        ? "#ff4d4d"
+        : "#00ed91";
 }
 
 
-atualizarSaldo();
+atualizarSaldoUI();
 
 
-/* =====================================================
-   NÚMEROS
-===================================================== */
-
-function criarNumeros(){
-
-    const area =
-        document.getElementById("numeros");
-
-    area.innerHTML = "";
-
-    const total = 20;
-
-    for(let i=1;i<=total;i++){
-
-        const numero =
-            document.createElement("div");
-
-        numero.className =
-            "numero";
-
-        numero.innerText = i;
-
-        const angulo =
-            ((i-1)*(360/total))-90;
-
-        const raio = 42;
-
-        const x =
-            Math.cos(
-                angulo*Math.PI/180
-            ) * raio;
-
-        const y =
-            Math.sin(
-                angulo*Math.PI/180
-            ) * raio;
-
-        numero.style.transform =
-            `translate(${x}px,${y}px)`;
-
-        area.appendChild(numero);
-
-    }
-
-}
-
-criarNumeros();
-
-
-/* =====================================================
-   ESCOLHER VALOR
-===================================================== */
-
-function selecionarValor(valor,botao){
-
-    if(girando)return;
-
-    valorAposta = valor;
-
-    document
-    .querySelectorAll(".btn-valor")
-    .forEach(b=>{
-        b.classList.remove("ativo");
-    });
-
-    botao.classList.add("ativo");
-
-    apostaInfo.innerText =
-        "R$ " +
-        valor.toFixed(2).replace(".",",");
-
-    fichaDisplay.innerText =
-        valor.toFixed(2).replace(".",",");
-
-    atualizarSaldo();
-
-    atualizarBotao();
-
-}
-
-
-/* =====================================================
-   ESCOLHER COR
-===================================================== */
+/* =========================
+   SELECIONAR COR
+========================= */
 
 function selecionarCor(cor,botao){
 
-    if(girando)return;
-
-    corSelecionada = cor;
-
     document
-    .querySelectorAll(".btn-cor")
-    .forEach(b=>{
-        b.classList.remove("ativo");
-    });
+        .querySelectorAll(".btn-cor")
+        .forEach(b=>{
+            b.classList.remove("ativo");
+        });
 
     botao.classList.add("ativo");
 
-    resultado.innerText =
-        "APOSTA: " +
-        cor.toUpperCase();
+    corSelecionada=cor;
 
-    if(cor==="vermelho"){
-
-        resultado.style.color =
-            "#ff4141";
-
-    }else if(cor==="preto"){
-
-        resultado.style.color =
-            "#eeeeee";
-
-    }else{
-
-        resultado.style.color =
-            "#48ff9a";
-
-    }
-
-    atualizarBotao();
-
+    btnApostar.disabled=false;
 }
 
 
-/* =====================================================
-   BOTÃO
-===================================================== */
-
-function atualizarBotao(){
-
-    if(girando){
-
-        btnApostar.disabled = true;
-
-        btnApostar.innerText =
-            "ROLETA GIRANDO...";
-
-        return;
-
-    }
-
-    if(!corSelecionada){
-
-        btnApostar.disabled = true;
-
-        btnApostar.innerText =
-            "ESCOLHA UMA COR";
-
-        return;
-
-    }
-
-    if(getSaldo() < valorAposta){
-
-        btnApostar.disabled = true;
-
-        btnApostar.innerText =
-            "SALDO INSUFICIENTE";
-
-        return;
-
-    }
-
-    btnApostar.disabled = false;
-
-    btnApostar.innerText =
-        "APOSTAR R$ " +
-        valorAposta
-        .toFixed(2)
-        .replace(".",",");
-
-}
-
-
-/* =====================================================
+/* =========================
    GIRO
-===================================================== */
+========================= */
 
 function girarRoleta(){
 
-    if(girando)return;
-
-    if(!corSelecionada){
-
-        alert(
-            "Escolha uma cor primeiro."
-        );
-
+    if(!corSelecionada)
         return;
 
-    }
 
-    if(getSaldo() < valorAposta){
+    btnApostar.disabled=true;
 
-        alert(
-            "Saldo insuficiente!\n\n" +
-            "Aposta: R$ " +
-            valorAposta
-            .toFixed(2)
-            .replace(".",",")
+
+    document
+        .querySelectorAll(".btn-cor")
+        .forEach(b=>{
+            b.style.pointerEvents="none";
+        });
+
+
+    display.classList.remove("visivel");
+
+
+    /*
+       Escolhe uma casa aleatória.
+    */
+
+    const indice =
+        Math.floor(
+            Math.random()*18
         );
 
-        return;
 
-    }
-
-
-    girando = true;
-
-    atualizarBotao();
+    const valor =
+        valores[indice];
 
 
     /*
-       DESCONTA A APOSTA
-       ANTES DO GIRO
+       Descobre a cor da casa.
     */
 
-    setSaldo(
-        getSaldo() - valorAposta
-    );
+    const cores = [
+        "vermelho",
+        "preto",
+        "verde"
+    ];
 
-    atualizarSaldo();
-
-
-    resultado.innerText =
-        "⚡ GIRANDO...";
-
-    resultado.style.color =
-        "#ffe36a";
+    const corResultado =
+        cores[indice % 3];
 
 
     /*
-       RESULTADO DA RODADA
-
-       vermelho = 45%
-       preto     = 45%
-       verde     = 10%
+       Cada casa ocupa 20 graus.
+       Colocamos a casa escolhida
+       exatamente embaixo da seta.
     */
 
-    const sorteio =
-        Math.random();
-
-    let resultadoCor;
-
-    if(sorteio < 0.45){
-
-        resultadoCor =
-            "vermelho";
-
-    }
-    else if(sorteio < 0.90){
-
-        resultadoCor =
-            "preto";
-
-    }
-    else{
-
-        resultadoCor =
-            "verde";
-
-    }
+    const centroCasa =
+        indice * 20 + 10;
 
 
-    /*
-       ESCOLHE POSIÇÃO VISUAL
-    */
+    const girosExtras =
+        360 * 6;
 
-    let anguloFinal;
-
-    if(resultadoCor==="vermelho"){
-
-        anguloFinal =
-            20 +
-            Math.random()*90;
-
-    }
-    else if(resultadoCor==="preto"){
-
-        anguloFinal =
-            120 +
-            Math.random()*90;
-
-    }
-    else{
-
-        anguloFinal =
-            240 +
-            Math.random()*90;
-
-    }
-
-
-    /*
-       7 VOLTAS COMPLETAS
-    */
-
-    const voltas =
-        360 * 7;
 
     const novaRotacao =
         rotacaoAtual +
-        voltas +
-        (360 - anguloFinal);
+        girosExtras +
+        (360 - centroCasa);
 
 
-    roleta.style.transform =
+    roda.style.transform =
         `rotate(${novaRotacao}deg)`;
+
 
     rotacaoAtual =
         novaRotacao;
 
 
-    /*
-       ESPERA TERMINAR
-    */
-
     setTimeout(()=>{
 
-        finalizarRodada(
-            resultadoCor
-        );
-
-    },4500);
-
-}
+        display.innerText =
+            "PRÊMIO: R$ " +
+            valor.toFixed(2).replace(".",",");
 
 
-/* =====================================================
-   FINALIZAR
-===================================================== */
-
-function finalizarRodada(resultadoCor){
-
-    let multiplicador = 0;
-
-    if(resultadoCor === corSelecionada){
-
-        if(resultadoCor === "verde"){
-
-            multiplicador = 14;
-
-        }else{
-
-            multiplicador = 2;
-
-        }
-
-    }
+        const coresTexto={
+            vermelho:"#ff4d4d",
+            preto:"#aaa",
+            verde:"#00ed91"
+        };
 
 
-    if(resultadoCor==="vermelho"){
-
-        resultado.style.color =
-            "#ff4141";
-
-    }
-    else if(resultadoCor==="preto"){
-
-        resultado.style.color =
-            "#eeeeee";
-
-    }
-    else{
-
-        resultado.style.color =
-            "#48ff9a";
-
-    }
+        display.style.color =
+            coresTexto[corResultado];
 
 
-    if(multiplicador > 0){
-
-        const premio =
-            valorAposta * multiplicador;
+        display.classList.add("visivel");
 
 
         /*
-           ADICIONA O PRÊMIO
+           Resultado visual da aposta.
         */
 
-        setSaldo(
-            getSaldo() + premio
-        );
+        if(corResultado === corSelecionada){
 
-        atualizarSaldo();
+            display.innerText +=
+                "  🎉";
 
+        }else{
 
-        resultado.innerHTML =
-            "🎉 " +
-            resultadoCor.toUpperCase() +
-            "<br>" +
-            "<span style='font-size:14px'>" +
-            "PRÊMIO R$ " +
-            premio.toFixed(2).replace(".",",") +
-            " (" +
-            multiplicador +
-            "x)" +
-            "</span>";
+            display.innerText +=
+                "  • Tente novamente";
 
-    }
-    else{
-
-        resultado.innerHTML =
-            "RESULTADO: " +
-            resultadoCor.toUpperCase() +
-            "<br>" +
-            "<span style='font-size:13px;color:#777'>" +
-            "APOSTA NÃO PREMIADA" +
-            "</span>";
-
-    }
+        }
 
 
-    /*
-       PEQUENA PAUSA ANTES
-       DA PRÓXIMA RODADA
-    */
+        /*
+           Libera os controles.
+        */
 
-    setTimeout(()=>{
+        setTimeout(()=>{
 
-        girando = false;
+            btnApostar.disabled=false;
 
-        atualizarBotao();
+            document
+                .querySelectorAll(".btn-cor")
+                .forEach(b=>{
+                    b.style.pointerEvents="auto";
+                });
 
-    },1200);
-
-}
-
-
-/* =====================================================
-   REPETIR
-===================================================== */
-
-function repetirAposta(){
-
-    if(girando)return;
-
-    if(!corSelecionada){
-
-        resultado.innerText =
-            "ESCOLHA UMA COR";
-
-        return;
-
-    }
-
-    girarRoleta();
-
-}
+        },700);
 
 
-/* =====================================================
-   MENU
-===================================================== */
-
-function abrirMenu(){
-
-    alert(
-        "⚡ APOSTAXBET\n\n" +
-        "ROLETA DE RELÂMPAGOS\n\n" +
-        "Vermelho: 2x\n" +
-        "Preto: 2x\n" +
-        "Verde: 14x\n\n" +
-        "Modo de teste"
-    );
+    },4000);
 
 }
 
