@@ -2,325 +2,639 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>Roleta Neon - ApostaXBet</title>
+<title>Roleta de Relâmpagos - ApostaXBet</title>
 
 <style>
 *{
     box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
     margin:0;
     padding:0;
+    -webkit-tap-highlight-color:transparent;
 }
 
 body{
-    background:#050505;
+    background:
+    radial-gradient(circle at 50% 30%,#18231f,#070a0a 45%,#020303 85%);
     color:white;
-    font-family:'Segoe UI',system-ui,sans-serif;
+    font-family:Arial,sans-serif;
     min-height:100vh;
-    padding-bottom:40px;
     overflow-x:hidden;
+    padding-bottom:30px;
 }
 
 .topo{
-    text-align:center;
-    padding:20px 15px;
-    background:rgba(10,10,10,.95);
-    border-bottom:1px solid rgba(0,255,255,.2);
-    position:sticky;
-    top:0;
-    z-index:100;
-    backdrop-filter:blur(10px);
+    height:58px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 14px;
+    background:#050708;
+    border-bottom:1px solid #292929;
 }
 
-.topo h1{
-    color:#00ffff;
-    font-size:22px;
-    margin-bottom:5px;
-    letter-spacing:2px;
-    text-shadow:0 0 10px rgba(0,255,255,.6);
-}
-
-.saldo{
-    font-weight:bold;
-    font-size:18px;
-}
-
-.container{
-    width:92%;
-    max-width:500px;
-    margin:20px auto;
-    text-align:center;
-}
-
-.roleta-box{
-    background:rgba(20,20,20,.8);
-    border-radius:20px;
-    padding:25px 15px;
-    border:1px solid rgba(255,255,255,.08);
-    box-shadow:0 0 30px rgba(0,0,0,.8);
-}
-
-.info-text{
-    color:#777;
-    font-size:11px;
-    margin-bottom:18px;
-    text-transform:uppercase;
+.logo{
+    color:#f5d76e;
+    font-weight:900;
     letter-spacing:1px;
 }
 
-/* ÁREA DA ROLETA */
+.saldo-topo{
+    text-align:right;
+}
+
+.saldo-label{
+    font-size:9px;
+    color:#777;
+}
+
+#displaySaldo{
+    color:#ffe34f;
+    font-weight:bold;
+    font-size:16px;
+}
+
+.container{
+    width:100%;
+    max-width:520px;
+    margin:auto;
+    padding:10px 8px 40px;
+}
+
+.lobby{
+    position:absolute;
+    top:68px;
+    left:7px;
+    width:60px;
+    height:60px;
+    border:1px solid #777;
+    border-radius:10px;
+    background:#090b0c;
+    color:white;
+    text-decoration:none;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    font-size:10px;
+    z-index:30;
+}
+
+.lobby-icon{
+    font-size:27px;
+}
+
+.titulo{
+    text-align:center;
+    margin-top:10px;
+    color:#d8c36a;
+    font-size:13px;
+    letter-spacing:3px;
+    font-weight:bold;
+}
+
+.subtitulo{
+    text-align:center;
+    color:#555;
+    font-size:9px;
+    letter-spacing:2px;
+    margin:5px 0 10px;
+}
+
+/* =========================
+   ROLETA
+========================= */
 
 .roleta-area{
     position:relative;
-    width:310px;
-    height:310px;
-    max-width:90vw;
-    max-height:90vw;
-    margin:0 auto 20px;
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin-bottom:10px;
 }
 
-.seta-indicadora{
-    position:absolute;
-    top:-5px;
-    left:50%;
-    transform:translateX(-50%);
-    width:0;
-    height:0;
-    border-left:13px solid transparent;
-    border-right:13px solid transparent;
-    border-top:25px solid white;
-    z-index:20;
-    filter:drop-shadow(0 0 6px white);
-}
-
-.roda-container{
-    position:absolute;
-    inset:0;
+.roleta{
+    width:min(92vw,390px);
+    height:min(92vw,390px);
     border-radius:50%;
-    border:6px solid #222;
-    overflow:hidden;
+    position:relative;
+
+    border:5px solid #d7ae31;
+
+    background:
+    radial-gradient(
+        circle,
+        #1b2925 0 15%,
+        #060a09 16% 23%,
+        transparent 24%
+    );
+
     box-shadow:
-        0 0 25px #000,
-        0 0 45px rgba(0,255,255,.15),
-        inset 0 0 20px #000;
+    0 0 8px #ffd84a,
+    0 0 25px rgba(255,205,45,.45),
+    0 0 55px rgba(255,190,20,.2),
+    inset 0 0 25px #000;
 
     transition:
-        transform 4s cubic-bezier(.12,.8,.18,1);
+    transform 4.5s cubic-bezier(.08,.75,.12,1);
+
+    overflow:hidden;
 }
 
-.roda-segmentos{
-    position:absolute;
-    inset:0;
-    border-radius:50%;
-
-    background:conic-gradient(
-        #e63946 0deg 20deg,
-        #151515 20deg 40deg,
-        #00b879 40deg 60deg,
-        #e63946 60deg 80deg,
-        #151515 80deg 100deg,
-        #00b879 100deg 120deg,
-        #e63946 120deg 140deg,
-        #151515 140deg 160deg,
-        #00b879 160deg 180deg,
-        #e63946 180deg 200deg,
-        #151515 200deg 220deg,
-        #00b879 220deg 240deg,
-        #e63946 240deg 260deg,
-        #151515 260deg 280deg,
-        #00b879 280deg 300deg,
-        #e63946 300deg 320deg,
-        #151515 320deg 340deg,
-        #00b879 340deg 360deg
-    );
-}
-
-/* LINHAS DOS SEGMENTOS */
-
-.roda-segmentos::after{
+.roleta::before{
     content:"";
     position:absolute;
-    inset:0;
+    inset:7px;
     border-radius:50%;
-    background:
-        repeating-conic-gradient(
-            transparent 0deg 19.5deg,
-            rgba(255,255,255,.65) 19.5deg 20deg
-        );
+    border:12px solid #101a21;
+    box-shadow:
+    inset 0 0 8px #000,
+    0 0 4px #000;
+    z-index:3;
 }
 
-/* VALORES */
+.roleta::after{
+    content:"";
+    position:absolute;
+    inset:28px;
+    border-radius:50%;
 
-.valores{
+    background:
+    repeating-conic-gradient(
+        from 0deg,
+        rgba(255,225,100,.7) 0deg 1deg,
+        transparent 1deg 18deg
+    );
+
+    z-index:2;
+}
+
+.roleta-inner{
+    position:absolute;
+    inset:30px;
+    border-radius:50%;
+
+    background:
+    repeating-conic-gradient(
+        #28645b 0deg 9deg,
+        #668c82 9deg 18deg
+    );
+
+    box-shadow:
+    inset 0 0 35px rgba(0,0,0,.85),
+    inset 0 0 8px #ffe05b;
+}
+
+/* VALORES DENTRO DA ROLETA */
+
+.numeros{
     position:absolute;
     inset:0;
-    border-radius:50%;
-    z-index:5;
+    z-index:7;
 }
 
-.valor{
+.numero{
     position:absolute;
     left:50%;
     top:50%;
-    width:54px;
-    height:25px;
+
+    width:55px;
+    height:32px;
+
     margin-left:-27px;
-    margin-top:-12px;
+    margin-top:-16px;
 
     display:flex;
     align-items:center;
     justify-content:center;
 
-    font-size:12px;
+    color:#ffe36a;
+    font-size:11px;
     font-weight:900;
-    color:white;
 
     text-shadow:
-        0 0 4px #000,
-        0 0 7px #000;
+    0 1px 2px #000,
+    0 0 5px rgba(255,210,70,.6);
 
-    transform:
-        rotate(var(--angulo))
-        translateY(-112px)
-        rotate(calc(var(--angulo) * -1));
+    transform-origin:center;
+    white-space:nowrap;
+}
+
+.numero.destaque{
+    color:#fff;
+    text-shadow:
+    0 0 5px #fff,
+    0 0 12px #ffe36a;
 }
 
 /* CENTRO */
 
-.roda-centro{
+.centro{
     position:absolute;
-    top:50%;
     left:50%;
+    top:50%;
+
     transform:translate(-50%,-50%);
 
-    width:65px;
-    height:65px;
+    width:82px;
+    height:82px;
 
-    background:#090909;
     border-radius:50%;
 
-    border:3px solid #e6c229;
+    background:
+    radial-gradient(circle,#283d38,#08100e 65%,#020303);
 
-    z-index:10;
+    border:4px solid #d5ad36;
+
+    z-index:12;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    box-shadow:
+    0 0 15px rgba(255,211,53,.55),
+    inset 0 0 15px #000;
+}
+
+.centro strong{
+    color:#ffe36a;
+    font-size:18px;
+    letter-spacing:2px;
+}
+
+.centro span{
+    color:#777;
+    font-size:8px;
+    letter-spacing:2px;
+}
+
+/* PONTEIRO */
+
+.ponteiro{
+    position:absolute;
+    z-index:20;
+    top:-3px;
+    left:50%;
+    transform:translateX(-50%);
+
+    width:0;
+    height:0;
+
+    border-left:13px solid transparent;
+    border-right:13px solid transparent;
+    border-top:27px solid white;
+
+    filter:
+    drop-shadow(0 0 4px white)
+    drop-shadow(0 0 9px #ffe66b);
+}
+
+/* RELÂMPAGOS */
+
+.raio{
+    position:absolute;
+    width:100px;
+    height:4px;
+    background:white;
+    opacity:.7;
+    z-index:18;
+
+    box-shadow:
+    0 0 5px white,
+    0 0 15px #dfffca;
+
+    animation:piscar .7s infinite alternate;
+}
+
+.raio1{
+    left:4px;
+    bottom:50px;
+    transform:rotate(-35deg);
+}
+
+.raio2{
+    right:4px;
+    top:65px;
+    transform:rotate(35deg);
+}
+
+.raio3{
+    left:45px;
+    top:20px;
+    width:70px;
+    transform:rotate(65deg);
+}
+
+@keyframes piscar{
+    from{opacity:.2;}
+    to{opacity:1;}
+}
+
+/* RESULTADO */
+
+.resultado{
+    min-height:58px;
+    text-align:center;
+    color:#ddd;
+    font-size:18px;
+    font-weight:900;
+    text-shadow:0 0 10px currentColor;
+    line-height:24px;
+}
+
+/* PAINEL */
+
+.painel{
+    position:relative;
+    padding:16px 12px 13px;
+
+    background:
+    linear-gradient(145deg,#0d1113,#050708);
+
+    border:1px solid #77642d;
+
+    box-shadow:
+    0 0 15px rgba(0,0,0,.9),
+    inset 0 0 15px rgba(255,200,50,.05);
+}
+
+.ficha-area{
+    height:38px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin-bottom:5px;
+}
+
+.ficha{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+
+    background:
+    radial-gradient(
+        circle,
+        #555 0 45%,
+        #eee 46% 54%,
+        #666 55% 70%,
+        #eee 71% 74%,
+        #333 75%
+    );
+
+    border:2px solid #eee;
 
     display:flex;
     align-items:center;
     justify-content:center;
 
+    color:white;
+    font-size:9px;
     font-weight:bold;
-    color:#e6c229;
 
-    font-size:13px;
+    text-shadow:0 1px 2px #000;
 
     box-shadow:
-        0 0 10px rgba(230,194,41,.5),
-        inset 0 0 12px #000;
+    0 0 8px rgba(255,255,255,.3),
+    0 2px 4px #000;
 }
 
-/* RESULTADO */
+/* VALORES DA APOSTA */
 
-.resultado-texto{
-    font-size:25px;
-    font-weight:900;
-    min-height:35px;
-    margin-bottom:15px;
-
-    text-shadow:0 0 12px currentColor;
-
-    opacity:0;
-    transition:opacity .3s;
+.valores{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:5px;
+    margin-bottom:8px;
 }
 
-.resultado-texto.visivel{
-    opacity:1;
+.btn-valor{
+    height:39px;
+    border:1px solid #5c4d26;
+    background:#090b0c;
+    color:#aaa;
+    border-radius:4px;
+    font-size:12px;
+    font-weight:bold;
 }
 
-/* BOTÕES */
+.btn-valor.ativo{
+    color:#ffe36a;
+    border-color:#ffe36a;
 
-.controles{
+    box-shadow:
+    0 0 10px rgba(255,215,60,.35),
+    inset 0 0 12px rgba(255,215,60,.1);
+}
+
+/* GRADE */
+
+.grade{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    border-left:1px solid #967c36;
+    border-top:1px solid #967c36;
+}
+
+.casa{
+    min-height:55px;
+
     display:flex;
-    gap:8px;
+    flex-direction:column;
+    align-items:center;
     justify-content:center;
-    margin-bottom:20px;
+
+    color:#b5a76e;
+
+    border-right:1px solid #967c36;
+    border-bottom:1px solid #967c36;
+
+    background:
+    linear-gradient(145deg,#000,#101212);
+
+    position:relative;
+
+    font-size:15px;
+    font-weight:bold;
+}
+
+.casa small{
+    color:#666;
+    font-size:8px;
+    margin-top:3px;
+}
+
+.casa.selecionada{
+    color:#ffe46a;
+
+    background:
+    radial-gradient(
+        circle,
+        rgba(255,210,50,.28),
+        rgba(255,190,30,.03)
+    );
+
+    box-shadow:
+    inset 0 0 15px rgba(255,215,60,.25);
+}
+
+.casa.resultado{
+    color:#fff;
+    border-color:#ffe36a;
+
+    box-shadow:
+    inset 0 0 18px rgba(255,220,80,.45),
+    0 0 10px rgba(255,215,60,.3);
+}
+
+/* CORES */
+
+.cores{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:5px;
+    margin-top:8px;
 }
 
 .btn-cor{
-    flex:1;
-    padding:14px 0;
+    min-height:48px;
 
-    border:1px solid rgba(255,255,255,.1);
-    border-radius:10px;
+    border:1px solid #62532a;
+    background:#090b0c;
 
-    color:white;
+    color:#aaa;
+
+    border-radius:4px;
+
+    font-size:12px;
     font-weight:bold;
-    cursor:pointer;
-    font-size:13px;
-
-    opacity:.4;
-    transition:.3s;
-
-    background:rgba(255,255,255,.03);
 }
 
 .btn-cor.ativo{
-    opacity:1;
-    transform:scale(1.05);
-    box-shadow:0 0 15px currentColor;
+    border-color:#ffe05b;
+    color:#fff;
+
+    box-shadow:
+    0 0 10px rgba(255,215,60,.4),
+    inset 0 0 12px rgba(255,215,60,.1);
 }
 
-.btn-vermelho{color:#ff4d4d;}
-.btn-verde{color:#00ed91;}
-.btn-preto{color:#aaa;}
+.vermelho.ativo{
+    color:#ff4141;
+}
+
+.preto.ativo{
+    color:#eee;
+}
+
+.verde.ativo{
+    color:#48ff9a;
+}
+
+/* APOSTAR */
 
 .btn-apostar{
     width:100%;
-    padding:16px;
+    height:54px;
 
-    background:transparent;
-    color:#e6c229;
+    margin-top:9px;
 
-    border:2px solid #e6c229;
-    border-radius:10px;
+    border:1px solid #d5af3d;
+
+    background:
+    linear-gradient(180deg,#332b12,#171306);
+
+    color:#f5d76b;
 
     font-size:16px;
     font-weight:900;
 
-    cursor:pointer;
+    letter-spacing:2px;
 
-    min-height:50px;
+    border-radius:4px;
 
-    box-shadow:0 0 15px rgba(230,194,41,.15);
+    box-shadow:
+    0 0 12px rgba(255,215,60,.18),
+    inset 0 0 10px #000;
 }
 
 .btn-apostar:disabled{
-    opacity:.2;
-    cursor:not-allowed;
-    border-color:#333;
-    color:#333;
-    box-shadow:none;
+    opacity:.35;
+    filter:grayscale(1);
 }
 
-.btn-voltar{
-    display:inline-block;
-    margin-top:20px;
-    color:#444;
-    text-decoration:none;
+/* INFORMAÇÕES */
+
+.info{
+    display:flex;
+    justify-content:space-between;
+
+    margin-top:9px;
+
+    color:#aaa;
     font-size:12px;
 }
 
-@media(max-width:350px){
-    .roleta-area{
-        width:280px;
-        height:280px;
+.info strong{
+    color:#ffe04f;
+}
+
+.mensagem{
+    text-align:center;
+    color:#555;
+    font-size:9px;
+    margin-top:8px;
+}
+
+/* BOTÕES */
+
+.repeat-btn,
+.menu-btn{
+    position:fixed;
+    bottom:15px;
+
+    width:52px;
+    height:52px;
+
+    border-radius:50%;
+
+    border:1px solid #777;
+    background:#090b0c;
+
+    color:#ddd;
+    font-size:23px;
+
+    z-index:40;
+}
+
+.repeat-btn{
+    left:8px;
+}
+
+.menu-btn{
+    right:8px;
+}
+
+@media(max-width:360px){
+
+    .roleta{
+        width:310px;
+        height:310px;
     }
 
-    .valor{
-        transform:
-            rotate(var(--angulo))
-            translateY(-100px)
-            rotate(calc(var(--angulo) * -1));
+    .numero{
+        font-size:9px;
+        width:48px;
+        margin-left:-24px;
+    }
+
+    .casa{
+        min-height:48px;
+        font-size:14px;
     }
 }
 </style>
@@ -329,168 +643,229 @@ body{
 <body>
 
 <div class="topo">
-    <h1>🎰 ROLETA NEON</h1>
-    <div class="saldo" id="displaySaldo">R$ 0,00</div>
+
+    <div class="logo">
+        ⚡ APOSTAXBET
+    </div>
+
+    <div class="saldo-topo">
+        <div class="saldo-label">SALDO</div>
+        <div id="displaySaldo">R$ 0,00</div>
+    </div>
+
 </div>
+
+<a href="../index.html" class="lobby">
+    <div class="lobby-icon">⌂</div>
+    Lobby
+</a>
 
 <div class="container">
 
-<div class="roleta-box">
+    <div class="titulo">
+        ROLETA DE RELÂMPAGOS
+    </div>
 
-<p class="info-text">
-    Escolha uma cor e gire a roleta
-</p>
+    <div class="subtitulo">
+        ESCOLHA O VALOR E A COR
+    </div>
 
-<div class="roleta-area">
+    <!-- ROLETA -->
 
-    <div class="seta-indicadora"></div>
+    <div class="roleta-area">
 
-    <div class="roda-container" id="rodaVisual">
+        <div class="ponteiro"></div>
 
-        <div class="roda-segmentos"></div>
+        <div class="raio raio1"></div>
+        <div class="raio raio2"></div>
+        <div class="raio raio3"></div>
 
-        <div class="valores" id="valoresRoleta"></div>
+        <div class="roleta" id="roleta">
 
-        <div class="roda-centro">
-            AX
+            <div class="roleta-inner"></div>
+
+            <div class="numeros" id="numeros"></div>
+
+            <div class="centro">
+                <strong>AX</strong>
+                <span>ROULETTE</span>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="resultado" id="resultado">
+        ESCOLHA SUA APOSTA
+    </div>
+
+    <div class="painel">
+
+        <div class="ficha-area">
+
+            <div class="ficha" id="fichaDisplay">
+                0,50
+            </div>
+
+        </div>
+
+        <!-- VALORES DA APOSTA -->
+
+        <div class="valores">
+
+            <button
+                class="btn-valor ativo"
+                onclick="selecionarValor(0.50,this)">
+                R$ 0,50
+            </button>
+
+            <button
+                class="btn-valor"
+                onclick="selecionarValor(1,this)">
+                R$ 1
+            </button>
+
+            <button
+                class="btn-valor"
+                onclick="selecionarValor(2,this)">
+                R$ 2
+            </button>
+
+            <button
+                class="btn-valor"
+                onclick="selecionarValor(5,this)">
+                R$ 5
+            </button>
+
+        </div>
+
+        <!-- GRADE DOS PRÊMIOS -->
+
+        <div class="grade" id="gradePremios"></div>
+
+        <!-- CORES -->
+
+        <div class="cores">
+
+            <button
+                class="btn-cor vermelho"
+                onclick="selecionarCor('vermelho',this)">
+                🔴 VERMELHO
+            </button>
+
+            <button
+                class="btn-cor preto"
+                onclick="selecionarCor('preto',this)">
+                ⚫ PRETO
+            </button>
+
+            <button
+                class="btn-cor verde"
+                onclick="selecionarCor('verde',this)">
+                🟢 VERDE
+            </button>
+
+        </div>
+
+        <button
+            id="btnApostar"
+            class="btn-apostar"
+            onclick="girarRoleta()"
+            disabled>
+
+            ESCOLHA UMA COR
+
+        </button>
+
+        <div class="info">
+
+            <span>
+                Aposta:
+                <strong id="apostaInfo">R$ 0,50</strong>
+            </span>
+
+            <span>
+                Saldo:
+                <strong id="saldoPainel">R$ 0,00</strong>
+            </span>
+
+        </div>
+
+        <div class="mensagem">
+            MODO DE TESTE • SALDO LOCAL
         </div>
 
     </div>
 
 </div>
 
-<div class="resultado-texto" id="resultadoDisplay">
-    --
-</div>
-
-<div class="controles">
-
 <button
-    type="button"
-    class="btn-cor btn-vermelho"
-    onclick="selecionarCor('vermelho',this)">
-    Vermelho
+    class="repeat-btn"
+    onclick="repetirAposta()">
+    ↻
 </button>
 
 <button
-    type="button"
-    class="btn-cor btn-verde"
-    onclick="selecionarCor('verde',this)">
-    Verde
+    class="menu-btn"
+    onclick="abrirMenu()">
+    ☰
 </button>
-
-<button
-    type="button"
-    class="btn-cor btn-preto"
-    onclick="selecionarCor('preto',this)">
-    Preto
-</button>
-
-</div>
-
-<button
-    type="button"
-    id="btnApostar"
-    class="btn-apostar"
-    onclick="girarRoleta()"
-    disabled>
-
-    GIRAR ROLETA
-
-</button>
-
-</div>
-
-<a href="../index.html" class="btn-voltar">
-    ← Voltar para Lobby
-</a>
-
-</div>
 
 <script>
 
-const VALOR_APOSTA = 5;
+/* =====================================================
+   CONFIGURAÇÃO
+===================================================== */
 
+let valorAposta = 0.50;
 let corSelecionada = null;
 let rotacaoAtual = 0;
+let girando = false;
+let casaSorteada = null;
+
+/*
+   20 valores da roleta.
+
+   Todos ficam entre R$ 0,40 e R$ 1,00.
+*/
+
+const premiosBase = [
+    0.40, 0.45, 0.50, 0.55, 0.60,
+    0.65, 0.70, 0.75, 0.80, 0.85,
+    0.90, 0.95, 1.00, 0.90, 0.80,
+    0.70, 0.60, 0.50, 0.45, 0.40
+];
+
+const roleta =
+    document.getElementById("roleta");
+
+const resultado =
+    document.getElementById("resultado");
 
 const btnApostar =
     document.getElementById("btnApostar");
 
-const display =
-    document.getElementById("resultadoDisplay");
-
 const saldoEl =
     document.getElementById("displaySaldo");
 
-const roda =
-    document.getElementById("rodaVisual");
+const saldoPainel =
+    document.getElementById("saldoPainel");
 
-const valoresRoleta =
-    document.getElementById("valoresRoleta");
+const apostaInfo =
+    document.getElementById("apostaInfo");
 
-
-/* =========================
-   VALORES DAS 18 CASAS
-========================= */
-
-const valores = [
-    0.40,
-    0.50,
-    0.60,
-    0.70,
-    0.80,
-    0.90,
-    1.00,
-    0.40,
-    0.50,
-    0.60,
-    0.70,
-    0.80,
-    0.90,
-    1.00,
-    0.40,
-    0.60,
-    0.80,
-    1.00
-];
+const fichaDisplay =
+    document.getElementById("fichaDisplay");
 
 
-/* =========================
-   CRIA OS VALORES NA ROLETA
-========================= */
-
-valores.forEach((valor,index)=>{
-
-    const el =
-        document.createElement("div");
-
-    el.className="valor";
-
-    const angulo =
-        index * 20 + 10;
-
-    el.style.setProperty(
-        "--angulo",
-        angulo + "deg"
-    );
-
-    el.innerText =
-        "R$ " +
-        valor.toFixed(2).replace(".",",");
-
-    valoresRoleta.appendChild(el);
-
-});
-
-
-/* =========================
+/* =====================================================
    SALDO
-========================= */
+===================================================== */
 
 function getSaldo(){
 
     try{
+
         return parseFloat(
             localStorage.getItem(
                 "apostaXBet_saldo"
@@ -500,9 +875,10 @@ function getSaldo(){
     }catch(e){
 
         return 0;
-    }
-}
 
+    }
+
+}
 
 function setSaldo(valor){
 
@@ -510,186 +886,663 @@ function setSaldo(valor){
 
         localStorage.setItem(
             "apostaXBet_saldo",
-            valor
+            Math.max(0,valor).toFixed(2)
         );
 
     }catch(e){}
+
 }
 
+function atualizarSaldo(){
 
-function atualizarSaldoUI(){
+    const saldo = getSaldo();
 
-    const saldo=getSaldo();
-
-    saldoEl.innerText =
+    const texto =
         "R$ " +
         saldo.toFixed(2).replace(".",",");
 
-    saldoEl.style.color =
-        saldo < 5
-        ? "#ff4d4d"
-        : "#00ed91";
+    saldoEl.innerText = texto;
+
+    saldoPainel.innerText = texto;
+
+    if(saldo < valorAposta){
+
+        saldoEl.style.color =
+            "#ff4141";
+
+    }else{
+
+        saldoEl.style.color =
+            "#ffe34f";
+
+    }
+
 }
 
+atualizarSaldo();
 
-atualizarSaldoUI();
+
+/* =====================================================
+   CRIAR VALORES NA ROLETA
+===================================================== */
+
+function criarNumeros(){
+
+    const area =
+        document.getElementById("numeros");
+
+    area.innerHTML = "";
+
+    const total = premiosBase.length;
+
+    for(let i=0;i<total;i++){
+
+        const numero =
+            document.createElement("div");
+
+        numero.className =
+            "numero";
+
+        numero.id =
+            "roletaValor" + i;
+
+        numero.innerText =
+            "R$ " +
+            premiosBase[i]
+            .toFixed(2)
+            .replace(".",",");
+
+        /*
+           A casa 0 começa no topo.
+        */
+
+        const angulo =
+            (i * (360 / total)) - 90;
+
+        const raio = 39;
+
+        const x =
+            Math.cos(
+                angulo * Math.PI / 180
+            ) * raio;
+
+        const y =
+            Math.sin(
+                angulo * Math.PI / 180
+            ) * raio;
+
+        numero.style.transform =
+            `translate(${x}px,${y}px)`;
+
+        area.appendChild(numero);
+
+    }
+
+}
+
+criarNumeros();
 
 
-/* =========================
-   SELECIONAR COR
-========================= */
+/* =====================================================
+   CRIAR GRADE DE PRÊMIOS
+===================================================== */
 
-function selecionarCor(cor,botao){
+function criarGrade(){
+
+    const grade =
+        document.getElementById(
+            "gradePremios"
+        );
+
+    grade.innerHTML = "";
+
+    premiosBase.forEach(
+        (valor,index)=>{
+
+            const casa =
+                document.createElement("div");
+
+            casa.className =
+                "casa";
+
+            casa.id =
+                "casa" + index;
+
+            casa.innerHTML =
+                `<span>${index + 1}</span>
+                 <small>R$ ${valor
+                    .toFixed(2)
+                    .replace(".",",")}</small>`;
+
+            grade.appendChild(casa);
+
+        }
+    );
+
+}
+
+criarGrade();
+
+
+/* =====================================================
+   ESCOLHER VALOR DA APOSTA
+===================================================== */
+
+function selecionarValor(valor,botao){
+
+    if(girando)return;
+
+    valorAposta = valor;
 
     document
-        .querySelectorAll(".btn-cor")
-        .forEach(b=>{
-            b.classList.remove("ativo");
-        });
+    .querySelectorAll(".btn-valor")
+    .forEach(b=>{
+        b.classList.remove("ativo");
+    });
 
     botao.classList.add("ativo");
 
-    corSelecionada=cor;
+    apostaInfo.innerText =
+        "R$ " +
+        valor
+        .toFixed(2)
+        .replace(".",",");
 
-    btnApostar.disabled=false;
+    fichaDisplay.innerText =
+        valor
+        .toFixed(2)
+        .replace(".",",");
+
+    atualizarSaldo();
+
+    atualizarBotao();
+
 }
 
 
-/* =========================
+/* =====================================================
+   ESCOLHER COR
+===================================================== */
+
+function selecionarCor(cor,botao){
+
+    if(girando)return;
+
+    corSelecionada = cor;
+
+    document
+    .querySelectorAll(".btn-cor")
+    .forEach(b=>{
+        b.classList.remove("ativo");
+    });
+
+    botao.classList.add("ativo");
+
+    resultado.innerText =
+        "APOSTA: " +
+        cor.toUpperCase();
+
+    if(cor==="vermelho"){
+
+        resultado.style.color =
+            "#ff4141";
+
+    }else if(cor==="preto"){
+
+        resultado.style.color =
+            "#eeeeee";
+
+    }else{
+
+        resultado.style.color =
+            "#48ff9a";
+
+    }
+
+    atualizarBotao();
+
+}
+
+
+/* =====================================================
+   BOTÃO
+===================================================== */
+
+function atualizarBotao(){
+
+    if(girando){
+
+        btnApostar.disabled = true;
+
+        btnApostar.innerText =
+            "ROLETA GIRANDO...";
+
+        return;
+
+    }
+
+    if(!corSelecionada){
+
+        btnApostar.disabled = true;
+
+        btnApostar.innerText =
+            "ESCOLHA UMA COR";
+
+        return;
+
+    }
+
+    if(getSaldo() < valorAposta){
+
+        btnApostar.disabled = true;
+
+        btnApostar.innerText =
+            "SALDO INSUFICIENTE";
+
+        return;
+
+    }
+
+    btnApostar.disabled = false;
+
+    btnApostar.innerText =
+        "APOSTAR R$ " +
+        valorAposta
+        .toFixed(2)
+        .replace(".",",");
+
+}
+
+
+/* =====================================================
+   LIMPAR DESTAQUES
+===================================================== */
+
+function limparDestaques(){
+
+    document
+    .querySelectorAll(".casa")
+    .forEach(c=>{
+        c.classList.remove(
+            "resultado",
+            "selecionada"
+        );
+    });
+
+    document
+    .querySelectorAll(".numero")
+    .forEach(n=>{
+        n.classList.remove(
+            "destaque"
+        );
+    });
+
+}
+
+
+/* =====================================================
    GIRO
-========================= */
+===================================================== */
 
 function girarRoleta(){
 
-    if(!corSelecionada)
+    if(girando)return;
+
+    if(!corSelecionada){
+
+        alert(
+            "Escolha uma cor primeiro."
+        );
+
         return;
 
+    }
 
-    btnApostar.disabled=true;
+    if(getSaldo() < valorAposta){
 
+        alert(
+            "Saldo insuficiente!\n\n" +
+            "Aposta: R$ " +
+            valorAposta
+            .toFixed(2)
+            .replace(".",",")
+        );
 
-    document
-        .querySelectorAll(".btn-cor")
-        .forEach(b=>{
-            b.style.pointerEvents="none";
-        });
+        return;
 
+    }
 
-    display.classList.remove("visivel");
+    girando = true;
+
+    atualizarBotao();
+
+    limparDestaques();
+
+    /*
+       Desconta a aposta antes do giro.
+    */
+
+    setSaldo(
+        getSaldo() - valorAposta
+    );
+
+    atualizarSaldo();
+
+    resultado.innerText =
+        "⚡ GIRANDO...";
+
+    resultado.style.color =
+        "#ffe36a";
 
 
     /*
-       Escolhe uma casa aleatória.
+       Sorteia a casa.
+
+       A cor também é sorteada.
     */
 
-    const indice =
+    casaSorteada =
         Math.floor(
-            Math.random()*18
+            Math.random() *
+            premiosBase.length
         );
 
 
-    const valor =
-        valores[indice];
+    const valorCasa =
+        premiosBase[casaSorteada];
 
 
     /*
-       Descobre a cor da casa.
+       Define uma cor para a casa.
+
+       Mantemos aproximadamente:
+       45% vermelho
+       45% preto
+       10% verde
     */
 
-    const cores = [
-        "vermelho",
-        "preto",
-        "verde"
-    ];
+    const sorteioCor =
+        Math.random();
 
-    const corResultado =
-        cores[indice % 3];
+    let resultadoCor;
+
+    if(sorteioCor < 0.45){
+
+        resultadoCor =
+            "vermelho";
+
+    }
+    else if(sorteioCor < 0.90){
+
+        resultadoCor =
+            "preto";
+
+    }
+    else{
+
+        resultadoCor =
+            "verde";
+
+    }
 
 
     /*
-       Cada casa ocupa 20 graus.
-       Colocamos a casa escolhida
-       exatamente embaixo da seta.
+       Cada casa representa um ângulo
+       de 18 graus.
+
+       O centro da casa fica
+       exatamente no ponteiro.
     */
 
-    const centroCasa =
-        indice * 20 + 10;
+    const total =
+        premiosBase.length;
+
+    const anguloCasa =
+        casaSorteada *
+        (360 / total);
+
+    const anguloFinal =
+        anguloCasa;
 
 
-    const girosExtras =
-        360 * 6;
+    /*
+       7 voltas completas.
+    */
 
+    const voltas =
+        360 * 7;
 
     const novaRotacao =
         rotacaoAtual +
-        girosExtras +
-        (360 - centroCasa);
+        voltas -
+        anguloFinal;
 
 
-    roda.style.transform =
+    roleta.style.transform =
         `rotate(${novaRotacao}deg)`;
-
 
     rotacaoAtual =
         novaRotacao;
 
 
+    /*
+       Guarda a cor junto da casa
+       para finalizar depois.
+    */
+
+    roleta.dataset.cor =
+        resultadoCor;
+
+
+    /*
+       Espera a animação.
+    */
+
     setTimeout(()=>{
 
-        display.innerText =
-            "PRÊMIO: R$ " +
-            valor.toFixed(2).replace(".",",");
+        finalizarRodada();
+
+    },4500);
+
+}
 
 
-        const coresTexto={
-            vermelho:"#ff4d4d",
-            preto:"#aaa",
-            verde:"#00ed91"
-        };
+/* =====================================================
+   FINALIZAR RODADA
+===================================================== */
+
+function finalizarRodada(){
+
+    const resultadoCor =
+        roleta.dataset.cor;
+
+    const valorCasa =
+        premiosBase[casaSorteada];
 
 
-        display.style.color =
-            coresTexto[corResultado];
+    /*
+       Mostra a casa sorteada.
+    */
+
+    const casa =
+        document.getElementById(
+            "casa" + casaSorteada
+        );
+
+    const numero =
+        document.getElementById(
+            "roletaValor" + casaSorteada
+        );
+
+    if(casa){
+
+        casa.classList.add(
+            "resultado"
+        );
+
+    }
+
+    if(numero){
+
+        numero.classList.add(
+            "destaque"
+        );
+
+    }
 
 
-        display.classList.add("visivel");
+    /*
+       O valor base é para aposta
+       de R$ 0,50.
+
+       Exemplo:
+
+       aposta 0,50
+       casa 0,80
+       prêmio = 0,80
+
+       aposta 1,00
+       casa 0,80
+       prêmio = 1,60
+
+       aposta 2,00
+       casa 0,80
+       prêmio = 3,20
+    */
+
+    const multiplicadorAposta =
+        valorAposta / 0.50;
+
+    const premio =
+        valorCasa *
+        multiplicadorAposta;
 
 
-        /*
-           Resultado visual da aposta.
-        */
+    /*
+       Só paga se a cor escolhida
+       for a cor sorteada.
+    */
 
-        if(corResultado === corSelecionada){
+    if(resultadoCor === corSelecionada){
 
-            display.innerText +=
-                "  🎉";
+        setSaldo(
+            getSaldo() + premio
+        );
 
-        }else{
+        atualizarSaldo();
 
-            display.innerText +=
-                "  • Tente novamente";
+        if(resultadoCor === "vermelho"){
+
+            resultado.style.color =
+                "#ff4141";
+
+        }
+        else if(resultadoCor === "preto"){
+
+            resultado.style.color =
+                "#eeeeee";
+
+        }
+        else{
+
+            resultado.style.color =
+                "#48ff9a";
 
         }
 
+        resultado.innerHTML =
+            "🎉 " +
+            resultadoCor.toUpperCase() +
+            "<br>" +
+            "<span style='font-size:14px'>" +
+            "PRÊMIO: R$ " +
+            premio.toFixed(2)
+            .replace(".",",") +
+            "</span>" +
+            "<br>" +
+            "<span style='font-size:12px;color:#ffe36a'>" +
+            "CASA " +
+            (casaSorteada + 1) +
+            " • VALOR R$ " +
+            valorCasa.toFixed(2)
+            .replace(".",",") +
+            "</span>";
 
-        /*
-           Libera os controles.
-        */
+    }
+    else{
 
-        setTimeout(()=>{
+        resultado.style.color =
+            "#aaa";
 
-            btnApostar.disabled=false;
+        resultado.innerHTML =
+            "RESULTADO: " +
+            resultadoCor.toUpperCase() +
+            "<br>" +
+            "<span style='font-size:14px;color:#ffe36a'>" +
+            "VALOR DA CASA: R$ " +
+            valorCasa
+            .toFixed(2)
+            .replace(".",",") +
+            "</span>" +
+            "<br>" +
+            "<span style='font-size:12px;color:#777'>" +
+            "COR NÃO PREMIADA" +
+            "</span>";
 
-            document
-                .querySelectorAll(".btn-cor")
-                .forEach(b=>{
-                    b.style.pointerEvents="auto";
-                });
-
-        },700);
+    }
 
 
-    },4000);
+    /*
+       Libera a próxima rodada.
+    */
+
+    setTimeout(()=>{
+
+        girando = false;
+
+        atualizarBotao();
+
+    },1200);
+
+}
+
+
+/* =====================================================
+   REPETIR APOSTA
+===================================================== */
+
+function repetirAposta(){
+
+    if(girando)return;
+
+    if(!corSelecionada){
+
+        resultado.innerText =
+            "ESCOLHA UMA COR";
+
+        return;
+
+    }
+
+    girarRoleta();
+
+}
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+function abrirMenu(){
+
+    alert(
+        "⚡ APOSTAXBET\n\n" +
+        "ROLETA DE RELÂMPAGOS\n\n" +
+        "20 casas de prêmio\n" +
+        "Valores: R$ 0,40 a R$ 1,00\n\n" +
+        "O prêmio acompanha o valor da aposta.\n\n" +
+        "MODO DE TESTE"
+    );
 
 }
 
