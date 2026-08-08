@@ -1,1016 +1,179 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Roleta - ApostaXBet</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Roleta Neon - ApostaXBet</title>
+    <style>
+        /* Reset e Base Neon */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        body { 
+            background: #050505; color: white; font-family: 'Segoe UI', system-ui, sans-serif; 
+            min-height: 100vh; padding-bottom: 40px; 
+        }
+        
+        /* Topo com Efeito Glow */
+        .topo { 
+            text-align: center; padding: 25px 15px; background: rgba(10,10,10,0.9); 
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3); 
+            position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px);
+        }
+        .topo h1 { 
+            color: #00ffff; font-size: 24px; margin-bottom: 8px; letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.6), 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+        .saldo { 
+            font-weight: bold; font-size: 18px; transition: all 0.3s ease; 
+            text-shadow: 0 0 5px currentColor;
+        }
+        
+        /* Container Principal */
+        .container { width: 92%; max-width: 500px; margin: 30px auto; text-align: center; }
+        .roleta-box { 
+            background: rgba(20, 20, 20, 0.8); border-radius: 20px; padding: 30px 20px; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+        }
+        
+        .info-text { color: #888; font-size: 12px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        /* Display de Resultado Neon */
+        .resultado { 
+            font-size: 48px; font-weight: 900; height: 80px; 
+            display: flex; align-items: center; justify-content: center;
+            margin: 20px 0; color: #fff; 
+            text-shadow: 0 0 15px rgba(255,255,255,0.5);
+            animation: pulseText 2s infinite alternate;
+        }
+        
+        /* Botões de Cores Estilo Glassmorphism */
+        .controles { display: flex; gap: 10px; justify-content: center; margin-bottom: 30px; }
+        .btn-cor { 
+            flex: 1; padding: 18px 0; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; 
+            color: white; font-weight: bold; cursor: pointer; font-size: 14px;
+            opacity: 0.5; transform: scale(1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255,255,255,0.05); backdrop-filter: blur(5px);
+            min-height: 50px; position: relative; overflow: hidden;
+        }
+        .btn-cor::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .btn-cor:hover::before { left: 100%; }
+        
+        .btn-cor.ativo { opacity: 1; transform: scale(1.08); border-color: rgba(255,255,255,0.5); box-shadow: 0 0 20px currentColor; z-index: 2; }
+        
+        .btn-vermelho { color: #ff4d4d; }
+        .btn-vermelho.ativo { background: rgba(255, 77, 77, 0.2); }
+        .btn-preto { color: #aaaaaa; }
+        .btn-preto.ativo { background: rgba(170, 170, 170, 0.2); }
+        .btn-verde { color: #00ed91; }
+        .btn-verde.ativo { background: rgba(0, 237, 145, 0.2); }
+        
+        /* Botão de Apostar Neon */
+        .btn-apostar { 
+            width: 100%; padding: 20px; background: transparent; color: #e6c229; 
+            border: 2px solid #e6c229; border-radius: 12px; font-size: 18px; font-weight: 900; 
+            cursor: pointer; transition: all 0.3s; min-height: 60px;
+            text-shadow: 0 0 10px rgba(230, 194, 41, 0.5);
+            box-shadow: 0 0 15px rgba(230, 194, 41, 0.2), inset 0 0 10px rgba(230, 194, 41, 0.1);
+        }
+        .btn-apostar:not(:disabled):hover { 
+            background: rgba(230, 194, 41, 0.1); 
+            box-shadow: 0 0 25px rgba(230, 194, 41, 0.4), inset 0 0 15px rgba(230, 194, 41, 0.2);
+        }
+        .btn-apostar:active:not(:disabled) { transform: scale(0.97); }
+        .btn-apostar:disabled { opacity: 0.2; cursor: not-allowed; filter: grayscale(100%); box-shadow: none; border-color: #333; color: #333; text-shadow: none;}
+        
+        .btn-voltar { display: inline-block; margin-top: 30px; color: #555; text-decoration: none; font-size: 13px; transition: color 0.3s; }
+        .btn-voltar:hover { color: #00ffff; text-shadow: 0 0 5px rgba(0, 255, 255, 0.5); }
 
-<style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    -webkit-tap-highlight-color:transparent;
-}
-
-body{
-    background:#000;
-    color:#fff;
-    font-family:Arial,sans-serif;
-    min-height:100vh;
-    padding-bottom:40px;
-}
-
-.topo{
-    text-align:center;
-    padding:20px 15px;
-    background:#111;
-    border-bottom:2px solid #d9b21f;
-}
-
-.topo h1{
-    color:#e6c229;
-    font-size:23px;
-    margin-bottom:6px;
-}
-
-.saldo{
-    color:#00ed91;
-    font-size:18px;
-    font-weight:bold;
-}
-
-.btn-som{
-    margin-top:12px;
-    padding:9px 18px;
-    border:1px solid #d9b21f;
-    border-radius:20px;
-    background:#222;
-    color:#fff;
-    font-size:14px;
-    font-weight:bold;
-}
-
-.container{
-    width:94%;
-    max-width:500px;
-    margin:25px auto;
-    text-align:center;
-}
-
-.roleta-box{
-    background:#151515;
-    border:1px solid #333;
-    border-radius:18px;
-    padding:22px 15px 28px;
-    box-shadow:0 5px 25px rgba(0,0,0,.6);
-}
-
-.info-text{
-    color:#aaa;
-    font-size:14px;
-    margin-bottom:20px;
-}
-
-.roleta-area{
-    position:relative;
-    width:300px;
-    height:300px;
-    max-width:85vw;
-    max-height:85vw;
-    margin:10px auto 25px;
-}
-
-.ponteiro{
-    position:absolute;
-    top:-8px;
-    left:50%;
-    transform:translateX(-50%);
-    width:0;
-    height:0;
-    border-left:14px solid transparent;
-    border-right:14px solid transparent;
-    border-top:30px solid #e6c229;
-    z-index:10;
-    filter:drop-shadow(0 2px 3px #000);
-}
-
-.roleta{
-    width:100%;
-    height:100%;
-    border-radius:50%;
-    border:8px solid #d9b21f;
-    position:relative;
-    overflow:hidden;
-    box-shadow:
-        0 0 0 5px #222,
-        0 0 25px rgba(217,178,31,.4);
-
-    background:
-        conic-gradient(
-            #c92f3b 0deg 30deg,
-            #111 30deg 60deg,
-            #c92f3b 60deg 90deg,
-            #111 90deg 120deg,
-            #c92f3b 120deg 150deg,
-            #111 150deg 180deg,
-            #c92f3b 180deg 210deg,
-            #111 210deg 240deg,
-            #c92f3b 240deg 270deg,
-            #111 270deg 300deg,
-            #c92f3b 300deg 330deg,
-            #159447 330deg 360deg
-        );
-
-    transition:
-        transform 3s cubic-bezier(.15,.75,.15,1);
-}
-
-.roleta::after{
-    content:"";
-    position:absolute;
-    width:70px;
-    height:70px;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%);
-    background:#111;
-    border:5px solid #e6c229;
-    border-radius:50%;
-    box-shadow:0 0 10px #000;
-}
-
-.resultado{
-    min-height:45px;
-    font-size:27px;
-    font-weight:bold;
-    margin-bottom:15px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-.controles{
-    display:flex;
-    gap:8px;
-    margin-bottom:18px;
-}
-
-.btn-cor{
-    flex:1;
-    min-height:60px;
-    border:0;
-    border-radius:10px;
-    color:#fff;
-    font-weight:bold;
-    font-size:14px;
-    opacity:.45;
-    cursor:pointer;
-}
-
-.btn-cor.ativo{
-    opacity:1;
-    transform:scale(1.04);
-    box-shadow:0 0 15px rgba(255,255,255,.35);
-}
-
-.btn-vermelho{
-    background:#c92f3b;
-}
-
-.btn-preto{
-    background:#222;
-    border:1px solid #666;
-}
-
-.btn-verde{
-    background:#159447;
-}
-
-.valor{
-    display:block;
-    margin-top:5px;
-    font-size:13px;
-    opacity:.9;
-}
-
-.btn-apostar{
-    width:100%;
-    min-height:55px;
-    border:0;
-    border-radius:11px;
-    background:#e6c229;
-    color:#000;
-    font-size:17px;
-    font-weight:bold;
-}
-
-.btn-apostar:disabled{
-    opacity:.35;
-}
-
-.btn-voltar{
-    display:inline-block;
-    margin-top:22px;
-    color:#888;
-    text-decoration:none;
-    padding:10px;
-}
-
-
-/* ==============================
-   ANIMAÇÃO DE SUSPENSE
-============================== */
-
-@keyframes pulsarSuspense{
-
-    0%{
-        box-shadow:
-        0 0 20px rgba(217,178,31,.25);
-    }
-
-    50%{
-        box-shadow:
-        0 0 45px rgba(217,178,31,.75);
-    }
-
-    100%{
-        box-shadow:
-        0 0 20px rgba(217,178,31,.25);
-    }
-}
-
-.roleta.suspense{
-    animation:
-        pulsarSuspense .45s infinite;
-}
-</style>
+        @keyframes pulseText { from { text-shadow: 0 0 10px rgba(255,255,255,0.3); } to { text-shadow: 0 0 20px rgba(255,255,255,0.8); } }
+    </style>
 </head>
-
 <body>
-
-<div class="topo">
-
-<h1>🎰 APOSTAXBET</h1>
-
-<div class="saldo">
-💰 R$ 0,00
-</div>
-
-<button
-id="btnSom"
-class="btn-som"
-onclick="alternarSom()">
-🔊 Suspense ligado
-</button>
-
-</div>
-
-
-<div class="container">
-
-<div class="roleta-box">
-
-<p class="info-text">
-ESCOLHA UMA COR — R$ 0,50
-</p>
-
-
-<div class="roleta-area">
-
-<div class="ponteiro"></div>
-
-<div
-class="roleta"
-id="roleta">
-</div>
-
-</div>
-
-
-<div
-class="resultado"
-id="resultado">
-
-Escolha uma cor
-
-</div>
-
-
-<div class="controles">
-
-<button
-class="btn-cor btn-vermelho"
-onclick="selecionarCor('vermelho',this)">
-
-Vermelho
-
-<span class="valor">
-R$ 0,50
-</span>
-
-</button>
-
-
-<button
-class="btn-cor btn-verde"
-onclick="selecionarCor('verde',this)">
-
-Verde
-
-<span class="valor">
-R$ 0,50
-</span>
-
-</button>
-
-
-<button
-class="btn-cor btn-preto"
-onclick="selecionarCor('preto',this)">
-
-Preto
-
-<span class="valor">
-R$ 0,50
-</span>
-
-</button>
-
-</div>
-
-
-<button
-id="btnGirar"
-class="btn-apostar"
-onclick="girarRoleta()"
-disabled>
-
-GIRAR ROLETA — R$ 0,50
-
-</button>
-
-</div>
-
-
-<a
-href="../index.html"
-class="btn-voltar">
-
-← Voltar para Lobby
-
-</a>
-
-</div>
-
-
-<script>
-
-/* ============================
-   VARIÁVEIS
-============================ */
-
-let corSelecionada = null;
-let girando = false;
-let rotacaoAtual = 0;
-
-let somLigado = true;
-
-let audioContext = null;
-
-let osciladorGrave = null;
-let ganhoGrave = null;
-
-let intervaloBatida = null;
-
-let tempoInicio = 0;
-
-
-/* ELEMENTOS */
-
-const roleta =
-document.getElementById("roleta");
-
-const resultado =
-document.getElementById("resultado");
-
-const btnGirar =
-document.getElementById("btnGirar");
-
-const btnSom =
-document.getElementById("btnSom");
-
-
-/* ============================
-   ÁUDIO
-============================ */
-
-function iniciarAudio(){
-
-if(!audioContext){
-
-audioContext =
-new (
-window.AudioContext ||
-window.webkitAudioContext
-)();
-
-}
-
-if(
-audioContext.state ===
-"suspended"
-){
-
-audioContext.resume();
-
-}
-
-}
-
-
-/* ============================
-   GRAVE DE SUSPENSE
-============================ */
-
-function iniciarGrave(){
-
-if(!somLigado)
-return;
-
-iniciarAudio();
-
-
-osciladorGrave =
-audioContext.createOscillator();
-
-ganhoGrave =
-audioContext.createGain();
-
-
-osciladorGrave.type =
-"sine";
-
-
-osciladorGrave.frequency.value =
-55;
-
-
-ganhoGrave.gain.value =
-0.0001;
-
-
-osciladorGrave.connect(
-ganhoGrave
-);
-
-ganhoGrave.connect(
-audioContext.destination
-);
-
-
-osciladorGrave.start();
-
-
-ganhoGrave.gain.exponentialRampToValueAtTime(
-0.08,
-audioContext.currentTime + 1
-);
-
-}
-
-
-/* ============================
-   BATIDA DE SUSPENSE
-============================ */
-
-function batidaSuspense(){
-
-if(!somLigado)
-return;
-
-iniciarAudio();
-
-
-const agora =
-audioContext.currentTime;
-
-
-const osc =
-audioContext.createOscillator();
-
-const ganho =
-audioContext.createGain();
-
-
-osc.type =
-"sine";
-
-
-/*
-   Frequência grave
-   cria sensação de tensão
-*/
-
-osc.frequency.setValueAtTime(
-75,
-agora
-);
-
-osc.frequency.exponentialRampToValueAtTime(
-38,
-agora + .18
-);
-
-
-ganho.gain.setValueAtTime(
-0.0001,
-agora
-);
-
-ganho.gain.exponentialRampToValueAtTime(
-0.18,
-agora + .015
-);
-
-ganho.gain.exponentialRampToValueAtTime(
-0.0001,
-agora + .22
-);
-
-
-osc.connect(ganho);
-
-ganho.connect(
-audioContext.destination
-);
-
-
-osc.start(agora);
-
-osc.stop(
-agora + .25
-);
-
-}
-
-
-/* ============================
-   COMEÇA SUSPENSE
-============================ */
-
-function iniciarSuspense(){
-
-if(!somLigado)
-return;
-
-iniciarAudio();
-
-iniciarGrave();
-
-
-tempoInicio =
-Date.now();
-
-
-let velocidade =
-220;
-
-
-function proximaBatida(){
-
-if(!girando)
-return;
-
-
-batidaSuspense();
-
-
-const decorrido =
-Date.now() -
-tempoInicio;
-
-
-/*
-   A batida vai ficando
-   cada vez mais rápida.
-*/
-
-velocidade =
-Math.max(
-65,
-220 -
-(decorrido * .045)
-);
-
-
-intervaloBatida =
-setTimeout(
-proximaBatida,
-velocidade
-);
-
-}
-
-
-proximaBatida();
-
-}
-
-
-/* ============================
-   FINAL DO SUSPENSE
-============================ */
-
-function finalizarSuspense(){
-
-if(intervaloBatida){
-
-clearTimeout(
-intervaloBatida
-);
-
-intervaloBatida =
-null;
-
-}
-
-
-/* encerra grave */
-
-if(
-osciladorGrave &&
-ganhoGrave
-){
-
-const agora =
-audioContext.currentTime;
-
-
-ganhoGrave.gain.exponentialRampToValueAtTime(
-0.0001,
-agora + .35
-);
-
-
-osciladorGrave.stop(
-agora + .4
-);
-
-osciladorGrave =
-null;
-
-}
-
-
-/*
-   três impactos finais
-*/
-
-setTimeout(
-() => impactoFinal(90),
-0
-);
-
-setTimeout(
-() => impactoFinal(120),
-120
-);
-
-setTimeout(
-() => impactoFinal(180),
-250
-);
-
-}
-
-
-/* ============================
-   IMPACTO FINAL
-============================ */
-
-function impactoFinal(frequencia){
-
-if(!somLigado)
-return;
-
-iniciarAudio();
-
-
-const agora =
-audioContext.currentTime;
-
-
-const osc =
-audioContext.createOscillator();
-
-const ganho =
-audioContext.createGain();
-
-
-osc.type =
-"sawtooth";
-
-
-osc.frequency.setValueAtTime(
-frequencia,
-agora
-);
-
-
-ganho.gain.setValueAtTime(
-0.0001,
-agora
-);
-
-ganho.gain.exponentialRampToValueAtTime(
-0.25,
-agora + .015
-);
-
-ganho.gain.exponentialRampToValueAtTime(
-0.0001,
-agora + .35
-);
-
-
-osc.connect(ganho);
-
-ganho.connect(
-audioContext.destination
-);
-
-
-osc.start(agora);
-
-osc.stop(
-agora + .4
-);
-
-}
-
-
-/* ============================
-   SOM LIGADO / DESLIGADO
-============================ */
-
-function alternarSom(){
-
-somLigado =
-!somLigado;
-
-
-if(somLigado){
-
-btnSom.textContent =
-"🔊 Suspense ligado";
-
-}else{
-
-btnSom.textContent =
-"🔇 Suspense desligado";
-
-
-if(intervaloBatida){
-
-clearTimeout(
-intervaloBatida
-);
-
-intervaloBatida =
-null;
-
-}
-
-}
-
-}
-
-
-/* ============================
-   SELECIONAR COR
-============================ */
-
-function selecionarCor(
-cor,
-botao
-){
-
-if(girando)
-return;
-
-
-document
-.querySelectorAll(".btn-cor")
-.forEach(
-btn =>
-btn.classList.remove("ativo")
-);
-
-
-botao.classList.add(
-"ativo"
-);
-
-
-corSelecionada =
-cor;
-
-
-btnGirar.disabled =
-false;
-
-
-resultado.textContent =
-"Cor escolhida: " +
-cor.toUpperCase();
-
-}
-
-
-/* ============================
-   GIRAR ROLETA
-============================ */
-
-function girarRoleta(){
-
-if(
-girando ||
-!corSelecionada
-)
-return;
-
-
-girando =
-true;
-
-
-btnGirar.disabled =
-true;
-
-
-document
-.querySelectorAll(".btn-cor")
-.forEach(
-btn =>
-btn.style.pointerEvents =
-"none"
-);
-
-
-resultado.textContent =
-"GIRANDO...";
-
-
-resultado.style.color =
-"#fff";
-
-
-/* suspense visual */
-
-roleta.classList.add(
-"suspense"
-);
-
-
-/* suspense sonoro */
-
-iniciarSuspense();
-
-
-const voltas =
-5 +
-Math.floor(
-Math.random() * 3
-);
-
-
-const novoGiro =
-voltas * 360 +
-Math.floor(
-Math.random() * 360
-);
-
-
-rotacaoAtual +=
-novoGiro;
-
-
-roleta.style.transform =
-"rotate(" +
-rotacaoAtual +
-"deg)";
-
-
-setTimeout(
-() => {
-
-
-finalizarSuspense();
-
-
-roleta.classList.remove(
-"suspense"
-);
-
-
-const numero =
-Math.floor(
-Math.random() * 15
-);
-
-
-let resultadoCor;
-
-
-if(numero === 0){
-
-resultadoCor =
-"verde";
-
-}else if(
-numero % 2 === 0
-){
-
-resultadoCor =
-"preto";
-
-}else{
-
-resultadoCor =
-"vermelho";
-
-}
-
-
-resultado.textContent =
-"Resultado: " +
-resultadoCor.toUpperCase();
-
-
-if(
-resultadoCor ===
-"vermelho"
-){
-
-resultado.style.color =
-"#ff4d4d";
-
-}
-
-
-if(
-resultadoCor ===
-"preto"
-){
-
-resultado.style.color =
-"#aaa";
-
-}
-
-
-if(
-resultadoCor ===
-"verde"
-){
-
-resultado.style.color =
-"#00ed91";
-
-}
-
-
-setTimeout(
-() => {
-
-girando =
-false;
-
-btnGirar.disabled =
-false;
-
-
-document
-.querySelectorAll(".btn-cor")
-.forEach(
-btn =>
-btn.style.pointerEvents =
-"auto"
-);
-
-},
-700
-);
-
-
-},
-3000
-);
-
-}
-
-</script>
-
+    <div class="topo">
+        <h1>🎰 ROLETA NEON</h1>
+        <div class="saldo" id="displaySaldo">R$ 0,00</div>
+    </div>
+    <div class="container">
+        <div class="roleta-box">
+            <p class="info-text">Escolha uma cor e aposte R$ 5,00</p>
+            <div class="resultado" id="resultadoDisplay">--</div>
+            <div class="controles">
+                <button type="button" class="btn-cor btn-vermelho" onclick="selecionarCor('vermelho', this)">Vermelho</button>
+                <button type="button" class="btn-cor btn-verde" onclick="selecionarCor('verde', this)">Verde</button>
+                <button type="button" class="btn-cor btn-preto" onclick="selecionarCor('preto', this)">Preto</button>
+            </div>
+            <button type="button" id="btnApostar" class="btn-apostar" onclick="girarRoleta()" disabled>APOSTAR R$ 5,00</button>
+        </div>
+        <a href="../index.html" class="btn-voltar">← Voltar para Lobby</a>
+    </div>
+
+    <!-- Script central com fallbacks -->
+    <script src="../script.js" onerror="this.remove()"></script>
+    <script>
+        const VALOR_APOSTA = 5;
+        let corSelecionada = null;
+        const btnApostar = document.getElementById('btnApostar');
+        const display = document.getElementById('resultadoDisplay');
+        const saldoEl = document.getElementById('displaySaldo');
+
+        // Fallbacks seguros
+        function getSaldo() { try { return parseFloat(localStorage.getItem('apostaXBet_saldo')) || 0; } catch(e) { return 0; } }
+        function setSaldo(v) { try { localStorage.setItem('apostaXBet_saldo', v); } catch(e) {} }
+        function atualizarSaldoUI() {
+            const s = getSaldo();
+            saldoEl.innerText = `R$ ${s.toFixed(2).replace('.', ',')}`;
+            saldoEl.style.color = s < 10 ? '#ff4d4d' : '#00ed91';
+        }
+        atualizarSaldoUI();
+
+        window.verificarAcessoJogo = window.verificarAcessoJogo || function(custo, nome) {
+            const saldo = getSaldo();
+            if (saldo < custo) { alert(`⚠️ Saldo insuficiente!\nNecessário: R$ ${custo},00`); return false; }
+            return true;
+        };
+        window.adicionarSaldo = window.adicionarSaldo || function(v) { setSaldo(getSaldo() + v); atualizarSaldoUI(); };
+        window.descontarSaldo = window.descontarSaldo || function(v) { setSaldo(Math.max(0, getSaldo() - v)); atualizarSaldoUI(); };
+
+        function selecionarCor(cor, botao) {
+            document.querySelectorAll('.btn-cor').forEach(b => b.classList.remove('ativo'));
+            botao.classList.add('ativo');
+            corSelecionada = cor;
+            btnApostar.disabled = false;
+        }
+
+        function girarRoleta() {
+            if (!verificarAcessoJogo(VALOR_APOSTA, "Roleta")) return;
+            if (!corSelecionada) return;
+
+            btnApostar.disabled = true;
+            document.querySelectorAll('.btn-cor').forEach(b => b.style.pointerEvents = 'none');
+            display.innerText = "GIRANDO...";
+            display.style.color = "#fff";
+
+            setTimeout(() => {
+                const rand = Math.random();
+                const resultado = rand < 0.45 ? 'vermelho' : (rand < 0.90 ? 'preto' : 'verde');
+                display.innerText = resultado.toUpperCase();
+                const coresMap = { vermelho: '#ff4d4d', verde: '#00ed91', preto: '#aaa' };
+                display.style.color = coresMap[resultado];
+                display.style.textShadow = `0 0 25px ${coresMap[resultado]}`;
+
+                if (resultado === corSelecionada) {
+                    const mult = corSelecionada === 'verde' ? 14 : 2;
+                    adicionarSaldo(VALOR_APOSTA * mult);
+                } else { descontarSaldo(VALOR_APOSTA); }
+
+                setTimeout(() => {
+                    btnApostar.disabled = false;
+                    document.querySelectorAll('.btn-cor').forEach(b => b.style.pointerEvents = 'auto');
+                }, 500);
+            }, 2000);
+        }
+    </script>
 </body>
 </html>
