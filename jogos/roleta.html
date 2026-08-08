@@ -1,8 +1,12 @@
-<!DOCTYPE html><html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Roleta - ApostaXBet</title><style>
+
+<title>Roleta - ApostaXBet</title>
+
+<style>
 *{
     box-sizing:border-box;
     margin:0;
@@ -35,6 +39,19 @@ body{
     color:#00ed91;
     font-size:18px;
     font-weight:bold;
+}
+
+/* BOTÃO DO SOM */
+.btn-som{
+    margin-top:12px;
+    padding:9px 18px;
+    border:1px solid #d9b21f;
+    border-radius:20px;
+    background:#222;
+    color:#fff;
+    font-size:14px;
+    font-weight:bold;
+    cursor:pointer;
 }
 
 .container{
@@ -208,13 +225,32 @@ body{
 .btn-voltar:hover{
     color:#e6c229;
 }
-</style></head><body><div class="topo"><h1>🎰 APOSTAXBET</h1>
+</style>
+</head>
 
-<div class="saldo">
-    💰 R$ 0,00
+<body>
+
+<div class="topo">
+
+    <h1>🎰 APOSTAXBET</h1>
+
+    <div class="saldo">
+        💰 R$ 0,00
+    </div>
+
+    <button
+        id="btnSom"
+        class="btn-som"
+        onclick="alternarSom()">
+        🔊 Som ligado
+    </button>
+
 </div>
 
-</div><div class="container"><div class="roleta-box">
+
+<div class="container">
+
+<div class="roleta-box">
 
     <p class="info-text">
         ESCOLHA UMA COR — R$ 0,50
@@ -280,11 +316,20 @@ body{
     ← Voltar para Lobby
 </a>
 
-</div><script>
+</div>
+
+
+<script>
+
+/* =========================
+   CONFIGURAÇÃO
+========================= */
 
 let corSelecionada = null;
 let girando = false;
 let rotacaoAtual = 0;
+
+let somLigado = true;
 
 const roleta =
     document.getElementById("roleta");
@@ -295,6 +340,171 @@ const resultado =
 const btnGirar =
     document.getElementById("btnGirar");
 
+const btnSom =
+    document.getElementById("btnSom");
+
+
+/* =========================
+   SISTEMA DE SOM
+========================= */
+
+let audioContext = null;
+let oscilador = null;
+let ganho = null;
+let intervaloSom = null;
+
+
+function iniciarAudio(){
+
+    if(!somLigado) return;
+
+    if(!audioContext){
+
+        audioContext =
+            new (window.AudioContext ||
+            window.webkitAudioContext)();
+
+    }
+
+    if(audioContext.state === "suspended"){
+        audioContext.resume();
+    }
+}
+
+
+/* Som curto */
+
+function tocarSom(frequencia, duracao){
+
+    if(!somLigado) return;
+
+    iniciarAudio();
+
+    const agora =
+        audioContext.currentTime;
+
+    const osc =
+        audioContext.createOscillator();
+
+    const gain =
+        audioContext.createGain();
+
+    osc.type = "sine";
+
+    osc.frequency.value =
+        frequencia;
+
+    gain.gain.setValueAtTime(
+        0.0001,
+        agora
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.12,
+        agora + 0.01
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        agora + duracao
+    );
+
+    osc.connect(gain);
+
+    gain.connect(
+        audioContext.destination
+    );
+
+    osc.start(agora);
+
+    osc.stop(
+        agora + duracao
+    );
+}
+
+
+/* Som durante a rotação */
+
+function iniciarSomRoleta(){
+
+    if(!somLigado) return;
+
+    iniciarAudio();
+
+    let intervalo = 180;
+
+    intervaloSom =
+        setInterval(() => {
+
+            tocarSom(
+                500 + Math.random() * 250,
+                0.07
+            );
+
+            intervalo = Math.max(
+                80,
+                intervalo - 8
+            );
+
+        }, intervalo);
+}
+
+
+/* Parar som da roleta */
+
+function pararSomRoleta(){
+
+    if(intervaloSom){
+
+        clearInterval(intervaloSom);
+
+        intervaloSom = null;
+    }
+
+    /* Som final */
+
+    tocarSom(180,0.12);
+
+    setTimeout(() => {
+        tocarSom(260,0.15);
+    },100);
+
+    setTimeout(() => {
+        tocarSom(380,0.20);
+    },220);
+}
+
+
+/* Ligar / desligar */
+
+function alternarSom(){
+
+    somLigado =
+        !somLigado;
+
+    if(somLigado){
+
+        btnSom.textContent =
+            "🔊 Som ligado";
+
+    }else{
+
+        btnSom.textContent =
+            "🔇 Som desligado";
+
+        if(intervaloSom){
+
+            clearInterval(intervaloSom);
+
+            intervaloSom = null;
+        }
+    }
+}
+
+
+/* =========================
+   ESCOLHER COR
+========================= */
 
 function selecionarCor(cor, botao){
 
@@ -319,10 +529,18 @@ function selecionarCor(cor, botao){
 }
 
 
+/* =========================
+   GIRAR ROLETA
+========================= */
+
 function girarRoleta(){
 
-    if(girando || !corSelecionada)
+    if(
+        girando ||
+        !corSelecionada
+    ){
         return;
+    }
 
     girando = true;
 
@@ -331,23 +549,38 @@ function girarRoleta(){
     document
         .querySelectorAll(".btn-cor")
         .forEach(btn =>
-            btn.style.pointerEvents = "none"
+            btn.style.pointerEvents =
+                "none"
         );
 
     resultado.textContent =
         "GIRANDO...";
 
-    resultado.style.color = "#fff";
+    resultado.style.color =
+        "#fff";
+
+
+    /* Ativa o áudio */
+
+    iniciarAudio();
+
+    iniciarSomRoleta();
 
 
     const voltas =
-        5 + Math.floor(Math.random() * 3);
+        5 +
+        Math.floor(
+            Math.random() * 3
+        );
 
     const novoGiro =
         voltas * 360 +
-        Math.floor(Math.random() * 360);
+        Math.floor(
+            Math.random() * 360
+        );
 
-    rotacaoAtual += novoGiro;
+    rotacaoAtual +=
+        novoGiro;
 
     roleta.style.transform =
         "rotate(" +
@@ -357,24 +590,33 @@ function girarRoleta(){
 
     setTimeout(() => {
 
+        pararSomRoleta();
+
+
         const numero =
-            Math.floor(Math.random() * 15);
+            Math.floor(
+                Math.random() * 15
+            );
 
         let resultadoCor;
 
 
         if(numero === 0){
 
-            resultadoCor = "verde";
+            resultadoCor =
+                "verde";
 
-        }else if(numero % 2 === 0){
+        }else if(
+            numero % 2 === 0
+        ){
 
-            resultadoCor = "preto";
+            resultadoCor =
+                "preto";
 
         }else{
 
-            resultadoCor = "vermelho";
-
+            resultadoCor =
+                "vermelho";
         }
 
 
@@ -383,27 +625,33 @@ function girarRoleta(){
             resultadoCor.toUpperCase();
 
 
-        if(resultadoCor === "vermelho"){
+        if(
+            resultadoCor ===
+            "vermelho"
+        ){
 
             resultado.style.color =
                 "#ff4d4d";
-
         }
 
 
-        if(resultadoCor === "preto"){
+        if(
+            resultadoCor ===
+            "preto"
+        ){
 
             resultado.style.color =
                 "#aaa";
-
         }
 
 
-        if(resultadoCor === "verde"){
+        if(
+            resultadoCor ===
+            "verde"
+        ){
 
             resultado.style.color =
                 "#00ed91";
-
         }
 
 
@@ -411,12 +659,16 @@ function girarRoleta(){
 
             girando = false;
 
-            btnGirar.disabled = false;
+            btnGirar.disabled =
+                false;
 
             document
-                .querySelectorAll(".btn-cor")
+                .querySelectorAll(
+                    ".btn-cor"
+                )
                 .forEach(btn =>
-                    btn.style.pointerEvents = "auto"
+                    btn.style.pointerEvents =
+                        "auto"
                 );
 
         },700);
@@ -425,5 +677,7 @@ function girarRoleta(){
 
 }
 
-</script></body>
+</script>
+
+</body>
 </html>
