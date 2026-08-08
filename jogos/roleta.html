@@ -1,163 +1,354 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Roleta - ApostaXBet</title>
-    <style>
-        /* Reset e Base */
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { background: #000; color: white; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding-bottom: 40px; min-height: 100vh; }
-        
-        /* Topo Fixo */
-        .topo { text-align: center; padding: 20px 15px; background: #111; border-bottom: 2px solid #d9b21f; position: sticky; top: 0; z-index: 100; }
-        .topo h1 { color: #e6c229; font-size: 22px; letter-spacing: 1px; margin-bottom: 5px; }
-        .saldo { font-weight: bold; font-size: 18px; transition: color 0.3s ease; }
-        
-        /* Container Principal */
-        .container { width: 92%; max-width: 500px; margin: 25px auto; text-align: center; }
-        .roleta-box { background: #1a1a1a; border-radius: 16px; padding: 25px 20px; border: 1px solid #333; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-        
-        .info-text { color: #888; font-size: 13px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        /* Display de Resultado */
-        .resultado { 
-            font-size: 42px; font-weight: 800; height: 70px; 
-            display: flex; align-items: center; justify-content: center;
-            margin: 15px 0; color: #fff; text-shadow: 0 2px 10px rgba(255,255,255,0.1);
-        }
-        
-        /* Botões de Cores - OTIMIZADO PARA MOBILE */
-        .controles { display: flex; gap: 8px; justify-content: center; margin-bottom: 25px; }
-        .btn-cor { 
-            flex: 1; padding: 16px 0; border: none; border-radius: 10px; 
-            color: white; font-weight: bold; cursor: pointer; font-size: 14px;
-            opacity: 0.4; transform: scale(1); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            /* Garante área de toque mínima no mobile */
-            min-height: 48px; 
-        }
-        .btn-cor.ativo { opacity: 1; transform: scale(1.05); box-shadow: 0 0 15px rgba(255,255,255,0.2); z-index: 2; }
-        
-        .btn-vermelho { background: linear-gradient(135deg, #dc3545, #b02a37); }
-        .btn-preto { background: linear-gradient(135deg, #333, #1a1a1a); border: 1px solid #555; }
-        .btn-verde { background: linear-gradient(135deg, #28a745, #1e7e34); }
-        
-        /* Botão de Apostar */
-        .btn-apostar { 
-            width: 100%; padding: 18px; background: #e6c229; color: #000; 
-            border: none; border-radius: 10px; font-size: 17px; font-weight: 800; 
-            cursor: pointer; transition: transform 0.1s, filter 0.2s;
-            box-shadow: 0 4px 15px rgba(230, 194, 41, 0.3);
-            min-height: 56px; /* Área de toque segura */
-        }
-        .btn-apostar:active:not(:disabled) { transform: scale(0.97); }
-        .btn-apostar:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(100%); box-shadow: none; }
-        
-        .btn-voltar { display: inline-block; margin-top: 25px; color: #555; text-decoration: none; font-size: 13px; padding: 10px; }
-        .btn-voltar:hover { color: #e6c229; }
-    </style>
-</head>
-<body>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roleta - ApostaXBet</title><style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    -webkit-tap-highlight-color:transparent;
+}
 
-    <div class="topo">
-        <h1>🎰 ROLETA</h1>
-        <div class="saldo" id="displaySaldo">R$ 0,00</div>
+body{
+    background:#000;
+    color:#fff;
+    font-family:Arial,sans-serif;
+    min-height:100vh;
+    padding-bottom:40px;
+}
+
+.topo{
+    text-align:center;
+    padding:20px 15px;
+    background:#111;
+    border-bottom:2px solid #d9b21f;
+}
+
+.topo h1{
+    color:#e6c229;
+    font-size:23px;
+    margin-bottom:6px;
+}
+
+.saldo{
+    color:#00ed91;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.container{
+    width:94%;
+    max-width:500px;
+    margin:25px auto;
+    text-align:center;
+}
+
+.roleta-box{
+    background:#151515;
+    border:1px solid #333;
+    border-radius:18px;
+    padding:22px 15px 28px;
+    box-shadow:0 5px 25px rgba(0,0,0,.6);
+}
+
+.info-text{
+    color:#aaa;
+    font-size:14px;
+    margin-bottom:20px;
+}
+
+/* ÁREA DA ROLETA */
+
+.roleta-area{
+    position:relative;
+    width:300px;
+    height:300px;
+    max-width:85vw;
+    max-height:85vw;
+    margin:10px auto 25px;
+}
+
+.ponteiro{
+    position:absolute;
+    top:-8px;
+    left:50%;
+    transform:translateX(-50%);
+    width:0;
+    height:0;
+    border-left:14px solid transparent;
+    border-right:14px solid transparent;
+    border-top:30px solid #e6c229;
+    z-index:10;
+    filter:drop-shadow(0 2px 3px #000);
+}
+
+.roleta{
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    border:8px solid #d9b21f;
+    position:relative;
+    overflow:hidden;
+    box-shadow:
+        0 0 0 5px #222,
+        0 0 25px rgba(217,178,31,.4);
+    background:
+        conic-gradient(
+            #c92f3b 0deg 30deg,
+            #111 30deg 60deg,
+            #c92f3b 60deg 90deg,
+            #111 90deg 120deg,
+            #c92f3b 120deg 150deg,
+            #111 150deg 180deg,
+            #c92f3b 180deg 210deg,
+            #111 210deg 240deg,
+            #c92f3b 240deg 270deg,
+            #111 270deg 300deg,
+            #c92f3b 300deg 330deg,
+            #159447 330deg 360deg
+        );
+    transition:transform 3s cubic-bezier(.15,.75,.15,1);
+}
+
+.roleta::after{
+    content:"";
+    position:absolute;
+    width:70px;
+    height:70px;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    background:#111;
+    border:5px solid #e6c229;
+    border-radius:50%;
+    box-shadow:0 0 10px #000;
+}
+
+.resultado{
+    min-height:45px;
+    font-size:27px;
+    font-weight:bold;
+    margin-bottom:15px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.controles{
+    display:flex;
+    gap:8px;
+    margin-bottom:18px;
+}
+
+.btn-cor{
+    flex:1;
+    min-height:52px;
+    border:0;
+    border-radius:10px;
+    color:#fff;
+    font-weight:bold;
+    font-size:14px;
+    opacity:.45;
+    cursor:pointer;
+}
+
+.btn-cor.ativo{
+    opacity:1;
+    transform:scale(1.04);
+    box-shadow:0 0 15px rgba(255,255,255,.35);
+}
+
+.btn-vermelho{
+    background:#c92f3b;
+}
+
+.btn-preto{
+    background:#222;
+    border:1px solid #666;
+}
+
+.btn-verde{
+    background:#159447;
+}
+
+.btn-apostar{
+    width:100%;
+    min-height:55px;
+    border:0;
+    border-radius:11px;
+    background:#e6c229;
+    color:#000;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.btn-apostar:disabled{
+    opacity:.35;
+    cursor:not-allowed;
+}
+
+.btn-voltar{
+    display:inline-block;
+    margin-top:22px;
+    color:#888;
+    text-decoration:none;
+    padding:10px;
+}
+
+.btn-voltar:hover{
+    color:#e6c229;
+}
+</style></head><body><div class="topo">
+    <h1>🎰 APOSTAXBET</h1>
+    <div class="saldo">💰 R$ 0,00</div>
+</div><div class="container"><div class="roleta-box">
+
+    <p class="info-text">
+        ROLETA
+    </p>
+
+    <div class="roleta-area">
+
+        <div class="ponteiro"></div>
+
+        <div class="roleta" id="roleta"></div>
+
     </div>
 
-    <div class="container">
-        <div class="roleta-box">
-            <p class="info-text">Escolha uma cor e aposte R$ 5,00</p>
-            
-            <div class="resultado" id="resultadoDisplay">--</div>
-            
-            <div class="controles">
-                <button type="button" class="btn-cor btn-vermelho" onclick="selecionarCor('vermelho', this)">Vermelho</button>
-                <button type="button" class="btn-cor btn-verde" onclick="selecionarCor('verde', this)">Verde</button>
-                <button type="button" class="btn-cor btn-preto" onclick="selecionarCor('preto', this)">Preto</button>
-            </div>
-            
-            <button type="button" id="btnApostar" class="btn-apostar" onclick="girarRoleta()" disabled>
-                APOSTAR R$ 5,00
-            </button>
-        </div>
-        
-        <a href="../index.html" class="btn-voltar">← Voltar para Lobby</a>
+    <div class="resultado" id="resultado">
+        Escolha uma cor
     </div>
 
-    <!-- ⚠️ IMPORTANTE: Carrega o script central com proteção contra erros -->
-    <script src="../script.js" onerror="console.warn('script.js não carregou, usando modo offline')"></script>
+    <div class="controles">
 
-    <script>
-        // Variáveis globais do jogo
-        let corSelecionada = null;
-        const VALOR_APOSTA = 5;
-        const btnApostar = document.getElementById('btnApostar');
-        const display = document.getElementById('resultadoDisplay');
+        <button
+            class="btn-cor btn-vermelho"
+            onclick="selecionarCor('vermelho',this)">
+            Vermelho
+        </button>
 
-        // Fallback: Se as funções do script.js não existirem, cria versões dummy
-        if (typeof verificarAcessoJogo !== 'function') {
-            window.verificarAcessoJogo = function() { return true; };
-            console.log("Modo Offline: Verificação de saldo desativada");
+        <button
+            class="btn-cor btn-verde"
+            onclick="selecionarCor('verde',this)">
+            Verde
+        </button>
+
+        <button
+            class="btn-cor btn-preto"
+            onclick="selecionarCor('preto',this)">
+            Preto
+        </button>
+
+    </div>
+
+    <button
+        id="btnGirar"
+        class="btn-apostar"
+        onclick="girarRoleta()"
+        disabled>
+        GIRAR ROLETA
+    </button>
+
+</div>
+
+<a href="../index.html" class="btn-voltar">
+    ← Voltar para Lobby
+</a>
+
+</div><script>
+
+let corSelecionada = null;
+let girando = false;
+let rotacaoAtual = 0;
+
+const roleta = document.getElementById("roleta");
+const resultado = document.getElementById("resultado");
+const btnGirar = document.getElementById("btnGirar");
+
+function selecionarCor(cor, botao){
+
+    if(girando) return;
+
+    document
+        .querySelectorAll(".btn-cor")
+        .forEach(btn => btn.classList.remove("ativo"));
+
+    botao.classList.add("ativo");
+
+    corSelecionada = cor;
+
+    btnGirar.disabled = false;
+
+    resultado.textContent =
+        "Cor escolhida: " + cor.toUpperCase();
+}
+
+function girarRoleta(){
+
+    if(girando || !corSelecionada) return;
+
+    girando = true;
+    btnGirar.disabled = true;
+
+    document
+        .querySelectorAll(".btn-cor")
+        .forEach(btn => btn.style.pointerEvents = "none");
+
+    resultado.textContent = "GIRANDO...";
+    resultado.style.color = "#fff";
+
+    const voltas = 5 + Math.floor(Math.random() * 3);
+    const novoGiro = voltas * 360 + Math.floor(Math.random() * 360);
+
+    rotacaoAtual += novoGiro;
+
+    roleta.style.transform =
+        "rotate(" + rotacaoAtual + "deg)";
+
+    setTimeout(() => {
+
+        const numero = Math.floor(Math.random() * 15);
+
+        let resultadoCor;
+
+        if(numero === 0){
+            resultadoCor = "verde";
+        }else if(numero % 2 === 0){
+            resultadoCor = "preto";
+        }else{
+            resultadoCor = "vermelho";
         }
-        if (typeof adicionarSaldo !== 'function') {
-            window.adicionarSaldo = function(v) { alert("Ganhou R$ " + v + ",00 (Simulação)"); };
-        }
-        if (typeof descontarSaldo !== 'function') {
-            window.descontarSaldo = function(v) { console.log("Perdeu R$ " + v + ",00 (Simulação)"); };
-        }
 
-        function selecionarCor(cor, botao) {
-            // Remove classe ativa de todos os botões
-            document.querySelectorAll('.btn-cor').forEach(b => b.classList.remove('ativo'));
-            
-            // Aplica na cor clicada
-            botao.classList.add('ativo');
-            corSelecionada = cor;
-            
-            // Habilita botão de apostar imediatamente
-            if(btnApostar) btnApostar.disabled = false;
+        resultado.textContent =
+            "Resultado: " + resultadoCor.toUpperCase();
+
+        if(resultadoCor === "vermelho"){
+            resultado.style.color = "#ff4d4d";
         }
 
-        function girarRoleta() {
-            // 🔒 Verificação de saldo (segura mesmo se script.js falhar)
-            if (!verificarAcessoJogo(VALOR_APOSTA, "Roleta")) return;
-            if (!corSelecionada) return;
-
-            // Bloqueia interface durante o giro
-            btnApostar.disabled = true;
-            document.querySelectorAll('.btn-cor').forEach(b => b.style.pointerEvents = 'none');
-            display.innerText = "GIRANDO...";
-            display.style.color = "#fff";
-            display.style.textShadow = "0 0 10px rgba(255,255,255,0.5)";
-
-            // Simulação de 2 segundos
-            setTimeout(() => {
-                const rand = Math.random();
-                let resultado = rand < 0.45 ? 'vermelho' : (rand < 0.90 ? 'preto' : 'verde');
-                
-                // Atualiza visual do resultado
-                display.innerText = resultado.toUpperCase();
-                const coresMap = { 'vermelho': '#ff4d4d', 'verde': '#00ed91', 'preto': '#aaaaaa' };
-                display.style.color = coresMap[resultado];
-                display.style.textShadow = `0 0 20px ${coresMap[resultado]}`;
-
-                // Lógica de pagamento/perda
-                if (resultado === corSelecionada) {
-                    const multiplicador = corSelecionada === 'verde' ? 14 : 2;
-                    const ganho = VALOR_APOSTA * multiplicador;
-                    adicionarSaldo(ganho);
-                } else {
-                    descontarSaldo(VALOR_APOSTA);
-                }
-                
-                // Restaura interface após breve delay
-                setTimeout(() => {
-                    btnApostar.disabled = false;
-                    document.querySelectorAll('.btn-cor').forEach(b => b.style.pointerEvents = 'auto');
-                }, 500);
-            }, 2000);
+        if(resultadoCor === "preto"){
+            resultado.style.color = "#aaa";
         }
-    </script>
-</body>
+
+        if(resultadoCor === "verde"){
+            resultado.style.color = "#00ed91";
+        }
+
+        setTimeout(() => {
+
+            girando = false;
+            btnGirar.disabled = false;
+
+            document
+                .querySelectorAll(".btn-cor")
+                .forEach(btn => btn.style.pointerEvents = "auto");
+
+        },700);
+
+    },3000);
+}
+
+</script></body>
 </html>
