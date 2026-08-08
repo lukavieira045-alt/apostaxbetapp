@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Night Monsters - ApostaXBet</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    -webkit-tap-highlight-color:transparent;
+}
+
+body{
+    min-height:100vh;
+    background:
+        radial-gradient(circle at 50% 25%,#35154b 0,#12091c 38%,#050507 80%);
+    color:white;
+    font-family:Arial,sans-serif;
+    overflow-x:hidden;
+}
+
+.topo{
+    height:60px;
+    padding:0 15px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:#08080b;
+    border-bottom:1px solid #5c426c;
+}
+
+.logo{
+    color:#f5d45c;
+    font-size:17px;
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+.saldo{
+    text-align:right;
+}
+
+.saldo small{
+    display:block;
+    color:#777;
+    font-size:9px;
+}
+
+#saldo{
+    color:#ffe45e;
+    font-weight:bold;
+}
+
+.container{
+    width:100%;
+    max-width:500px;
+    margin:auto;
+    padding:12px 10px 35px;
+}
+
+.voltar{
+    display:inline-block;
+    color:#aaa;
+    text-decoration:none;
+    font-size:12px;
+    margin-bottom:8px;
+}
+
+.titulo{
+    text-align:center;
+    color:#f4d35e;
+    font-weight:900;
+    font-size:20px;
+    letter-spacing:2px;
+    text-shadow:0 0 12px #a65cff;
+}
+
+.subtitulo{
+    text-align:center;
+    color:#777;
+    font-size:9px;
+    letter-spacing:3px;
+    margin-top:4px;
+}
+
+/* ÁREA DO JOGO */
+
+.jogo{
+    margin-top:15px;
+    padding:12px 9px 15px;
+    border:1px solid #73517e;
+    border-radius:12px;
+    background:
+        linear-gradient(145deg,#211226,#09090c);
+    box-shadow:
+        0 0 25px rgba(148,60,200,.25),
+        inset 0 0 20px rgba(0,0,0,.8);
+    position:relative;
+    overflow:hidden;
+}
+
+/* RELÂMPAGOS */
+
+.raio{
+    position:absolute;
+    height:3px;
+    width:120px;
+    background:white;
+    box-shadow:
+        0 0 5px white,
+        0 0 15px #c56cff;
+    opacity:.6;
+    animation:flash .8s infinite alternate;
+}
+
+.raio1{
+    top:35px;
+    left:-20px;
+    transform:rotate(25deg);
+}
+
+.raio2{
+    top:80px;
+    right:-20px;
+    transform:rotate(-28deg);
+    animation-delay:.3s;
+}
+
+.raio3{
+    bottom:45px;
+    left:15px;
+    transform:rotate(-20deg);
+    animation-delay:.5s;
+}
+
+@keyframes flash{
+    from{opacity:.15}
+    to{opacity:1}
+}
+
+/* PAINEL SUPERIOR */
+
+.multiplicador{
+    text-align:center;
+    height:45px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+#multiplicador{
+    color:#ffe25b;
+    font-size:22px;
+    font-weight:900;
+    text-shadow:
+        0 0 5px #ffbf00,
+        0 0 15px #a648ff;
+}
+
+/* ROLOS */
+
+.rolos{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:7px;
+    padding:10px;
+    border:2px solid #b18b3a;
+    border-radius:8px;
+    background:
+        linear-gradient(180deg,#180d20,#050507);
+    box-shadow:
+        0 0 20px rgba(183,112,255,.25),
+        inset 0 0 18px #000;
+}
+
+.rolo{
+    height:145px;
+    overflow:hidden;
+    position:relative;
+    border:2px solid #6e4b7d;
+    border-radius:7px;
+    background:#09090c;
+    box-shadow:inset 0 0 18px #000;
+}
+
+.rolo::before,
+.rolo::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    height:35px;
+    z-index:4;
+    pointer-events:none;
+}
+
+.rolo::before{
+    top:0;
+    background:linear-gradient(#08080b,transparent);
+}
+
+.rolo::after{
+    bottom:0;
+    background:linear-gradient(transparent,#08080b);
+}
+
+.simbolos{
+    position:absolute;
+    top:0;
+    width:100%;
+    transition:transform .9s cubic-bezier(.12,.75,.15,1);
+}
+
+.simbolo{
+    height:70px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:42px;
+    border-bottom:1px solid #23172a;
+    background:
+        radial-gradient(circle,#281832,#08080b 70%);
+}
+
+.simbolo.destaque{
+    text-shadow:
+        0 0 8px white,
+        0 0 20px #bf55ff;
+}
+
+/* LINHA DE PAGAMENTO */
+
+.linha{
+    height:4px;
+    position:absolute;
+    top:50%;
+    left:9px;
+    right:9px;
+    transform:translateY(-50%);
+    background:#ffe45c;
+    box-shadow:0 0 10px #ffe45c;
+    z-index:6;
+    opacity:.75;
+    pointer-events:none;
+}
+
+/* BOTÃO */
+
+.valor-area{
+    margin-top:12px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:5px;
+}
+
+.valor{
+    height:40px;
+    border:1px solid #624d29;
+    background:#0a090b;
+    color:#aaa;
+    border-radius:5px;
+    font-weight:bold;
+}
+
+.valor.ativo{
+    color:#ffe45b;
+    border-color:#ffe45b;
+    box-shadow:0 0 10px rgba(255,215,60,.3);
+}
+
+.apostar{
+    width:100%;
+    height:55px;
+    margin-top:10px;
+    border:1px solid #e1b93e;
+    border-radius:6px;
+    background:
+        linear-gradient(180deg,#4b3510,#171105);
+    color:#ffe36a;
+    font-size:17px;
+    font-weight:900;
+    letter-spacing:2px;
+    box-shadow:0 0 15px rgba(255,210,50,.2);
+}
+
+.apostar:disabled{
+    opacity:.35;
+}
+
+/* RESULTADO */
+
+.resultado{
+    min-height:55px;
+    margin-top:10px;
+    text-align:center;
+    color:#bbb;
+    font-weight:900;
+    font-size:16px;
+    line-height:22px;
+}
+
+.premio{
+    color:#ffe45b;
+    font-size:22px;
+    text-shadow:0 0 15px #ffbd00;
+}
+
+.info{
+    display:flex;
+    justify-content:space-between;
+    color:#777;
+    font-size:11px;
+    margin-top:5px;
+}
+
+.info strong{
+    color:#ffe45b;
+}
+
+/* ANIMAÇÃO */
+
+.jogando .rolos{
+    box-shadow:
+        0 0 20px #a94cff,
+        0 0 40px rgba(176,65,255,.35),
+        inset 0 0 18px #000;
+}
+
+@keyframes tremor{
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-2px)}
+    75%{transform:translateX(2px)}
+}
+
+.tremendo{
+    animation:tremor .08s infinite;
+}
+
+/* RESPONSIVO */
+
+@media(max-width:360px){
+    .rolo{
+        height:125px;
+    }
+
+    .simbolo{
+        height:60px;
+        font-size:34px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topo">
+
+    <div class="logo">
+        ⚡ NIGHT MONSTERS
+    </div>
+
+    <div class="saldo">
+        <small>SALDO</small>
+        <div id="saldo">R$ 0,00</div>
+    </div>
+
+</header>
+
+<div class="container">
+
+    <a href="../index.html" class="voltar">
+        ← Voltar para Jogos
+    </a>
+
+    <div class="titulo">
+        ⚡ NIGHT MONSTERS ⚡
+    </div>
+
+    <div class="subtitulo">
+        SLOTS DE RELÂMPAGOS
+    </div>
+
+    <div class="jogo" id="jogo">
+
+        <div class="raio raio1"></div>
+        <div class="raio raio2"></div>
+        <div class="raio raio3"></div>
+
+        <div class="multiplicador">
+            <div id="multiplicador">
+                PRÊMIO ATÉ 100x
+            </div>
+        </div>
+
+        <div class="rolos">
+
+            <div class="rolo">
+                <div class="simbolos" id="rolo1"></div>
+            </div>
+
+            <div class="rolo">
+                <div class="simbolos" id="rolo2"></div>
+            </div>
+
+            <div class="rolo">
+                <div class="simbolos" id="rolo3"></div>
+            </div>
+
+            <div class="linha"></div>
+
+        </div>
+
+        <div class="valor-area">
+
+            <button class="valor ativo" onclick="escolherValor(.50,this)">
+                R$ 0,50
+            </button>
+
+            <button class="valor" onclick="escolherValor(1,this)">
+                R$ 1
+            </button>
+
+            <button class="valor" onclick="escolherValor(2,this)">
+                R$ 2
+            </button>
+
+            <button class="valor" onclick="escolherValor(5,this)">
+                R$ 5
+            </button>
+
+        </div>
+
+        <button
+            class="apostar"
+            id="btn"
+            onclick="girar()">
+
+            GIRAR R$ 0,50
+
+        </button>
+
+        <div class="resultado" id="resultado">
+            BOA SORTE!
+        </div>
+
+        <div class="info">
+
+            <span>
+                Aposta:
+                <strong id="aposta">R$ 0,50</strong>
+            </span>
+
+            <span>
+                Saldo:
+                <strong id="saldo2">R$ 0,00</strong>
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+/* ==============================
+   CONFIGURAÇÃO
+============================== */
+
+let aposta = 0.50;
+let girando = false;
+
+const simbolos = [
+    "🦇",
+    "👻",
+    "💀",
+    "🕷️",
+    "🧛",
+    "🎃",
+    "⚡",
+    "💎"
+];
+
+/*
+   Multiplicadores do jogo.
+   Três iguais = prêmio.
+*/
+
+const premios = {
+    "🦇": 3,
+    "👻": 5,
+    "💀": 8,
+    "🕷️": 10,
+    "🧛": 15,
+    "🎃": 20,
+    "⚡": 30,
+    "💎": 100
+};
+
+
+/* ==============================
+   SALDO
+============================== */
+
+function getSaldo(){
+
+    try{
+
+        return parseFloat(
+            localStorage.getItem("apostaXBet_saldo")
+        ) || 0;
+
+    }catch(e){
+
+        return 0;
+
+    }
+
+}
+
+function setSaldo(valor){
+
+    try{
+
+        localStorage.setItem(
+            "apostaXBet_saldo",
+            Math.max(0,valor).toFixed(2)
+        );
+
+    }catch(e){}
+
+}
+
+function dinheiro(valor){
+
+    return "R$ " +
+        valor.toFixed(2).replace(".",",");
+
+}
+
+function atualizarSaldo(){
+
+    document.getElementById("saldo").innerText =
+        dinheiro(getSaldo());
+
+    document.getElementById("saldo2").innerText =
+        dinheiro(getSaldo());
+
+}
+
+atualizarSaldo();
+
+
+/* ==============================
+   CRIAR ROLOS
+============================== */
+
+function criarRolo(id){
+
+    const area =
+        document.getElementById(id);
+
+    area.innerHTML = "";
+
+    for(let i=0;i<18;i++){
+
+        const div =
+            document.createElement("div");
+
+        div.className = "simbolo";
+
+        div.innerText =
+            simbolos[
+                Math.floor(
+                    Math.random()*simbolos.length
+                )
+            ];
+
+        area.appendChild(div);
+
+    }
+
+}
+
+criarRolo("rolo1");
+criarRolo("rolo2");
+criarRolo("rolo3");
+
+
+/* ==============================
+   ESCOLHER VALOR
+============================== */
+
+function escolherValor(valor,botao){
+
+    if(girando)return;
+
+    aposta = valor;
+
+    document
+        .querySelectorAll(".valor")
+        .forEach(b =>
+            b.classList.remove("ativo")
+        );
+
+    botao.classList.add("ativo");
+
+    document.getElementById("aposta").innerText =
+        dinheiro(aposta);
+
+    document.getElementById("btn").innerText =
+        "GIRAR " + dinheiro(aposta);
+
+}
+
+
+/* ==============================
+   RESULTADO ALEATÓRIO
+============================== */
+
+function escolherSimbolo(){
+
+    return simbolos[
+        Math.floor(
+            Math.random()*simbolos.length
+        )
+    ];
+
+}
+
+
+/* ==============================
+   GIRAR
+============================== */
+
+function girar(){
+
+    if(girando)return;
+
+    if(getSaldo() < aposta){
+
+        alert(
+            "Saldo insuficiente!\n\n" +
+            "Necessário: " +
+            dinheiro(aposta)
+        );
+
+        return;
+
+    }
+
+    girando = true;
+
+    const jogo =
+        document.getElementById("jogo");
+
+    const btn =
+        document.getElementById("btn");
+
+    const resultado =
+        document.getElementById("resultado");
+
+    jogo.classList.add("jogando");
+    jogo.classList.add("tremendo");
+
+    btn.disabled = true;
+    btn.innerText = "GIRANDO...";
+
+    resultado.innerText =
+        "⚡ OS MONSTROS ESTÃO GIRANDO...";
+
+    resultado.style.color =
+        "#ffe45b";
+
+
+    /* DESCONTA A APOSTA */
+
+    setSaldo(
+        getSaldo() - aposta
+    );
+
+    atualizarSaldo();
+
+
+    /*
+       Decide o resultado antes da animação.
+       Isso permite que o terceiro rolo pare por último.
+    */
+
+    let resultadoFinal;
+
+    const sorteio = Math.random();
+
+    if(sorteio < 0.015){
+
+        /*
+           JACKPOT
+        */
+
+        resultadoFinal = [
+            "💎",
+            "💎",
+            "💎"
+        ];
+
+    }
+    else if(sorteio < 0.06){
+
+        resultadoFinal = [
+            "⚡",
+            "⚡",
+            "⚡"
+        ];
+
+    }
+    else if(sorteio < 0.15){
+
+        const s = escolherSimbolo();
+
+        resultadoFinal = [s,s,s];
+
+    }
+    else{
+
+        let a = escolherSimbolo();
+        let b = escolherSimbolo();
+        let c = escolherSimbolo();
+
+        /*
+           Garante que normalmente
+           não sejam três iguais.
+        */
+
+        while(a === b && b === c){
+
+            c = escolherSimbolo();
+
+        }
+
+        resultadoFinal = [a,b,c];
+
+    }
+
+
+    /*
+       Gera novos conteúdos
+       para os três rolos.
+    */
+
+    prepararRolo(
+        "rolo1",
+        resultadoFinal[0],
+        500
+    );
+
+    prepararRolo(
+        "rolo2",
+        resultadoFinal[1],
+        1000
+    );
+
+    prepararRolo(
+        "rolo3",
+        resultadoFinal[2],
+        1500
+    );
+
+
+    /*
+       Depois que os três rolos pararem,
+       mostra o prêmio.
+    */
+
+    setTimeout(()=>{
+
+        finalizar(
+            resultadoFinal
+        );
+
+    },2400);
+
+}
+
+
+/* ==============================
+   PREPARAR ROLO
+============================== */
+
+function prepararRolo(id,final,tempo){
+
+    const area =
+        document.getElementById(id);
+
+    area.innerHTML = "";
+
+    /*
+       Coloca vários símbolos aleatórios
+       antes do resultado final.
+    */
+
+    for(let i=0;i<15;i++){
+
+        const div =
+            document.createElement("div");
+
+        div.className = "simbolo";
+
+        div.innerText =
+            escolherSimbolo();
+
+        area.appendChild(div);
+
+    }
+
+    const finalDiv =
+        document.createElement("div");
+
+    finalDiv.className =
+        "simbolo destaque";
+
+    finalDiv.innerText =
+        final;
+
+    area.appendChild(finalDiv);
+
+
+    /*
+       Volta para o começo.
+    */
+
+    area.style.transition = "none";
+    area.style.transform = "translateY(0)";
+
+    /*
+       Força o navegador a atualizar.
+    */
+
+    area.offsetHeight;
+
+    area.style.transition =
+        `transform ${tempo/1000 + .8}s cubic-bezier(.08,.75,.12,1)`;
+
+    /*
+       Cada símbolo tem 70px.
+       O resultado final está na posição 15.
+    */
+
+    const distancia =
+        -(15 * 70) + 37;
+
+    setTimeout(()=>{
+
+        area.style.transform =
+            `translateY(${distancia}px)`;
+
+    },50);
+
+}
+
+
+/* ==============================
+   FINALIZAR
+============================== */
+
+function finalizar(resultadoFinal){
+
+    const jogo =
+        document.getElementById("jogo");
+
+    const btn =
+        document.getElementById("btn");
+
+    const resultado =
+        document.getElementById("resultado");
+
+    jogo.classList.remove("tremendo");
+
+
+    const iguais =
+        resultadoFinal[0] === resultadoFinal[1] &&
+        resultadoFinal[1] === resultadoFinal[2];
+
+
+    if(iguais){
+
+        const simbolo =
+            resultadoFinal[0];
+
+        const multiplicador =
+            premios[simbolo];
+
+        const premio =
+            aposta * multiplicador;
+
+
+        setSaldo(
+            getSaldo() + premio
+        );
+
+        atualizarSaldo();
+
+
+        document.getElementById(
+            "multiplicador"
+        ).innerText =
+            multiplicador + "x";
+
+
+        resultado.innerHTML =
+            "⚡ COMBINAÇÃO PREMIADA!<br>" +
+            "<span class='premio'>" +
+            dinheiro(premio) +
+            "</span>";
+
+        resultado.style.color =
+            "#ffe45b";
+
+
+    }
+    else{
+
+        document.getElementById(
+            "multiplicador"
+        ).innerText =
+            "TENTE NOVAMENTE";
+
+        resultado.innerText =
+            "NÃO FOI DESSA VEZ";
+
+        resultado.style.color =
+            "#999";
+
+    }
+
+
+    girando = false;
+
+    btn.disabled = false;
+
+    btn.innerText =
+        "GIRAR " + dinheiro(aposta);
+
+}
+
+
+/* ==============================
+   ATUALIZAÇÃO
+============================== */
+
+setInterval(()=>{
+
+    if(!girando){
+
+        atualizarSaldo();
+
+    }
+
+},1000);
+
+</script>
+
+</body>
+</html>
