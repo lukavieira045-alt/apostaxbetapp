@@ -9,88 +9,94 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         body { 
             background: #050505; color: white; font-family: 'Segoe UI', system-ui, sans-serif; 
-            min-height: 100vh; padding-bottom: 40px; 
+            min-height: 100vh; padding-bottom: 40px; overflow-x: hidden;
         }
         
         /* Topo com Efeito Glow */
         .topo { 
-            text-align: center; padding: 25px 15px; background: rgba(10,10,10,0.9); 
-            border-bottom: 1px solid rgba(0, 255, 255, 0.3); 
+            text-align: center; padding: 20px 15px; background: rgba(10,10,10,0.95); 
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2); 
             position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px);
         }
         .topo h1 { 
-            color: #00ffff; font-size: 24px; margin-bottom: 8px; letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(0, 255, 255, 0.6), 0 0 20px rgba(0, 255, 255, 0.3);
+            color: #00ffff; font-size: 22px; margin-bottom: 5px; letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
         }
-        .saldo { 
-            font-weight: bold; font-size: 18px; transition: all 0.3s ease; 
-            text-shadow: 0 0 5px currentColor;
-        }
+        .saldo { font-weight: bold; font-size: 18px; text-shadow: 0 0 5px currentColor; }
         
         /* Container Principal */
-        .container { width: 92%; max-width: 500px; margin: 30px auto; text-align: center; }
+        .container { width: 92%; max-width: 500px; margin: 20px auto; text-align: center; }
         .roleta-box { 
-            background: rgba(20, 20, 20, 0.8); border-radius: 20px; padding: 30px 20px; 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 255, 255, 0.05);
-            backdrop-filter: blur(5px);
+            background: rgba(20, 20, 20, 0.8); border-radius: 20px; padding: 25px 15px; 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
         }
         
-        .info-text { color: #888; font-size: 12px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+        .info-text { color: #777; font-size: 11px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
         
-        /* Display de Resultado Neon */
-        .resultado { 
-            font-size: 48px; font-weight: 900; height: 80px; 
-            display: flex; align-items: center; justify-content: center;
-            margin: 20px 0; color: #fff; 
-            text-shadow: 0 0 15px rgba(255,255,255,0.5);
-            animation: pulseText 2s infinite alternate;
+        /* --- NOVA RODA VISUAL --- */
+        .roda-container {
+            position: relative; width: 220px; height: 220px; margin: 0 auto 20px;
+            border-radius: 50%; border: 4px solid #1a1a1a;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8), inset 0 0 15px rgba(0,0,0,0.9);
+            overflow: hidden; transition: transform 3s cubic-bezier(0.1, 0.9, 0.2, 1);
         }
+        .roda-segmentos {
+            width: 100%; height: 100%; border-radius: 50%; position: relative;
+            background: conic-gradient(
+                #dc3545 0deg 18deg, #222 18deg 36deg, #28a745 36deg 54deg, #222 54deg 72deg,
+                #dc3545 72deg 90deg, #222 90deg 108deg, #28a745 108deg 126deg, #222 126deg 144deg,
+                #dc3545 144deg 162deg, #222 162deg 180deg, #28a745 180deg 198deg, #222 198deg 216deg,
+                #dc3545 216deg 234deg, #222 234deg 252deg, #28a745 252deg 270deg, #222 270deg 288deg,
+                #dc3545 288deg 306deg, #222 306deg 324deg, #28a745 324deg 342deg, #222 342deg 360deg
+            );
+        }
+        .roda-centro {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 50px; height: 50px; background: #111; border-radius: 50%;
+            border: 3px solid #e6c229; z-index: 2; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; color: #e6c229; font-size: 12px; box-shadow: 0 0 10px rgba(230,194,41,0.3);
+        }
+        .seta-indicadora {
+            position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent;
+            border-top: 20px solid #fff; z-index: 3; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+        }
+        
+        /* Display de Resultado Texto (opcional, abaixo da roda) */
+        .resultado-texto { 
+            font-size: 24px; font-weight: 800; height: 30px; margin-bottom: 15px;
+            text-shadow: 0 0 10px currentColor; opacity: 0; transition: opacity 0.3s;
+        }
+        .resultado-texto.visivel { opacity: 1; }
         
         /* Botões de Cores Estilo Glassmorphism */
-        .controles { display: flex; gap: 10px; justify-content: center; margin-bottom: 30px; }
+        .controles { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; }
         .btn-cor { 
-            flex: 1; padding: 18px 0; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; 
-            color: white; font-weight: bold; cursor: pointer; font-size: 14px;
-            opacity: 0.5; transform: scale(1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background: rgba(255,255,255,0.05); backdrop-filter: blur(5px);
-            min-height: 50px; position: relative; overflow: hidden;
+            flex: 1; padding: 14px 0; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; 
+            color: white; font-weight: bold; cursor: pointer; font-size: 13px;
+            opacity: 0.4; transition: all 0.3s; background: rgba(255,255,255,0.03);
+            min-height: 44px;
         }
-        .btn-cor::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-        .btn-cor:hover::before { left: 100%; }
-        
-        .btn-cor.ativo { opacity: 1; transform: scale(1.08); border-color: rgba(255,255,255,0.5); box-shadow: 0 0 20px currentColor; z-index: 2; }
-        
-        .btn-vermelho { color: #ff4d4d; }
-        .btn-vermelho.ativo { background: rgba(255, 77, 77, 0.2); }
-        .btn-preto { color: #aaaaaa; }
-        .btn-preto.ativo { background: rgba(170, 170, 170, 0.2); }
-        .btn-verde { color: #00ed91; }
-        .btn-verde.ativo { background: rgba(0, 237, 145, 0.2); }
+        .btn-cor.ativo { opacity: 1; transform: scale(1.05); border-color: rgba(255,255,255,0.4); box-shadow: 0 0 15px currentColor; }
+        .btn-vermelho { color: #ff4d4d; } .btn-vermelho.ativo { background: rgba(255,77,77,0.15); }
+        .btn-preto { color: #aaa; } .btn-preto.ativo { background: rgba(170,170,170,0.15); }
+        .btn-verde { color: #00ed91; } .btn-verde.ativo { background: rgba(0,237,145,0.15); }
         
         /* Botão de Apostar Neon */
         .btn-apostar { 
-            width: 100%; padding: 20px; background: transparent; color: #e6c229; 
-            border: 2px solid #e6c229; border-radius: 12px; font-size: 18px; font-weight: 900; 
-            cursor: pointer; transition: all 0.3s; min-height: 60px;
-            text-shadow: 0 0 10px rgba(230, 194, 41, 0.5);
-            box-shadow: 0 0 15px rgba(230, 194, 41, 0.2), inset 0 0 10px rgba(230, 194, 41, 0.1);
+            width: 100%; padding: 16px; background: transparent; color: #e6c229; 
+            border: 2px solid #e6c229; border-radius: 10px; font-size: 16px; font-weight: 900; 
+            cursor: pointer; transition: all 0.3s; min-height: 50px;
+            text-shadow: 0 0 8px rgba(230,194,41,0.4);
+            box-shadow: 0 0 12px rgba(230,194,41,0.15);
         }
-        .btn-apostar:not(:disabled):hover { 
-            background: rgba(230, 194, 41, 0.1); 
-            box-shadow: 0 0 25px rgba(230, 194, 41, 0.4), inset 0 0 15px rgba(230, 194, 41, 0.2);
-        }
+        .btn-apostar:not(:disabled):hover { background: rgba(230,194,41,0.08); box-shadow: 0 0 20px rgba(230,194,41,0.3); }
         .btn-apostar:active:not(:disabled) { transform: scale(0.97); }
-        .btn-apostar:disabled { opacity: 0.2; cursor: not-allowed; filter: grayscale(100%); box-shadow: none; border-color: #333; color: #333; text-shadow: none;}
+        .btn-apostar:disabled { opacity: 0.2; cursor: not-allowed; filter: grayscale(100%); border-color: #333; color: #333; text-shadow: none; box-shadow: none;}
         
-        .btn-voltar { display: inline-block; margin-top: 30px; color: #555; text-decoration: none; font-size: 13px; transition: color 0.3s; }
-        .btn-voltar:hover { color: #00ffff; text-shadow: 0 0 5px rgba(0, 255, 255, 0.5); }
-
-        @keyframes pulseText { from { text-shadow: 0 0 10px rgba(255,255,255,0.3); } to { text-shadow: 0 0 20px rgba(255,255,255,0.8); } }
+        .btn-voltar { display: inline-block; margin-top: 20px; color: #444; text-decoration: none; font-size: 12px; }
+        .btn-voltar:hover { color: #00ffff; }
     </style>
 </head>
 <body>
@@ -98,28 +104,42 @@
         <h1>🎰 ROLETA NEON</h1>
         <div class="saldo" id="displaySaldo">R$ 0,00</div>
     </div>
+    
     <div class="container">
         <div class="roleta-box">
             <p class="info-text">Escolha uma cor e aposte R$ 5,00</p>
-            <div class="resultado" id="resultadoDisplay">--</div>
+            
+            <!-- NOVA RODA VISUAL -->
+            <div style="position: relative; display: inline-block;">
+                <div class="seta-indicadora"></div>
+                <div class="roda-container" id="rodaVisual">
+                    <div class="roda-segmentos"></div>
+                    <div class="roda-centro">AX</div>
+                </div>
+            </div>
+            
+            <div class="resultado-texto" id="resultadoDisplay">--</div>
+            
             <div class="controles">
                 <button type="button" class="btn-cor btn-vermelho" onclick="selecionarCor('vermelho', this)">Vermelho</button>
                 <button type="button" class="btn-cor btn-verde" onclick="selecionarCor('verde', this)">Verde</button>
                 <button type="button" class="btn-cor btn-preto" onclick="selecionarCor('preto', this)">Preto</button>
             </div>
+            
             <button type="button" id="btnApostar" class="btn-apostar" onclick="girarRoleta()" disabled>APOSTAR R$ 5,00</button>
         </div>
         <a href="../index.html" class="btn-voltar">← Voltar para Lobby</a>
     </div>
 
-    <!-- Script central com fallbacks -->
     <script src="../script.js" onerror="this.remove()"></script>
     <script>
         const VALOR_APOSTA = 5;
         let corSelecionada = null;
+        let rotacaoAtual = 0;
         const btnApostar = document.getElementById('btnApostar');
         const display = document.getElementById('resultadoDisplay');
         const saldoEl = document.getElementById('displaySaldo');
+        const roda = document.getElementById('rodaVisual');
 
         // Fallbacks seguros
         function getSaldo() { try { return parseFloat(localStorage.getItem('apostaXBet_saldo')) || 0; } catch(e) { return 0; } }
@@ -152,16 +172,33 @@
 
             btnApostar.disabled = true;
             document.querySelectorAll('.btn-cor').forEach(b => b.style.pointerEvents = 'none');
-            display.innerText = "GIRANDO...";
-            display.style.color = "#fff";
+            display.classList.remove('visivel');
+            
+            // Lógica do giro visual
+            const rand = Math.random();
+            const resultado = rand < 0.45 ? 'vermelho' : (rand < 0.90 ? 'preto' : 'verde');
+            
+            // Calcula ângulo baseado no resultado (ajustado para cair sob a seta)
+            // Vermelho: ~9deg, Preto: ~27deg, Verde: ~45deg (baseado no conic-gradient)
+            let anguloFinal = 0;
+            if (resultado === 'vermelho') anguloFinal = 9 + (Math.random() * 16); 
+            else if (resultado === 'preto') anguloFinal = 27 + (Math.random() * 16);
+            else anguloFinal = 45 + (Math.random() * 16);
+            
+            // Adiciona giros extras (mínimo 5 voltas completas)
+            const girosExtras = 360 * 5; 
+            // Inverte a rotação para alinhar com a seta no topo (que está em 0deg/360deg)
+            const novaRotacao = rotacaoAtual + girosExtras + (360 - anguloFinal);
+            
+            roda.style.transform = `rotate(${novaRotacao}deg)`;
+            rotacaoAtual = novaRotacao;
 
+            // Aguarda animação CSS terminar (3s)
             setTimeout(() => {
-                const rand = Math.random();
-                const resultado = rand < 0.45 ? 'vermelho' : (rand < 0.90 ? 'preto' : 'verde');
                 display.innerText = resultado.toUpperCase();
                 const coresMap = { vermelho: '#ff4d4d', verde: '#00ed91', preto: '#aaa' };
                 display.style.color = coresMap[resultado];
-                display.style.textShadow = `0 0 25px ${coresMap[resultado]}`;
+                display.classList.add('visivel');
 
                 if (resultado === corSelecionada) {
                     const mult = corSelecionada === 'verde' ? 14 : 2;
@@ -172,7 +209,7 @@
                     btnApostar.disabled = false;
                     document.querySelectorAll('.btn-cor').forEach(b => b.style.pointerEvents = 'auto');
                 }, 500);
-            }, 2000);
+            }, 3000); // Tempo igual ao transition CSS
         }
     </script>
 </body>
