@@ -58,8 +58,6 @@ body{
     margin-bottom:20px;
 }
 
-/* ÁREA DA ROLETA */
-
 .roleta-area{
     position:relative;
     width:300px;
@@ -93,6 +91,7 @@ body{
     box-shadow:
         0 0 0 5px #222,
         0 0 25px rgba(217,178,31,.4);
+
     background:
         conic-gradient(
             #c92f3b 0deg 30deg,
@@ -108,7 +107,9 @@ body{
             #c92f3b 300deg 330deg,
             #159447 330deg 360deg
         );
-    transition:transform 3s cubic-bezier(.15,.75,.15,1);
+
+    transition:
+        transform 3s cubic-bezier(.15,.75,.15,1);
 }
 
 .roleta::after{
@@ -143,7 +144,7 @@ body{
 
 .btn-cor{
     flex:1;
-    min-height:52px;
+    min-height:60px;
     border:0;
     border-radius:10px;
     color:#fff;
@@ -170,6 +171,13 @@ body{
 
 .btn-verde{
     background:#159447;
+}
+
+.valor{
+    display:block;
+    margin-top:5px;
+    font-size:13px;
+    opacity:.9;
 }
 
 .btn-apostar{
@@ -200,14 +208,18 @@ body{
 .btn-voltar:hover{
     color:#e6c229;
 }
-</style></head><body><div class="topo">
-    <h1>🎰 APOSTAXBET</h1>
-    <div class="saldo">💰 R$ 0,00</div>
+</style></head><body><div class="topo"><h1>🎰 APOSTAXBET</h1>
+
+<div class="saldo">
+    💰 R$ 0,00
+</div>
+
 </div><div class="container"><div class="roleta-box">
 
     <p class="info-text">
-        ROLETA
+        ESCOLHA UMA COR — R$ 0,50
     </p>
+
 
     <div class="roleta-area">
 
@@ -217,9 +229,11 @@ body{
 
     </div>
 
+
     <div class="resultado" id="resultado">
         Escolha uma cor
     </div>
+
 
     <div class="controles">
 
@@ -227,31 +241,40 @@ body{
             class="btn-cor btn-vermelho"
             onclick="selecionarCor('vermelho',this)">
             Vermelho
+            <span class="valor">R$ 0,50</span>
         </button>
+
 
         <button
             class="btn-cor btn-verde"
             onclick="selecionarCor('verde',this)">
             Verde
+            <span class="valor">R$ 0,50</span>
         </button>
+
 
         <button
             class="btn-cor btn-preto"
             onclick="selecionarCor('preto',this)">
             Preto
+            <span class="valor">R$ 0,50</span>
         </button>
 
     </div>
+
 
     <button
         id="btnGirar"
         class="btn-apostar"
         onclick="girarRoleta()"
         disabled>
-        GIRAR ROLETA
+
+        GIRAR ROLETA — R$ 0,50
+
     </button>
 
 </div>
+
 
 <a href="../index.html" class="btn-voltar">
     ← Voltar para Lobby
@@ -263,9 +286,15 @@ let corSelecionada = null;
 let girando = false;
 let rotacaoAtual = 0;
 
-const roleta = document.getElementById("roleta");
-const resultado = document.getElementById("resultado");
-const btnGirar = document.getElementById("btnGirar");
+const roleta =
+    document.getElementById("roleta");
+
+const resultado =
+    document.getElementById("resultado");
+
+const btnGirar =
+    document.getElementById("btnGirar");
+
 
 function selecionarCor(cor, botao){
 
@@ -273,7 +302,9 @@ function selecionarCor(cor, botao){
 
     document
         .querySelectorAll(".btn-cor")
-        .forEach(btn => btn.classList.remove("ativo"));
+        .forEach(btn =>
+            btn.classList.remove("ativo")
+        );
 
     botao.classList.add("ativo");
 
@@ -282,72 +313,116 @@ function selecionarCor(cor, botao){
     btnGirar.disabled = false;
 
     resultado.textContent =
-        "Cor escolhida: " + cor.toUpperCase();
+        "Cor escolhida: " +
+        cor.toUpperCase();
+
 }
+
 
 function girarRoleta(){
 
-    if(girando || !corSelecionada) return;
+    if(girando || !corSelecionada)
+        return;
 
     girando = true;
+
     btnGirar.disabled = true;
 
     document
         .querySelectorAll(".btn-cor")
-        .forEach(btn => btn.style.pointerEvents = "none");
+        .forEach(btn =>
+            btn.style.pointerEvents = "none"
+        );
 
-    resultado.textContent = "GIRANDO...";
+    resultado.textContent =
+        "GIRANDO...";
+
     resultado.style.color = "#fff";
 
-    const voltas = 5 + Math.floor(Math.random() * 3);
-    const novoGiro = voltas * 360 + Math.floor(Math.random() * 360);
+
+    const voltas =
+        5 + Math.floor(Math.random() * 3);
+
+    const novoGiro =
+        voltas * 360 +
+        Math.floor(Math.random() * 360);
 
     rotacaoAtual += novoGiro;
 
     roleta.style.transform =
-        "rotate(" + rotacaoAtual + "deg)";
+        "rotate(" +
+        rotacaoAtual +
+        "deg)";
+
 
     setTimeout(() => {
 
-        const numero = Math.floor(Math.random() * 15);
+        const numero =
+            Math.floor(Math.random() * 15);
 
         let resultadoCor;
 
+
         if(numero === 0){
+
             resultadoCor = "verde";
+
         }else if(numero % 2 === 0){
+
             resultadoCor = "preto";
+
         }else{
+
             resultadoCor = "vermelho";
+
         }
+
 
         resultado.textContent =
-            "Resultado: " + resultadoCor.toUpperCase();
+            "Resultado: " +
+            resultadoCor.toUpperCase();
+
 
         if(resultadoCor === "vermelho"){
-            resultado.style.color = "#ff4d4d";
+
+            resultado.style.color =
+                "#ff4d4d";
+
         }
+
 
         if(resultadoCor === "preto"){
-            resultado.style.color = "#aaa";
+
+            resultado.style.color =
+                "#aaa";
+
         }
 
+
         if(resultadoCor === "verde"){
-            resultado.style.color = "#00ed91";
+
+            resultado.style.color =
+                "#00ed91";
+
         }
+
 
         setTimeout(() => {
 
             girando = false;
+
             btnGirar.disabled = false;
 
             document
                 .querySelectorAll(".btn-cor")
-                .forEach(btn => btn.style.pointerEvents = "auto");
+                .forEach(btn =>
+                    btn.style.pointerEvents = "auto"
+                );
 
         },700);
 
     },3000);
+
 }
 
 </script></body>
