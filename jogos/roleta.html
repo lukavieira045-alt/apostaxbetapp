@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Roleta - ApostaXBet</title>
 
 <style>
@@ -41,7 +40,6 @@ body{
     font-weight:bold;
 }
 
-/* BOTÃO DO SOM */
 .btn-som{
     margin-top:12px;
     padding:9px 18px;
@@ -51,7 +49,6 @@ body{
     color:#fff;
     font-size:14px;
     font-weight:bold;
-    cursor:pointer;
 }
 
 .container{
@@ -206,12 +203,10 @@ body{
     color:#000;
     font-size:17px;
     font-weight:bold;
-    cursor:pointer;
 }
 
 .btn-apostar:disabled{
     opacity:.35;
-    cursor:not-allowed;
 }
 
 .btn-voltar{
@@ -222,8 +217,32 @@ body{
     padding:10px;
 }
 
-.btn-voltar:hover{
-    color:#e6c229;
+
+/* ==============================
+   ANIMAÇÃO DE SUSPENSE
+============================== */
+
+@keyframes pulsarSuspense{
+
+    0%{
+        box-shadow:
+        0 0 20px rgba(217,178,31,.25);
+    }
+
+    50%{
+        box-shadow:
+        0 0 45px rgba(217,178,31,.75);
+    }
+
+    100%{
+        box-shadow:
+        0 0 20px rgba(217,178,31,.25);
+    }
+}
+
+.roleta.suspense{
+    animation:
+        pulsarSuspense .45s infinite;
 }
 </style>
 </head>
@@ -232,18 +251,18 @@ body{
 
 <div class="topo">
 
-    <h1>🎰 APOSTAXBET</h1>
+<h1>🎰 APOSTAXBET</h1>
 
-    <div class="saldo">
-        💰 R$ 0,00
-    </div>
+<div class="saldo">
+💰 R$ 0,00
+</div>
 
-    <button
-        id="btnSom"
-        class="btn-som"
-        onclick="alternarSom()">
-        🔊 Som ligado
-    </button>
+<button
+id="btnSom"
+class="btn-som"
+onclick="alternarSom()">
+🔊 Suspense ligado
+</button>
 
 </div>
 
@@ -252,68 +271,94 @@ body{
 
 <div class="roleta-box">
 
-    <p class="info-text">
-        ESCOLHA UMA COR — R$ 0,50
-    </p>
+<p class="info-text">
+ESCOLHA UMA COR — R$ 0,50
+</p>
 
 
-    <div class="roleta-area">
+<div class="roleta-area">
 
-        <div class="ponteiro"></div>
+<div class="ponteiro"></div>
 
-        <div class="roleta" id="roleta"></div>
-
-    </div>
-
-
-    <div class="resultado" id="resultado">
-        Escolha uma cor
-    </div>
-
-
-    <div class="controles">
-
-        <button
-            class="btn-cor btn-vermelho"
-            onclick="selecionarCor('vermelho',this)">
-            Vermelho
-            <span class="valor">R$ 0,50</span>
-        </button>
-
-
-        <button
-            class="btn-cor btn-verde"
-            onclick="selecionarCor('verde',this)">
-            Verde
-            <span class="valor">R$ 0,50</span>
-        </button>
-
-
-        <button
-            class="btn-cor btn-preto"
-            onclick="selecionarCor('preto',this)">
-            Preto
-            <span class="valor">R$ 0,50</span>
-        </button>
-
-    </div>
-
-
-    <button
-        id="btnGirar"
-        class="btn-apostar"
-        onclick="girarRoleta()"
-        disabled>
-
-        GIRAR ROLETA — R$ 0,50
-
-    </button>
+<div
+class="roleta"
+id="roleta">
+</div>
 
 </div>
 
 
-<a href="../index.html" class="btn-voltar">
-    ← Voltar para Lobby
+<div
+class="resultado"
+id="resultado">
+
+Escolha uma cor
+
+</div>
+
+
+<div class="controles">
+
+<button
+class="btn-cor btn-vermelho"
+onclick="selecionarCor('vermelho',this)">
+
+Vermelho
+
+<span class="valor">
+R$ 0,50
+</span>
+
+</button>
+
+
+<button
+class="btn-cor btn-verde"
+onclick="selecionarCor('verde',this)">
+
+Verde
+
+<span class="valor">
+R$ 0,50
+</span>
+
+</button>
+
+
+<button
+class="btn-cor btn-preto"
+onclick="selecionarCor('preto',this)">
+
+Preto
+
+<span class="valor">
+R$ 0,50
+</span>
+
+</button>
+
+</div>
+
+
+<button
+id="btnGirar"
+class="btn-apostar"
+onclick="girarRoleta()"
+disabled>
+
+GIRAR ROLETA — R$ 0,50
+
+</button>
+
+</div>
+
+
+<a
+href="../index.html"
+class="btn-voltar">
+
+← Voltar para Lobby
+
 </a>
 
 </div>
@@ -321,9 +366,9 @@ body{
 
 <script>
 
-/* =========================
-   CONFIGURAÇÃO
-========================= */
+/* ============================
+   VARIÁVEIS
+============================ */
 
 let corSelecionada = null;
 let girando = false;
@@ -331,349 +376,637 @@ let rotacaoAtual = 0;
 
 let somLigado = true;
 
+let audioContext = null;
+
+let osciladorGrave = null;
+let ganhoGrave = null;
+
+let intervaloBatida = null;
+
+let tempoInicio = 0;
+
+
+/* ELEMENTOS */
+
 const roleta =
-    document.getElementById("roleta");
+document.getElementById("roleta");
 
 const resultado =
-    document.getElementById("resultado");
+document.getElementById("resultado");
 
 const btnGirar =
-    document.getElementById("btnGirar");
+document.getElementById("btnGirar");
 
 const btnSom =
-    document.getElementById("btnSom");
+document.getElementById("btnSom");
 
 
-/* =========================
-   SISTEMA DE SOM
-========================= */
-
-let audioContext = null;
-let oscilador = null;
-let ganho = null;
-let intervaloSom = null;
-
+/* ============================
+   ÁUDIO
+============================ */
 
 function iniciarAudio(){
 
-    if(!somLigado) return;
+if(!audioContext){
 
-    if(!audioContext){
+audioContext =
+new (
+window.AudioContext ||
+window.webkitAudioContext
+)();
 
-        audioContext =
-            new (window.AudioContext ||
-            window.webkitAudioContext)();
+}
 
-    }
+if(
+audioContext.state ===
+"suspended"
+){
 
-    if(audioContext.state === "suspended"){
-        audioContext.resume();
-    }
+audioContext.resume();
+
+}
+
 }
 
 
-/* Som curto */
+/* ============================
+   GRAVE DE SUSPENSE
+============================ */
 
-function tocarSom(frequencia, duracao){
+function iniciarGrave(){
 
-    if(!somLigado) return;
+if(!somLigado)
+return;
 
-    iniciarAudio();
+iniciarAudio();
 
-    const agora =
-        audioContext.currentTime;
 
-    const osc =
-        audioContext.createOscillator();
+osciladorGrave =
+audioContext.createOscillator();
 
-    const gain =
-        audioContext.createGain();
+ganhoGrave =
+audioContext.createGain();
 
-    osc.type = "sine";
 
-    osc.frequency.value =
-        frequencia;
+osciladorGrave.type =
+"sine";
 
-    gain.gain.setValueAtTime(
-        0.0001,
-        agora
-    );
 
-    gain.gain.exponentialRampToValueAtTime(
-        0.12,
-        agora + 0.01
-    );
+osciladorGrave.frequency.value =
+55;
 
-    gain.gain.exponentialRampToValueAtTime(
-        0.0001,
-        agora + duracao
-    );
 
-    osc.connect(gain);
+ganhoGrave.gain.value =
+0.0001;
 
-    gain.connect(
-        audioContext.destination
-    );
 
-    osc.start(agora);
+osciladorGrave.connect(
+ganhoGrave
+);
 
-    osc.stop(
-        agora + duracao
-    );
+ganhoGrave.connect(
+audioContext.destination
+);
+
+
+osciladorGrave.start();
+
+
+ganhoGrave.gain.exponentialRampToValueAtTime(
+0.08,
+audioContext.currentTime + 1
+);
+
 }
 
 
-/* Som durante a rotação */
+/* ============================
+   BATIDA DE SUSPENSE
+============================ */
 
-function iniciarSomRoleta(){
+function batidaSuspense(){
 
-    if(!somLigado) return;
+if(!somLigado)
+return;
 
-    iniciarAudio();
+iniciarAudio();
 
-    let intervalo = 180;
 
-    intervaloSom =
-        setInterval(() => {
+const agora =
+audioContext.currentTime;
 
-            tocarSom(
-                500 + Math.random() * 250,
-                0.07
-            );
 
-            intervalo = Math.max(
-                80,
-                intervalo - 8
-            );
+const osc =
+audioContext.createOscillator();
 
-        }, intervalo);
+const ganho =
+audioContext.createGain();
+
+
+osc.type =
+"sine";
+
+
+/*
+   Frequência grave
+   cria sensação de tensão
+*/
+
+osc.frequency.setValueAtTime(
+75,
+agora
+);
+
+osc.frequency.exponentialRampToValueAtTime(
+38,
+agora + .18
+);
+
+
+ganho.gain.setValueAtTime(
+0.0001,
+agora
+);
+
+ganho.gain.exponentialRampToValueAtTime(
+0.18,
+agora + .015
+);
+
+ganho.gain.exponentialRampToValueAtTime(
+0.0001,
+agora + .22
+);
+
+
+osc.connect(ganho);
+
+ganho.connect(
+audioContext.destination
+);
+
+
+osc.start(agora);
+
+osc.stop(
+agora + .25
+);
+
 }
 
 
-/* Parar som da roleta */
+/* ============================
+   COMEÇA SUSPENSE
+============================ */
 
-function pararSomRoleta(){
+function iniciarSuspense(){
 
-    if(intervaloSom){
+if(!somLigado)
+return;
 
-        clearInterval(intervaloSom);
+iniciarAudio();
 
-        intervaloSom = null;
-    }
+iniciarGrave();
 
-    /* Som final */
 
-    tocarSom(180,0.12);
+tempoInicio =
+Date.now();
 
-    setTimeout(() => {
-        tocarSom(260,0.15);
-    },100);
 
-    setTimeout(() => {
-        tocarSom(380,0.20);
-    },220);
+let velocidade =
+220;
+
+
+function proximaBatida(){
+
+if(!girando)
+return;
+
+
+batidaSuspense();
+
+
+const decorrido =
+Date.now() -
+tempoInicio;
+
+
+/*
+   A batida vai ficando
+   cada vez mais rápida.
+*/
+
+velocidade =
+Math.max(
+65,
+220 -
+(decorrido * .045)
+);
+
+
+intervaloBatida =
+setTimeout(
+proximaBatida,
+velocidade
+);
+
 }
 
 
-/* Ligar / desligar */
+proximaBatida();
+
+}
+
+
+/* ============================
+   FINAL DO SUSPENSE
+============================ */
+
+function finalizarSuspense(){
+
+if(intervaloBatida){
+
+clearTimeout(
+intervaloBatida
+);
+
+intervaloBatida =
+null;
+
+}
+
+
+/* encerra grave */
+
+if(
+osciladorGrave &&
+ganhoGrave
+){
+
+const agora =
+audioContext.currentTime;
+
+
+ganhoGrave.gain.exponentialRampToValueAtTime(
+0.0001,
+agora + .35
+);
+
+
+osciladorGrave.stop(
+agora + .4
+);
+
+osciladorGrave =
+null;
+
+}
+
+
+/*
+   três impactos finais
+*/
+
+setTimeout(
+() => impactoFinal(90),
+0
+);
+
+setTimeout(
+() => impactoFinal(120),
+120
+);
+
+setTimeout(
+() => impactoFinal(180),
+250
+);
+
+}
+
+
+/* ============================
+   IMPACTO FINAL
+============================ */
+
+function impactoFinal(frequencia){
+
+if(!somLigado)
+return;
+
+iniciarAudio();
+
+
+const agora =
+audioContext.currentTime;
+
+
+const osc =
+audioContext.createOscillator();
+
+const ganho =
+audioContext.createGain();
+
+
+osc.type =
+"sawtooth";
+
+
+osc.frequency.setValueAtTime(
+frequencia,
+agora
+);
+
+
+ganho.gain.setValueAtTime(
+0.0001,
+agora
+);
+
+ganho.gain.exponentialRampToValueAtTime(
+0.25,
+agora + .015
+);
+
+ganho.gain.exponentialRampToValueAtTime(
+0.0001,
+agora + .35
+);
+
+
+osc.connect(ganho);
+
+ganho.connect(
+audioContext.destination
+);
+
+
+osc.start(agora);
+
+osc.stop(
+agora + .4
+);
+
+}
+
+
+/* ============================
+   SOM LIGADO / DESLIGADO
+============================ */
 
 function alternarSom(){
 
-    somLigado =
-        !somLigado;
+somLigado =
+!somLigado;
 
-    if(somLigado){
 
-        btnSom.textContent =
-            "🔊 Som ligado";
+if(somLigado){
 
-    }else{
+btnSom.textContent =
+"🔊 Suspense ligado";
 
-        btnSom.textContent =
-            "🔇 Som desligado";
+}else{
 
-        if(intervaloSom){
+btnSom.textContent =
+"🔇 Suspense desligado";
 
-            clearInterval(intervaloSom);
 
-            intervaloSom = null;
-        }
-    }
+if(intervaloBatida){
+
+clearTimeout(
+intervaloBatida
+);
+
+intervaloBatida =
+null;
+
 }
 
-
-/* =========================
-   ESCOLHER COR
-========================= */
-
-function selecionarCor(cor, botao){
-
-    if(girando) return;
-
-    document
-        .querySelectorAll(".btn-cor")
-        .forEach(btn =>
-            btn.classList.remove("ativo")
-        );
-
-    botao.classList.add("ativo");
-
-    corSelecionada = cor;
-
-    btnGirar.disabled = false;
-
-    resultado.textContent =
-        "Cor escolhida: " +
-        cor.toUpperCase();
+}
 
 }
 
 
-/* =========================
+/* ============================
+   SELECIONAR COR
+============================ */
+
+function selecionarCor(
+cor,
+botao
+){
+
+if(girando)
+return;
+
+
+document
+.querySelectorAll(".btn-cor")
+.forEach(
+btn =>
+btn.classList.remove("ativo")
+);
+
+
+botao.classList.add(
+"ativo"
+);
+
+
+corSelecionada =
+cor;
+
+
+btnGirar.disabled =
+false;
+
+
+resultado.textContent =
+"Cor escolhida: " +
+cor.toUpperCase();
+
+}
+
+
+/* ============================
    GIRAR ROLETA
-========================= */
+============================ */
 
 function girarRoleta(){
 
-    if(
-        girando ||
-        !corSelecionada
-    ){
-        return;
-    }
-
-    girando = true;
-
-    btnGirar.disabled = true;
-
-    document
-        .querySelectorAll(".btn-cor")
-        .forEach(btn =>
-            btn.style.pointerEvents =
-                "none"
-        );
-
-    resultado.textContent =
-        "GIRANDO...";
-
-    resultado.style.color =
-        "#fff";
+if(
+girando ||
+!corSelecionada
+)
+return;
 
 
-    /* Ativa o áudio */
-
-    iniciarAudio();
-
-    iniciarSomRoleta();
+girando =
+true;
 
 
-    const voltas =
-        5 +
-        Math.floor(
-            Math.random() * 3
-        );
-
-    const novoGiro =
-        voltas * 360 +
-        Math.floor(
-            Math.random() * 360
-        );
-
-    rotacaoAtual +=
-        novoGiro;
-
-    roleta.style.transform =
-        "rotate(" +
-        rotacaoAtual +
-        "deg)";
+btnGirar.disabled =
+true;
 
 
-    setTimeout(() => {
-
-        pararSomRoleta();
-
-
-        const numero =
-            Math.floor(
-                Math.random() * 15
-            );
-
-        let resultadoCor;
+document
+.querySelectorAll(".btn-cor")
+.forEach(
+btn =>
+btn.style.pointerEvents =
+"none"
+);
 
 
-        if(numero === 0){
-
-            resultadoCor =
-                "verde";
-
-        }else if(
-            numero % 2 === 0
-        ){
-
-            resultadoCor =
-                "preto";
-
-        }else{
-
-            resultadoCor =
-                "vermelho";
-        }
+resultado.textContent =
+"GIRANDO...";
 
 
-        resultado.textContent =
-            "Resultado: " +
-            resultadoCor.toUpperCase();
+resultado.style.color =
+"#fff";
 
 
-        if(
-            resultadoCor ===
-            "vermelho"
-        ){
+/* suspense visual */
 
-            resultado.style.color =
-                "#ff4d4d";
-        }
+roleta.classList.add(
+"suspense"
+);
 
 
-        if(
-            resultadoCor ===
-            "preto"
-        ){
+/* suspense sonoro */
 
-            resultado.style.color =
-                "#aaa";
-        }
+iniciarSuspense();
 
 
-        if(
-            resultadoCor ===
-            "verde"
-        ){
-
-            resultado.style.color =
-                "#00ed91";
-        }
+const voltas =
+5 +
+Math.floor(
+Math.random() * 3
+);
 
 
-        setTimeout(() => {
+const novoGiro =
+voltas * 360 +
+Math.floor(
+Math.random() * 360
+);
 
-            girando = false;
 
-            btnGirar.disabled =
-                false;
+rotacaoAtual +=
+novoGiro;
 
-            document
-                .querySelectorAll(
-                    ".btn-cor"
-                )
-                .forEach(btn =>
-                    btn.style.pointerEvents =
-                        "auto"
-                );
 
-        },700);
+roleta.style.transform =
+"rotate(" +
+rotacaoAtual +
+"deg)";
 
-    },3000);
+
+setTimeout(
+() => {
+
+
+finalizarSuspense();
+
+
+roleta.classList.remove(
+"suspense"
+);
+
+
+const numero =
+Math.floor(
+Math.random() * 15
+);
+
+
+let resultadoCor;
+
+
+if(numero === 0){
+
+resultadoCor =
+"verde";
+
+}else if(
+numero % 2 === 0
+){
+
+resultadoCor =
+"preto";
+
+}else{
+
+resultadoCor =
+"vermelho";
+
+}
+
+
+resultado.textContent =
+"Resultado: " +
+resultadoCor.toUpperCase();
+
+
+if(
+resultadoCor ===
+"vermelho"
+){
+
+resultado.style.color =
+"#ff4d4d";
+
+}
+
+
+if(
+resultadoCor ===
+"preto"
+){
+
+resultado.style.color =
+"#aaa";
+
+}
+
+
+if(
+resultadoCor ===
+"verde"
+){
+
+resultado.style.color =
+"#00ed91";
+
+}
+
+
+setTimeout(
+() => {
+
+girando =
+false;
+
+btnGirar.disabled =
+false;
+
+
+document
+.querySelectorAll(".btn-cor")
+.forEach(
+btn =>
+btn.style.pointerEvents =
+"auto"
+);
+
+},
+700
+);
+
+
+},
+3000
+);
 
 }
 
