@@ -65,6 +65,7 @@ body{
   position:absolute;
   top:-14px;
   left:50%;
+
   transform:translateX(-50%);
 
   width:0;
@@ -79,7 +80,7 @@ body{
   z-index:30;
 }
 
-/* RODA */
+/* ROLETA */
 
 .roleta{
   position:relative;
@@ -136,8 +137,10 @@ body{
     0 0 0 3px #d09a50,
     0 10px 25px #000;
 
+  /* GIRO LENTO */
+
   transition:
-    transform 3s cubic-bezier(.12,.75,.18,1);
+    transform 7s cubic-bezier(.08,.55,.15,1);
 
   overflow:hidden;
 }
@@ -147,9 +150,7 @@ body{
 .numeros-roleta{
   position:absolute;
   inset:5px;
-
   border-radius:50%;
-
   pointer-events:none;
 }
 
@@ -173,8 +174,7 @@ body{
   text-align:center;
   line-height:18px;
 
-  text-shadow:
-    0 1px 2px #000;
+  text-shadow:0 1px 2px #000;
 
   transform-origin:9px 9px;
 }
@@ -210,7 +210,7 @@ body{
   z-index:5;
 }
 
-/* MESA */
+/* TABULEIRO */
 
 .mesa-jogo{
   position:absolute;
@@ -315,9 +315,7 @@ body{
 }
 
 .selecionado{
-  box-shadow:
-    inset 0 0 0 3px #ffd43b;
-
+  box-shadow:inset 0 0 0 3px #ffd43b;
   filter:brightness(1.4);
 }
 
@@ -428,15 +426,21 @@ button{
 
 #mensagem{
   text-align:center;
+
   margin-top:10px;
+
   min-height:20px;
+
   font-size:12px;
 }
 
 .nota{
   text-align:center;
+
   color:#777;
+
   font-size:9px;
+
   margin-top:8px;
 }
 
@@ -482,20 +486,13 @@ button{
 
 </div>
 
-
 <div class="area">
 
 <div class="mesa">
 
-  <!-- ROLETA -->
-
   <div class="roleta-area">
 
-    <!-- PONTEIRO FIXO -->
-
     <div class="ponteiro"></div>
-
-    <!-- RODA -->
 
     <div
       id="roleta"
@@ -512,8 +509,6 @@ button{
 
   </div>
 
-
-  <!-- TABULEIRO -->
 
   <div class="mesa-jogo">
 
@@ -669,9 +664,8 @@ const vermelhos = [
 ];
 
 
-/*
-  Sequência padrão da roleta europeia.
-*/
+/* ORDEM PADRÃO DA ROLETA */
+
 const ordemRoleta = [
   0,
   32,15,19,4,21,2,25,17,34,6,
@@ -717,7 +711,7 @@ let girando = false;
 let rotacao = 0;
 
 
-/* CRIA OS NÚMEROS NA ROLETA */
+/* NÚMEROS NA ROLETA */
 
 ordemRoleta.forEach(
 function(numero,index){
@@ -731,17 +725,8 @@ function(numero,index){
   el.textContent =
     numero;
 
-  /*
-    37 posições em círculo.
-  */
-
   const angulo =
     index * (360 / 37);
-
-  /*
-    Número fica na borda
-    interna da roda.
-  */
 
   const raio = 61;
 
@@ -755,7 +740,6 @@ function(numero,index){
   const y =
     Math.sin(rad) * raio;
 
-
   el.style.transform =
     "translate(" +
     x +
@@ -763,40 +747,19 @@ function(numero,index){
     y +
     "px)";
 
-
-  /*
-    Vermelho/branco conforme
-    a cor real do número.
-  */
-
   if(numero === 0){
 
     el.style.color =
       "#63e58d";
 
   }
-  else if(
-    vermelhos.includes(numero)
-  ){
-
-    el.style.color =
-      "#fff";
-
-  }
-  else{
-
-    el.style.color =
-      "#fff";
-
-  }
-
 
   numerosRoleta.appendChild(el);
 
 });
 
 
-/* CRIA TABULEIRO */
+/* TABULEIRO */
 
 for(
   let n=1;
@@ -945,7 +908,7 @@ function fazerAposta(
 }
 
 
-/* VERIFICA RESULTADO */
+/* VERIFICAR RESULTADO */
 
 function ganhou(
   tipo,
@@ -1085,8 +1048,8 @@ function(){
 
 
   /*
-    O resultado é escolhido antes
-    do movimento visual.
+    Escolhe o resultado antes
+    do giro visual.
   */
 
   const resultado =
@@ -1095,43 +1058,28 @@ function(){
     );
 
 
-  /*
-    Encontra a posição do resultado
-    na roda.
-  */
-
   const indice =
     ordemRoleta.indexOf(
       resultado
     );
 
 
-  /*
-    Cada número ocupa aproximadamente
-    360/37 graus.
-
-    O ponteiro está no topo.
-  */
-
   const setor =
     360 / 37;
 
-
-  /*
-    Faz o resultado parar
-    aproximadamente no ponteiro.
-  */
 
   const alvo =
     -(indice * setor);
 
 
   /*
-    Muitas voltas + posição final.
+    7 segundos de giro.
+    Começa rápido e desacelera
+    bastante perto do final.
   */
 
   rotacao +=
-    360 * 5;
+    360 * 8;
 
 
   const atualModulo =
@@ -1142,7 +1090,8 @@ function(){
     alvo - atualModulo;
 
 
-  rotacao += ajuste;
+  rotacao +=
+    ajuste;
 
 
   roleta.style.transform =
@@ -1150,6 +1099,11 @@ function(){
     rotacao +
     "deg)";
 
+
+  /*
+    Aguarda exatamente o final
+    da animação de 7 segundos.
+  */
 
   setTimeout(
   function(){
@@ -1268,13 +1222,13 @@ function(){
     btnGirar.disabled = false;
 
   },
-  3050
+  7050
   );
 
 };
 
 
-/* SALDO */
+/* ATUALIZAR SALDO */
 
 function atualizar(){
 
@@ -1284,7 +1238,6 @@ function atualizar(){
     .replace(".",",");
 
 }
-
 
 atualizar();
 
