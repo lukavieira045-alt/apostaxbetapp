@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Roleta Cassino</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#050505;color:white;font-family:Arial,sans-serif;
+}
+.top{
+ height:50px;background:#111;border-bottom:1px solid #444;
+ display:flex;justify-content:space-between;align-items:center;
+ padding:0 10px;font-size:12px;
+}
+.online{color:#42df7d}
+.area{
+ width:100%;max-width:900px;margin:auto;
+}
+.mesa{
+ position:relative;height:430px;overflow:hidden;
+ background:
+ radial-gradient(circle at 25% 50%,#6b3b1c 0 7%,#25160c 8% 15%,transparent 16%),
+ linear-gradient(135deg,#06162d,#123c94,#071936);
+}
+.roleta{
+ position:absolute;width:150px;height:150px;left:3%;top:55px;
+ border-radius:50%;border:10px solid #8a4b20;
+ box-shadow:0 0 0 4px #c88a45,0 10px 25px #000;
+ background:conic-gradient(
+ #0b7b3c 0 10deg,#b51d24 10deg 30deg,#111 30deg 50deg,
+ #b51d24 50deg 70deg,#111 70deg 90deg,#b51d24 90deg 110deg,
+ #111 110deg 130deg,#b51d24 130deg 150deg,#111 150deg 170deg,
+ #b51d24 170deg 190deg,#111 190deg 210deg,#b51d24 210deg 230deg,
+ #111 230deg 250deg,#b51d24 250deg 270deg,#111 270deg 290deg,
+ #b51d24 290deg 310deg,#111 310deg 330deg,#b51d24 330deg 350deg,#111 350deg 360deg
+ );
+}
+.roleta:after{
+ content:"";position:absolute;inset:25%;border-radius:50%;
+ background:radial-gradient(circle,#d4a15b 0 12%,#3c1c0c 13% 25%,#111 26% 45%,#c18b48 46% 52%,#222 53%);
+ border:3px solid #d3a05d;
+}
+.girar{animation:girar 2.8s cubic-bezier(.15,.75,.2,1)}
+@keyframes girar{to{transform:rotate(1080deg)}}
+
+.mesa-jogo{
+ position:absolute;left:23%;right:-8%;top:55px;height:330px;
+ transform:skewX(-7deg) rotate(-2deg);
+ background:#12419a;border:3px solid white;
+ box-shadow:0 0 0 3px #152d68,0 15px 30px #000;
+ padding:15px;
+}
+.grade{
+ display:grid;grid-template-columns:repeat(12,1fr);
+ margin-left:7%;
+}
+.numero{
+ height:38px;border:1px solid white;
+ display:flex;align-items:center;justify-content:center;
+ font-size:13px;font-weight:bold;cursor:pointer;
+}
+.vermelho{background:#b31e25}
+.preto{background:#111}
+.zero{
+ position:absolute;left:10px;top:15px;width:6%;height:77%;
+ background:#087d3d;border:1px solid white;
+ display:flex;align-items:center;justify-content:center;
+ font-size:20px;font-weight:bold;
+}
+.faixas{
+ margin-left:7%;margin-top:3px;
+ display:grid;grid-template-columns:repeat(6,1fr);
+}
+.faixa{
+ height:45px;background:#12377d;border:1px solid white;
+ display:flex;align-items:center;justify-content:center;
+ font-size:10px;font-weight:bold;cursor:pointer;
+}
+.faixa.vermelho{background:#a91d25}
+.selecionado{box-shadow:inset 0 0 0 3px #ffd43b}
+
+.aviso{
+ position:absolute;bottom:8px;left:8px;
+ background:rgba(0,0,0,.8);padding:9px;border-radius:4px;
+ font-size:10px;
+}
+.controles{
+ background:#0d0d0d;border-top:1px solid #444;
+ padding:12px;
+}
+.linha{
+ display:flex;justify-content:space-between;
+ margin-bottom:10px;font-size:13px;color:#aaa;
+}
+.linha b{color:#6fe38b}
+.fichas{
+ display:flex;gap:8px;overflow:auto;padding-bottom:10px;
+}
+.ficha{
+ min-width:43px;height:43px;border-radius:50%;
+ border:3px solid white;background:#8b3030;color:white;
+ font-weight:bold;
+}
+.ficha.ativa{outline:3px solid #ffd43b}
+.botoes{display:flex;gap:8px}
+button{
+ flex:1;padding:13px;border-radius:8px;
+ background:#181818;border:1px solid #555;color:white;font-weight:bold;
+}
+#btnGirar{background:#087642;border-color:#39d97b}
+#mensagem{text-align:center;margin-top:9px;font-size:12px;min-height:18px}
+.nota{text-align:center;color:#777;font-size:9px;margin-top:8px}
+</style>
+</head>
+
+<body>
+
+<div class="top">
+ <span>🎰 ROleta Cassino — DEMO</span>
+ <span class="online">● ONLINE</span>
+</div>
+
+<div class="area">
+
+<div class="mesa">
+
+ <div class="roleta" id="roleta"></div>
+
+ <div class="mesa-jogo">
+
+  <div class="zero" data-bet="0">0</div>
+
+  <div class="grade" id="grade"></div>
+
+  <div class="faixas">
+   <div class="faixa" data-bet="baixo">1-18</div>
+   <div class="faixa" data-bet="par">PAR</div>
+   <div class="faixa vermelho" data-bet="vermelho">VERMELHO</div>
+   <div class="faixa" data-bet="preto">PRETO</div>
+   <div class="faixa" data-bet="impar">ÍMPAR</div>
+   <div class="faixa" data-bet="alto">19-36</div>
+  </div>
+
+ </div>
+
+ <div class="aviso" id="aviso">
+  FAÇA SUAS APOSTAS
+ </div>
+
+</div>
+
+<div class="controles">
+
+ <div class="linha">
+  <span>Créditos virtuais: <b id="saldo">100,00</b></span>
+  <span>Ficha: <b id="valor">1,00</b></span>
+ </div>
+
+ <div class="fichas">
+  <button class="ficha ativa" data-valor="1">1</button>
+  <button class="ficha" data-valor="5">5</button>
+  <button class="ficha" data-valor="10">10</button>
+  <button class="ficha" data-valor="25">25</button>
+  <button class="ficha" data-valor="50">50</button>
+ </div>
+
+ <div class="botoes">
+  <button id="limpar">LIMPAR</button>
+  <button id="btnGirar">GIRAR</button>
+ </div>
+
+ <div id="mensagem"></div>
+
+ <div class="nota">
+  Jogo demonstrativo com créditos virtuais. Não utiliza dinheiro real.
+ </div>
+
+</div>
+
+</div>
+
+<script>
+const vermelhos=[
+1,3,5,7,9,12,14,16,18,
+19,21,23,25,27,30,32,34,36
+];
+
+const grade=document.getElementById("grade");
+const saldo=document.getElementById("saldo");
+const valor=document.getElementById("valor");
+const mensagem=document.getElementById("mensagem");
+const roleta=document.getElementById("roleta");
+
+let dinheiro=100;
+let ficha=1;
+let apostas=[];
+let girando=false;
+
+for(let n=1;n<=36;n++){
+
+ let el=document.createElement("div");
+
+ el.className="numero "+
+ (vermelhos.includes(n)?"vermelho":"preto");
+
+ el.textContent=n;
+ el.dataset.bet=n;
+
+ el.onclick=function(){
+  apostar(n,this);
+ };
+
+ grade.appendChild(el);
+}
+
+document.querySelector(".zero").onclick=function(){
+ apostar(0,this);
+};
+
+document.querySelectorAll(".faixa").forEach(el=>{
+ el.onclick=function(){
+  apostar(el.dataset.bet,el);
+ };
+});
+
+document.querySelectorAll(".ficha").forEach(el=>{
+
+ el.onclick=function(){
+
+  document.querySelectorAll(".ficha")
+  .forEach(x=>x.classList.remove("ativa"));
+
+  el.classList.add("ativa");
+
+  ficha=Number(el.dataset.valor);
+
+  valor.textContent=ficha.toFixed(2).replace(".",",");
+ };
+});
+
+function apostar(tipo,el){
+
+ if(girando)return;
+
+ if(dinheiro<ficha){
+
+  mensagem.textContent="Créditos virtuais insuficientes.";
+  return;
+ }
+
+ dinheiro-=ficha;
+
+ apostas.push({
+  tipo:tipo,
+  valor:ficha
+ });
+
+ el.classList.add("selecionado");
+
+ atualizar();
+
+ mensagem.textContent=
+ "Aposta virtual adicionada: "+
+ ficha.toFixed(2).replace(".",",");
+}
+
+function ganhou(tipo,n){
+
+ if(tipo===n)return true;
+
+ if(tipo==="vermelho")
+  return vermelhos.includes(n);
+
+ if(tipo==="preto")
+  return n!==0&&!vermelhos.includes(n);
+
+ if(tipo==="baixo")
+  return n>=1&&n<=18;
+
+ if(tipo==="alto")
+  return n>=19&&n<=36;
+
+ if(tipo==="par")
+  return n!==0&&n%2===0;
+
+ if(tipo==="impar")
+  return n%2===1;
+
+ return false;
+}
+
+function multiplicador(tipo){
+
+ if(typeof tipo==="number")return 35;
+
+ return 1;
+}
+
+function atualizar(){
+
+ saldo.textContent=
+ dinheiro.toFixed(2).replace(".",",");
+}
+
+document.getElementById("limpar").onclick=function(){
+
+ if(girando)return;
+
+ apostas.forEach(a=>{
+  dinheiro+=a.valor;
+ });
+
+ apostas=[];
+
+ document.querySelectorAll(".selecionado")
+ .forEach(x=>x.classList.remove("selecionado"));
+
+ mensagem.textContent="Apostas limpas.";
+
+ atualizar();
+};
+
+document.getElementById("btnGirar").onclick=function(){
+
+ if(girando)return;
+
+ if(apostas.length===0){
+
+  mensagem.textContent=
+  "Escolha uma aposta primeiro.";
+
+  return;
+ }
+
+ girando=true;
+
+ this.disabled=true;
+
+ mensagem.textContent="Roleta girando...";
+
+ document.getElementById("aviso").textContent=
+ "AGUARDE O RESULTADO...";
+
+ roleta.classList.remove("girar");
+
+ void roleta.offsetWidth;
+
+ roleta.classList.add("girar");
+
+ setTimeout(function(){
+
+  let resultado=Math.floor(Math.random()*37);
+
+  let premio=0;
+
+  apostas.forEach(a=>{
+
+   if(ganhou(a.tipo,resultado)){
+
+    premio+=
+    a.valor*(multiplicador(a.tipo)+1);
+   }
+
+  });
+
+  dinheiro+=premio;
+
+  let cor;
+
+  if(resultado===0)
+   cor="VERDE";
+  else if(vermelhos.includes(resultado))
+   cor="VERMELHO";
+  else
+   cor="PRETO";
+
+  if(premio>0){
+
+   mensagem.textContent=
+   "Resultado "+resultado+" — "+cor+
+   ". Prêmio virtual: "+
+   premio.toFixed(2).replace(".",",");
+
+  }else{
+
+   mensagem.textContent=
+   "Resultado "+resultado+" — "+cor+
+   ". Nenhuma aposta vencedora.";
+  }
+
+  document.getElementById("aviso").innerHTML=
+  "RESULTADO: <b>"+resultado+
+  "</b> — "+cor;
+
+  apostas=[];
+
+  document.querySelectorAll(".selecionado")
+  .forEach(x=>x.classList.remove("selecionado"));
+
+  atualizar();
+
+  girando=false;
+
+  document.getElementById("btnGirar")
+  .disabled=false;
+
+ },2900);
+
+};
+
+atualizar();
+</script>
+
+</body>
+</html>
