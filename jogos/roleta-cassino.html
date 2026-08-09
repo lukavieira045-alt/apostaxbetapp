@@ -48,7 +48,7 @@ body{
   background:linear-gradient(135deg,#06152d,#123d94,#071936);
 }
 
-/* ÁREA DA ROLETA */
+/* ROLETA */
 
 .roleta-area{
   position:absolute;
@@ -59,13 +59,10 @@ body{
   z-index:5;
 }
 
-/* PONTEIRO */
-
 .ponteiro{
   position:absolute;
   top:-14px;
   left:50%;
-
   transform:translateX(-50%);
 
   width:0;
@@ -79,8 +76,6 @@ body{
 
   z-index:30;
 }
-
-/* ROLETA */
 
 .roleta{
   position:relative;
@@ -137,15 +132,11 @@ body{
     0 0 0 3px #d09a50,
     0 10px 25px #000;
 
-  /* GIRO LENTO */
-
   transition:
     transform 7s cubic-bezier(.08,.55,.15,1);
 
   overflow:hidden;
 }
-
-/* NÚMEROS DA ROLETA */
 
 .numeros-roleta{
   position:absolute;
@@ -175,11 +166,7 @@ body{
   line-height:18px;
 
   text-shadow:0 1px 2px #000;
-
-  transform-origin:9px 9px;
 }
-
-/* CENTRO */
 
 .centro-roleta{
   position:absolute;
@@ -325,9 +312,9 @@ body{
   left:8px;
   bottom:8px;
 
-  background:rgba(0,0,0,.85);
+  background:rgba(0,0,0,.9);
 
-  padding:9px;
+  padding:9px 12px;
 
   border-radius:5px;
 
@@ -348,13 +335,11 @@ body{
 
 .linha{
   display:flex;
-
   justify-content:space-between;
 
   margin-bottom:12px;
 
   font-size:13px;
-
   color:#aaa;
 }
 
@@ -365,7 +350,9 @@ body{
 .fichas{
   display:flex;
   gap:8px;
+
   overflow-x:auto;
+
   padding-bottom:12px;
 }
 
@@ -421,7 +408,7 @@ button{
 }
 
 #btnGirar:disabled{
-  opacity:.5;
+  opacity:.45;
 }
 
 #mensagem{
@@ -486,6 +473,7 @@ button{
 
 </div>
 
+
 <div class="area">
 
 <div class="mesa">
@@ -494,9 +482,7 @@ button{
 
     <div class="ponteiro"></div>
 
-    <div
-      id="roleta"
-      class="roleta">
+    <div id="roleta" class="roleta">
 
       <div
         id="numerosRoleta"
@@ -566,12 +552,8 @@ button{
   </div>
 
 
-  <div
-    id="aviso"
-    class="aviso">
-
-    FAÇA SUAS APOSTAS
-
+  <div id="aviso" class="aviso">
+    PREPARANDO RODADA...
   </div>
 
 </div>
@@ -635,8 +617,8 @@ button{
       LIMPAR
     </button>
 
-    <button id="btnGirar">
-      GIRAR
+    <button id="btnGirar" disabled>
+      AGUARDE
     </button>
 
   </div>
@@ -663,8 +645,6 @@ const vermelhos = [
   30,32,34,36
 ];
 
-
-/* ORDEM PADRÃO DA ROLETA */
 
 const ordemRoleta = [
   0,
@@ -708,10 +688,16 @@ let apostas = [];
 
 let girando = false;
 
+let apostasAbertas = false;
+
+let tempoAposta = 10;
+
+let contador = null;
+
 let rotacao = 0;
 
 
-/* NÚMEROS NA ROLETA */
+/* NÚMEROS DA ROLETA */
 
 ordemRoleta.forEach(
 function(numero,index){
@@ -782,14 +768,14 @@ for(
     n;
 
   numero.onclick =
-    function(){
+  function(){
 
-      fazerAposta(
-        n,
-        numero
-      );
+    fazerAposta(
+      n,
+      numero
+    );
 
-    };
+  };
 
   grade.appendChild(numero);
 
@@ -841,6 +827,9 @@ function(botao){
   botao.onclick =
   function(){
 
+    if(!apostasAbertas)
+      return;
+
     document
     .querySelectorAll(".ficha")
     .forEach(
@@ -871,12 +860,21 @@ function(botao){
 });
 
 
-/* APOSTA */
+/* FAZER APOSTA */
 
 function fazerAposta(
   tipo,
   elemento
 ){
+
+  if(!apostasAbertas){
+
+    mensagem.textContent =
+      "🔒 As apostas estão fechadas.";
+
+    return;
+
+  }
 
   if(girando)
     return;
@@ -887,6 +885,7 @@ function fazerAposta(
       "Créditos insuficientes.";
 
     return;
+
   }
 
   dinheiro -= ficha;
@@ -908,7 +907,7 @@ function fazerAposta(
 }
 
 
-/* VERIFICAR RESULTADO */
+/* VERIFICAR GANHO */
 
 function ganhou(
   tipo,
@@ -978,14 +977,14 @@ function ganhou(
 }
 
 
-/* LIMPAR */
+/* LIMPAR APOSTAS */
 
 document
 .getElementById("limpar")
 .onclick =
 function(){
 
-  if(girando)
+  if(!apostasAbertas)
     return;
 
   apostas.forEach(
@@ -1009,9 +1008,6 @@ function(){
 
   });
 
-  aviso.textContent =
-    "FAÇA SUAS APOSTAS";
-
   mensagem.textContent =
     "Apostas limpas.";
 
@@ -1020,37 +1016,107 @@ function(){
 };
 
 
-/* GIRAR */
+/* INICIAR RODADA */
 
-btnGirar.onclick =
-function(){
+function iniciarRodada(){
+
+  clearInterval(contador);
+
+  tempoAposta = 10;
+
+  apostasAbertas = true;
+
+  girando = false;
+
+  btnGirar.disabled = true;
+
+  btnGirar.textContent =
+    "AGUARDE";
+
+  aviso.innerHTML =
+    "⏱️ APOSTAS: <b>10s</b>";
+
+  mensagem.textContent =
+    "Faça suas apostas.";
+
+  contador =
+    setInterval(
+    function(){
+
+      tempoAposta--;
+
+      if(tempoAposta > 0){
+
+        aviso.innerHTML =
+          "⏱️ APOSTAS: <b>" +
+          tempoAposta +
+          "s</b>";
+
+      }
+
+      if(tempoAposta <= 0){
+
+        clearInterval(contador);
+
+        fecharApostas();
+
+      }
+
+    },
+    1000
+    );
+
+}
+
+
+/* FECHAR APOSTAS */
+
+function fecharApostas(){
+
+  apostasAbertas = false;
+
+  document
+  .querySelectorAll(".ficha")
+  .forEach(
+  function(el){
+
+    el.classList.remove(
+      "ativa"
+    );
+
+  });
+
+  aviso.innerHTML =
+    "🔒 <b>APOSTAS ENCERRADAS</b>";
+
+  mensagem.textContent =
+    "🎰 Preparando o giro...";
+
+  setTimeout(
+    girarAutomaticamente,
+    800
+  );
+
+}
+
+
+/* GIRAR AUTOMATICAMENTE */
+
+function girarAutomaticamente(){
 
   if(girando)
     return;
-
-  if(apostas.length === 0){
-
-    mensagem.textContent =
-      "Escolha uma aposta primeiro.";
-
-    return;
-  }
 
   girando = true;
 
   btnGirar.disabled = true;
 
+  aviso.innerHTML =
+    "🎰 <b>ROLETA GIRANDO...</b>";
+
   mensagem.textContent =
-    "🎰 A roleta está girando...";
+    "Aguarde o resultado...";
 
-  aviso.textContent =
-    "AGUARDE O RESULTADO...";
-
-
-  /*
-    Escolhe o resultado antes
-    do giro visual.
-  */
 
   const resultado =
     Math.floor(
@@ -1073,9 +1139,8 @@ function(){
 
 
   /*
-    7 segundos de giro.
-    Começa rápido e desacelera
-    bastante perto do final.
+    8 voltas completas.
+    A animação dura 7 segundos.
   */
 
   rotacao +=
@@ -1100,135 +1165,151 @@ function(){
     "deg)";
 
 
-  /*
-    Aguarda exatamente o final
-    da animação de 7 segundos.
-  */
-
   setTimeout(
   function(){
 
-    let premio = 0;
-
-
-    apostas.forEach(
-    function(aposta){
-
-      if(
-        ganhou(
-          aposta.tipo,
-          resultado
-        )
-      ){
-
-        if(
-          typeof aposta.tipo === "number"
-        ){
-
-          premio +=
-            aposta.valor * 36;
-
-        }
-        else{
-
-          premio +=
-            aposta.valor * 2;
-
-        }
-
-      }
-
-    });
-
-
-    dinheiro +=
-      premio;
-
-
-    let cor;
-
-
-    if(resultado === 0){
-
-      cor = "VERDE";
-
-    }
-    else if(
-      vermelhos.includes(resultado)
-    ){
-
-      cor = "VERMELHO";
-
-    }
-    else{
-
-      cor = "PRETO";
-
-    }
-
-
-    if(premio > 0){
-
-      mensagem.textContent =
-        "🏆 Resultado: " +
-        resultado +
-        " — " +
-        cor +
-        " | Prêmio virtual: " +
-        premio
-        .toFixed(2)
-        .replace(".",",");
-
-    }
-    else{
-
-      mensagem.textContent =
-        "Resultado: " +
-        resultado +
-        " — " +
-        cor +
-        " | Sem prêmio.";
-
-    }
-
-
-    aviso.innerHTML =
-      "RESULTADO: <b>" +
-      resultado +
-      "</b> — " +
-      cor;
-
-
-    apostas = [];
-
-
-    document
-    .querySelectorAll(".selecionado")
-    .forEach(
-    function(el){
-
-      el.classList.remove(
-        "selecionado"
-      );
-
-    });
-
-
-    atualizar();
-
-
-    girando = false;
-
-    btnGirar.disabled = false;
+    finalizarRodada(
+      resultado
+    );
 
   },
   7050
   );
 
-};
+}
 
 
-/* ATUALIZAR SALDO */
+/* FINALIZAR */
+
+function finalizarRodada(
+  resultado
+){
+
+  let premio = 0;
+
+
+  apostas.forEach(
+  function(aposta){
+
+    if(
+      ganhou(
+        aposta.tipo,
+        resultado
+      )
+    ){
+
+      if(
+        typeof aposta.tipo === "number"
+      ){
+
+        premio +=
+          aposta.valor * 36;
+
+      }
+      else{
+
+        premio +=
+          aposta.valor * 2;
+
+      }
+
+    }
+
+  });
+
+
+  dinheiro +=
+    premio;
+
+
+  let cor;
+
+
+  if(resultado === 0){
+
+    cor = "VERDE";
+
+  }
+  else if(
+    vermelhos.includes(resultado)
+  ){
+
+    cor = "VERMELHO";
+
+  }
+  else{
+
+    cor = "PRETO";
+
+  }
+
+
+  if(premio > 0){
+
+    mensagem.textContent =
+      "🏆 Resultado: " +
+      resultado +
+      " — " +
+      cor +
+      " | Prêmio virtual: " +
+      premio
+      .toFixed(2)
+      .replace(".",",");
+
+  }
+  else{
+
+    mensagem.textContent =
+      "Resultado: " +
+      resultado +
+      " — " +
+      cor +
+      " | Sem prêmio.";
+
+  }
+
+
+  aviso.innerHTML =
+    "🎯 RESULTADO: <b>" +
+    resultado +
+    "</b> — " +
+    cor;
+
+
+  apostas = [];
+
+
+  document
+  .querySelectorAll(".selecionado")
+  .forEach(
+  function(el){
+
+    el.classList.remove(
+      "selecionado"
+    );
+
+  });
+
+
+  atualizar();
+
+  girando = false;
+
+
+  /*
+    Espera 3 segundos
+    antes da próxima rodada.
+  */
+
+  setTimeout(
+    iniciarRodada,
+    3000
+  );
+
+}
+
+
+/* SALDO */
 
 function atualizar(){
 
@@ -1239,7 +1320,15 @@ function atualizar(){
 
 }
 
+
+/* COMEÇAR */
+
 atualizar();
+
+setTimeout(
+  iniciarRodada,
+  500
+);
 
 </script>
 
