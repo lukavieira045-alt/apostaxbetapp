@@ -2,416 +2,1265 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <title>Roleta Cassino</title>
 
 <style>
-*{box-sizing:border-box}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
 body{
- margin:0;background:#050505;color:white;font-family:Arial,sans-serif;
+    background:#050505;
+    color:white;
+    font-family:Arial,sans-serif;
+    overflow-x:hidden;
 }
+
 .top{
- height:50px;background:#111;border-bottom:1px solid #444;
- display:flex;justify-content:space-between;align-items:center;
- padding:0 10px;font-size:12px;
+    height:52px;
+    background:#111;
+    border-bottom:1px solid #444;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 12px;
+
+    font-size:12px;
 }
-.online{color:#42df7d}
+
+.online{
+    color:#45df7d;
+}
+
 .area{
- width:100%;max-width:900px;margin:auto;
+    width:100%;
+    max-width:900px;
+    margin:auto;
 }
+
+/* MESA */
+
 .mesa{
- position:relative;height:430px;overflow:hidden;
- background:
- radial-gradient(circle at 25% 50%,#6b3b1c 0 7%,#25160c 8% 15%,transparent 16%),
- linear-gradient(135deg,#06162d,#123c94,#071936);
+    position:relative;
+    height:440px;
+
+    overflow:hidden;
+
+    background:
+        radial-gradient(
+            circle at 20% 50%,
+            #713d1b 0 7%,
+            #24150a 8% 16%,
+            transparent 17%
+        ),
+        linear-gradient(
+            135deg,
+            #06162d,
+            #123d94,
+            #071936
+        );
 }
+
+/* ROLETA */
+
 .roleta{
- position:absolute;width:150px;height:150px;left:3%;top:55px;
- border-radius:50%;border:10px solid #8a4b20;
- box-shadow:0 0 0 4px #c88a45,0 10px 25px #000;
- background:conic-gradient(
- #0b7b3c 0 10deg,#b51d24 10deg 30deg,#111 30deg 50deg,
- #b51d24 50deg 70deg,#111 70deg 90deg,#b51d24 90deg 110deg,
- #111 110deg 130deg,#b51d24 130deg 150deg,#111 150deg 170deg,
- #b51d24 170deg 190deg,#111 190deg 210deg,#b51d24 210deg 230deg,
- #111 230deg 250deg,#b51d24 250deg 270deg,#111 270deg 290deg,
- #b51d24 290deg 310deg,#111 310deg 330deg,#b51d24 330deg 350deg,#111 350deg 360deg
- );
+    position:absolute;
+
+    width:155px;
+    height:155px;
+
+    left:3%;
+    top:55px;
+
+    border-radius:50%;
+
+    border:10px solid #874a20;
+
+    box-shadow:
+        0 0 0 4px #c88944,
+        0 10px 25px #000;
+
+    background:
+        conic-gradient(
+            #087c3d 0deg 10deg,
+            #b51e24 10deg 30deg,
+            #111 30deg 50deg,
+            #b51e24 50deg 70deg,
+            #111 70deg 90deg,
+            #b51e24 90deg 110deg,
+            #111 110deg 130deg,
+            #b51e24 130deg 150deg,
+            #111 150deg 170deg,
+            #b51e24 170deg 190deg,
+            #111 190deg 210deg,
+            #b51e24 210deg 230deg,
+            #111 230deg 250deg,
+            #b51e24 250deg 270deg,
+            #111 270deg 290deg,
+            #b51e24 290deg 310deg,
+            #111 310deg 330deg,
+            #b51e24 330deg 350deg,
+            #111 350deg 360deg
+        );
+
+    transition:
+        transform 2.8s cubic-bezier(.15,.75,.2,1);
 }
-.roleta:after{
- content:"";position:absolute;inset:25%;border-radius:50%;
- background:radial-gradient(circle,#d4a15b 0 12%,#3c1c0c 13% 25%,#111 26% 45%,#c18b48 46% 52%,#222 53%);
- border:3px solid #d3a05d;
+
+.roleta::after{
+
+    content:"";
+
+    position:absolute;
+
+    inset:25%;
+
+    border-radius:50%;
+
+    background:
+        radial-gradient(
+            circle,
+            #d5a35e 0 12%,
+            #411d0b 13% 25%,
+            #111 26% 45%,
+            #c38c49 46% 52%,
+            #222 53%
+        );
+
+    border:3px solid #d3a05d;
 }
-.girar{animation:girar 2.8s cubic-bezier(.15,.75,.2,1)}
-@keyframes girar{to{transform:rotate(1080deg)}}
+
+.roleta.girar{
+
+    transform:
+        rotate(1440deg)
+        scale(1.03);
+
+}
+
+/* MESA DE NÚMEROS */
 
 .mesa-jogo{
- position:absolute;left:23%;right:-8%;top:55px;height:330px;
- transform:skewX(-7deg) rotate(-2deg);
- background:#12419a;border:3px solid white;
- box-shadow:0 0 0 3px #152d68,0 15px 30px #000;
- padding:15px;
+
+    position:absolute;
+
+    left:23%;
+    right:-8%;
+
+    top:55px;
+
+    height:340px;
+
+    transform:
+        skewX(-7deg)
+        rotate(-2deg);
+
+    background:#12419a;
+
+    border:3px solid white;
+
+    box-shadow:
+        0 0 0 3px #152d68,
+        0 15px 30px #000;
+
+    padding:15px;
 }
+
 .grade{
- display:grid;grid-template-columns:repeat(12,1fr);
- margin-left:7%;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(12,1fr);
+
+    margin-left:7%;
 }
+
 .numero{
- height:38px;border:1px solid white;
- display:flex;align-items:center;justify-content:center;
- font-size:13px;font-weight:bold;cursor:pointer;
+
+    height:38px;
+
+    border:1px solid white;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    font-size:13px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    user-select:none;
+
+    transition:.15s;
 }
-.vermelho{background:#b31e25}
-.preto{background:#111}
+
+.vermelho{
+    background:#b31e25;
+}
+
+.preto{
+    background:#111;
+}
+
+.numero:hover{
+    filter:brightness(1.35);
+}
+
+.selecionado{
+
+    box-shadow:
+        inset 0 0 0 3px #ffd43b;
+
+    filter:
+        brightness(1.4);
+}
+
+/* ZERO */
+
 .zero{
- position:absolute;left:10px;top:15px;width:6%;height:77%;
- background:#087d3d;border:1px solid white;
- display:flex;align-items:center;justify-content:center;
- font-size:20px;font-weight:bold;
+
+    position:absolute;
+
+    left:10px;
+    top:15px;
+
+    width:6%;
+    height:77%;
+
+    background:#087d3d;
+
+    border:1px solid white;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    font-size:20px;
+
+    font-weight:bold;
+
+    cursor:pointer;
 }
+
+.zero.selecionado{
+
+    box-shadow:
+        inset 0 0 0 3px #ffd43b;
+
+    filter:brightness(1.4);
+}
+
+/* FAIXAS */
+
 .faixas{
- margin-left:7%;margin-top:3px;
- display:grid;grid-template-columns:repeat(6,1fr);
+
+    margin-left:7%;
+    margin-top:3px;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(6,1fr);
 }
+
 .faixa{
- height:45px;background:#12377d;border:1px solid white;
- display:flex;align-items:center;justify-content:center;
- font-size:10px;font-weight:bold;cursor:pointer;
+
+    height:45px;
+
+    background:#12377d;
+
+    border:1px solid white;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    font-size:10px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    user-select:none;
 }
-.faixa.vermelho{background:#a91d25}
-.selecionado{box-shadow:inset 0 0 0 3px #ffd43b}
+
+.faixa.vermelho{
+    background:#a91d25;
+}
+
+.faixa:hover{
+    filter:brightness(1.3);
+}
+
+.faixa.selecionado{
+
+    box-shadow:
+        inset 0 0 0 3px #ffd43b;
+
+    filter:brightness(1.3);
+}
+
+/* AVISO */
 
 .aviso{
- position:absolute;bottom:8px;left:8px;
- background:rgba(0,0,0,.8);padding:9px;border-radius:4px;
- font-size:10px;
+
+    position:absolute;
+
+    bottom:8px;
+    left:8px;
+
+    background:
+        rgba(0,0,0,.82);
+
+    padding:9px;
+
+    border-radius:4px;
+
+    font-size:10px;
 }
+
+/* CONTROLES */
+
 .controles{
- background:#0d0d0d;border-top:1px solid #444;
- padding:12px;
+
+    background:#0d0d0d;
+
+    border-top:1px solid #444;
+
+    padding:12px;
 }
+
 .linha{
- display:flex;justify-content:space-between;
- margin-bottom:10px;font-size:13px;color:#aaa;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-bottom:10px;
+
+    font-size:13px;
+
+    color:#aaa;
 }
-.linha b{color:#6fe38b}
+
+.linha b{
+    color:#6fe38b;
+}
+
 .fichas{
- display:flex;gap:8px;overflow:auto;padding-bottom:10px;
+
+    display:flex;
+
+    gap:8px;
+
+    overflow:auto;
+
+    padding-bottom:10px;
 }
+
 .ficha{
- min-width:43px;height:43px;border-radius:50%;
- border:3px solid white;background:#8b3030;color:white;
- font-weight:bold;
+
+    min-width:44px;
+    height:44px;
+
+    border-radius:50%;
+
+    border:3px solid white;
+
+    background:#8b3030;
+
+    color:white;
+
+    font-weight:bold;
+
+    cursor:pointer;
 }
-.ficha.ativa{outline:3px solid #ffd43b}
-.botoes{display:flex;gap:8px}
+
+.ficha.ativa{
+
+    outline:
+        3px solid #ffd43b;
+
+    transform:
+        translateY(-2px);
+}
+
+.botoes{
+
+    display:flex;
+
+    gap:8px;
+}
+
 button{
- flex:1;padding:13px;border-radius:8px;
- background:#181818;border:1px solid #555;color:white;font-weight:bold;
+
+    flex:1;
+
+    padding:13px;
+
+    border-radius:8px;
+
+    background:#181818;
+
+    border:1px solid #555;
+
+    color:white;
+
+    font-weight:bold;
+
+    cursor:pointer;
 }
-#btnGirar{background:#087642;border-color:#39d97b}
-#mensagem{text-align:center;margin-top:9px;font-size:12px;min-height:18px}
-.nota{text-align:center;color:#777;font-size:9px;margin-top:8px}
+
+button:active{
+
+    transform:scale(.97);
+}
+
+#btnGirar{
+
+    background:#087642;
+
+    border-color:#39d97b;
+}
+
+#btnGirar:disabled{
+
+    opacity:.5;
+
+}
+
+#mensagem{
+
+    text-align:center;
+
+    margin-top:10px;
+
+    font-size:12px;
+
+    min-height:20px;
+
+}
+
+.nota{
+
+    text-align:center;
+
+    color:#777;
+
+    font-size:9px;
+
+    margin-top:8px;
+}
+
+@media(max-width:600px){
+
+    .mesa{
+        height:430px;
+    }
+
+    .mesa-jogo{
+
+        left:20%;
+
+        right:-15%;
+
+        top:55px;
+
+        height:335px;
+    }
+
+    .roleta{
+
+        width:145px;
+        height:145px;
+
+        left:2%;
+    }
+
+    .numero{
+
+        height:36px;
+
+        font-size:11px;
+    }
+
+    .faixa{
+
+        height:43px;
+
+        font-size:9px;
+    }
+
+}
+
 </style>
+
 </head>
 
 <body>
 
 <div class="top">
- <span>🎰 ROleta Cassino — DEMO</span>
- <span class="online">● ONLINE</span>
+
+    <span>
+        🎰 Roleta Cassino — DEMO
+    </span>
+
+    <span class="online">
+        ● ONLINE
+    </span>
+
 </div>
+
 
 <div class="area">
 
 <div class="mesa">
 
- <div class="roleta" id="roleta"></div>
+    <div
+        class="roleta"
+        id="roleta">
+    </div>
 
- <div class="mesa-jogo">
 
-  <div class="zero" data-bet="0">0</div>
+    <div class="mesa-jogo">
 
-  <div class="grade" id="grade"></div>
+        <div
+            class="zero"
+            data-bet="0">
+            0
+        </div>
 
-  <div class="faixas">
-   <div class="faixa" data-bet="baixo">1-18</div>
-   <div class="faixa" data-bet="par">PAR</div>
-   <div class="faixa vermelho" data-bet="vermelho">VERMELHO</div>
-   <div class="faixa" data-bet="preto">PRETO</div>
-   <div class="faixa" data-bet="impar">ÍMPAR</div>
-   <div class="faixa" data-bet="alto">19-36</div>
-  </div>
 
- </div>
+        <div
+            class="grade"
+            id="grade">
+        </div>
 
- <div class="aviso" id="aviso">
-  FAÇA SUAS APOSTAS
- </div>
+
+        <div class="faixas">
+
+            <div
+                class="faixa"
+                data-bet="baixo">
+                1-18
+            </div>
+
+            <div
+                class="faixa"
+                data-bet="par">
+                PAR
+            </div>
+
+            <div
+                class="faixa vermelho"
+                data-bet="vermelho">
+                VERMELHO
+            </div>
+
+            <div
+                class="faixa"
+                data-bet="preto">
+                PRETO
+            </div>
+
+            <div
+                class="faixa"
+                data-bet="impar">
+                ÍMPAR
+            </div>
+
+            <div
+                class="faixa"
+                data-bet="alto">
+                19-36
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div
+        class="aviso"
+        id="aviso">
+
+        FAÇA SUAS APOSTAS
+
+    </div>
 
 </div>
+
 
 <div class="controles">
 
- <div class="linha">
-  <span>Créditos virtuais: <b id="saldo">100,00</b></span>
-  <span>Ficha: <b id="valor">1,00</b></span>
- </div>
+    <div class="linha">
 
- <div class="fichas">
-  <button class="ficha ativa" data-valor="1">1</button>
-  <button class="ficha" data-valor="5">5</button>
-  <button class="ficha" data-valor="10">10</button>
-  <button class="ficha" data-valor="25">25</button>
-  <button class="ficha" data-valor="50">50</button>
- </div>
+        <span>
+            Créditos virtuais:
+            <b id="saldo">
+                100,00
+            </b>
+        </span>
 
- <div class="botoes">
-  <button id="limpar">LIMPAR</button>
-  <button id="btnGirar">GIRAR</button>
- </div>
+        <span>
+            Ficha:
+            <b id="valor">
+                1,00
+            </b>
+        </span>
 
- <div id="mensagem"></div>
+    </div>
 
- <div class="nota">
-  Jogo demonstrativo com créditos virtuais. Não utiliza dinheiro real.
- </div>
+
+    <div class="fichas">
+
+        <button
+            class="ficha ativa"
+            data-valor="1">
+            1
+        </button>
+
+        <button
+            class="ficha"
+            data-valor="5">
+            5
+        </button>
+
+        <button
+            class="ficha"
+            data-valor="10">
+            10
+        </button>
+
+        <button
+            class="ficha"
+            data-valor="25">
+            25
+        </button>
+
+        <button
+            class="ficha"
+            data-valor="50">
+            50
+        </button>
+
+    </div>
+
+
+    <div class="botoes">
+
+        <button id="limpar">
+            LIMPAR
+        </button>
+
+        <button id="btnGirar">
+            GIRAR
+        </button>
+
+    </div>
+
+
+    <div
+        id="mensagem">
+    </div>
+
+
+    <div class="nota">
+
+        Jogo demonstrativo
+        com créditos virtuais.
+        Não utiliza dinheiro real.
+
+    </div>
 
 </div>
 
 </div>
+
 
 <script>
-const vermelhos=[
-1,3,5,7,9,12,14,16,18,
-19,21,23,25,27,30,32,34,36
+
+const vermelhos = [
+
+    1,3,5,7,9,
+    12,14,16,18,
+    19,21,23,25,27,
+    30,32,34,36
+
 ];
 
-const grade=document.getElementById("grade");
-const saldo=document.getElementById("saldo");
-const valor=document.getElementById("valor");
-const mensagem=document.getElementById("mensagem");
-const roleta=document.getElementById("roleta");
 
-let dinheiro=100;
-let ficha=1;
-let apostas=[];
-let girando=false;
+const grade =
+    document.getElementById("grade");
 
-for(let n=1;n<=36;n++){
+const saldo =
+    document.getElementById("saldo");
 
- let el=document.createElement("div");
+const valor =
+    document.getElementById("valor");
 
- el.className="numero "+
- (vermelhos.includes(n)?"vermelho":"preto");
+const mensagem =
+    document.getElementById("mensagem");
 
- el.textContent=n;
- el.dataset.bet=n;
+const roleta =
+    document.getElementById("roleta");
 
- el.onclick=function(){
-  apostar(n,this);
- };
+const aviso =
+    document.getElementById("aviso");
 
- grade.appendChild(el);
+const btnGirar =
+    document.getElementById("btnGirar");
+
+
+let dinheiro = 100;
+
+let ficha = 1;
+
+let apostas = [];
+
+let girando = false;
+
+
+/* CRIA OS NÚMEROS */
+
+for(
+    let n = 1;
+    n <= 36;
+    n++
+){
+
+    const el =
+        document.createElement("div");
+
+    el.className =
+        "numero " +
+        (
+            vermelhos.includes(n)
+            ? "vermelho"
+            : "preto"
+        );
+
+    el.textContent = n;
+
+    el.dataset.bet = n;
+
+    el.addEventListener(
+        "click",
+        function(){
+
+            apostar(
+                n,
+                el
+            );
+
+        }
+    );
+
+    grade.appendChild(el);
+
 }
 
-document.querySelector(".zero").onclick=function(){
- apostar(0,this);
-};
 
-document.querySelectorAll(".faixa").forEach(el=>{
- el.onclick=function(){
-  apostar(el.dataset.bet,el);
- };
-});
+/* ZERO */
 
-document.querySelectorAll(".ficha").forEach(el=>{
+const zero =
+    document.querySelector(".zero");
 
- el.onclick=function(){
+zero.addEventListener(
+    "click",
+    function(){
 
-  document.querySelectorAll(".ficha")
-  .forEach(x=>x.classList.remove("ativa"));
+        apostar(
+            0,
+            zero
+        );
 
-  el.classList.add("ativa");
+    }
+);
 
-  ficha=Number(el.dataset.valor);
 
-  valor.textContent=ficha.toFixed(2).replace(".",",");
- };
-});
+/* FAIXAS */
 
-function apostar(tipo,el){
+document
+.querySelectorAll(".faixa")
+.forEach(
+    function(el){
 
- if(girando)return;
+        el.addEventListener(
+            "click",
+            function(){
 
- if(dinheiro<ficha){
+                apostar(
+                    el.dataset.bet,
+                    el
+                );
 
-  mensagem.textContent="Créditos virtuais insuficientes.";
-  return;
- }
+            }
+        );
 
- dinheiro-=ficha;
+    }
+);
 
- apostas.push({
-  tipo:tipo,
-  valor:ficha
- });
 
- el.classList.add("selecionado");
+/* FICHAS */
 
- atualizar();
+document
+.querySelectorAll(".ficha")
+.forEach(
+    function(el){
 
- mensagem.textContent=
- "Aposta virtual adicionada: "+
- ficha.toFixed(2).replace(".",",");
+        el.addEventListener(
+            "click",
+            function(){
+
+                document
+                .querySelectorAll(".ficha")
+                .forEach(
+                    function(x){
+                        x.classList.remove(
+                            "ativa"
+                        );
+                    }
+                );
+
+                el.classList.add(
+                    "ativa"
+                );
+
+                ficha =
+                    Number(
+                        el.dataset.valor
+                    );
+
+                valor.textContent =
+                    ficha
+                    .toFixed(2)
+                    .replace(".",",");
+
+            }
+        );
+
+    }
+);
+
+
+/* APOSTAR */
+
+function apostar(
+    tipo,
+    elemento
+){
+
+    if(girando)
+        return;
+
+
+    if(dinheiro < ficha){
+
+        mensagem.textContent =
+            "Créditos virtuais insuficientes.";
+
+        return;
+
+    }
+
+
+    dinheiro -= ficha;
+
+
+    apostas.push({
+
+        tipo:tipo,
+
+        valor:ficha,
+
+        elemento:elemento
+
+    });
+
+
+    elemento.classList.add(
+        "selecionado"
+    );
+
+
+    atualizar();
+
+
+    mensagem.textContent =
+        "Aposta virtual de " +
+        ficha
+        .toFixed(2)
+        .replace(".",",") +
+        " adicionada.";
+
 }
 
-function ganhou(tipo,n){
 
- if(tipo===n)return true;
+/* VERIFICA RESULTADO */
 
- if(tipo==="vermelho")
-  return vermelhos.includes(n);
+function ganhou(
+    tipo,
+    numero
+){
 
- if(tipo==="preto")
-  return n!==0&&!vermelhos.includes(n);
+    if(
+        typeof tipo === "number"
+    ){
 
- if(tipo==="baixo")
-  return n>=1&&n<=18;
+        return tipo === numero;
 
- if(tipo==="alto")
-  return n>=19&&n<=36;
+    }
 
- if(tipo==="par")
-  return n!==0&&n%2===0;
 
- if(tipo==="impar")
-  return n%2===1;
+    if(
+        tipo === "vermelho"
+    ){
 
- return false;
+        return vermelhos
+            .includes(numero);
+
+    }
+
+
+    if(
+        tipo === "preto"
+    ){
+
+        return (
+            numero !== 0 &&
+            !vermelhos.includes(numero)
+        );
+
+    }
+
+
+    if(
+        tipo === "baixo"
+    ){
+
+        return (
+            numero >= 1 &&
+            numero <= 18
+        );
+
+    }
+
+
+    if(
+        tipo === "alto"
+    ){
+
+        return (
+            numero >= 19 &&
+            numero <= 36
+        );
+
+    }
+
+
+    if(
+        tipo === "par"
+    ){
+
+        return (
+            numero !== 0 &&
+            numero % 2 === 0
+        );
+
+    }
+
+
+    if(
+        tipo === "impar"
+    ){
+
+        return numero % 2 === 1;
+
+    }
+
+
+    return false;
+
 }
 
-function multiplicador(tipo){
 
- if(typeof tipo==="number")return 35;
+/* PRÊMIO */
 
- return 1;
+function multiplicador(
+    tipo
+){
+
+    if(
+        typeof tipo === "number"
+    ){
+
+        return 35;
+
+    }
+
+    return 1;
+
 }
+
+
+/* ATUALIZA SALDO */
 
 function atualizar(){
 
- saldo.textContent=
- dinheiro.toFixed(2).replace(".",",");
+    saldo.textContent =
+        dinheiro
+        .toFixed(2)
+        .replace(".",",");
+
 }
 
-document.getElementById("limpar").onclick=function(){
 
- if(girando)return;
+/* LIMPAR */
 
- apostas.forEach(a=>{
-  dinheiro+=a.valor;
- });
+document
+.getElementById("limpar")
+.addEventListener(
+    "click",
+    function(){
 
- apostas=[];
+        if(girando)
+            return;
 
- document.querySelectorAll(".selecionado")
- .forEach(x=>x.classList.remove("selecionado"));
 
- mensagem.textContent="Apostas limpas.";
+        apostas.forEach(
+            function(aposta){
 
- atualizar();
-};
+                dinheiro +=
+                    aposta.valor;
 
-document.getElementById("btnGirar").onclick=function(){
+            }
+        );
 
- if(girando)return;
 
- if(apostas.length===0){
+        apostas = [];
 
-  mensagem.textContent=
-  "Escolha uma aposta primeiro.";
 
-  return;
- }
+        document
+        .querySelectorAll(
+            ".selecionado"
+        )
+        .forEach(
+            function(el){
 
- girando=true;
+                el.classList.remove(
+                    "selecionado"
+                );
 
- this.disabled=true;
+            }
+        );
 
- mensagem.textContent="Roleta girando...";
 
- document.getElementById("aviso").textContent=
- "AGUARDE O RESULTADO...";
+        mensagem.textContent =
+            "Apostas limpas.";
 
- roleta.classList.remove("girar");
+        aviso.textContent =
+            "FAÇA SUAS APOSTAS";
 
- void roleta.offsetWidth;
 
- roleta.classList.add("girar");
+        atualizar();
 
- setTimeout(function(){
+    }
+);
 
-  let resultado=Math.floor(Math.random()*37);
 
-  let premio=0;
+/* GIRAR */
 
-  apostas.forEach(a=>{
+btnGirar.addEventListener(
+    "click",
+    function(){
 
-   if(ganhou(a.tipo,resultado)){
+        if(girando)
+            return;
 
-    premio+=
-    a.valor*(multiplicador(a.tipo)+1);
-   }
 
-  });
+        if(apostas.length === 0){
 
-  dinheiro+=premio;
+            mensagem.textContent =
+                "Escolha uma aposta primeiro.";
 
-  let cor;
+            return;
 
-  if(resultado===0)
-   cor="VERDE";
-  else if(vermelhos.includes(resultado))
-   cor="VERMELHO";
-  else
-   cor="PRETO";
+        }
 
-  if(premio>0){
 
-   mensagem.textContent=
-   "Resultado "+resultado+" — "+cor+
-   ". Prêmio virtual: "+
-   premio.toFixed(2).replace(".",",");
+        girando = true;
 
-  }else{
+        btnGirar.disabled = true;
 
-   mensagem.textContent=
-   "Resultado "+resultado+" — "+cor+
-   ". Nenhuma aposta vencedora.";
-  }
 
-  document.getElementById("aviso").innerHTML=
-  "RESULTADO: <b>"+resultado+
-  "</b> — "+cor;
+        mensagem.textContent =
+            "Roleta girando...";
 
-  apostas=[];
 
-  document.querySelectorAll(".selecionado")
-  .forEach(x=>x.classList.remove("selecionado"));
+        aviso.textContent =
+            "AGUARDE O RESULTADO...";
 
-  atualizar();
 
-  girando=false;
+        roleta.classList.remove(
+            "girar"
+        );
 
-  document.getElementById("btnGirar")
-  .disabled=false;
 
- },2900);
+        void roleta.offsetWidth;
 
-};
+
+        roleta.classList.add(
+            "girar"
+        );
+
+
+        setTimeout(
+            function(){
+
+                const resultado =
+                    Math.floor(
+                        Math.random() * 37
+                    );
+
+
+                let premio = 0;
+
+
+                apostas.forEach(
+                    function(aposta){
+
+                        if(
+                            ganhou(
+                                aposta.tipo,
+                                resultado
+                            )
+                        ){
+
+                            premio +=
+                                aposta.valor *
+                                (
+                                    multiplicador(
+                                        aposta.tipo
+                                    ) + 1
+                                );
+
+                        }
+
+                    }
+                );
+
+
+                dinheiro += premio;
+
+
+                let cor;
+
+
+                if(
+                    resultado === 0
+                ){
+
+                    cor = "VERDE";
+
+                }
+                else if(
+                    vermelhos.includes(
+                        resultado
+                    )
+                ){
+
+                    cor = "VERMELHO";
+
+                }
+                else{
+
+                    cor = "PRETO";
+
+                }
+
+
+                if(premio > 0){
+
+                    mensagem.textContent =
+                        "Resultado " +
+                        resultado +
+                        " — " +
+                        cor +
+                        ". Prêmio virtual: " +
+                        premio
+                        .toFixed(2)
+                        .replace(".",",");
+
+                }
+                else{
+
+                    mensagem.textContent =
+                        "Resultado " +
+                        resultado +
+                        " — " +
+                        cor +
+                        ". Nenhuma aposta vencedora.";
+
+                }
+
+
+                aviso.innerHTML =
+                    "RESULTADO: <b>" +
+                    resultado +
+                    "</b> — " +
+                    cor;
+
+
+                apostas = [];
+
+
+                document
+                .querySelectorAll(
+                    ".selecionado"
+                )
+                .forEach(
+                    function(el){
+
+                        el.classList.remove(
+                            "selecionado"
+                        );
+
+                    }
+                );
+
+
+                atualizar();
+
+
+                girando = false;
+
+                btnGirar.disabled = false;
+
+
+            },
+            2900
+        );
+
+    }
+);
+
 
 atualizar();
+
 </script>
 
 </body>
