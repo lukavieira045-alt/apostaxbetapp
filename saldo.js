@@ -16,7 +16,7 @@ async function buscarSaldo() {
         .eq('user_id', USER_ID)
         .single();
     
-    if (error || !data) return 100.00; 
+    if (error || !data) return 500; 
     return parseFloat(data.valor);
 }
 
