@@ -1,48 +1,56 @@
-// === SISTEMA DE SALDO GLOBAL - APOSTAXBET ===
+// === SISTEMA DE SALDO COM SUPABASE ===
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-// Inicializa o saldo se for a primeira vez
-if (!localStorage.getItem('apostaXBet_saldo')) {
-    localStorage.setItem('apostaXBet_saldo', '100.00'); // <-- AQUI ESTÁ OS 100 REAIS
+// --- COLE SUAS CHAVES ABAIXO ---
+const SUPABASE_URL = 'https://jxbzjiwmajjzxgihfjgt.supabase.co'; 
+const SUPABASE_KEY = 'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ
+// -------------------------------
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const USER_ID = 'jogador-unico-001'; // ID fixo para teste
+
+async function buscarSaldo() {
+    const { data, error } = await supabase
+        .from('saldos')
+        .select('valor')
+        .eq('user_id', USER_ID)
+        .single();
+    
+    if (error || !data) return 100.00; 
+    return parseFloat(data.valor);
 }
 
-// Funções globais disponíveis para todos os jogos
+async function salvarSaldo(novoValor) {
+    await supabase
+        .from('saldos')
+        .upsert({ user_id: USER_ID, valor: novoValor }, { onConflict: 'user_id' });
+}
+
 window.SistemaSaldo = {
-    // Lê o saldo atual
-    get: function() {
-        return parseFloat(localStorage.getItem('apostaXBet_saldo'));
-    },
-
-    // Atualiza o valor na tela
-    atualizarTela: function() {
+    get: async function() { return await buscarSaldo(); },
+    
+    atualizarTela: async function() {
+        const saldo = await this.get();
         const el = document.getElementById('display-saldo');
-        if (el) {
-            el.innerText = 'R$ ' + this.get().toFixed(2);
-        }
+        if (el) el.innerText = 'R$ ' + saldo.toFixed(2);
     },
 
-    // Tenta debitar (retorna true se der certo, false se não tiver saldo)
-    debitar: function(valor) {
-        let saldo = this.get();
+    debitar: async function(valor) {
+        let saldo = await this.get();
         if (valor > saldo) {
-            alert('❌ Saldo insuficiente! Você tem R$ ' + saldo.toFixed(2));
+            alert('❌ Saldo insuficiente!');
             return false;
         }
-        saldo -= valor;
-        localStorage.setItem('apostaXBet_saldo', saldo.toFixed(2));
+        await salvarSaldo(saldo - valor);
         this.atualizarTela();
         return true;
     },
 
-    // Adiciona dinheiro (quando ganha)
-    creditar: function(valor) {
-        let saldo = this.get();
-        saldo += valor;
-        localStorage.setItem('apostaXBet_saldo', saldo.toFixed(2));
+    creditar: async function(valor) {
+        let saldo = await this.get();
+        await salvarSaldo(saldo + valor);
         this.atualizarTela();
     }
 };
 
-// Atualiza automaticamente quando a página carrega
-document.addEventListener('DOMContentLoaded', function() {
-    SistemaSaldo.atualizarTela();
-});
+document.addEventListener('DOMContentLoaded', () => SistemaSaldo.atualizarTela());
