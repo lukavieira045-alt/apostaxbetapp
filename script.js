@@ -144,3 +144,31 @@ window.SistemaSaldo = {
     ganhar: processarVitoria,
     atualizarTela: carregarSaldoDisplay
 };
+// === BOTÃO DE APOSTA DO MINES (SIMPLIFICADO) ===
+const btnApostarMines = document.getElementById('btn-apostar-mines');
+
+if (btnApostarMines) {
+    btnApostarMines.addEventListener('click', async () => {
+        // Pega o valor que o usuário digitou
+        const valor = parseFloat(document.getElementById('input-aposta-mines').value);
+        
+        // Verifica se tem saldo usando o sistema que JÁ FUNCIONA
+        const saldo = await window.SistemaSaldo.get();
+        
+        if (!valor || valor <= 0) {
+            alert('⚠️ Digite um valor válido!');
+            return;
+        }
+        
+        if (valor > saldo) {
+            alert('❌ Saldo insuficiente!');
+            return;
+        }
+        
+        // Debita o saldo e avisa
+        await window.SistemaSaldo.debitar(valor);
+        alert(`✅ Aposta de R$ ${valor.toFixed(2)} realizada! Boa sorte!`);
+        
+        // Aqui você pode adicionar a lógica visual do jogo depois
+    });
+}
