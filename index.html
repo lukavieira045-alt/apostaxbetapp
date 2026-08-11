@@ -384,10 +384,6 @@ input:focus{
     cursor:pointer;
 }
 
-.menu .ativo{
-    color:#e6c229;
-}
-
 @media(max-width:400px){
 
     .logo{font-size:38px}
@@ -402,9 +398,7 @@ input:focus{
 <body>
 
 
-<!-- =========================
-     LOGIN / CADASTRO
-========================= -->
+<!-- LOGIN -->
 
 <section id="telaLogin">
 
@@ -462,7 +456,6 @@ type="text"
 placeholder="Digite seu nome"
 required>
 
-
 <label>E-mail</label>
 
 <input
@@ -470,7 +463,6 @@ id="emailCadastro"
 type="email"
 placeholder="Digite seu e-mail"
 required>
-
 
 <label>Criar senha</label>
 
@@ -491,7 +483,6 @@ onclick="mostrarSenha('senhaCadastro')">
 
 </div>
 
-
 <label>Confirmar senha</label>
 
 <div class="campo-senha">
@@ -510,7 +501,6 @@ onclick="mostrarSenha('confirmarSenha')">
 </span>
 
 </div>
-
 
 <button
 class="btn-principal"
@@ -542,7 +532,6 @@ type="email"
 placeholder="Digite seu e-mail"
 required>
 
-
 <label>Senha</label>
 
 <div class="campo-senha">
@@ -561,7 +550,6 @@ onclick="mostrarSenha('senhaLogin')">
 
 </div>
 
-
 <button
 class="btn-principal"
 type="submit"
@@ -576,7 +564,6 @@ class="mensagem">
 
 </form>
 
-
 <div class="termos">
 Ao criar uma conta, você concorda com os
 termos de uso e política de privacidade
@@ -590,9 +577,7 @@ do ApostaXBet.
 
 
 
-<!-- =========================
-     SITE
-========================= -->
+<!-- SITE -->
 
 <section id="site">
 
@@ -600,8 +585,8 @@ do ApostaXBet.
 
 <h1>🎰 ApostaXBet</h1>
 
-<div class="saldo">
-💰 Saldo: R$ 2,00
+<div class="saldo" id="saldoTopo">
+💰 Saldo: R$ 0,00
 </div>
 
 <div
@@ -614,7 +599,8 @@ id="usuarioNome">
 
 <section class="banner">
 
-<img src="img/file_000000009b24820eb29b3df2e7ebd768.png">
+<img
+src="img/file_000000009b24820eb29b3df2e7ebd768.png">
 
 <h2>Bem-vindo ao ApostaXBet</h2>
 
@@ -640,7 +626,7 @@ class="botao sacar">
 </section>
 
 
-<section class="inicio" id="inicioPagina">
+<section class="inicio">
 
 <h2>🎮 ApostaXBet</h2>
 
@@ -654,9 +640,7 @@ Para jogar, toque em 🎮 Jogos no menu abaixo.
 
 
 
-<!-- =========================
-     PÁGINA CONTA
-========================= -->
+<!-- CONTA -->
 
 <section id="paginaConta">
 
@@ -689,8 +673,10 @@ Carregando...
 
 <strong>💰 Saldo</strong>
 
-<div class="conta-saldo">
-R$ 2,00
+<div
+class="conta-saldo"
+id="saldoConta">
+R$ 0,00
 </div>
 
 </div>
@@ -721,22 +707,18 @@ onclick="sair()">
 
 
 
-<!-- =========================
-     MENU
-========================= -->
+<!-- MENU -->
 
 <nav class="menu">
 
 <a
 href="#"
-id="menuInicio"
 onclick="mostrarInicio();return false;">
 
 <span>🏠</span>
 Início
 
 </a>
-
 
 <a href="jogos/jogos.html">
 
@@ -745,17 +727,14 @@ Jogos
 
 </a>
 
-
 <a
 href="#"
-id="menuConta"
 onclick="mostrarConta();return false;">
 
 <span>👤</span>
 Conta
 
 </a>
-
 
 <button onclick="sair()">
 
@@ -798,27 +777,29 @@ document.getElementById("site");
 const paginaConta =
 document.getElementById("paginaConta");
 
+const saldoTopo =
+document.getElementById("saldoTopo");
+
+const saldoConta =
+document.getElementById("saldoConta");
+
 
 /* =========================
-   ABAS
+   FORMULÁRIOS
 ========================= */
 
 function mostrarCadastro(){
 
-document
-.getElementById("formCadastro")
+document.getElementById("formCadastro")
 .classList.add("active");
 
-document
-.getElementById("formLogin")
+document.getElementById("formLogin")
 .classList.remove("active");
 
-document
-.getElementById("tabCadastro")
+document.getElementById("tabCadastro")
 .classList.add("active");
 
-document
-.getElementById("tabLogin")
+document.getElementById("tabLogin")
 .classList.remove("active");
 
 }
@@ -826,28 +807,20 @@ document
 
 function mostrarLogin(){
 
-document
-.getElementById("formLogin")
+document.getElementById("formLogin")
 .classList.add("active");
 
-document
-.getElementById("formCadastro")
+document.getElementById("formCadastro")
 .classList.remove("active");
 
-document
-.getElementById("tabLogin")
+document.getElementById("tabLogin")
 .classList.add("active");
 
-document
-.getElementById("tabCadastro")
+document.getElementById("tabCadastro")
 .classList.remove("active");
 
 }
 
-
-/* =========================
-   SENHA
-========================= */
 
 function mostrarSenha(id){
 
@@ -862,23 +835,131 @@ campo.type === "password"
 }
 
 
-/* =========================
-   MENSAGEM
-========================= */
-
 function mensagem(id,texto,tipo){
 
 const elemento =
 document.getElementById(id);
 
-elemento.style.display =
-"block";
+elemento.style.display="block";
 
 elemento.className =
 "mensagem " + tipo;
 
-elemento.innerText =
-texto;
+elemento.innerText=texto;
+
+}
+
+
+/* =========================
+   CRIAR PERFIL
+========================= */
+
+async function criarPerfil(user,nome){
+
+const {data,error} =
+await supabaseClient
+.from("perfis")
+.select("id,saldo,nome")
+.eq("id",user.id)
+.maybeSingle();
+
+if(error){
+console.error("Erro ao consultar perfil:",error);
+return;
+}
+
+
+/*
+Se o perfil ainda não existir,
+cria com saldo inicial de R$ 2,00.
+*/
+
+if(!data){
+
+const {error:erroInsert} =
+await supabaseClient
+.from("perfis")
+.insert({
+id:user.id,
+nome:nome || user.user_metadata?.nome || "Usuário",
+saldo:2.00
+});
+
+if(erroInsert){
+console.error("Erro ao criar perfil:",erroInsert);
+}
+
+}
+
+}
+
+
+/* =========================
+   BUSCAR SALDO
+========================= */
+
+async function carregarSaldo(user){
+
+if(!user){
+return 0;
+}
+
+const {data,error} =
+await supabaseClient
+.from("perfis")
+.select("saldo,nome")
+.eq("id",user.id)
+.maybeSingle();
+
+if(error){
+
+console.error("Erro ao carregar saldo:",error);
+
+return 0;
+
+}
+
+
+if(!data){
+
+await criarPerfil(
+user,
+user.user_metadata?.nome
+);
+
+return 2;
+
+}
+
+
+return Number(data.saldo || 0);
+
+}
+
+
+/* =========================
+   ATUALIZAR SALDO NA TELA
+========================= */
+
+function atualizarSaldo(valor){
+
+const numero =
+Number(valor || 0);
+
+const formatado =
+numero.toLocaleString(
+"pt-BR",
+{
+style:"currency",
+currency:"BRL"
+}
+);
+
+saldoTopo.innerText =
+"💰 Saldo: " + formatado;
+
+saldoConta.innerText =
+formatado;
 
 }
 
@@ -892,25 +973,19 @@ async function cadastrar(event){
 event.preventDefault();
 
 const nome =
-document
-.getElementById("nomeCadastro")
-.value
-.trim();
+document.getElementById("nomeCadastro")
+.value.trim();
 
 const email =
-document
-.getElementById("emailCadastro")
-.value
-.trim();
+document.getElementById("emailCadastro")
+.value.trim();
 
 const senha =
-document
-.getElementById("senhaCadastro")
+document.getElementById("senhaCadastro")
 .value;
 
 const confirmar =
-document
-.getElementById("confirmarSenha")
+document.getElementById("confirmarSenha")
 .value;
 
 const botao =
@@ -970,6 +1045,11 @@ if(error) throw error;
 
 if(data.session){
 
+await criarPerfil(
+data.session.user,
+nome
+);
+
 mensagem(
 "mensagemCadastro",
 "Conta criada com sucesso! Entrando...",
@@ -978,7 +1058,9 @@ mensagem(
 
 setTimeout(()=>{
 
-mostrarSite(data.session.user);
+mostrarSite(
+data.session.user
+);
 
 },800);
 
@@ -1018,14 +1100,11 @@ async function entrar(event){
 event.preventDefault();
 
 const email =
-document
-.getElementById("emailLogin")
-.value
-.trim();
+document.getElementById("emailLogin")
+.value.trim();
 
 const senha =
-document
-.getElementById("senhaLogin")
+document.getElementById("senhaLogin")
 .value;
 
 const botao =
@@ -1048,6 +1127,12 @@ password:senha
 
 
 if(error) throw error;
+
+
+await criarPerfil(
+data.user,
+data.user.user_metadata?.nome
+);
 
 
 mensagem(
@@ -1085,7 +1170,7 @@ botao.innerText="ENTRAR";
    MOSTRAR SITE
 ========================= */
 
-function mostrarSite(user){
+async function mostrarSite(user){
 
 telaLogin.style.display="none";
 
@@ -1094,22 +1179,26 @@ paginaConta.style.display="none";
 site.style.display="block";
 
 
-let nome =
+const nome =
 user?.user_metadata?.nome ||
 user?.email ||
 "Usuário";
 
 
-document
-.getElementById("usuarioNome")
-.innerText=
-"👤 " + nome;
+document.getElementById("usuarioNome")
+.innerText="👤 " + nome;
+
+
+const saldo =
+await carregarSaldo(user);
+
+atualizarSaldo(saldo);
 
 }
 
 
 /* =========================
-   MOSTRAR CONTA
+   CONTA
 ========================= */
 
 async function mostrarConta(){
@@ -1125,49 +1214,62 @@ return;
 
 }
 
+
+telaLogin.style.display="none";
+
 site.style.display="none";
 
 paginaConta.style.display="block";
-
-telaLogin.style.display="none";
 
 
 const user =
 data.session.user;
 
+
 const nome =
 user.user_metadata?.nome ||
 "Usuário";
 
+
 const email =
-user.email ||
-"";
+user.email || "";
 
 
-document
-.getElementById("contaNome")
-.innerText=
-nome;
+document.getElementById("contaNome")
+.innerText=nome;
 
-document
-.getElementById("contaEmail")
-.innerText=
-email;
+document.getElementById("contaEmail")
+.innerText=email;
+
+
+const saldo =
+await carregarSaldo(user);
+
+atualizarSaldo(saldo);
 
 }
 
 
 /* =========================
-   VOLTAR PARA INÍCIO
+   INÍCIO
 ========================= */
 
-function mostrarInicio(){
+async function mostrarInicio(){
 
-site.style.display="block";
+const {data} =
+await supabaseClient.auth.getSession();
 
-paginaConta.style.display="none";
+if(!data.session){
 
-telaLogin.style.display="none";
+mostrarLoginTela();
+
+return;
+
+}
+
+mostrarSite(
+data.session.user
+);
 
 }
 
@@ -1208,9 +1310,9 @@ mostrarLoginTela();
 
 function traduzirErro(erro){
 
-if(!erro)
+if(!erro){
 return "Ocorreu um erro.";
-
+}
 
 const texto =
 erro.toLowerCase();
@@ -1262,7 +1364,7 @@ return erro;
 
 
 /* =========================
-   VERIFICAR SESSÃO
+   SESSÃO
 ========================= */
 
 async function verificarSessao(){
@@ -1272,6 +1374,11 @@ await supabaseClient.auth.getSession();
 
 
 if(data.session){
+
+await criarPerfil(
+data.session.user,
+data.session.user.user_metadata?.nome
+);
 
 mostrarSite(
 data.session.user
