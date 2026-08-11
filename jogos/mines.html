@@ -174,14 +174,26 @@
             }
 
             // DIAMANTE
+            
+            
             setTimeout(async () => {
                 cell.classList.remove("abrindo");
                 cell.classList.add("revealed");
                 cell.innerText = "";
 
-                // Credita R$ 0,50 no saldo real
+                // 1. Credita no banco de dados
                 await window.SistemaSaldo.ganhar(0.50, 1); 
                 
+                // 2. Atualiza o display LOCAL do Mines imediatamente
+                let saldoAtualizado = await window.SistemaSaldo.get();
+                const displaySaldoLocal = document.getElementById("saldo");
+                if (displaySaldoLocal) {
+                    displaySaldoLocal.textContent = `💰 Saldo: R$ ${saldoAtualizado.toFixed(2)}`;
+                }
+                
+                // 3. Tenta atualizar o display global também
+                window.SistemaSaldo.atualizarTela();
+
                 premio.textContent = "💎 + R$ 0,50";
 
                 const abertas = document.querySelectorAll(".revealed").length;
@@ -195,6 +207,7 @@
                     }, 500);
                 }
             }, 180);
+
         }
 
         function revelarBombas() {
