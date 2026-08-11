@@ -151,21 +151,21 @@
 
         <!-- Crash -->
         <div class="game-card" onclick="window.location.href='crash.html'">
-            <div class="game-icon"></div>
+            <div class="game-icon">🚀</div>
             <div class="game-title">Crash</div>
             <div class="game-desc">Acompanhe o multiplicador</div>
         </div>
 
         <!-- Plinko -->
         <div class="game-card" onclick="window.location.href='plinko.html'">
-            <div class="game-icon">🎯</div>
+            <div class="game-icon"></div>
             <div class="game-title">Plinko</div>
             <div class="game-desc">Solte a bola</div>
         </div>
 
         <!-- Dice -->
         <div class="game-card" onclick="window.location.href='dice.html'">
-            <div class="game-icon"></div>
+            <div class="game-icon">🎲</div>
             <div class="game-title">Dice</div>
             <div class="game-desc">Jogue os dados</div>
         </div>
@@ -179,7 +179,7 @@
 
         <!-- Vampiro -->
         <div class="game-card" onclick="window.location.href='vampire.html'">
-            <div class="game-icon">🧛</div>
+            <div class="game-icon"></div>
             <div class="game-title">Vampire Night</div>
             <div class="game-desc">Sorte imortal</div>
         </div>
@@ -201,5 +201,30 @@
         </a>
     </nav>
 
+    <!-- SCRIPTS ESSENCIAIS PARA FUNCIONAMENTO -->
+    <script>
+        // Verifica se há saldo salvo no localStorage e exibe na página
+        document.addEventListener('DOMContentLoaded', function() {
+            const saldo = localStorage.getItem('saldo') || '0.00';
+            // Se houver um elemento com id="saldo-display", atualiza ele
+            const saldoDisplay = document.getElementById('saldo-display');
+            if (saldoDisplay) saldoDisplay.textContent = `R$ ${parseFloat(saldo).toFixed(2)}`;
+            
+            // Ativa o menu inferior correto baseado na URL atual
+            const currentPath = window.location.pathname.split('/').pop();
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === currentPath || 
+                   (currentPath === '' && item.getAttribute('href') === 'index.html')) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Função genérica para redirecionamento seguro
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+    </script>
 </body>
 </html>
