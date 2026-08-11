@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mines - ApostaXBet</title>
     
-    <!-- Carrega o sistema de saldo principal -->
+    <!-- Mantido para compatibilidade, mas usaremos saldo local -->
     <script type="module" src="../script.js"></script>
 
     <style>
@@ -75,12 +75,15 @@
         </div>
     </div>
 
-    <!-- LÓGICA REATIVA DEFINITIVA -->
+    <!-- LÓGICA COM SALDO LOCAL INDEPENDENTE -->
     <script>
         let bombas = [];
         let jogando = false;
         const VALOR_APOSTA = 1.00;
         const PREMIO_DIAMANTE = 0.50;
+        
+        // ⚠️ ALTERE AQUI PARA O SEU SALDO REAL
+        let saldoAtual = 2.00; 
 
         const grid = document.getElementById("grid");
         const premio = document.getElementById("premio");
@@ -90,55 +93,48 @@
         const resultadoTexto = document.getElementById("resultadoTexto");
         const btnNovoJogo = document.getElementById("btnNovoJogo");
 
-        // Atualiza o display apenas se receber um número válido
-        function atualizarDisplaySaldo(valor) {
-            if (displaySaldoLocal && typeof valor === 'number' && !isNaN(valor)) {
-                displaySaldoLocal.textContent = `💰 Saldo: R$ ${valor.toFixed(2)}`;
-                console.log(`[Mines] Saldo sincronizado: R$ ${valor.toFixed(2)}`);
+        function atualizarDisplaySaldo() {
+            if (displaySaldoLocal) {
+                displaySaldoLocal.textContent = `💰 Saldo: R$ ${saldoAtual.toFixed(2)}`;
             }
         }
 
         async function iniciarJogo() {
             if (jogando) return alert("⚠️ Termine o jogo atual primeiro!");
-            if (!window.SistemaSaldo) return alert("⏳ Sistema carregando... aguarde.");
 
-            try {
-                // Consulta SALDO REAL antes de debitar
-                let saldoReal = await window.SistemaSaldo.get();
-                
-                if (saldoReal < VALOR_APOSTA) {
-                    return alert(`❌ Saldo insuficiente! Precisa de R$ ${VALOR_APOSTA.toFixed(2)} e tem R$ ${saldoReal.toFixed(2)}`);
-                }
+            if (saldoAtual < VALOR_APOSTA) {
+                return alert(`❌ Saldo insuficiente! Precisa de R$ ${VALOR_APOSTA.toFixed(2)} e tem R$ ${saldoAtual.toFixed(2)}`);
+            }
 
-                await window.SistemaSaldo.debitar(VALOR_APOSTA);
-                
-                // Atualiza display local IMEDIATAMENTE após débito confirmado
-                let novoSaldo = saldoReal - VALOR_APOSTA;
-                atualizarDisplaySaldo(novoSaldo);
-                window.SistemaSaldo.atualizarTela();
+            // Debita do saldo local imediatamente
+            saldoAtual -= VALOR_APOSTA;
+            atualizarDisplaySaldo();
 
-                jogando = true;
-                bombas = [];
-                grid.innerHTML = "";
-                premio.textContent = "💎 Encontre os diamantes";
-                resultadoTela.classList.remove("mostrar");
+            // Tenta sincronizar com o sistema externo se ele existir, mas não trava o jogo
+            if (window.SistemaSaldo) {
+                try {
+                    await window.SistemaSaldo.debitar(VALOR_APOSTA);
+                    window.SistemaSaldo.atualizarTela();
+                } catch (e) { console.warn("Sistema externo indisponível, usando saldo local."); }
+            }
 
-                while (bombas.length < 3) {
-                    let p = Math.floor(Math.random() * 9);
-                    if (!bombas.includes(p)) bombas.push(p);
-                }
+            jogando = true;
+            bombas = [];
+            grid.innerHTML = "";
+            premio.textContent = "💎 Encontre os diamantes";
+            resultadoTela.classList.remove("mostrar");
 
-                for (let i = 0; i < 9; i++) {
-                    let cell = document.createElement("div");
-                    cell.className = "cell";
-                    cell.innerText = "?";
-                    cell.onclick = () => abrirCasa(cell, i);
-                    grid.appendChild(cell);
-                }
+            while (bombas.length < 3) {
+                let p = Math.floor(Math.random() * 9);
+                if (!bombas.includes(p)) bombas.push(p);
+            }
 
-            } catch (erro) {
-                console.error("Erro ao iniciar:", erro);
-                jogando = false;
+            for (let i = 0; i < 9; i++) {
+                let cell = document.createElement("div");
+                cell.className = "cell";
+                cell.innerText = "?";
+                cell.onclick = () => abrirCasa(cell, i);
+                grid.appendChild(cell);
             }
         }
 
@@ -168,28 +164,29 @@
                 cell.classList.add("revealed");
                 cell.innerText = "💎";
 
-                try {
-                    await window.SistemaSaldo.ganhar(PREMIO_DIAMANTE, 1);
-                    
-                    // Força nova leitura do saldo real após ganhar
-                    let saldoAtualizado = await window.SistemaSaldo.get();
-                    atualizarDisplaySaldo(saldoAtualizado);
-                    window.SistemaSaldo.atualizarTela();
-                    
-                    premio.textContent = `💎 + R$ ${PREMIO_DIAMANTE.toFixed(2)}`;
+                // Credita no saldo local imediatamente
+                saldoAtual += PREMIO_DIAMANTE;
+                atualizarDisplaySaldo();
 
-                    const abertas = document.querySelectorAll(".revealed").length;
-                    if (abertas >= 6) {
-                        jogando = false;
-                        premio.textContent = "🏆 Vitória Máxima!";
-                        setTimeout(() => {
-                            resultadoIcone.textContent = "🏆";
-                            resultadoTexto.textContent = "Lucro total!";
-                            resultadoTela.classList.add("mostrar");
-                        }, 600);
-                    }
-                } catch (erro) {
-                    console.error("Erro no diamante:", erro);
+                // Tenta sincronizar com externo
+                if (window.SistemaSaldo) {
+                    try {
+                        await window.SistemaSaldo.ganhar(PREMIO_DIAMANTE, 1);
+                        window.SistemaSaldo.atualizarTela();
+                    } catch (e) { console.warn("Sistema externo indisponível."); }
+                }
+                
+                premio.textContent = `💎 + R$ ${PREMIO_DIAMANTE.toFixed(2)}`;
+
+                const abertas = document.querySelectorAll(".revealed").length;
+                if (abertas >= 6) {
+                    jogando = false;
+                    premio.textContent = "🏆 Vitória Máxima!";
+                    setTimeout(() => {
+                        resultadoIcone.textContent = "🏆";
+                        resultadoTexto.textContent = "Lucro total!";
+                        resultadoTela.classList.add("mostrar");
+                    }, 600);
                 }
             }, 180);
         }
@@ -211,50 +208,12 @@
             resultadoTela.classList.remove("mostrar");
         }
 
-        // INICIALIZAÇÃO REATIVA (SEM POLLING)
-        window.addEventListener('DOMContentLoaded', async () => {
-            console.log("🔄 Mines carregado. Aguardando sinal do sistema...");
+        // Inicialização
+        window.addEventListener('DOMContentLoaded', () => {
+            atualizarDisplaySaldo(); // Mostra o saldo definido na variável assim que abre
             
-            // 1. Tenta conexão imediata caso o sistema já esteja pronto
-            if (window.SistemaSaldo) {
-                try {
-                    const s = await window.SistemaSaldo.get();
-                    if (typeof s === 'number' && !isNaN(s) && s > 0) {
-                        atualizarDisplaySaldo(s);
-                        console.log("[Mines] ✅ Saldo carregado imediatamente");
-                    }
-                } catch (e) {
-                    console.warn("[Mines] Sistema ainda não pronto, aguardando evento...");
-                }
-            }
-
-            // 2. Escuta ativa por qualquer atualização vinda do script.js
-            // Isso substitui o setInterval e garante sincronia perfeita
-            window.addEventListener('saldoAtualizado', (e) => {
-                if (e.detail && typeof e.detail === 'number') {
-                    atualizarDisplaySaldo(e.detail);
-                }
-            });
-
-            // 3. Fallback seguro: tenta ler novamente após 1.5s se nada acontecer
-            setTimeout(async () => {
-                if (window.SistemaSaldo) {
-                    try {
-                        const s = await window.SistemaSaldo.get();
-                        if (typeof s === 'number' && !isNaN(s) && s > 0) {
-                            atualizarDisplaySaldo(s);
-                            console.log("[Mines] ✅ Saldo carregado via fallback");
-                        }
-                    } catch (e) {
-                        console.error("[Mines] Falha crítica ao carregar saldo", e);
-                    }
-                }
-            }, 1500);
-
-            // Conecta botão
             if (btnNovoJogo) {
                 btnNovoJogo.onclick = iniciarJogo;
-                console.log("✅ Botão conectado!");
             }
         });
     </script>
