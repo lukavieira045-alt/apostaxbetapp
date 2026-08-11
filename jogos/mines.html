@@ -61,7 +61,7 @@
     <div id="saldo">💰 Saldo: R$ 0,00</div>
 
     <div class="painel">
-        <div id="premio"> Encontre os diamantes</div>
+        <div id="premio">💎 Encontre os diamantes</div>
         <button id="btnNovoJogo">NOVO JOGO</button>
     </div>
 
@@ -75,13 +75,13 @@
         </div>
     </div>
 
-    <!-- LÓGICA DE SINCRONIZAÇÃO ATIVA E INDEPENDENTE -->
+    <!-- LÓGICA DE SINCRONIZAÇÃO AGRESSIVA -->
     <script>
         let bombas = [];
         let jogando = false;
         const VALOR_APOSTA = 1.00;
         const PREMIO_DIAMANTE = 0.50;
-        let saldoLocalCache = 0; // Cache local para garantir exibição imediata
+        let syncTimer = null;
 
         const grid = document.getElementById("grid");
         const premio = document.getElementById("premio");
@@ -93,38 +93,53 @@
 
         function atualizarDisplaySaldo(valor) {
             if (displaySaldoLocal && typeof valor === 'number' && !isNaN(valor)) {
-                saldoLocalCache = valor;
                 displaySaldoLocal.textContent = `💰 Saldo: R$ ${valor.toFixed(2)}`;
-                console.log(`[Mines] Display atualizado: R$ ${valor.toFixed(2)}`);
+                console.log(`[Mines] Saldo exibido: R$ ${valor.toFixed(2)}`);
             }
         }
 
-        // Tenta se conectar ao evento de atualização do sistema externo
-        function conectarAoSistemaExterno() {
-            if (!window.SistemaSaldo) return;
+        // Loop agressivo: tenta buscar saldo a cada 300ms até conseguir um valor > 0
+        function iniciarSincronizacaoAgressiva() {
+            if (syncTimer) clearInterval(syncTimer);
             
-            // Verifica se o sistema expõe um método de escuta comum
-            if (typeof window.SistemaSaldo.onUpdate === 'function') {
-                window.SistemaSaldo.onUpdate((novoSaldo) => {
-                    console.log("[Mines] Recebido evento onUpdate:", novoSaldo);
-                    atualizarDisplaySaldo(novoSaldo);
-                });
-            } else if (typeof window.SistemaSaldo.subscribe === 'function') {
-                window.SistemaSaldo.subscribe((novoSaldo) => {
-                    console.log("[Mines] Recebido evento subscribe:", novoSaldo);
-                    atualizarDisplaySaldo(novoSaldo);
-                });
-            } else {
-                console.warn("[Mines] Sistema externo não expõe métodos de escuta. Usando fallback.");
-            }
+            syncTimer = setInterval(async () => {
+                if (!window.SistemaSaldo) return;
+                
+                try {
+                    const saldoReal = await window.SistemaSaldo.get();
+                    
+                    // Só atualiza se for um número válido E maior que 0
+                    // Isso evita exibir "R$ 0,00" enquanto o sistema ainda está carregando
+                    if (typeof saldoReal === 'number' && !isNaN(saldoReal) && saldoReal > 0) {
+                        atualizarDisplaySaldo(saldoReal);
+                        console.log(`[Mines] ✅ Sincronizado com sucesso: R$ ${saldoReal.toFixed(2)}`);
+                        
+                        // Para o loop após primeira sincronização bem-sucedida
+                        // Mas mantém rodando em segundo plano para atualizações futuras
+                        clearInterval(syncTimer);
+                        
+                        // Reinicia loop mais lento para manter sincronia contínua
+                        syncTimer = setInterval(async () => {
+                            if (window.SistemaSaldo) {
+                                const s = await window.SistemaSaldo.get();
+                                if (typeof s === 'number' && !isNaN(s)) {
+                                    atualizarDisplaySaldo(s);
+                                }
+                            }
+                        }, 2000); // Atualiza a cada 2s após sincronização inicial
+                    }
+                } catch (e) {
+                    console.warn("[Mines] Aguardando sistema...", e.message);
+                }
+            }, 300); // Tenta a cada 300ms
         }
 
         async function iniciarJogo() {
-            if (jogando) return alert("️ Termine o jogo atual primeiro!");
-            if (!window.SistemaSaldo) return alert("⏳ Sistema carregando... aguarde.");
+            if (jogando) return alert("⚠️ Termine o jogo atual primeiro!");
+            if (!window.SistemaSaldo) return alert(" Sistema carregando... aguarde.");
 
             try {
-                // Busca saldo REAL antes de debitar
+                // Busca SALDO REAL antes de debitar
                 let saldoReal = await window.SistemaSaldo.get();
                 
                 if (saldoReal < VALOR_APOSTA) {
@@ -133,11 +148,9 @@
 
                 await window.SistemaSaldo.debitar(VALOR_APOSTA);
                 
-                // Atualiza cache local IMEDIATAMENTE após débito confirmado
+                // Atualiza display local IMEDIATAMENTE após débito
                 let novoSaldo = saldoReal - VALOR_APOSTA;
                 atualizarDisplaySaldo(novoSaldo);
-                
-                // Notifica sistema global
                 window.SistemaSaldo.atualizarTela();
 
                 jogando = true;
@@ -234,25 +247,12 @@
             resultadoTela.classList.remove("mostrar");
         }
 
-        // INICIALIZAÇÃO COM CONEXÃO ATIVA
-        window.addEventListener('DOMContentLoaded', async () => {
-            console.log(" Mines carregado. Conectando ao sistema...");
+        // INICIALIZAÇÃO COM SINCRONIZAÇÃO AGRESSIVA
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log(" Mines carregado. Iniciando sincronização agressiva...");
             
-            // Tenta conectar aos eventos do sistema externo
-            conectarAoSistemaExterno();
-            
-            // Fallback: busca inicial após delay seguro
-            setTimeout(async () => {
-                if (window.SistemaSaldo) {
-                    try {
-                        let s = await window.SistemaSaldo.get();
-                        atualizarDisplaySaldo(s);
-                        console.log("[Mines] Saldo inicial carregado via fallback");
-                    } catch (e) {
-                        console.error("[Mines] Falha no fallback de saldo", e);
-                    }
-                }
-            }, 800);
+            // Inicia loop imediato
+            iniciarSincronizacaoAgressiva();
 
             // Conecta botão
             if (btnNovoJogo) {
