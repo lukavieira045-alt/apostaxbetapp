@@ -1,71 +1,110 @@
-// script.js - Versão Final Corrigida
+// === SCRIPT.JS - VERSÃO FINAL COM SUPABASE E VALIDAÇÃO SEGURA ===
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+// --- CONFIGURAÇÃO DO SUPABASE ---
+const SUPABASE_URL = 'https://jxbzjiwmajjzxgihfjgt.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ'; 
+const USER_ID = 'jogador-unico-001'; // ID fixo para teste
+const CASA_VANTAGEM = 0.95; 
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// === SISTEMA DE SALDO REAL (SUPABASE) ===
+async function buscarSaldo() {
+    const { data, error } = await supabase.from('saldos').select('valor').eq('user_id', USER_ID).single();
+    if (error || !data) return 100.00;
+    return parseFloat(data.valor);
+}
+
+async function salvarSaldo(novoValor) {
+    await supabase.from('saldos').upsert({ user_id: USER_ID, valor: novoValor }, { onConflict: 'user_id' });
+}
 
 function carregarSaldoDisplay() {
-    let saldo = localStorage.getItem('apostaXBet_saldo');
-    if (!saldo) {
-        saldo = 0;
-        localStorage.setItem('apostaXBet_saldo', 0);
-    }
-    
-    const valorNumerico = parseFloat(saldo);
-    const valorFormatado = valorNumerico.toFixed(2).replace('.', ',');
-    
-    const displays = document.querySelectorAll('#displaySaldo, .saldo');
-    displays.forEach(el => {
-        el.innerText = `R$ ${valorFormatado}`;
+    buscarSaldo().then(saldo => {
+        const valorFormatado = saldo.toFixed(2).replace('.', ',');
+        const displays = document.querySelectorAll('#displaySaldo, .saldo');
         
-        // Lógica de cor: Vermelho se < 10, Verde se >= 10
-        if (valorNumerico < 10) {
-            el.style.color = '#ff4d4d'; 
-        } else {
-            el.style.color = '#00ed91'; 
-        }
+        displays.forEach(el => {
+            el.innerText = `R$ ${valorFormatado}`;
+            el.style.color = saldo < 10 ? '#ff4d4d' : '#00ed91';
+        });
     });
+}
+
+async function descontarSaldo(valor) {
+    let saldoAtual = await buscarSaldo();
+    if (saldoAtual < valor) return false;
     
-    return valorNumerico;
-}
-
-function adicionarSaldo(valor) {
-    let saldoAtual = parseFloat(localStorage.getItem('apostaXBet_saldo')) || 0;
-    localStorage.setItem('apostaXBet_saldo', saldoAtual + valor);
+    await salvarSaldo(saldoAtual - valor);
     carregarSaldoDisplay();
-}
-
-function descontarSaldo(valor) {
-    let saldoAtual = parseFloat(localStorage.getItem('apostaXBet_saldo')) || 0;
-    let novoSaldo = Math.max(0, saldoAtual - valor);
-    localStorage.setItem('apostaXBet_saldo', novoSaldo);
-    carregarSaldoDisplay();
-}
-
-function verificarAcessoJogo(custoAposta, nomeJogo) {
-    let saldo = parseFloat(localStorage.getItem('apostaXBet_saldo')) || 0;
-    
-    if (saldo < custoAposta) {
-        criarModalAviso(custoAposta, saldo, nomeJogo);
-        return false; 
-    }
     return true;
 }
 
-function criarModalAviso(custo, saldoAtual, nomeJogo) {
-    const oldModal = document.getElementById('modalAvisoSaldo');
-    if (oldModal) oldModal.remove();
-
-    const modal = document.createElement('div');
-    modal.id = 'modalAvisoSaldo';
-    modal.style.cssText = `position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(3px);`;
-    
-    modal.innerHTML = `
-        <div style="background: #1a1a1a; padding: 30px; border-radius: 15px; text-align: center; max-width: 320px; width: 90%; border: 1px solid #e6c229; color: white;">
-            <h3 style="color: #e6c229; margin-top: 0;">⚠️ Saldo Insuficiente</h3>
-            <p style="font-size: 15px; color: #ccc;">Para jogar <strong>${nomeJogo}</strong> você precisa de <strong>R$ ${custo},00</strong>.<br>Seu saldo: <span style="color:#ff4d4d; font-weight:bold">R$ ${saldoAtual.toFixed(2)}</span></p>
-            <button onclick="window.location.href='deposito.html'" style="background: #28a745; color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; margin-bottom: 10px; font-weight: bold;">💰 Depositar</button>
-            <button onclick="document.getElementById('modalAvisoSaldo').remove()" style="background: transparent; color: #888; border: 1px solid #444; padding: 10px; border-radius: 8px; width: 100%;">Cancelar</button>
-        </div>`;
-    document.body.appendChild(modal);
+async function processarVitoria(aposta, multiplicador) {
+    let saldoAtual = await buscarSaldo();
+    const ganhoReal = (aposta * multiplicador) * CASA_VANTAGEM;
+    await salvarSaldo(saldoAtual + ganhoReal);
+    carregarSaldoDisplay();
+    return ganhoReal;
 }
 
-if (typeof window !== 'undefined') {
-    window.addEventListener('DOMContentLoaded', carregarSaldoDisplay);
-}
+// === VALIDAÇÃO DE CADASTRO SEGURO ===
+document.addEventListener('DOMContentLoaded', () => {
+    carregarSaldoDisplay();
+
+    const btnCriarConta = document.getElementById('btn-criar-conta');
+    if (btnCriarConta) {
+        btnCriarConta.addEventListener('click', async (e) => {
+            e.preventDefault(); 
+            
+            const nome = document.getElementById('input-nome')?.value.trim();
+            const email = document.getElementById('input-email')?.value.trim();
+            const senha = document.getElementById('input-senha')?.value;
+            const confirmar = document.getElementById('input-confirmar-senha')?.value;
+
+            if (!nome || !email || !senha || !confirmar) {
+                alert('⚠️ Preencha TODOS os campos!'); return;
+            }
+            if (senha.length < 6) {
+                alert('⚠️ Senha mínima de 6 caracteres!'); return;
+            }
+            if (senha !== confirmar) {
+                alert('⚠️ As senhas não coincidem!'); return;
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                alert('⚠️ E-mail inválido!'); return;
+            }
+
+            try {
+                // Cria a conta no Supabase Auth
+const { data, error } = await supabase.auth.signUp({
+    email: email,
+    password: senha,
+    options: {
+        data: {
+            full_name: nome
+        }
+    }
+});
+
+if (error) throw error;
+
+alert('✅ Cadastro realizado! Verifique seu e-mail para confirmar.');
+
+                
+                
+            } catch (err) {
+                alert('❌ Erro ao criar conta: ' + err.message);
+            }
+        });
+    }
+});
+
+// Exporta funções globais para uso nos jogos
+window.SistemaSaldo = {
+    get: buscarSaldo,
+    debitar: descontarSaldo,
+    ganhar: processarVitoria,
+    atualizarTela: carregarSaldoDisplay
+};
