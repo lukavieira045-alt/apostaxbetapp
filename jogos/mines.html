@@ -5,65 +5,142 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mines - ApostaXBet</title>
     
-    <!-- Carrega o sistema de saldo principal -->
+    <!-- IMPORTANTE: Carrega o sistema de saldo principal -->
     <script type="module" src="../script.js"></script>
 
     <style>
-        /* CSS ORIGINAL MANTIDO INTACTO */
-        * { box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { 
-            margin: 0; min-height: 100vh; color: white; 
-            background: #0a0a1a; display: flex; flex-direction: column; 
-            align-items: center; padding-top: 20px; 
-        }
+        /* =========================================
+           CSS ORIGINAL RESTAURADO - ESTILO NEON
+           ========================================= */
+        * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; }
         
-        .luz { position: fixed; width: 280px; height: 280px; border-radius: 50%; filter: blur(100px); opacity: 0.4; z-index: -1; }
-        .luz1 { background: #00ff88; left: -120px; top: -120px; animation: luz1 6s infinite alternate; }
-        .luz2 { background: #6a00ff; right: -120px; bottom: -120px; animation: luz2 6s infinite alternate; }
-        @keyframes luz1 { to { transform: translate(170px, 170px); } }
-        @keyframes luz2 { to { transform: translate(-170px, -170px); } }
+        body { 
+            min-height: 100vh; color: white; 
+            background: #0a0a1a; display: flex; flex-direction: column; 
+            align-items: center; padding-top: 30px; overflow-x: hidden;
+            position: relative;
+        }
 
+        /* Luzes de Fundo Neon */
+        .luz { position: fixed; width: 300px; height: 300px; border-radius: 50%; filter: blur(120px); opacity: 0.35; z-index: -1; pointer-events: none; }
+        .luz1 { background: #00ff88; left: -100px; top: -100px; animation: flutuar1 7s infinite alternate ease-in-out; }
+        .luz2 { background: #6a00ff; right: -100px; bottom: -100px; animation: flutuar2 7s infinite alternate ease-in-out; }
+        @keyframes flutuar1 { to { transform: translate(150px, 150px); } }
+        @keyframes flutuar2 { to { transform: translate(-150px, -150px); } }
+
+        /* Partículas Subindo */
         .particulas { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: -1; }
-        .particulas span { position: absolute; bottom: -20px; width: 6px; height: 6px; background: rgba(255,255,255,0.5); border-radius: 50%; }
-        .particulas span:nth-child(1){left:5%;animation:subir 8s infinite linear;}
-        .particulas span:nth-child(2){left:25%;animation:subir 10s infinite linear 1s;}
-        .particulas span:nth-child(3){left:50%;animation:subir 7s infinite linear 2s;}
-        .particulas span:nth-child(4){left:75%;animation:subir 9s infinite linear 0.5s;}
-        .particulas span:nth-child(5){left:90%;animation:subir 11s infinite linear 3s;}
+        .particulas span { 
+            position: absolute; bottom: -20px; width: 4px; height: 4px; 
+            background: rgba(255,255,255,0.6); border-radius: 50%; 
+        }
+        .particulas span:nth-child(1){left:10%;animation:subir 9s infinite linear;}
+        .particulas span:nth-child(2){left:30%;animation:subir 11s infinite linear 1.5s;}
+        .particulas span:nth-child(3){left:50%;animation:subir 8s infinite linear 0.5s;}
+        .particulas span:nth-child(4){left:70%;animation:subir 10s infinite linear 2s;}
+        .particulas span:nth-child(5){left:90%;animation:subir 12s infinite linear 3s;}
         @keyframes subir { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-100vh); opacity: 0; } }
 
-        h1 { margin-top: 25px; font-size: 40px; color: #00ff88; text-shadow: 0 0 15px #00ff88; }
-        #saldo { display: inline-block; font-size: 22px; background: rgba(0,255,136,0.1); padding: 10px 25px; border-radius: 30px; border: 1px solid #00ff88; margin-bottom: 20px; }
-        .painel { width: 95%; max-width: 390px; margin: 10px auto; background: rgba(255,255,255,0.05); border-radius: 20px; padding: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+        /* Cabeçalho e Saldo */
+        h1 { margin-top: 20px; font-size: 42px; color: #00ff88; text-shadow: 0 0 20px rgba(0,255,136,0.6); letter-spacing: 2px; }
         
-        button { background: #00ff88; color: #000; border: none; padding: 15px 40px; font-size: 20px; font-weight: bold; border-radius: 12px; cursor: pointer; transition: 0.3s; box-shadow: 0 0 15px rgba(0,255,136,0.4); }
-        button:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(0,255,136,0.6); }
-        button:disabled { background: #555; cursor: not-allowed; box-shadow: none; }
+        #saldo { 
+            display: inline-block; font-size: 20px; font-weight: bold;
+            background: rgba(0,255,136,0.08); padding: 12px 30px; 
+            border-radius: 40px; border: 1px solid rgba(0,255,136,0.4); 
+            margin: 20px 0; backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
 
-        #grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px auto; max-width: 320px; }
-        .cell { aspect-ratio: 1; background: #1a1a2e; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; border: 2px solid rgba(255,255,255,0.1); transition: 0.2s; user-select: none; }
-        .cell:hover:not(.revealed):not(.bomb) { background: #252540; border-color: #00ff88; }
-        .cell.revealed { background: #00ff88; color: #000; border-color: #00ff88; box-shadow: 0 0 15px rgba(0,255,136,0.5); }
-        .cell.bomb { background: #ff3333; color: #fff; border-color: #ff3333; box-shadow: 0 0 15px rgba(255,51,51,0.5); }
-        .cell.abrindo { animation: pulse 0.5s infinite; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(0.95); } }
+        /* Painel de Controle */
+        .painel { 
+            width: 92%; max-width: 380px; margin: 10px auto; 
+            background: rgba(255,255,255,0.03); border-radius: 24px; 
+            padding: 25px 20px; text-align: center; 
+            border: 1px solid rgba(255,255,255,0.08); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
 
-        #premio { font-size: 24px; margin: 15px 0; min-height: 30px; }
+        #premio { font-size: 22px; margin-bottom: 20px; min-height: 28px; color: #ffd700; text-shadow: 0 0 10px rgba(255,215,0,0.3); }
         
-        .resultado-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 100; }
+        button#btnNovoJogo { 
+            background: linear-gradient(135deg, #00ff88, #00cc6a); 
+            color: #000; border: none; padding: 16px 45px; 
+            font-size: 18px; font-weight: 800; border-radius: 14px; 
+            cursor: pointer; transition: all 0.2s; 
+            box-shadow: 0 0 20px rgba(0,255,136,0.3); 
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        button#btnNovoJogo:hover { transform: scale(1.03); box-shadow: 0 0 30px rgba(0,255,136,0.5); }
+        button#btnNovoJogo:active { transform: scale(0.98); }
+        button#btnNovoJogo:disabled { background: #333; color: #666; cursor: not-allowed; box-shadow: none; }
+
+        /* Grid do Jogo */
+        #grid { 
+            display: grid; grid-template-columns: repeat(3, 1fr); 
+            gap: 14px; margin: 25px auto; max-width: 340px; width: 90%; 
+        }
+        .cell { 
+            aspect-ratio: 1; background: #16162a; border-radius: 16px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 32px; cursor: pointer; 
+            border: 2px solid rgba(255,255,255,0.08); 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+            user-select: none; position: relative; overflow: hidden;
+        }
+        .cell:hover:not(.revealed):not(.bomb) { 
+            background: #1e1e38; border-color: rgba(0,255,136,0.5); 
+            transform: translateY(-2px); 
+        }
+        .cell.revealed { 
+            background: #00ff88; color: #000; border-color: #00ff88; 
+            box-shadow: 0 0 20px rgba(0,255,136,0.4); 
+            animation: revelar 0.3s ease forwards;
+        }
+        .cell.bomb { 
+            background: #ff3333; color: #fff; border-color: #ff3333; 
+            box-shadow: 0 0 20px rgba(255,51,51,0.4); 
+            animation: tremer 0.4s ease;
+        }
+        .cell.abrindo { animation: pulsar 0.6s infinite; }
+        
+        @keyframes revelar { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes tremer { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes pulsar { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.92); opacity: 0.7; } }
+
+        /* Tela de Resultado */
+        .resultado-overlay { 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); 
+            display: flex; align-items: center; justify-content: center; 
+            opacity: 0; pointer-events: none; transition: opacity 0.3s; 
+            z-index: 100; backdrop-filter: blur(8px);
+        }
         .resultado-overlay.mostrar { opacity: 1; pointer-events: all; }
-        .resultado-box { background: #1a1a2e; padding: 30px; border-radius: 20px; text-align: center; border: 2px solid #00ff88; box-shadow: 0 0 30px rgba(0,255,136,0.3); max-width: 90%; }
-        .resultado-icon { font-size: 60px; margin-bottom: 15px; }
-        .resultado-text { font-size: 22px; margin-bottom: 20px; }
-        .btn-fechar { background: transparent; border: 2px solid #00ff88; color: #00ff88; padding: 10px 30px; font-size: 16px; }
+        .resultado-box { 
+            background: #16162a; padding: 35px; border-radius: 24px; 
+            text-align: center; border: 2px solid #00ff88; 
+            box-shadow: 0 0 40px rgba(0,255,136,0.2); max-width: 85%; 
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        
+        .resultado-icon { font-size: 64px; margin-bottom: 15px; }
+        .resultado-text { font-size: 24px; margin-bottom: 25px; font-weight: bold; }
+        .btn-fechar { 
+            background: transparent; border: 2px solid #00ff88; 
+            color: #00ff88; padding: 12px 35px; font-size: 16px; 
+            border-radius: 12px; cursor: pointer; transition: 0.2s; font-weight: bold;
+        }
         .btn-fechar:hover { background: #00ff88; color: #000; }
     </style>
 </head>
 <body>
+    <!-- Efeitos Visuais -->
     <div class="luz luz1"></div>
     <div class="luz luz2"></div>
     <div class="particulas"><span></span><span></span><span></span><span></span><span></span></div>
 
+    <!-- Interface Principal -->
     <h1>💣 MINES</h1>
     <div id="saldo">💰 Saldo: R$ 0,00</div>
 
@@ -74,22 +151,24 @@
 
     <div id="grid"></div>
 
+    <!-- Overlay de Resultado -->
     <div class="resultado-overlay" id="resultadoTela">
         <div class="resultado-box">
-            <div class="resultado-icon" id="resultadoIcone"></div>
+            <div class="resultado-icon" id="resultadoIcone">🏆</div>
             <div class="resultado-text" id="resultadoTexto">Parabéns!</div>
             <button class="btn-fechar" onclick="fecharResultado()">JOGAR NOVAMENTE</button>
         </div>
     </div>
 
-    <!-- SCRIPT NORMAL (SEM MODULE) PARA GARANTIR FUNCIONAMENTO DO BOTÃO -->
+    <!-- LÓGICA DO JOGO (Script Normal para Garantir Resposta Imediata) -->
     <script>
+        // Variáveis de Estado
         let bombas = [];
         let jogando = false;
         const VALOR_APOSTA = 1.00;
         const PREMIO_DIAMANTE = 0.50;
 
-        // Captura elementos DOM originais
+        // Elementos DOM
         const grid = document.getElementById("grid");
         const premio = document.getElementById("premio");
         const displaySaldoLocal = document.getElementById("saldo");
@@ -98,44 +177,51 @@
         const resultadoTexto = document.getElementById("resultadoTexto");
         const btnNovoJogo = document.getElementById("btnNovoJogo");
 
+        // Atualiza o texto do saldo na tela
         function atualizarDisplaySaldo(valor) {
             if (displaySaldoLocal) {
                 displaySaldoLocal.textContent = `💰 Saldo: R$ ${valor.toFixed(2)}`;
             }
         }
 
+        // Inicia uma nova partida
         async function iniciarJogo() {
             console.log("🎮 Iniciando Mines...");
             
             if (jogando) return alert("⚠️ Termine o jogo atual primeiro!");
-            if (!window.SistemaSaldo) return alert("⏳ Sistema carregando... aguarde.");
+            if (!window.SistemaSaldo) return alert("⏳ Sistema carregando... aguarde alguns segundos.");
 
             try {
+                // Verifica saldo antes de debitar
                 let saldo = await window.SistemaSaldo.get();
                 if (saldo < VALOR_APOSTA) {
-                    return alert(`❌ Saldo insuficiente! Precisa de R$ ${VALOR_APOSTA.toFixed(2)}`);
+                    return alert(`❌ Saldo insuficiente! Precisa de R$ ${VALOR_APOSTA.toFixed(2)} e tem R$ ${saldo.toFixed(2)}`);
                 }
 
-                // Debita aposta e atualiza saldo local
+                // Debita a aposta
                 await window.SistemaSaldo.debitar(VALOR_APOSTA);
+                
+                // Atualiza saldo localmente IMEDIATAMENTE após débito
                 saldo -= VALOR_APOSTA;
                 atualizarDisplaySaldo(saldo);
+                
+                // Sincroniza com o sistema global
                 window.SistemaSaldo.atualizarTela();
 
-                // Reseta estado do jogo
+                // Reseta estado visual
                 jogando = true;
                 bombas = [];
                 grid.innerHTML = "";
                 premio.textContent = "💎 Encontre os diamantes";
                 resultadoTela.classList.remove("mostrar");
 
-                // Gera 3 bombas aleatórias
+                // Gera 3 bombas aleatórias (0 a 8)
                 while (bombas.length < 3) {
                     let p = Math.floor(Math.random() * 9);
                     if (!bombas.includes(p)) bombas.push(p);
                 }
 
-                // Cria grid 3x3 com classes CSS originais
+                // Cria o grid 3x3
                 for (let i = 0; i < 9; i++) {
                     let cell = document.createElement("div");
                     cell.className = "cell";
@@ -144,67 +230,73 @@
                     grid.appendChild(cell);
                 }
                 
-                console.log("✅ Jogo iniciado! Bombas:", bombas);
+                console.log("✅ Jogo iniciado! Bombas nas posições:", bombas);
 
             } catch (erro) {
-                console.error("Erro ao iniciar:", erro);
+                console.error("Erro ao iniciar jogo:", erro);
+                alert("Erro ao iniciar. Tente novamente.");
                 jogando = false;
             }
         }
 
+        // Abre uma casa clicada
         async function abrirCasa(cell, indice) {
-            if (!jogando || cell.classList.contains("revealed") || cell.classList.contains("bomb")) return;
+            if (!jogando || !cell || cell.classList.contains("revealed") || cell.classList.contains("bomb")) return;
 
             cell.classList.add("abrindo");
 
             setTimeout(async () => {
                 if (bombas.includes(indice)) {
-                    // BOMBA
+                    // 💣 BOMBA
                     cell.classList.remove("abrindo");
                     cell.classList.add("bomb");
                     cell.innerText = "💣";
                     revelarBombas();
                     jogando = false;
-                    premio.textContent = " BOOM!";
+                    premio.textContent = "💥 BOOM! Você perdeu!";
                     
                     setTimeout(() => {
                         resultadoIcone.textContent = "💣";
-                        resultadoTexto.textContent = "Você perdeu!";
+                        resultadoTexto.textContent = "Tente novamente!";
                         resultadoTela.classList.add("mostrar");
-                    }, 500);
+                    }, 600);
                     return;
                 }
 
-                // DIAMANTE
+                // 💎 DIAMANTE
                 cell.classList.remove("abrindo");
                 cell.classList.add("revealed");
-                cell.innerText = "";
+                cell.innerText = "💎";
 
                 try {
-                    // Credita prêmio e atualiza saldo
+                    // Credita o prêmio
                     await window.SistemaSaldo.ganhar(PREMIO_DIAMANTE, 1);
+                    
+                    // Busca saldo atualizado e exibe
                     let novoSaldo = await window.SistemaSaldo.get();
                     atualizarDisplaySaldo(novoSaldo);
                     window.SistemaSaldo.atualizarTela();
+                    
                     premio.textContent = `💎 + R$ ${PREMIO_DIAMANTE.toFixed(2)}`;
 
-                    // Verifica vitória máxima (6 diamantes)
+                    // Verifica vitória máxima (6 diamantes = lucro total)
                     const abertas = document.querySelectorAll(".revealed").length;
                     if (abertas >= 6) {
                         jogando = false;
-                        premio.textContent = " Vitória Máxima!";
+                        premio.textContent = "🏆 Vitória Máxima!";
                         setTimeout(() => {
                             resultadoIcone.textContent = "🏆";
-                            resultadoTexto.textContent = "Lucro total!";
+                            resultadoTexto.textContent = "Parabéns! Lucro total!";
                             resultadoTela.classList.add("mostrar");
-                        }, 500);
+                        }, 600);
                     }
                 } catch (erro) {
-                    console.error("Erro no diamante:", erro);
+                    console.error("Erro ao processar diamante:", erro);
                 }
             }, 180);
         }
 
+        // Revela todas as bombas ao perder
         function revelarBombas() {
             const cells = document.querySelectorAll(".cell");
             bombas.forEach((idx) => {
@@ -212,25 +304,27 @@
                 setTimeout(() => {
                     if (!cells[idx].classList.contains("bomb")) {
                         cells[idx].classList.add("bomb");
-                        cells[idx].innerText = "";
+                        cells[idx].innerText = "💣";
                     }
                 }, 150 + idx * 80);
             });
         }
 
+        // Fecha a tela de resultado
         function fecharResultado() {
             resultadoTela.classList.remove("mostrar");
         }
 
-        // Inicialização segura
+        // Inicialização Segura ao Carregar a Página
         window.addEventListener('DOMContentLoaded', async () => {
-            console.log(" Mines carregado (script normal)");
+            console.log("🔄 Mines carregado. Conectando sistema...");
             
             // Carrega saldo inicial
             if (window.SistemaSaldo) {
                 let s = await window.SistemaSaldo.get();
                 atualizarDisplaySaldo(s);
             } else {
+                // Retry após 1s se o sistema ainda não estiver pronto
                 setTimeout(async () => {
                     if (window.SistemaSaldo) {
                         let s = await window.SistemaSaldo.get();
@@ -239,12 +333,12 @@
                 }, 1000);
             }
 
-            // Conecta botão diretamente (funciona em script normal)
+            // Conecta o botão de Novo Jogo
             if (btnNovoJogo) {
                 btnNovoJogo.onclick = iniciarJogo;
-                console.log("✅ Botão 'NOVO JOGO' conectado!");
+                console.log("✅ Botão 'NOVO JOGO' conectado com sucesso!");
             } else {
-                console.warn("❌ Botão NÃO encontrado! Verifique HTML");
+                console.warn("❌ Botão NÃO encontrado! Verifique se existe <button id='btnNovoJogo'> no HTML");
             }
         });
     </script>
