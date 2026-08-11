@@ -5,149 +5,141 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mines - ApostaXBet</title>
     
-    <!-- IMPORTANTE: Carrega o script principal que tem o window.SistemaSaldo -->
+    <!-- IMPORTANTE: Carrega o script principal -->
     <script type="module" src="../script.js"></script>
 
     <style>
         * { box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { margin: 0; min-height: 100vh; color: white; text-align: center; overflow-x: hidden; background: radial-gradient(circle at 15% 15%,#003d66,transparent 30%), radial-gradient(circle at 85% 20%,#4a0066,transparent 30%), radial-gradient(circle at 50% 100%,#003d2b,transparent 35%), linear-gradient(135deg,#02050a,#090014,#00130e); background-size: 180% 180%; animation: fundo 12s ease-in-out infinite alternate; }
-        @keyframes fundo { 0% { background-position: 0% 0%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 100%; } }
+        body { margin: 0; min-height: 100vh; color: white; background: #0a0a1a; display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
         
         /* LUZES */
-        .luz { position: fixed; width: 280px; height: 280px; border-radius: 50%; filter: blur(100px); opacity: .35; pointer-events: none; z-index: -3; }
-        .luz1 { background: #00ff88; left: -120px; top: 10%; animation: luz1 8s infinite alternate; }
-        .luz2 { background: #6a00ff; right: -120px; bottom: 10%; animation: luz2 9s infinite alternate; }
-        @keyframes luz1 { to { transform: translate(170px, 100px) scale(1.4); } }
-        @keyframes luz2 { to { transform: translate(-170px, -100px) scale(1.4); } }
+        .luz { position: fixed; width: 280px; height: 280px; border-radius: 50%; filter: blur(100px); opacity: 0.4; z-index: -1; }
+        .luz1 { background: #00ff88; left: -120px; top: -120px; animation: luz1 6s infinite alternate; }
+        .luz2 { background: #6a00ff; right: -120px; bottom: -120px; animation: luz2 6s infinite alternate; }
+        @keyframes luz1 { to { transform: translate(170px, 170px); } }
+        @keyframes luz2 { to { transform: translate(-170px, -170px); } }
 
         /* PARTICULAS */
-        .particulas { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: -2; }
-        .particulas span { position: absolute; bottom: -20px; width: 4px; height: 4px; border-radius: 50%; background: white; box-shadow: 0 0 8px #00ffcc, 0 0 18px #00ff88; animation: subir linear infinite; }
-        .particulas span:nth-child(1){left:5%;animation-duration:7s} .particulas span:nth-child(2){left:15%;animation-duration:10s} .particulas span:nth-child(3){left:25%;animation-duration:8s} .particulas span:nth-child(4){left:35%;animation-duration:12s} .particulas span:nth-child(5){left:45%;animation-duration:9s} .particulas span:nth-child(6){left:55%;animation-duration:11s} .particulas span:nth-child(7){left:65%;animation-duration:7s} .particulas span:nth-child(8){left:75%;animation-duration:10s} .particulas span:nth-child(9){left:85%;animation-duration:8s} .particulas span:nth-child(10){left:95%;animation-duration:12s}
-        @keyframes subir { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(-110vh); opacity: 0; } }
+        .particulas { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: -1; }
+        .particulas span { position: absolute; bottom: -20px; width: 6px; height: 6px; background: rgba(255,255,255,0.5); border-radius: 50%; }
+        .particulas span:nth-child(1){left:5%;animation:subir 8s infinite linear;}
+        .particulas span:nth-child(2){left:25%;animation:subir 10s infinite linear 1s;}
+        .particulas span:nth-child(3){left:50%;animation:subir 7s infinite linear 2s;}
+        .particulas span:nth-child(4){left:75%;animation:subir 9s infinite linear 0.5s;}
+        .particulas span:nth-child(5){left:90%;animation:subir 11s infinite linear 3s;}
+        @keyframes subir { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-100vh); opacity: 0; } }
 
-        h1 { margin-top: 25px; font-size: 40px; color: #00ff88; text-shadow: 0 0 8px white, 0 0 18px #00ff88, 0 0 35px #00ff88; }
+        h1 { margin-top: 25px; font-size: 40px; color: #00ff88; text-shadow: 0 0 15px #00ff88; }
+        #saldo { display: inline-block; font-size: 22px; background: rgba(0,255,136,0.1); padding: 10px 25px; border-radius: 30px; border: 1px solid #00ff88; margin-bottom: 20px; }
+        .painel { width: 95%; max-width: 390px; margin: 10px auto; background: rgba(255,255,255,0.05); border-radius: 20px; padding: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
         
-        #saldo { display: inline-block; font-size: 22px; color: #00ff88; margin: 10px 0 20px; padding: 10px 22px; border: 1px solid #00ff88; border-radius: 30px; background: rgba(0,0,0,.6); box-shadow: 0 0 15px rgba(0,255,136,.3); }
+        button { background: #00ff88; color: #000; border: none; padding: 15px 40px; font-size: 20px; font-weight: bold; border-radius: 12px; cursor: pointer; transition: 0.3s; box-shadow: 0 0 15px rgba(0,255,136,0.4); }
+        button:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(0,255,136,0.6); }
+        button:disabled { background: #555; cursor: not-allowed; box-shadow: none; }
+
+        #grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px auto; max-width: 320px; }
+        .cell { aspect-ratio: 1; background: #1a1a2e; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; border: 2px solid rgba(255,255,255,0.1); transition: 0.2s; user-select: none; }
+        .cell:hover:not(.revealed):not(.bomb) { background: #252540; border-color: #00ff88; }
+        .cell.revealed { background: #00ff88; color: #000; border-color: #00ff88; box-shadow: 0 0 15px rgba(0,255,136,0.5); }
+        .cell.bomb { background: #ff3333; color: #fff; border-color: #ff3333; box-shadow: 0 0 15px rgba(255,51,51,0.5); }
+        .cell.abrindo { animation: pulse 0.5s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(0.95); } }
+
+        #premio { font-size: 24px; margin: 15px 0; min-height: 30px; }
         
-        .painel { width: 95%; max-width: 390px; margin: auto; padding: 20px; border: 1px solid rgba(0,255,136,.45); border-radius: 25px; background: linear-gradient(145deg, rgba(20,30,40,.94), rgba(2,8,14,.97)); box-shadow: 0 0 30px rgba(0,255,136,.15), 0 20px 70px rgba(0,0,0,.7); backdrop-filter: blur(12px); }
-        
-        #grid { display: grid; grid-template-columns: repeat(3, 82px); gap: 12px; justify-content: center; margin: 25px auto; padding: 10px; }
-        
-        .cell { width: 82px; height: 82px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; cursor: pointer; color: #777; background: linear-gradient(145deg, #182534, #080e16); border: 1px solid #33485a; box-shadow: inset 0 2px 4px rgba(255,255,255,.08), 0 8px 15px rgba(0,0,0,.5); transition: transform .15s, box-shadow .15s, background .15s; }
-        .cell:hover { transform: translateY(-3px) scale(1.03); border-color: #00ff88; box-shadow: 0 0 15px rgba(0,255,136,.3), inset 0 2px 5px rgba(255,255,255,.1); }
-        
-        .cell.abrindo { animation: abrir .3s; }
-        @keyframes abrir { 0% { transform: scale(.8) rotateY(90deg); } 100% { transform: scale(1) rotateY(0); } }
-        
-        .revealed { background: radial-gradient(circle at 35% 25%, white, #00ff88 35%, #008f66 100%); border-color: #7affc7; color: white; box-shadow: 0 0 12px #00ff88, 0 0 30px rgba(0,255,136,.7), inset 0 0 20px rgba(255,255,255,.2); animation: diamante .55s; }
-        @keyframes diamante { 0% { transform: scale(.4); opacity: 0; } 60% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
-        
-        .bomb { background: radial-gradient(circle, #ff7777, #ff1744 50%, #650018); border-color: #ff416d; box-shadow: 0 0 15px #ff1744, 0 0 40px rgba(255,0,50,.7); animation: explodir .6s; }
-        @keyframes explodir { 0% { transform: scale(.5); } 35% { transform: scale(1.25) rotate(-5deg); } 55% { transform: scale(.9) rotate(5deg); } 75% { transform: scale(1.1); } 100% { transform: scale(1); } }
-        
-        #premio { min-height: 35px; margin: 10px; color: #ffd700; font-size: 22px; font-weight: bold; text-shadow: 0 0 12px #ffd700; }
-        
-        button { padding: 15px 30px; border: 0; border-radius: 14px; background: linear-gradient(180deg, #5dffb1, #00c978); color: #002417; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 0 15px rgba(0,255,136,.4); transition: .15s; }
-        button:active { transform: scale(.94); }
-        
-        #resultadoTela { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.78); backdrop-filter: blur(8px); opacity: 0; pointer-events: none; transition: .25s; z-index: 100; }
-        #resultadoTela.mostrar { opacity: 1; pointer-events: auto; }
-        .resultadoCard { width: 85%; max-width: 340px; padding: 30px 20px; border-radius: 25px; background: linear-gradient(145deg, #10231d, #07100e); border: 2px solid #00ff88; box-shadow: 0 0 25px #00ff88, 0 0 80px rgba(0,255,136,.3); transform: scale(.5); }
-        #resultadoTela.mostrar .resultadoCard { animation: entrar .45s forwards; }
-        @keyframes entrar { 0% { transform: scale(.5) rotate(-8deg); } 70% { transform: scale(1.08) rotate(2deg); } 100% { transform: scale(1) rotate(0); } }
-        .resultadoTitulo { font-size: 24px; color: #00ff88; }
-        .resultadoIcone { font-size: 75px; margin: 10px; }
-        .resultadoTexto { font-size: 25px; color: #ffd700; font-weight: bold; text-shadow: 0 0 12px #ffd700; }
-        .fechar { margin-top: 20px; background: #00ff88; }
-        
-        a { display: block; margin-top: 25px; color: #aaa; text-decoration: none; }
-        a:hover { color: #00ff88; }
-        
-        @media(max-width:400px){ #grid{ grid-template-columns: repeat(3,72px); gap:9px; } .cell{ width:72px; height:72px; } }
+        .resultado-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 100; }
+        .resultado-overlay.mostrar { opacity: 1; pointer-events: all; }
+        .resultado-box { background: #1a1a2e; padding: 30px; border-radius: 20px; text-align: center; border: 2px solid #00ff88; box-shadow: 0 0 30px rgba(0,255,136,0.3); max-width: 90%; }
+        .resultado-icon { font-size: 60px; margin-bottom: 15px; }
+        .resultado-text { font-size: 22px; margin-bottom: 20px; }
+        .btn-fechar { background: transparent; border: 2px solid #00ff88; color: #00ff88; padding: 10px 30px; font-size: 16px; }
+        .btn-fechar:hover { background: #00ff88; color: #000; }
     </style>
 </head>
-
 <body>
     <div class="luz luz1"></div>
     <div class="luz luz2"></div>
-    <div class="particulas"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="particulas"><span></span><span></span><span></span><span></span><span></span></div>
 
     <h1>💣 MINES</h1>
     <div id="saldo">💰 Saldo: R$ 0,00</div>
 
     <div class="painel">
-        <div id="grid"></div>
         <div id="premio">💎 Encontre os diamantes</div>
-        <button onclick="iniciarJogo()"> NOVO JOGO</button>
+        <button id="btnNovoJogo">NOVO JOGO</button>
     </div>
 
-    <a href="../index.html">← Voltar</a>
+    <div id="grid"></div>
 
-    <div id="resultadoTela">
-        <div class="resultadoCard">
-            <div class="resultadoTitulo">RESULTADO</div>
-            <div class="resultadoIcone" id="resultadoIcone">💎</div>
-            <div class="resultadoTexto" id="resultadoTexto">Você ganhou!</div>
-            <button class="fechar" onclick="fecharResultado()">CONTINUAR</button>
+    <div class="resultado-overlay" id="resultadoTela">
+        <div class="resultado-box">
+            <div class="resultado-icon" id="resultadoIcone">🏆</div>
+            <div class="resultado-text" id="resultadoTexto">Parabéns!</div>
+            <button class="btn-fechar" onclick="fecharResultado()">JOGAR NOVAMENTE</button>
         </div>
     </div>
 
-    <script>
-        /* ========================================
-           MINES INTEGRADO COM SALDO REAL (SUPABASE)
-        ========================================= */
+    <script type="module">
         let bombas = [];
         let jogando = false;
-        const VALOR_APOSTA = 1.00; // Valor fixo por rodada
+        const VALOR_APOSTA = 1.00;
+        const PREMIO_DIAMANTE = 0.50;
 
         const grid = document.getElementById("grid");
         const premio = document.getElementById("premio");
+        const displaySaldoLocal = document.getElementById("saldo");
         const resultadoTela = document.getElementById("resultadoTela");
         const resultadoIcone = document.getElementById("resultadoIcone");
         const resultadoTexto = document.getElementById("resultadoTexto");
+        const btnNovoJogo = document.getElementById("btnNovoJogo");
+
+        function atualizarDisplaySaldo(valor) {
+            if (displaySaldoLocal) {
+                displaySaldoLocal.textContent = `💰 Saldo: R$ ${valor.toFixed(2)}`;
+            }
+        }
 
         async function iniciarJogo() {
             if (jogando) return;
             
-            // Verifica se o sistema de saldo já carregou
             if (!window.SistemaSaldo) {
-                alert("⏳ Sistema de saldo ainda carregando... aguarde um momento.");
+                alert("⏳ Sistema carregando... aguarde.");
                 return;
             }
 
-            const saldoReal = await window.SistemaSaldo.get();
-            if (saldoReal < VALOR_APOSTA) {
-                alert(`❌ Saldo insuficiente! Você precisa de R$ ${VALOR_APOSTA.toFixed(2)}.`);
-                return;
-            }
+            try {
+                let saldo = await window.SistemaSaldo.get();
+                if (saldo < VALOR_APOSTA) {
+                    alert(`Saldo insuficiente! Precisa de R$ ${VALOR_APOSTA.toFixed(2)}`);
+                    return;
+                }
 
-            // Debita o valor antes de começar
-            const sucesso = await window.SistemaSaldo.debitar(VALOR_APOSTA);
-            if (!sucesso) {
-                alert("Erro ao processar aposta.");
-                return;
-            }
+                await window.SistemaSaldo.debitar(VALOR_APOSTA);
+                saldo -= VALOR_APOSTA;
+                atualizarDisplaySaldo(saldo);
+                window.SistemaSaldo.atualizarTela();
 
-            jogando = true;
-            bombas = [];
-            grid.innerHTML = "";
-            premio.textContent = "💎 Encontre os diamantes";
-            resultadoTela.classList.remove("mostrar");
+                jogando = true;
+                bombas = [];
+                grid.innerHTML = "";
+                premio.textContent = "💎 Encontre os diamantes";
+                resultadoTela.classList.remove("mostrar");
 
-            // Sorteia 3 bombas em 9 posições
-            while (bombas.length < 3) {
-                let p = Math.floor(Math.random() * 9);
-                if (!bombas.includes(p)) bombas.push(p);
-            }
+                while (bombas.length < 3) {
+                    let p = Math.floor(Math.random() * 9);
+                    if (!bombas.includes(p)) bombas.push(p);
+                }
 
-            // Cria o grid
-            for (let i = 0; i < 9; i++) {
-                let cell = document.createElement("div");
-                cell.className = "cell";
-                cell.innerText = "?";
-                cell.onclick = () => abrirCasa(cell, i);
-                grid.appendChild(cell);
+                for (let i = 0; i < 9; i++) {
+                    let cell = document.createElement("div");
+                    cell.className = "cell";
+                    cell.innerText = "?";
+                    cell.onclick = () => abrirCasa(cell, i);
+                    grid.appendChild(cell);
+                }
+            } catch (e) {
+                console.error(e);
+                jogando = false;
             }
         }
 
@@ -156,61 +148,47 @@
 
             cell.classList.add("abrindo");
 
-            if (bombas.includes(indice)) {
-                // BOMBA
-                cell.classList.remove("abrindo");
-                cell.classList.add("bomb");
-                cell.innerText = "💣";
-                revelarBombas();
-                jogando = false;
-                premio.textContent = "💥 Você encontrou uma bomba!";
-                
-                setTimeout(() => {
-                    resultadoIcone.textContent = "💣";
-                    resultadoTexto.textContent = `BOOM! Perdeu R$ ${VALOR_APOSTA.toFixed(2)}`;
-                    resultadoTela.classList.add("mostrar");
-                }, 500);
-                return;
-            }
-
-            // DIAMANTE
-                    // DIAMANTE
-        setTimeout(async () => {
-            cell.classList.remove("abrindo");
-
-            
             setTimeout(async () => {
+                if (bombas.includes(indice)) {
+                    cell.classList.remove("abrindo");
+                    cell.classList.add("bomb");
+                    cell.innerText = "💣";
+                    revelarBombas();
+                    jogando = false;
+                    premio.textContent = "💥 BOOM!";
+                    setTimeout(() => {
+                        resultadoIcone.textContent = "💣";
+                        resultadoTexto.textContent = "Você perdeu!";
+                        resultadoTela.classList.add("mostrar");
+                    }, 500);
+                    return;
+                }
+
                 cell.classList.remove("abrindo");
                 cell.classList.add("revealed");
                 cell.innerText = "";
 
-                // 1. Credita no banco de dados
-                await window.SistemaSaldo.ganhar(0.50, 1); 
-                
-                // 2. Atualiza o display LOCAL do Mines imediatamente
-                let saldoAtualizado = await window.SistemaSaldo.get();
-                const displaySaldoLocal = document.getElementById("saldo");
-                if (displaySaldoLocal) {
-                    displaySaldoLocal.textContent = `💰 Saldo: R$ ${saldoAtualizado.toFixed(2)}`;
-                }
-                
-                // 3. Tenta atualizar o display global também
-                window.SistemaSaldo.atualizarTela();
+                try {
+                    await window.SistemaSaldo.ganhar(PREMIO_DIAMANTE, 1);
+                    let novoSaldo = await window.SistemaSaldo.get();
+                    atualizarDisplaySaldo(novoSaldo);
+                    window.SistemaSaldo.atualizarTela();
+                    premio.textContent = `💎 + R$ ${PREMIO_DIAMANTE.toFixed(2)}`;
 
-                premio.textContent = "💎 + R$ 0,50";
-
-                const abertas = document.querySelectorAll(".revealed").length;
-                if (abertas >= 6) {
-                    jogando = false;
-                    premio.textContent = "🏆 Vitória máxima!";
-                    setTimeout(() => {
-                        resultadoIcone.textContent = "🏆";
-                        resultadoTexto.textContent = "Parabéns! Lucro total!";
-                        resultadoTela.classList.add("mostrar");
-                    }, 500);
+                    const abertas = document.querySelectorAll(".revealed").length;
+                    if (abertas >= 6) {
+                        jogando = false;
+                        premio.textContent = "🏆 Vitória Máxima!";
+                        setTimeout(() => {
+                            resultadoIcone.textContent = "";
+                            resultadoTexto.textContent = "Lucro total!";
+                            resultadoTela.classList.add("mostrar");
+                        }, 500);
+                    }
+                } catch (e) {
+                    console.error(e);
                 }
             }, 180);
-
         }
 
         function revelarBombas() {
@@ -230,14 +208,19 @@
             resultadoTela.classList.remove("mostrar");
         }
 
-        // Inicialização segura
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             if (window.SistemaSaldo) {
-                window.SistemaSaldo.atualizarTela();
+                let s = await window.SistemaSaldo.get();
+                atualizarDisplaySaldo(s);
             } else {
-                // Tenta novamente após 1s caso o script.js demore a carregar
-                setTimeout(() => window.SistemaSaldo?.atualizarTela(), 1000);
+                setTimeout(async () => {
+                    if (window.SistemaSaldo) {
+                        let s = await window.SistemaSaldo.get();
+                        atualizarDisplaySaldo(s);
+                    }
+                }, 1000);
             }
+            btnNovoJogo.onclick = iniciarJogo;
         });
     </script>
 </body>
