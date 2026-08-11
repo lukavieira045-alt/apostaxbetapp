@@ -4,227 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ApostaXBet - Jogos</title>
-    <!-- Ícones do Google Material -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-    
     <style>
-        /* RESET BÁSICO */
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body { 
-            min-height: 100vh; 
-            color: #fff; 
-            /* IMAGEM DE FUNDO CHONGQING */
+            min-height: 100vh; color: #fff; 
             background: url('fundo-jogos.jpg') no-repeat center center fixed; 
-            background-size: cover;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-bottom: 90px; /* Espaço para o menu inferior */
+            background-size: cover; display: flex; flex-direction: column; align-items: center; padding-bottom: 90px; 
         }
-
-        /* CAMADA ESCURA PARA LEGIBILIDADE */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: rgba(10, 10, 15, 0.85); /* Escurece 85% da foto */
-            backdrop-filter: blur(5px);
-            z-index: -1;
-        }
-
-        /* CABEÇALHO */
-        header { 
-            width: 100%; 
-            padding: 25px 20px; 
-            text-align: center; 
-            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
-        }
-        
-        h1 { 
-            font-size: 32px; 
-            color: #ffd700; 
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.6); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 12px; 
-            letter-spacing: 1px;
-        }
-
-        /* GRID DE JOGOS */
-        .games-container { 
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 18px; 
-            width: 95%; 
-            max-width: 480px; 
-            padding: 15px; 
-            margin-top: 10px; 
-        }
-
-        /* CARD DO JOGO COM EFEITO NEON */
-        .game-card {
-            background: rgba(30, 30, 35, 0.9);
-            border: 1px solid rgba(255, 215, 0, 0.5);
-            border-radius: 24px;
-            padding: 30px 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            backdrop-filter: blur(12px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* INTERAÇÃO AO TOCAR/PASSAR MOUSE */
-        .game-card:hover, .game-card:active {
-            transform: translateY(-6px) scale(1.03);
-            border-color: #ff00cc;
-            box-shadow: 0 0 30px rgba(255, 0, 204, 0.5), inset 0 0 20px rgba(255, 0, 204, 0.1);
-        }
-
-        .game-icon { font-size: 50px; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2)); }
-        .game-title { font-size: 20px; font-weight: 800; margin-bottom: 6px; color: #fff; }
-        .game-desc { font-size: 13px; color: #bbb; font-weight: 500; }
-
-        /* MENU INFERIOR FIXO */
-        .bottom-nav { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 75px; 
-            background: rgba(15, 15, 20, 0.98); 
-            backdrop-filter: blur(20px); 
-            border-top: 1px solid rgba(255, 215, 0, 0.3); 
-            display: flex; 
-            justify-content: space-around; 
-            align-items: center; 
-            z-index: 100; 
-            padding-bottom: 10px; /* Ajuste para telas modernas */
-        }
-
-        .nav-item { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            color: #777; 
-            text-decoration: none; 
-            font-size: 12px; 
-            gap: 6px; 
-            transition: all 0.3s; 
-            width: 33%;
-        }
-
+        body::before { content: ''; position: fixed; inset: 0; background: rgba(10, 10, 15, 0.85); backdrop-filter: blur(5px); z-index: -1; }
+        header { width: 100%; padding: 25px 20px; text-align: center; background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent); }
+        h1 { font-size: 32px; color: #ffd700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.6); display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .games-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; width: 95%; max-width: 480px; padding: 15px; margin-top: 10px; }
+        .game-card { background: rgba(30, 30, 35, 0.9); border: 1px solid rgba(255, 215, 0, 0.5); border-radius: 24px; padding: 30px 15px; text-align: center; cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(12px); }
+        .game-card:hover { transform: translateY(-6px); border-color: #ff00cc; box-shadow: 0 0 30px rgba(255, 0, 204, 0.5); }
+        .game-icon { font-size: 50px; margin-bottom: 15px; }
+        .game-title { font-size: 20px; font-weight: bold; margin-bottom: 6px; }
+        .game-desc { font-size: 13px; color: #bbb; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 75px; background: rgba(15, 15, 20, 0.98); backdrop-filter: blur(20px); border-top: 1px solid rgba(255, 215, 0, 0.3); display: flex; justify-content: space-around; align-items: center; z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #777; text-decoration: none; font-size: 12px; gap: 6px; width: 33%; }
         .nav-item.active { color: #ffd700; }
-        .nav-item .material-icons-round { font-size: 30px; }
     </style>
 </head>
 <body>
-
-    <header>
-        <h1><span class="material-icons-round">sports_esports</span> Jogos</h1>
-    </header>
-
+    <header><h1><span class="material-icons-round">sports_esports</span> Jogos</h1></header>
     <div class="games-container">
-        <!-- Roleta -->
-        <div class="game-card" onclick="window.location.href='roleta.html'">
-            <div class="game-icon">🎰</div>
-            <div class="game-title">Roleta</div>
-            <div class="game-desc">Gire a roleta</div>
-        </div>
-
-        <!-- Roleta Cassino -->
-        <div class="game-card" onclick="window.location.href='roleta-cassino.html'">
-            <div class="game-icon">🎰</div>
-            <div class="game-title">Roleta Cassino</div>
-            <div class="game-desc">Roleta automática</div>
-        </div>
-
-        <!-- Mines -->
-        <div class="game-card" onclick="window.location.href='mines.html'">
-            <div class="game-icon">💣</div>
-            <div class="game-title">Mines</div>
-            <div class="game-desc">Encontre os diamantes</div>
-        </div>
-
-        <!-- Crash -->
-        <div class="game-card" onclick="window.location.href='crash.html'">
-            <div class="game-icon">🚀</div>
-            <div class="game-title">Crash</div>
-            <div class="game-desc">Acompanhe o multiplicador</div>
-        </div>
-
-        <!-- Plinko -->
-        <div class="game-card" onclick="window.location.href='plinko.html'">
-            <div class="game-icon"></div>
-            <div class="game-title">Plinko</div>
-            <div class="game-desc">Solte a bola</div>
-        </div>
-
-        <!-- Dice -->
-        <div class="game-card" onclick="window.location.href='dice.html'">
-            <div class="game-icon">🎲</div>
-            <div class="game-title">Dice</div>
-            <div class="game-desc">Jogue os dados</div>
-        </div>
-        
-        <!-- Lobo -->
-        <div class="game-card" onclick="window.location.href='wolf.html'">
-            <div class="game-icon">🐺</div>
-            <div class="game-title">Wolf Gold</div>
-            <div class="game-desc">Caçada noturna</div>
-        </div>
-
-        <!-- Vampiro -->
-        <div class="game-card" onclick="window.location.href='vampire.html'">
-            <div class="game-icon"></div>
-            <div class="game-title">Vampire Night</div>
-            <div class="game-desc">Sorte imortal</div>
-        </div>
+        <div class="game-card" onclick="window.location.href='roleta.html'"><div class="game-icon">🎰</div><div class="game-title">Roleta</div><div class="game-desc">Gire a roleta</div></div>
+        <div class="game-card" onclick="window.location.href='roleta-cassino.html'"><div class="game-icon"></div><div class="game-title">Roleta Cassino</div><div class="game-desc">Automático</div></div>
+        <div class="game-card" onclick="window.location.href='mines.html'"><div class="game-icon"></div><div class="game-title">Mines</div><div class="game-desc">Diamantes</div></div>
+        <div class="game-card" onclick="window.location.href='crash.html'"><div class="game-icon"></div><div class="game-title">Crash</div><div class="game-desc">Multiplicador</div></div>
+        <div class="game-card" onclick="window.location.href='plinko.html'"><div class="game-icon">🎯</div><div class="game-title">Plinko</div><div class="game-desc">Solte a bola</div></div>
+        <div class="game-card" onclick="window.location.href='dice.html'"><div class="game-icon">🎲</div><div class="game-title">Dice</div><div class="game-desc">Jogue os dados</div></div>
+        <div class="game-card" onclick="window.location.href='wolf.html'"><div class="game-icon">🐺</div><div class="game-title">Wolf Gold</div><div class="game-desc">Caçada noturna</div></div>
+        <div class="game-card" onclick="window.location.href='vampire.html'"><div class="game-icon"></div><div class="game-title">Vampire Night</div><div class="game-desc">Sorte imortal</div></div>
     </div>
-
-    <!-- Menu Inferior -->
     <nav class="bottom-nav">
-        <a href="index.html" class="nav-item active">
-            <span class="material-icons-round">home</span>
-            Início
-        </a>
-        <a href="#" class="nav-item">
-            <span class="material-icons-round">sports_esports</span>
-            Jogos
-        </a>
-        <a href="conta.html" class="nav-item">
-            <span class="material-icons-round">person</span>
-            Conta
-        </a>
+        <a href="index.html" class="nav-item active"><span class="material-icons-round">home</span>Início</a>
+        <a href="#" class="nav-item"><span class="material-icons-round">sports_esports</span>Jogos</a>
+        <a href="conta.html" class="nav-item"><span class="material-icons-round">person</span>Conta</a>
     </nav>
-
-    <!-- SCRIPTS ESSENCIAIS PARA FUNCIONAMENTO -->
     <script>
-        // Verifica se há saldo salvo no localStorage e exibe na página
         document.addEventListener('DOMContentLoaded', function() {
             const saldo = localStorage.getItem('saldo') || '0.00';
-            // Se houver um elemento com id="saldo-display", atualiza ele
             const saldoDisplay = document.getElementById('saldo-display');
             if (saldoDisplay) saldoDisplay.textContent = `R$ ${parseFloat(saldo).toFixed(2)}`;
-            
-            // Ativa o menu inferior correto baseado na URL atual
             const currentPath = window.location.pathname.split('/').pop();
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
-                if (item.getAttribute('href') === currentPath || 
-                   (currentPath === '' && item.getAttribute('href') === 'index.html')) {
+                if (item.getAttribute('href') === currentPath || (currentPath === '' && item.getAttribute('href') === 'index.html')) {
                     item.classList.add('active');
                 }
             });
         });
-
-        // Função genérica para redirecionamento seguro
-        function navigateTo(page) {
-            window.location.href = page;
-        }
     </script>
 </body>
 </html>
