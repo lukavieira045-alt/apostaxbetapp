@@ -1,61 +1,1233 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApostaXBet - Jogos</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { 
-            min-height: 100vh; color: #fff; 
-            background: url('fundo-jogos.jpg') no-repeat center center fixed; 
-            background-size: cover; display: flex; flex-direction: column; align-items: center; padding-bottom: 90px; 
-        }
-        body::before { content: ''; position: fixed; inset: 0; background: rgba(10, 10, 15, 0.85); backdrop-filter: blur(5px); z-index: -1; }
-        header { width: 100%; padding: 25px 20px; text-align: center; background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent); }
-        h1 { font-size: 32px; color: #ffd700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.6); display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .games-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; width: 95%; max-width: 480px; padding: 15px; margin-top: 10px; }
-        .game-card { background: rgba(30, 30, 35, 0.9); border: 1px solid rgba(255, 215, 0, 0.5); border-radius: 24px; padding: 30px 15px; text-align: center; cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(12px); }
-        .game-card:hover { transform: translateY(-6px); border-color: #ff00cc; box-shadow: 0 0 30px rgba(255, 0, 204, 0.5); }
-        .game-icon { font-size: 50px; margin-bottom: 15px; }
-        .game-title { font-size: 20px; font-weight: bold; margin-bottom: 6px; }
-        .game-desc { font-size: 13px; color: #bbb; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 75px; background: rgba(15, 15, 20, 0.98); backdrop-filter: blur(20px); border-top: 1px solid rgba(255, 215, 0, 0.3); display: flex; justify-content: space-around; align-items: center; z-index: 100; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: #777; text-decoration: none; font-size: 12px; gap: 6px; width: 33%; }
-        .nav-item.active { color: #ffd700; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ApostaXBet</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    padding-bottom:90px;
+    background:#000;
+    color:white;
+    font-family:Arial,sans-serif;
+}
+
+/* ================= LOGIN ================= */
+
+#telaLogin{
+    min-height:100vh;
+    padding:15px;
+    background:
+        radial-gradient(circle at 20% 20%,#126b4e 0%,transparent 35%),
+        radial-gradient(circle at 80% 30%,#0d6047 0%,transparent 40%),
+        linear-gradient(135deg,#073b2b,#0b6248);
+}
+
+.login-container{
+    width:100%;
+    max-width:600px;
+    margin:auto;
+}
+
+.logo{
+    text-align:center;
+    padding:22px 10px 15px;
+    font-size:43px;
+    font-weight:900;
+    letter-spacing:-3px;
+    color:white;
+    text-shadow:0 3px 8px rgba(0,0,0,.3);
+}
+
+.logo span{
+    color:#d9ef19;
+}
+
+.banner-login{
+    padding:22px 18px;
+    margin-bottom:20px;
+    text-align:center;
+    border-radius:20px;
+    background:linear-gradient(135deg,#19b979,#087f54);
+    box-shadow:0 8px 25px rgba(0,0,0,.25);
+}
+
+.banner-login .brasil{
+    font-size:65px;
+    margin-bottom:8px;
+}
+
+.banner-login h2{
+    margin:5px 0;
+    font-size:24px;
+}
+
+.banner-login p{
+    margin:5px 0;
+    color:#e5fff4;
+}
+
+.banner-login strong{
+    display:block;
+    margin-top:8px;
+    color:#f1ed20;
+    font-size:24px;
+}
+
+.login-box{
+    padding:20px;
+    border-radius:20px;
+    background:rgba(0,0,0,.18);
+    border:1px solid rgba(255,255,255,.15);
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+}
+
+.tabs{
+    display:flex;
+    margin-bottom:20px;
+    border-bottom:1px solid rgba(255,255,255,.25);
+}
+
+.tab{
+    width:50%;
+    padding:15px;
+    text-align:center;
+    font-size:18px;
+    font-weight:bold;
+    color:#b7d9cc;
+    cursor:pointer;
+    border-bottom:3px solid transparent;
+}
+
+.tab.active{
+    color:#f0ef1d;
+    border-bottom-color:#f0ef1d;
+}
+
+.form{
+    display:none;
+}
+
+.form.active{
+    display:block;
+}
+
+label{
+    display:block;
+    margin:14px 0 7px;
+    font-size:15px;
+}
+
+input{
+    width:100%;
+    height:56px;
+    padding:0 16px;
+    border:1px solid rgba(255,255,255,.35);
+    border-radius:10px;
+    outline:none;
+    background:rgba(0,0,0,.15);
+    color:white;
+    font-size:16px;
+}
+
+input::placeholder{
+    color:#9ccdbc;
+}
+
+input:focus{
+    border-color:#f0ef1d;
+    box-shadow:0 0 0 2px rgba(240,239,29,.12);
+}
+
+.campo-senha{
+    position:relative;
+}
+
+.olho{
+    position:absolute;
+    right:15px;
+    top:15px;
+    cursor:pointer;
+    font-size:23px;
+}
+
+.btn-principal{
+    width:100%;
+    height:57px;
+    margin-top:22px;
+    border:0;
+    border-radius:11px;
+    background:linear-gradient(135deg,#d9ed20,#a8c900);
+    color:#143c2c;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.btn-principal:disabled{
+    opacity:.6;
+}
+
+.mensagem{
+    display:none;
+    margin-top:15px;
+    padding:12px;
+    border-radius:9px;
+    text-align:center;
+    font-size:14px;
+    background:rgba(0,0,0,.25);
+}
+
+.mensagem.sucesso{
+    color:#dfff9b;
+}
+
+.mensagem.erro{
+    color:#ffb0b0;
+}
+
+.termos{
+    margin-top:18px;
+    color:#a8d3c2;
+    font-size:12px;
+    line-height:1.5;
+    text-align:center;
+}
+
+/* ================= SITE ================= */
+
+#site{
+    display:none;
+}
+
+.topo{
+    text-align:center;
+    padding:25px;
+    border-bottom:2px solid #d9b21f;
+}
+
+.topo h1{
+    color:#e6c229;
+    margin:0;
+}
+
+.saldo{
+    margin-top:10px;
+    color:#00ed91;
+    font-size:20px;
+    font-weight:bold;
+}
+
+.usuario{
+    margin-top:7px;
+    color:#aaa;
+    font-size:13px;
+}
+
+.banner{
+    width:94%;
+    max-width:600px;
+    margin:25px auto;
+    padding:20px;
+    text-align:center;
+    background:#b88d15;
+    border:2px solid #d9b21f;
+    border-radius:20px;
+}
+
+.banner img{
+    width:100%;
+    border-radius:12px;
+}
+
+.banner h2{
+    color:white;
+}
+
+.botoes{
+    width:94%;
+    max-width:600px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.botao{
+    padding:20px;
+    border-radius:15px;
+    background:#e1bd28;
+    color:#000;
+    text-decoration:none;
+    text-align:center;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.sacar{
+    background:#00df8a;
+}
+
+.inicio{
+    text-align:center;
+    margin:35px;
+    color:#aaa;
+}
+
+/* ================= CONTA ================= */
+
+#paginaConta{
+    display:none;
+    min-height:100vh;
+    padding:25px 15px 110px;
+    background:
+        radial-gradient(circle at 50% 0%,#173b30 0%,transparent 45%),
+        #000;
+}
+
+.conta-container{
+    width:94%;
+    max-width:600px;
+    margin:auto;
+}
+
+.conta-titulo{
+    text-align:center;
+    color:#e6c229;
+    font-size:28px;
+    margin:10px 0 25px;
+}
+
+.conta-card{
+    padding:25px 20px;
+    background:#111;
+    border:2px solid #d9b21f;
+    border-radius:20px;
+    box-shadow:0 8px 25px rgba(0,0,0,.4);
+}
+
+.avatar{
+    width:80px;
+    height:80px;
+    margin:0 auto 15px;
+    border-radius:50%;
+    background:#e1bd28;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:40px;
+}
+
+.conta-nome{
+    text-align:center;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.conta-email{
+    text-align:center;
+    color:#aaa;
+    margin-top:7px;
+    word-break:break-word;
+}
+
+.conta-item{
+    margin-top:20px;
+    padding:16px;
+    border-radius:12px;
+    background:#1c1c1c;
+    border:1px solid #333;
+}
+
+.conta-item strong{
+    display:block;
+    color:#e6c229;
+    margin-bottom:5px;
+}
+
+.conta-saldo{
+    color:#00ed91;
+    font-size:20px;
+    font-weight:bold;
+}
+
+.btn-sair-conta{
+    width:100%;
+    margin-top:20px;
+    padding:16px;
+    border:0;
+    border-radius:12px;
+    background:#d92828;
+    color:white;
+    font-size:17px;
+    font-weight:bold;
+}
+
+/* ================= MENU ================= */
+
+.menu{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:75px;
+    background:#111;
+    border-top:2px solid #d9b21f;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    z-index:100;
+}
+
+.menu a,
+.menu button{
+    color:white;
+    text-decoration:none;
+    text-align:center;
+    font-size:13px;
+}
+
+.menu span{
+    display:block;
+    font-size:25px;
+}
+
+.menu button{
+    background:none;
+    border:0;
+    cursor:pointer;
+}
+
+@media(max-width:400px){
+
+    .logo{
+        font-size:38px;
+    }
+
+    .banner-login .brasil{
+        font-size:55px;
+    }
+
+    .botoes{
+        gap:10px;
+    }
+
+    .botao{
+        padding:17px 8px;
+        font-size:16px;
+    }
+}
+</style>
 </head>
+
 <body>
-    <header><h1><span class="material-icons-round">sports_esports</span> Jogos</h1></header>
-    <div class="games-container">
-        <div class="game-card" onclick="window.location.href='roleta.html'"><div class="game-icon">🎰</div><div class="game-title">Roleta</div><div class="game-desc">Gire a roleta</div></div>
-        <div class="game-card" onclick="window.location.href='roleta-cassino.html'"><div class="game-icon"></div><div class="game-title">Roleta Cassino</div><div class="game-desc">Automático</div></div>
-        <div class="game-card" onclick="window.location.href='mines.html'"><div class="game-icon"></div><div class="game-title">Mines</div><div class="game-desc">Diamantes</div></div>
-        <div class="game-card" onclick="window.location.href='crash.html'"><div class="game-icon"></div><div class="game-title">Crash</div><div class="game-desc">Multiplicador</div></div>
-        <div class="game-card" onclick="window.location.href='plinko.html'"><div class="game-icon">🎯</div><div class="game-title">Plinko</div><div class="game-desc">Solte a bola</div></div>
-        <div class="game-card" onclick="window.location.href='dice.html'"><div class="game-icon">🎲</div><div class="game-title">Dice</div><div class="game-desc">Jogue os dados</div></div>
-        <div class="game-card" onclick="window.location.href='wolf.html'"><div class="game-icon">🐺</div><div class="game-title">Wolf Gold</div><div class="game-desc">Caçada noturna</div></div>
-        <div class="game-card" onclick="window.location.href='vampire.html'"><div class="game-icon"></div><div class="game-title">Vampire Night</div><div class="game-desc">Sorte imortal</div></div>
-    </div>
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-item active"><span class="material-icons-round">home</span>Início</a>
-        <a href="#" class="nav-item"><span class="material-icons-round">sports_esports</span>Jogos</a>
-        <a href="conta.html" class="nav-item"><span class="material-icons-round">person</span>Conta</a>
-    </nav>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const saldo = localStorage.getItem('saldo') || '0.00';
-            const saldoDisplay = document.getElementById('saldo-display');
-            if (saldoDisplay) saldoDisplay.textContent = `R$ ${parseFloat(saldo).toFixed(2)}`;
-            const currentPath = window.location.pathname.split('/').pop();
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-                if (item.getAttribute('href') === currentPath || (currentPath === '' && item.getAttribute('href') === 'index.html')) {
-                    item.classList.add('active');
-                }
-            });
-        });
-    </script>
+
+<!-- ================= TELA LOGIN ================= -->
+
+<section id="telaLogin">
+
+<div class="login-container">
+
+<div class="logo">
+Aposta<span>X</span>Bet
+</div>
+
+<div class="banner-login">
+
+<div class="brasil">🇧🇷</div>
+
+<h2>Bem-vindo ao ApostaXBet</h2>
+
+<p>Cadastre-se agora e comece a jogar</p>
+
+<strong>🎁 BÔNUS DE BOAS-VINDAS</strong>
+
+</div>
+
+<div class="login-box">
+
+<div class="tabs">
+
+<div
+class="tab active"
+id="tabCadastro"
+onclick="mostrarCadastro()">
+Cadastro
+</div>
+
+<div
+class="tab"
+id="tabLogin"
+onclick="mostrarLogin()">
+Login
+</div>
+
+</div>
+
+<!-- CADASTRO -->
+
+<form
+id="formCadastro"
+class="form active"
+onsubmit="cadastrar(event)">
+
+<label>Seu nome</label>
+
+<input
+id="nomeCadastro"
+type="text"
+placeholder="Digite seu nome"
+required>
+
+<label>E-mail</label>
+
+<input
+id="emailCadastro"
+type="email"
+placeholder="Digite seu e-mail"
+required>
+
+<label>Criar senha</label>
+
+<div class="campo-senha">
+
+<input
+id="senhaCadastro"
+type="password"
+placeholder="Mínimo de 6 caracteres"
+minlength="6"
+required>
+
+<span
+class="olho"
+onclick="mostrarSenha('senhaCadastro')">
+👁️
+</span>
+
+</div>
+
+<label>Confirmar senha</label>
+
+<div class="campo-senha">
+
+<input
+id="confirmarSenha"
+type="password"
+placeholder="Digite a senha novamente"
+minlength="6"
+required>
+
+<span
+class="olho"
+onclick="mostrarSenha('confirmarSenha')">
+👁️
+</span>
+
+</div>
+
+<button
+class="btn-principal"
+type="submit"
+id="btnCadastro">
+CRIAR CONTA
+</button>
+
+<div
+id="mensagemCadastro"
+class="mensagem">
+</div>
+
+</form>
+
+<!-- LOGIN -->
+
+<form
+id="formLogin"
+class="form"
+onsubmit="entrar(event)">
+
+<label>E-mail</label>
+
+<input
+id="emailLogin"
+type="email"
+placeholder="Digite seu e-mail"
+required>
+
+<label>Senha</label>
+
+<div class="campo-senha">
+
+<input
+id="senhaLogin"
+type="password"
+placeholder="Digite sua senha"
+required>
+
+<span
+class="olho"
+onclick="mostrarSenha('senhaLogin')">
+👁️
+</span>
+
+</div>
+
+<button
+class="btn-principal"
+type="submit"
+id="btnLogin">
+ENTRAR
+</button>
+
+<div
+id="mensagemLogin"
+class="mensagem">
+</div>
+
+</form>
+
+<div class="termos">
+Ao criar uma conta, você concorda com os
+termos de uso e política de privacidade
+do ApostaXBet.
+</div>
+
+</div>
+</div>
+
+</section>
+
+<!-- ================= SITE PRINCIPAL ================= -->
+
+<section id="site">
+
+<header class="topo">
+
+<h1>🎰 ApostaXBet</h1>
+
+<div class="saldo">
+💰 Saldo: R$ <span id="saldoValor">2,00</span>
+</div>
+
+<div
+class="usuario"
+id="usuarioNome">
+</div>
+
+</header>
+
+<section class="banner">
+
+<img
+src="img/file_000000009b24820eb29b3df2e7ebd768.png"
+onerror="this.style.display='none'">
+
+<h2>Bem-vindo ao ApostaXBet</h2>
+
+<p>🎮 Jogos, diversão e prêmios!</p>
+
+</section>
+
+<section class="botoes">
+
+<a
+href="deposito.html"
+class="botao">
+💰 Depositar
+</a>
+
+<a
+href="saque.html"
+class="botao sacar">
+💵 Sacar
+</a>
+
+</section>
+
+<section class="inicio">
+
+<h2>🎮 ApostaXBet</h2>
+
+<p>
+Para jogar, toque em 🎮 Jogos no menu abaixo.
+</p>
+
+</section>
+
+</section>
+
+<!-- ================= CONTA ================= -->
+
+<section id="paginaConta">
+
+<div class="conta-container">
+
+<h2 class="conta-titulo">
+👤 Minha Conta
+</h2>
+
+<div class="conta-card">
+
+<div class="avatar">
+👤
+</div>
+
+<div
+class="conta-nome"
+id="contaNome">
+Usuário
+</div>
+
+<div
+class="conta-email"
+id="contaEmail">
+</div>
+
+<div class="conta-item">
+
+<strong>💰 Seu saldo</strong>
+
+<div class="conta-saldo">
+R$ <span id="contaSaldo">2,00</span>
+</div>
+
+</div>
+
+<button
+class="btn-sair-conta"
+onclick="sair()">
+🚪 Sair da conta
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ================= MENU ================= -->
+
+<nav class="menu">
+
+<a
+href="#"
+onclick="mostrarInicio();return false;">
+
+<span>🏠</span>
+Início
+
+</a>
+
+<a
+href="jogos/jogos.html">
+
+<span>🎮</span>
+Jogos
+
+</a>
+
+<button
+onclick="mostrarConta()">
+
+<span>👤</span>
+Conta
+
+</button>
+
+</nav>
+
+<script>
+
+/* ================= SUPABASE ================= */
+
+const SUPABASE_URL =
+'https://jxbzjiwmajjzxgihfjgt.supabase.co';
+
+const SUPABASE_KEY =
+'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ';
+
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+/* ================= ELEMENTOS ================= */
+
+const telaLogin =
+document.getElementById("telaLogin");
+
+const site =
+document.getElementById("site");
+
+const paginaConta =
+document.getElementById("paginaConta");
+
+/* ================= ABAS ================= */
+
+function mostrarCadastro(){
+
+document
+.getElementById("formCadastro")
+.classList.add("active");
+
+document
+.getElementById("formLogin")
+.classList.remove("active");
+
+document
+.getElementById("tabCadastro")
+.classList.add("active");
+
+document
+.getElementById("tabLogin")
+.classList.remove("active");
+
+}
+
+function mostrarLogin(){
+
+document
+.getElementById("formLogin")
+.classList.add("active");
+
+document
+.getElementById("formCadastro")
+.classList.remove("active");
+
+document
+.getElementById("tabLogin")
+.classList.add("active");
+
+document
+.getElementById("tabCadastro")
+.classList.remove("active");
+
+}
+
+/* ================= SENHA ================= */
+
+function mostrarSenha(id){
+
+const campo =
+document.getElementById(id);
+
+campo.type =
+campo.type === "password"
+? "text"
+: "password";
+
+}
+
+/* ================= MENSAGEM ================= */
+
+function mensagem(id,texto,tipo){
+
+const elemento =
+document.getElementById(id);
+
+elemento.style.display="block";
+
+elemento.className =
+"mensagem " + tipo;
+
+elemento.innerText =
+texto;
+
+}
+
+/* ================= CADASTRO ================= */
+
+async function cadastrar(event){
+
+event.preventDefault();
+
+const nome =
+document
+.getElementById("nomeCadastro")
+.value
+.trim();
+
+const email =
+document
+.getElementById("emailCadastro")
+.value
+.trim();
+
+const senha =
+document
+.getElementById("senhaCadastro")
+.value;
+
+const confirmar =
+document
+.getElementById("confirmarSenha")
+.value;
+
+const botao =
+document.getElementById("btnCadastro");
+
+if(senha !== confirmar){
+
+mensagem(
+"mensagemCadastro",
+"As senhas não são iguais.",
+"erro"
+);
+
+return;
+}
+
+if(senha.length < 6){
+
+mensagem(
+"mensagemCadastro",
+"A senha precisa ter pelo menos 6 caracteres.",
+"erro"
+);
+
+return;
+}
+
+botao.disabled=true;
+botao.innerText="CRIANDO CONTA...";
+
+try{
+
+const {data,error} =
+await supabaseClient.auth.signUp({
+
+email:email,
+
+password:senha,
+
+options:{
+data:{
+nome:nome
+}
+}
+
+});
+
+if(error){
+throw error;
+}
+
+if(data.session){
+
+mensagem(
+"mensagemCadastro",
+"Conta criada com sucesso!",
+"sucesso"
+);
+
+setTimeout(function(){
+
+mostrarSite(data.session.user);
+
+},800);
+
+}else{
+
+mensagem(
+"mensagemCadastro",
+"Conta criada! Verifique seu e-mail para confirmar a conta.",
+"sucesso"
+);
+
+}
+
+}catch(error){
+
+mensagem(
+"mensagemCadastro",
+traduzirErro(error.message),
+"erro"
+);
+
+}
+
+botao.disabled=false;
+botao.innerText="CRIAR CONTA";
+
+}
+
+/* ================= LOGIN ================= */
+
+async function entrar(event){
+
+event.preventDefault();
+
+const email =
+document
+.getElementById("emailLogin")
+.value
+.trim();
+
+const senha =
+document
+.getElementById("senhaLogin")
+.value;
+
+const botao =
+document.getElementById("btnLogin");
+
+botao.disabled=true;
+botao.innerText="ENTRANDO...";
+
+try{
+
+const {data,error} =
+await supabaseClient.auth.signInWithPassword({
+
+email:email,
+password:senha
+
+});
+
+if(error){
+throw error;
+}
+
+mensagem(
+"mensagemLogin",
+"Login realizado! Entrando...",
+"sucesso"
+);
+
+setTimeout(function(){
+
+mostrarSite(data.user);
+
+},700);
+
+}catch(error){
+
+mensagem(
+"mensagemLogin",
+traduzirErro(error.message),
+"erro"
+);
+
+}
+
+botao.disabled=false;
+botao.innerText="ENTRAR";
+
+}
+
+/* ================= MOSTRAR SITE ================= */
+
+function mostrarSite(user){
+
+telaLogin.style.display="none";
+paginaConta.style.display="none";
+site.style.display="block";
+
+let nome =
+user &&
+user.user_metadata &&
+user.user_metadata.nome;
+
+if(!nome){
+nome=user?.email || "Usuário";
+}
+
+document
+.getElementById("usuarioNome")
+.innerText="👤 "+nome;
+
+document
+.getElementById("contaNome")
+.innerText=nome;
+
+document
+.getElementById("contaEmail")
+.innerText=user?.email || "";
+
+atualizarSaldoVisual();
+
+}
+
+/* ================= INÍCIO ================= */
+
+function mostrarInicio(){
+
+paginaConta.style.display="none";
+site.style.display="block";
+
+}
+
+/* ================= CONTA ================= */
+
+function mostrarConta(){
+
+site.style.display="none";
+paginaConta.style.display="block";
+
+}
+
+/* ================= SALDO ================= */
+
+function atualizarSaldoVisual(){
+
+const saldo="2,00";
+
+document
+.getElementById("saldoValor")
+.innerText=saldo;
+
+document
+.getElementById("contaSaldo")
+.innerText=saldo;
+
+}
+
+/* ================= LOGIN TELA ================= */
+
+function mostrarLoginTela(){
+
+telaLogin.style.display="block";
+site.style.display="none";
+paginaConta.style.display="none";
+
+mostrarLogin();
+
+}
+
+/* ================= SAIR ================= */
+
+async function sair(){
+
+try{
+
+await supabaseClient.auth.signOut();
+
+}catch(error){
+
+console.log(error);
+
+}
+
+mostrarLoginTela();
+
+}
+
+/* ================= ERROS ================= */
+
+function traduzirErro(erro){
+
+if(!erro){
+return "Ocorreu um erro.";
+}
+
+const texto =
+erro.toLowerCase();
+
+if(
+texto.includes("invalid login credentials")
+){
+
+return "E-mail ou senha incorretos.";
+
+}
+
+if(
+texto.includes("user already registered")
+){
+
+return "Esse e-mail já está cadastrado.";
+
+}
+
+if(
+texto.includes("password")
+&&
+texto.includes("6")
+){
+
+return "A senha precisa ter pelo menos 6 caracteres.";
+
+}
+
+if(
+texto.includes("email")
+&&
+texto.includes("valid")
+){
+
+return "Digite um e-mail válido.";
+
+}
+
+return erro;
+
+}
+
+/* ================= SESSÃO ================= */
+
+async function verificarSessao(){
+
+try{
+
+const {data} =
+await supabaseClient.auth.getSession();
+
+if(data && data.session){
+
+mostrarSite(
+data.session.user
+);
+
+}else{
+
+mostrarLoginTela();
+
+}
+
+}catch(error){
+
+console.log(error);
+
+mostrarLoginTela();
+
+}
+
+}
+
+/* ================= MUDANÇA DE LOGIN ================= */
+
+supabaseClient.auth.onAuthStateChange(
+function(event,session){
+
+if(session){
+
+mostrarSite(
+session.user
+);
+
+}else if(event === "SIGNED_OUT"){
+
+mostrarLoginTela();
+
+}
+
+});
+
+/* ================= INICIAR ================= */
+
+verificarSessao();
+
+</script>
+
 </body>
 </html>
