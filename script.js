@@ -1,23 +1,41 @@
-// === SCRIPT.JS - VERSÃO FINAL COM SUPABASE E VALIDAÇÃO SEGURA ===
+// === SCRIPT.JS - VERSÃO FINAL COMPLETA (CADASTRO + LOGIN + SALDO REAL) ===
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
 // --- CONFIGURAÇÃO DO SUPABASE ---
 const SUPABASE_URL = 'https://jxbzjiwmajjzxgihfjgt.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ'; 
-const USER_ID = 'jogador-unico-001'; // ID fixo para teste
 const CASA_VANTAGEM = 0.95; 
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // === SISTEMA DE SALDO REAL (SUPABASE) ===
+async function getUsuarioLogado() {
+    const { data } = await supabase.auth.getSession();
+    return data?.session?.user || null;
+}
+
 async function buscarSaldo() {
-    const { data, error } = await supabase.from('saldos').select('valor').eq('user_id', USER_ID).single();
-    if (error || !data) return 100.00;
+    const user = await getUsuarioLogado();
+    if (!user) return 0; // Se não estiver logado, saldo é 0
+    
+    const { data, error } = await supabase
+        .from('saldos')
+        .select('valor')
+        .eq('user_id', user.id)
+        .single();
+        
+    if (error || !data) return 100.00; // Saldo inicial padrão se não existir
     return parseFloat(data.valor);
 }
 
 async function salvarSaldo(novoValor) {
-    await supabase.from('saldos').upsert({ user_id: USER_ID, valor: novoValor }, { onConflict: 'user_id' });
+    const user = await getUsuarioLogado();
+    if (!user) return;
+    
+    await supabase.from('saldos').upsert(
+        { user_id: user.id, valor: novoValor }, 
+        { onConflict: 'user_id' }
+    );
 }
 
 function carregarSaldoDisplay() {
@@ -49,10 +67,11 @@ async function processarVitoria(aposta, multiplicador) {
     return ganhoReal;
 }
 
-// === VALIDAÇÃO DE CADASTRO SEGURO ===
+// === LÓGICA DE INTERFACE E VALIDAÇÃO ===
 document.addEventListener('DOMContentLoaded', () => {
     carregarSaldoDisplay();
 
+    // --- VALIDAÇÃO DE CADASTRO ---
     const btnCriarConta = document.getElementById('btn-criar-conta');
     if (btnCriarConta) {
         btnCriarConta.addEventListener('click', async (e) => {
@@ -70,32 +89,49 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('⚠️ Senha mínima de 6 caracteres!'); return;
             }
             if (senha !== confirmar) {
-                alert('⚠️ As senhas não coincidem!'); return;
+                alert('️ As senhas não coincidem!'); return;
             }
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
                 alert('⚠️ E-mail inválido!'); return;
             }
 
             try {
-                // Cria a conta no Supabase Auth
-const { data, error } = await supabase.auth.signUp({
-    email: email,
-    password: senha,
-    options: {
-        data: {
-            full_name: nome
-        }
-    }
-});
-
-if (error) throw error;
-
-alert('✅ Cadastro realizado! Verifique seu e-mail para confirmar.');
-
-                
-                
+                const { error } = await supabase.auth.signUp({
+                    email, password: senha, options: { data: { full_name: nome } }
+                });
+                if (error) throw error;
+                alert('✅ Cadastro realizado! Verifique seu e-mail.');
             } catch (err) {
                 alert('❌ Erro ao criar conta: ' + err.message);
+            }
+        });
+    }
+
+    // --- LÓGICA DE LOGIN ---
+    const btnEntrar = document.getElementById('btn-entrar');
+    if (btnEntrar) {
+        btnEntrar.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            // Ajuste estes IDs conforme estão no seu HTML da aba Login
+            const email = document.getElementById('input-login-email')?.value.trim();
+            const senha = document.getElementById('input-login-senha')?.value;
+
+            if (!email || !senha) {
+                alert('⚠️ Preencha e-mail e senha!'); return;
+            }
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email, password: senha
+                });
+                if (error) throw error;
+                
+                alert('✅ Login realizado com sucesso!');
+                window.location.reload(); // Recarrega para atualizar o saldo do usuário
+                
+            } catch (err) {
+                alert('❌ Erro ao entrar: ' + err.message);
             }
         });
     }
