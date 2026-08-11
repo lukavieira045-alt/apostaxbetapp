@@ -5,21 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mines - ApostaXBet</title>
     
-    <!-- IMPORTANTE: Carrega o script principal -->
+    <!-- Carrega o sistema de saldo principal -->
     <script type="module" src="../script.js"></script>
 
     <style>
+        /* MANTENDO O CSS ORIGINAL INTACTO */
         * { box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { margin: 0; min-height: 100vh; color: white; background: #0a0a1a; display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
+        body { 
+            margin: 0; min-height: 100vh; color: white; 
+            background: #0a0a1a; display: flex; flex-direction: column; 
+            align-items: center; padding-top: 20px; 
+        }
         
-        /* LUZES */
         .luz { position: fixed; width: 280px; height: 280px; border-radius: 50%; filter: blur(100px); opacity: 0.4; z-index: -1; }
         .luz1 { background: #00ff88; left: -120px; top: -120px; animation: luz1 6s infinite alternate; }
         .luz2 { background: #6a00ff; right: -120px; bottom: -120px; animation: luz2 6s infinite alternate; }
         @keyframes luz1 { to { transform: translate(170px, 170px); } }
         @keyframes luz2 { to { transform: translate(-170px, -170px); } }
 
-        /* PARTICULAS */
         .particulas { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: -1; }
         .particulas span { position: absolute; bottom: -20px; width: 6px; height: 6px; background: rgba(255,255,255,0.5); border-radius: 50%; }
         .particulas span:nth-child(1){left:5%;animation:subir 8s infinite linear;}
@@ -65,7 +68,7 @@
     <div id="saldo">💰 Saldo: R$ 0,00</div>
 
     <div class="painel">
-        <div id="premio">💎 Encontre os diamantes</div>
+        <div id="premio"> Encontre os diamantes</div>
         <button id="btnNovoJogo">NOVO JOGO</button>
     </div>
 
@@ -73,7 +76,7 @@
 
     <div class="resultado-overlay" id="resultadoTela">
         <div class="resultado-box">
-            <div class="resultado-icon" id="resultadoIcone">🏆</div>
+            <div class="resultado-icon" id="resultadoIcone"></div>
             <div class="resultado-text" id="resultadoTexto">Parabéns!</div>
             <button class="btn-fechar" onclick="fecharResultado()">JOGAR NOVAMENTE</button>
         </div>
@@ -85,6 +88,7 @@
         const VALOR_APOSTA = 1.00;
         const PREMIO_DIAMANTE = 0.50;
 
+        // Captura elementos mantendo IDs originais
         const grid = document.getElementById("grid");
         const premio = document.getElementById("premio");
         const displaySaldoLocal = document.getElementById("saldo");
@@ -100,93 +104,113 @@
         }
 
         async function iniciarJogo() {
-            if (jogando) return;
+            console.log("🎮 Iniciando Mines...");
             
+            if (jogando) {
+                alert("⚠️ Termine o jogo atual primeiro!");
+                return;
+            }
+
             if (!window.SistemaSaldo) {
-                alert("⏳ Sistema carregando... aguarde.");
+                alert("⏳ Sistema de saldo ainda carregando. Aguarde 2 segundos.");
                 return;
             }
 
             try {
-                let saldo = await window.SistemaSaldo.get();
-                if (saldo < VALOR_APOSTA) {
-                    alert(`Saldo insuficiente! Precisa de R$ ${VALOR_APOSTA.toFixed(2)}`);
+                let saldoAtual = await window.SistemaSaldo.get();
+                
+                if (saldoAtual < VALOR_APOSTA) {
+                    alert(`❌ Saldo insuficiente! Precisa de R$ ${VALOR_APOSTA.toFixed(2)}`);
                     return;
                 }
 
+                // Debita aposta e atualiza saldo local imediatamente
                 await window.SistemaSaldo.debitar(VALOR_APOSTA);
-                saldo -= VALOR_APOSTA;
-                atualizarDisplaySaldo(saldo);
+                saldoAtual -= VALOR_APOSTA;
+                atualizarDisplaySaldo(saldoAtual);
                 window.SistemaSaldo.atualizarTela();
 
+                // Reseta estado do jogo
                 jogando = true;
                 bombas = [];
-                grid.innerHTML = "";
-                premio.textContent = "💎 Encontre os diamantes";
-                resultadoTela.classList.remove("mostrar");
+                if(grid) grid.innerHTML = "";
+                if(premio) premio.textContent = "💎 Encontre os diamantes";
+                if(resultadoTela) resultadoTela.classList.remove("mostrar");
 
+                // Gera 3 bombas aleatórias
                 while (bombas.length < 3) {
                     let p = Math.floor(Math.random() * 9);
                     if (!bombas.includes(p)) bombas.push(p);
                 }
 
+                // Cria grid 3x3 usando CLASSES ORIGINAIS (.cell)
                 for (let i = 0; i < 9; i++) {
                     let cell = document.createElement("div");
                     cell.className = "cell";
                     cell.innerText = "?";
                     cell.onclick = () => abrirCasa(cell, i);
-                    grid.appendChild(cell);
+                    if(grid) grid.appendChild(cell);
                 }
-            } catch (e) {
-                console.error(e);
+                
+                console.log("✅ Jogo iniciado! Bombas:", bombas);
+
+            } catch (erro) {
+                console.error("Erro ao iniciar:", erro);
+                alert("Erro ao iniciar jogo. Verifique console.");
                 jogando = false;
             }
         }
 
         async function abrirCasa(cell, indice) {
-            if (!jogando || cell.classList.contains("revealed") || cell.classList.contains("bomb")) return;
+            if (!jogando || !cell || cell.classList.contains("revealed") || cell.classList.contains("bomb")) return;
 
             cell.classList.add("abrindo");
 
             setTimeout(async () => {
                 if (bombas.includes(indice)) {
+                    // BOMBA
                     cell.classList.remove("abrindo");
                     cell.classList.add("bomb");
                     cell.innerText = "💣";
                     revelarBombas();
                     jogando = false;
-                    premio.textContent = "💥 BOOM!";
+                    if(premio) premio.textContent = " BOOM!";
+                    
                     setTimeout(() => {
-                        resultadoIcone.textContent = "💣";
-                        resultadoTexto.textContent = "Você perdeu!";
-                        resultadoTela.classList.add("mostrar");
+                        if(resultadoIcone) resultadoIcone.textContent = "💣";
+                        if(resultadoTexto) resultadoTexto.textContent = "Você perdeu!";
+                        if(resultadoTela) resultadoTela.classList.add("mostrar");
                     }, 500);
                     return;
                 }
 
+                // DIAMANTE
                 cell.classList.remove("abrindo");
                 cell.classList.add("revealed");
                 cell.innerText = "";
 
                 try {
+                    // Credita prêmio e atualiza saldo
                     await window.SistemaSaldo.ganhar(PREMIO_DIAMANTE, 1);
                     let novoSaldo = await window.SistemaSaldo.get();
                     atualizarDisplaySaldo(novoSaldo);
                     window.SistemaSaldo.atualizarTela();
-                    premio.textContent = `💎 + R$ ${PREMIO_DIAMANTE.toFixed(2)}`;
 
+                    if(premio) premio.textContent = `💎 + R$ ${PREMIO_DIAMANTE.toFixed(2)}`;
+
+                    // Verifica vitória máxima (6 diamantes)
                     const abertas = document.querySelectorAll(".revealed").length;
                     if (abertas >= 6) {
                         jogando = false;
-                        premio.textContent = "🏆 Vitória Máxima!";
+                        if(premio) premio.textContent = "🏆 Vitória Máxima!";
                         setTimeout(() => {
-                            resultadoIcone.textContent = "";
-                            resultadoTexto.textContent = "Lucro total!";
-                            resultadoTela.classList.add("mostrar");
+                            if(resultadoIcone) resultadoIcone.textContent = "🏆";
+                            if(resultadoTexto) resultadoTexto.textContent = "Lucro total!";
+                            if(resultadoTela) resultadoTela.classList.add("mostrar");
                         }, 500);
                     }
-                } catch (e) {
-                    console.error(e);
+                } catch (erro) {
+                    console.error("Erro no diamante:", erro);
                 }
             }, 180);
         }
@@ -205,10 +229,14 @@
         }
 
         function fecharResultado() {
-            resultadoTela.classList.remove("mostrar");
+            if(resultadoTela) resultadoTela.classList.remove("mostrar");
         }
 
+        // INICIALIZAÇÃO SEGURA E CONEXÃO DO BOTÃO
         window.addEventListener('DOMContentLoaded', async () => {
+            console.log("🔄 Mines carregado. Verificando SistemaSaldo...");
+            
+            // Carrega saldo inicial
             if (window.SistemaSaldo) {
                 let s = await window.SistemaSaldo.get();
                 atualizarDisplaySaldo(s);
@@ -220,8 +248,19 @@
                     }
                 }, 1000);
             }
-            btnNovoJogo.onclick = iniciarJogo;
+
+            // CONECTA O BOTÃO - Correção crucial para modules
+            if (btnNovoJogo) {
+                btnNovoJogo.onclick = iniciarJogo;
+                console.log("✅ Botão 'NOVO JOGO' conectado com sucesso!");
+            } else {
+                console.warn("❌ Botão NÃO encontrado! Verifique HTML");
+            }
         });
+
+        // Expõe funções globalmente para evitar problemas de escopo em modules
+        window.iniciarJogo = iniciarJogo;
+        window.fecharResultado = fecharResultado;
     </script>
 </body>
 </html>
