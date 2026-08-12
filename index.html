@@ -1164,7 +1164,7 @@ class="mensagem">
 
 💰 Saldo: R$
 <span id="saldoValor">
-2,00
+0,00
 </span>
 
 </div>
@@ -1281,7 +1281,7 @@ id="contaEmail">
 
 R$
 <span id="contaSaldo">
-2,00
+0,00
 </span>
 
 </div>
@@ -2196,19 +2196,32 @@ function mostrarConta(){
    SALDO
 ================================================== */
 
-function atualizarSaldoVisual(){
+async function atualizarSaldoVisual(){
 
-    document
-    .getElementById("saldoValor")
-    .innerText =
-        "2,00";
+    const { data: sessaoData } =
+        await supabaseClient.auth.getSession();
 
+    const user = sessaoData?.session?.user;
 
-    document
-    .getElementById("contaSaldo")
-    .innerText =
-        "2,00";
+    if (!user) return;
 
+    const { data, error } =
+        await supabaseClient
+        .from("saldos")
+        .select("valor")
+        .eq("user_id", user.id)
+        .single();
+
+    if (error) {
+        console.error("Erro ao buscar saldo:", error);
+        return;
+    }
+
+    const saldo = Number(data?.valor || 0);
+    const valor = saldo.toFixed(2).replace(".", ",");
+
+    document.getElementById("saldoValor").innerText = valor;
+    document.getElementById("contaSaldo").innerText = valor;
 }
 
 
