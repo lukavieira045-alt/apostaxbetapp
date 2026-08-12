@@ -98,10 +98,10 @@ input {
     font-weight: bold;
     font-size: 17px;
 
-}
+
 
 .resultado {
-
+}
     display: none;
 
     margin-top: 20px;
@@ -151,7 +151,7 @@ input {
 <h1>🎰 ApostaXBet</h1>
 
 <div class="saldo" id="displaySaldo">
-💰 TESTE 999
+💰 Saldo: R$ 0,00
 </div>
 
 </header>
@@ -253,7 +253,43 @@ document.getElementById("resultado")
 
 </script>
 
-<script type="module" src="script.js"></script>
-<script type="module" src="saldo.js"></script>
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const supabase = createClient(
+    "https://jxbzjiwmajjzxgihfjgt.supabase.co",
+    "sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ"
+);
+
+async function atualizarSaldoSaque() {
+
+    const { data: sessionData } =
+        await supabase.auth.getSession();
+
+    const user = sessionData?.session?.user;
+
+    if (!user) return;
+
+    const { data, error } =
+        await supabase
+        .from("saldos")
+        .select("valor")
+        .eq("user_id", user.id)
+        .single();
+
+    if (error) {
+        console.error("Erro ao buscar saldo:", error);
+        return;
+    }
+
+    const saldo = Number(data?.valor || 0);
+
+    document.getElementById("displaySaldo").innerText =
+        "💰 Saldo: R$ " +
+        saldo.toFixed(2).replace(".", ",");
+}
+
+atualizarSaldoSaque();
+</script>
 </body>
 </html>
