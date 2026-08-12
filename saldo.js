@@ -1,80 +1,304 @@
-// === SISTEMA DE SALDO COM SUPABASE E VANTAGEM DA CASA ===
+// === SISTEMA DE SALDO REAL COM SUPABASE ===
+
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-// --- COLE SUAS CHAVES ABAIXO ---
 const SUPABASE_URL = 'https://jxbzjiwmajjzxgihfjgt.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ'; 
-// -------------------------------
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-const USER_ID = 'jogador-unico-001'; // ID fixo para teste
+const SUPABASE_KEY =
+    'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ';
 
-// Configuração da Vantagem da Casa (0.95 = Jogador recebe 95% do valor justo)
-// A casa fica com 5% de cada vitória automaticamente
-const CASA_VANTAGEM = 0.95; 
+const supabase = createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+const CASA_VANTAGEM = 0.95;
+
+
+// =====================================================
+// USUÁRIO LOGADO
+// =====================================================
+
+async function getUsuarioLogado() {
+
+    const { data, error } =
+        await supabase.auth.getSession();
+
+    if (error) {
+        console.error(
+            'Erro ao obter sessão:',
+            error
+        );
+
+        return null;
+    }
+
+    return data?.session?.user || null;
+}
+
+
+// =====================================================
+// BUSCAR SALDO
+// =====================================================
 
 async function buscarSaldo() {
-    const { data, error } = await supabase
-        .from('saldos')
-        .select('valor')
-        .eq('user_id', USER_ID)
-        .single();
 
-    if (error || !data) return 100.00;
-    return parseFloat(data.valor);
+    const user =
+        await getUsuarioLogado();
+
+    if (!user) {
+        return 0;
+    }
+
+    const { data, error } =
+        await supabase
+            .from('saldos')
+            .select('valor')
+            .eq('user_id', user.id)
+            .single();
+
+    if (error) {
+
+        console.error(
+            'Erro ao buscar saldo:',
+            error
+        );
+
+        return 0;
+    }
+
+    if (!data) {
+        return 0;
+    }
+
+    return parseFloat(data.valor) || 0;
 }
+
+
+// =====================================================
+// SALVAR SALDO
+// =====================================================
 
 async function salvarSaldo(novoValor) {
-    await supabase
-        .from('saldos')
-        .upsert({ user_id: USER_ID, valor: novoValor }, { onConflict: 'user_id' });
+
+    const user =
+        await getUsuarioLogado();
+
+    if (!user) {
+        return false;
+    }
+
+    const { error } =
+        await supabase
+            .from('saldos')
+            .upsert(
+                {
+                    user_id: user.id,
+                    valor: Number(novoValor)
+                },
+                {
+                    onConflict: 'user_id'
+                }
+            );
+
+    if (error) {
+
+        console.error(
+            'Erro ao salvar saldo:',
+            error
+        );
+
+        return false;
+    }
+
+    return true;
 }
 
-window.SistemaSaldo = {
-    get: async function() { 
-        return await buscarSaldo(); 
-    },
 
-    atualizarTela: async function() {
-        const saldo = await this.get();
-        const el = document.getElementById('display-saldo');
-        if (el) el.innerText = 'R$ ' + saldo.toFixed(2);
-    },
+// =====================================================
+// ATUALIZAR SALDO NA TELA
+// =====================================================
 
-    debitar: async function(valorAposta) {
-        let saldoAtual = await this.get();
-        
-        if (valorAposta > saldoAtual) {
-            alert('❌ Saldo insuficiente!');
-            return false;
-        }
-        
-        // Desconta a aposta inteira imediatamente
-        await salvarSaldo(saldoAtual - valorAposta);
-        this.atualizarTela();
-        return true;
-    },
+async function atualizarTela() {
 
-    // NOVA FUNÇÃO: Processar Vitória com Vantagem da Casa Automática
-    processarVitoria: async function(valorAposta, multiplicadorJusto) {
-        let saldoAtual = await this.get();
-        
-        // Calcula o ganho REAL aplicando a taxa da casa
-        // Ex: Aposta 10 x Mult 2.0 = 20. Com taxa (0.95): 20 * 0.95 = 19.
-        const ganhoReal = (valorAposta * multiplicadorJusto) * CASA_VANTAGEM;
-        
-        const novoSaldo = saldoAtual + ganhoReal;
-        await salvarSaldo(novoSaldo);
-        this.atualizarTela();
-        
-        return ganhoReal; 
-    },
+    const saldo =
+        await buscarSaldo();
 
-    creditar: async function(valor) {
-        let saldo = await this.get();
-        await salvarSaldo(saldo + valor);
-        this.atualizarTela();
+    const valorFormatado =
+        saldo
+            .toFixed(2)
+            .replace('.', ',');
+
+    const elementos =
+        document.querySelectorAll(
+            '#displaySaldo, #display-saldo, .saldo'
+        );
+
+    elementos.forEach(el => {
+
+        el.innerText =
+            `💰 Saldo: R$ ${valorFormatado}`;
+
+    });
+
+    return saldo;
+}
+
+
+// =====================================================
+// DEBITAR
+// =====================================================
+
+async function debitar(valorAposta) {
+
+    const valor =
+        Number(valorAposta);
+
+    if (
+        !Number.isFinite(valor) ||
+        valor <= 0
+    ) {
+        return false;
     }
+
+    const saldoAtual =
+        await buscarSaldo();
+
+    if (valor > saldoAtual) {
+
+        alert(
+            '❌ Saldo insuficiente!'
+        );
+
+        return false;
+    }
+
+    const novoSaldo =
+        saldoAtual - valor;
+
+    const salvo =
+        await salvarSaldo(novoSaldo);
+
+    if (!salvo) {
+        return false;
+    }
+
+    await atualizarTela();
+
+    return true;
+}
+
+
+// =====================================================
+// PROCESSAR VITÓRIA
+// =====================================================
+
+async function processarVitoria(
+    valorAposta,
+    multiplicadorJusto
+) {
+
+    const aposta =
+        Number(valorAposta);
+
+    const multiplicador =
+        Number(multiplicadorJusto);
+
+    if (
+        !Number.isFinite(aposta) ||
+        !Number.isFinite(multiplicador)
+    ) {
+        return 0;
+    }
+
+    const saldoAtual =
+        await buscarSaldo();
+
+    const ganhoReal =
+        (aposta * multiplicador) *
+        CASA_VANTAGEM;
+
+    const novoSaldo =
+        saldoAtual + ganhoReal;
+
+    const salvo =
+        await salvarSaldo(novoSaldo);
+
+    if (!salvo) {
+        return 0;
+    }
+
+    await atualizarTela();
+
+    return ganhoReal;
+}
+
+
+// =====================================================
+// CREDitar
+// =====================================================
+
+async function creditar(valor) {
+
+    const valorCredito =
+        Number(valor);
+
+    if (
+        !Number.isFinite(valorCredito) ||
+        valorCredito <= 0
+    ) {
+        return false;
+    }
+
+    const saldoAtual =
+        await buscarSaldo();
+
+    const novoSaldo =
+        saldoAtual + valorCredito;
+
+    const salvo =
+        await salvarSaldo(novoSaldo);
+
+    if (!salvo) {
+        return false;
+    }
+
+    await atualizarTela();
+
+    return true;
+}
+
+
+// =====================================================
+// SISTEMA GLOBAL
+// =====================================================
+
+window.SistemaSaldo = {
+
+    get: buscarSaldo,
+
+    debitar: debitar,
+
+    ganhar: processarVitoria,
+
+    processarVitoria: processarVitoria,
+
+    creditar: creditar,
+
+    atualizarTela: atualizarTela
+
 };
 
-document.addEventListener('DOMContentLoaded', () => SistemaSaldo.atualizarTela());
+
+// =====================================================
+// CARREGAR AO ABRIR A PÁGINA
+// =====================================================
+
+document.addEventListener(
+    'DOMContentLoaded',
+    () => {
+
+        atualizarTela();
+
+    }
+);
