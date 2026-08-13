@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>Lobby Mania</title>
 
 <style>
+
 *{
   box-sizing:border-box;
   margin:0;
@@ -37,7 +39,9 @@ body{
   overflow:hidden;
 }
 
-/* TOPO */
+/* =========================
+   TOPO
+========================= */
 
 .top{
   height:62px;
@@ -63,7 +67,9 @@ body{
   font:18px monospace;
 }
 
-/* BANNER */
+/* =========================
+   BANNER
+========================= */
 
 .banner{
   height:105px;
@@ -92,7 +98,9 @@ body{
     0 0 15px #00ffff;
 }
 
-/* MÁQUINA */
+/* =========================
+   MÁQUINA
+========================= */
 
 .machine{
   margin:0 5px;
@@ -114,7 +122,9 @@ body{
     0 0 25px #3927a855;
 }
 
-/* ROLOS */
+/* =========================
+   ROLOS
+========================= */
 
 .reels{
   height:475px;
@@ -147,7 +157,9 @@ body{
     transform 1.1s cubic-bezier(.12,.78,.18,1);
 }
 
-/* SÍMBOLOS */
+/* =========================
+   SÍMBOLOS
+========================= */
 
 .symbol{
   height:157px;
@@ -235,7 +247,9 @@ body{
     3px 3px #3b4a30;
 }
 
-/* MENSAGEM */
+/* =========================
+   MENSAGEM
+========================= */
 
 .message{
   height:26px;
@@ -248,7 +262,9 @@ body{
   font-size:14px;
 }
 
-/* PAINEL */
+/* =========================
+   PAINEL
+========================= */
 
 .info{
   height:70px;
@@ -286,7 +302,20 @@ body{
   font-weight:bold;
 }
 
-/* BOTÕES */
+#balance{
+  transition:
+    transform .25s ease,
+    color .25s ease;
+}
+
+#balance.atualizando{
+  transform:scale(1.12);
+  color:#fff36b;
+}
+
+/* =========================
+   BOTÕES
+========================= */
 
 .controls{
   height:150px;
@@ -363,24 +392,126 @@ body{
   font-size:10px;
   padding:4px 5px 20px;
 }
+
+/* =========================
+   CARREGANDO
+========================= */
+
+#carregando{
+  position:fixed;
+  inset:0;
+
+  background:#02030b;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  z-index:9999;
+
+  color:#61fff4;
+  font-size:15px;
+  font-weight:bold;
+
+  letter-spacing:1px;
+}
+
+/* =========================
+   ERRO
+========================= */
+
+.erro-saldo{
+  color:#ff5252 !important;
+}
+
+/* =========================
+   CELULAR
+========================= */
+
+@media(max-width:360px){
+
+  .reels{
+    height:430px;
+  }
+
+  .symbol{
+    height:142px;
+  }
+
+  .face{
+    width:90px;
+    height:90px;
+    font-size:48px;
+  }
+
+  .coin{
+    width:100px;
+    height:72px;
+    font-size:31px;
+  }
+
+  .five{
+    font-size:62px;
+  }
+
+}
+
 </style>
 </head>
 
 <body>
 
+<!-- =========================
+     CARREGAMENTO
+========================= -->
+
+<div id="carregando">
+  🔐 VERIFICANDO CONTA...
+</div>
+
+
 <div class="game">
 
+  <!-- =========================
+       TOPO
+  ========================= -->
+
   <div class="top">
-    <div class="home">⌂</div>
-    <div class="name">Lobby Mania</div>
-    <div class="clock" id="clock">03:27:59</div>
+
+    <div class="home">
+      ⌂
+    </div>
+
+    <div class="name">
+      Lobby Mania
+    </div>
+
+    <div class="clock" id="clock">
+      00:00:00
+    </div>
+
   </div>
+
+
+  <!-- =========================
+       BANNER
+  ========================= -->
 
   <div class="banner">
-    <span>» Nova rodada é de empurrar! «</span>
+
+    <span>
+      » Nova rodada é de empurrar! «
+    </span>
+
   </div>
 
+
+  <!-- =========================
+       MÁQUINA
+  ========================= -->
+
   <div class="machine">
+
 
     <div class="reels">
 
@@ -398,9 +529,15 @@ body{
 
     </div>
 
+
     <div class="message" id="message">
       Pronto para jogar
     </div>
+
+
+    <!-- =========================
+         SALDO
+    ========================= -->
 
     <div class="info">
 
@@ -408,41 +545,138 @@ body{
         👤
       </div>
 
-      <div class="infoItem">
-        <span class="infoSmall">SALDO DEMO</span>
-        <span class="value" id="balance">R$0,03</span>
-      </div>
 
       <div class="infoItem">
-        <span class="infoSmall">APOSTA</span>
-        <span class="value" id="bet">R$0,50</span>
+
+        <span class="infoSmall">
+          SALDO
+        </span>
+
+        <span
+          class="value"
+          id="balance">
+
+          R$ 0,00
+
+        </span>
+
+      </div>
+
+
+      <div class="infoItem">
+
+        <span class="infoSmall">
+          APOSTA
+        </span>
+
+        <span
+          class="value"
+          id="bet">
+
+          R$ 0,50
+
+        </span>
+
       </div>
 
     </div>
 
+
+    <!-- =========================
+         CONTROLES
+    ========================= -->
+
     <div class="controls">
 
-      <button class="btn" onclick="sound()">🔇</button>
+      <button
+        class="btn"
+        onclick="sound()">
 
-      <button class="btn" onclick="minus()">−</button>
+        🔇
 
-      <button class="spin" onclick="spin()">★</button>
+      </button>
 
-      <button class="btn" onclick="plus()">+</button>
 
-      <button class="btn" onclick="spin()">▶</button>
+      <button
+        class="btn"
+        onclick="minus()">
+
+        −
+
+      </button>
+
+
+      <button
+        class="spin"
+        onclick="spin()">
+
+        ★
+
+      </button>
+
+
+      <button
+        class="btn"
+        onclick="plus()">
+
+        +
+
+      </button>
+
+
+      <button
+        class="btn"
+        onclick="spin()">
+
+        ▶
+
+      </button>
 
     </div>
 
   </div>
 
+
   <div class="notice">
-    Jogo demonstrativo com créditos fictícios.
+
+    Saldo conectado à sua conta.
+
   </div>
 
 </div>
 
-<script>
+
+<script type="module">
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+import {
+  createClient
+}
+from
+"https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+
+const SUPABASE_URL =
+"https://jxbzjiwmajjzxgihfjgt.supabase.co";
+
+
+const SUPABASE_KEY =
+"sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ";
+
+
+const supabase =
+createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+
+/* =====================================================
+   SÍMBOLOS
+===================================================== */
 
 const symbols = [
 
@@ -474,138 +708,560 @@ const symbols = [
 
 ];
 
+
 const reels = [
+
   document.getElementById("reel1"),
+
   document.getElementById("reel2"),
+
   document.getElementById("reel3")
+
 ];
 
-let balance = 0.03;
+
+/* =====================================================
+   VARIÁVEIS
+===================================================== */
+
+let usuarioAtual = null;
+
+let saldoReal = 0;
+
 let bet = 0.50;
+
 let spinning = false;
+
+
+/* =====================================================
+   FORMATAÇÃO
+===================================================== */
+
+function dinheiro(valor){
+
+  return "R$ " +
+    Number(valor || 0)
+    .toFixed(2)
+    .replace(".",",");
+
+}
+
+
+/* =====================================================
+   MOSTRAR SALDO
+===================================================== */
+
+function atualizarSaldo(){
+
+  const balance =
+    document.getElementById(
+      "balance"
+    );
+
+
+  balance.classList.add(
+    "atualizando"
+  );
+
+
+  balance.textContent =
+    dinheiro(
+      saldoReal
+    );
+
+
+  setTimeout(
+    function(){
+
+      balance.classList.remove(
+        "atualizando"
+      );
+
+    },
+    250
+  );
+
+
+  /*
+     Cor do saldo
+  */
+
+  if(saldoReal <= 0){
+
+    balance.classList.add(
+      "erro-saldo"
+    );
+
+  }else{
+
+    balance.classList.remove(
+      "erro-saldo"
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   ATUALIZAR APOSTA
+===================================================== */
+
+function atualizarAposta(){
+
+  document.getElementById(
+    "bet"
+  ).textContent =
+    dinheiro(bet);
+
+}
+
+
+/* =====================================================
+   PEGAR USUÁRIO
+===================================================== */
+
+async function obterUsuario(){
+
+  const {
+    data,
+    error
+  } =
+  await supabase
+  .auth
+  .getSession();
+
+
+  if(error){
+
+    console.error(
+      "Erro ao verificar sessão:",
+      error
+    );
+
+    return null;
+
+  }
+
+
+  return data?.session?.user || null;
+
+}
+
+
+/* =====================================================
+   CARREGAR SALDO DO SUPABASE
+===================================================== */
+
+async function carregarSaldo(){
+
+  if(!usuarioAtual)
+    return false;
+
+
+  const {
+    data,
+    error
+  } =
+  await supabase
+  .from("saldos")
+  .select("valor")
+  .eq(
+    "user_id",
+    usuarioAtual.id
+  )
+  .single();
+
+
+  if(error){
+
+    console.error(
+      "Erro ao carregar saldo:",
+      error
+    );
+
+
+    document.getElementById(
+      "message"
+    ).textContent =
+      "Erro ao carregar saldo";
+
+
+    document.getElementById(
+      "balance"
+    ).textContent =
+      "ERRO";
+
+
+    document.getElementById(
+      "balance"
+    ).classList.add(
+      "erro-saldo"
+    );
+
+
+    return false;
+
+  }
+
+
+  saldoReal =
+    Number(
+      data?.valor || 0
+    );
+
+
+  atualizarSaldo();
+
+
+  return true;
+
+}
+
+
+/* =====================================================
+   CONSTRUIR ROLOS
+===================================================== */
 
 function buildReels(){
 
-  reels.forEach((reel,col)=>{
+  reels.forEach(
+    function(reel,col){
 
-    let html = "";
+      let html = "";
 
-    for(let i=0;i<25;i++){
 
-      html += symbols[
-        (i + col * 2) % symbols.length
-      ];
+      for(
+        let i = 0;
+        i < 30;
+        i++
+      ){
+
+        html +=
+          symbols[
+            (i + col * 2)
+            %
+            symbols.length
+          ];
+
+      }
+
+
+      reel.innerHTML =
+        html;
+
+
+      reel.style.transform =
+        "translateY(0px)";
 
     }
-
-    reel.innerHTML = html;
-
-  });
+  );
 
 }
 
-function update(){
 
-  document.getElementById("balance").textContent =
-    "R$" + balance.toFixed(2).replace(".",",");
-
-  document.getElementById("bet").textContent =
-    "R$" + bet.toFixed(2).replace(".",",");
-
-}
+/* =====================================================
+   GIRAR
+===================================================== */
 
 function spin(){
 
-  if(spinning) return;
+  if(spinning)
+    return;
+
 
   spinning = true;
 
-  document.getElementById("message").textContent =
+
+  const message =
+    document.getElementById(
+      "message"
+    );
+
+
+  message.textContent =
     "Girando...";
 
-  reels.forEach((reel,index)=>{
 
-    const distance =
-      -(Math.floor(Math.random()*10)+10) * 157;
+  reels.forEach(
+    function(reel,index){
 
-    reel.style.transition =
-      "transform " +
-      (0.9 + index * 0.25) +
-      "s cubic-bezier(.12,.78,.18,1)";
+      /*
+         Mantém uma distância grande
+         para o giro ficar visível.
+      */
 
-    reel.style.transform =
-      "translateY(" + distance + "px)";
+      const casas =
+        18 +
+        Math.floor(
+          Math.random() * 8
+        );
 
-  });
 
-  setTimeout(()=>{
+      const distance =
+        -(casas * 157);
 
-    const win = Math.random() < 0.20;
 
-    if(win){
+      const duracao =
+        1.15 +
+        (index * 0.25);
 
-      balance += bet * 2;
 
-      document.getElementById("message").textContent =
-        "Você ganhou!";
+      reel.style.transition =
+        "transform " +
+        duracao +
+        "s cubic-bezier(.12,.78,.18,1)";
 
-    }else{
 
-      document.getElementById("message").textContent =
-        "Nova rodada";
+      reel.style.transform =
+        "translateY(" +
+        distance +
+        "px)";
 
     }
+  );
 
-    update();
 
-    spinning = false;
+  setTimeout(
+    function(){
 
-  },1500);
+      message.textContent =
+        "Nova rodada";
+
+
+      spinning =
+        false;
+
+    },
+    1900
+  );
 
 }
+
+
+/* =====================================================
+   MAIS
+===================================================== */
 
 function plus(){
 
-  bet = Math.min(5,bet + 0.50);
+  if(spinning)
+    return;
 
-  update();
+
+  bet =
+    Math.min(
+      5,
+      bet + 0.50
+    );
+
+
+  atualizarAposta();
 
 }
+
+
+/* =====================================================
+   MENOS
+===================================================== */
 
 function minus(){
 
-  bet = Math.max(0.50,bet - 0.50);
+  if(spinning)
+    return;
 
-  update();
+
+  bet =
+    Math.max(
+      0.50,
+      bet - 0.50
+    );
+
+
+  atualizarAposta();
 
 }
+
+
+/* =====================================================
+   SOM
+===================================================== */
 
 function sound(){
 
-  document.getElementById("message").textContent =
-    "Som alternado";
+  const message =
+    document.getElementById(
+      "message"
+    );
+
+
+  message.textContent =
+    "🔊 Som alternado";
 
 }
 
-let seconds = 3*3600 + 27*60 + 59;
 
-setInterval(()=>{
+/* =====================================================
+   RELÓGIO
+===================================================== */
 
-  seconds++;
+let segundos =
+  3 * 3600 +
+  27 * 60 +
+  59;
 
-  const h = Math.floor(seconds/3600) % 24;
-  const m = Math.floor((seconds%3600)/60);
-  const s = seconds % 60;
 
-  document.getElementById("clock").textContent =
-    [h,m,s]
-      .map(n => String(n).padStart(2,"0"))
+setInterval(
+  function(){
+
+    segundos++;
+
+
+    const h =
+      Math.floor(
+        segundos / 3600
+      ) % 24;
+
+
+    const m =
+      Math.floor(
+        (segundos % 3600) / 60
+      );
+
+
+    const s =
+      segundos % 60;
+
+
+    document.getElementById(
+      "clock"
+    ).textContent =
+
+      [
+        h,
+        m,
+        s
+      ]
+
+      .map(
+        function(n){
+
+          return String(n)
+            .padStart(2,"0");
+
+        }
+      )
+
       .join(":");
 
-},1000);
+  },
+  1000
+);
 
-buildReels();
-update();
+
+/* =====================================================
+   OBSERVAR LOGIN
+===================================================== */
+
+supabase
+.auth
+.onAuthStateChange(
+  function(
+    event,
+    session
+  ){
+
+    if(!session){
+
+      window.location.href =
+        "./index.html";
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   INICIAR
+===================================================== */
+
+async function iniciar(){
+
+  try{
+
+    usuarioAtual =
+      await obterUsuario();
+
+
+    if(!usuarioAtual){
+
+      alert(
+        "Você precisa estar logado."
+      );
+
+
+      window.location.href =
+        "./index.html";
+
+
+      return;
+
+    }
+
+
+    const carregou =
+      await carregarSaldo();
+
+
+    if(!carregou){
+
+      document.getElementById(
+        "carregando"
+      ).style.display =
+        "none";
+
+      return;
+
+    }
+
+
+    buildReels();
+
+    atualizarAposta();
+
+
+    document.getElementById(
+      "carregando"
+    ).style.display =
+      "none";
+
+
+  }catch(error){
+
+    console.error(
+      "Erro ao iniciar:",
+      error
+    );
+
+
+    document.getElementById(
+      "carregando"
+    ).style.display =
+      "none";
+
+
+    document.getElementById(
+      "message"
+    ).textContent =
+      "Erro ao iniciar Lobby";
+
+  }
+
+}
+
+
+iniciar();
 
 </script>
 
