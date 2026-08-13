@@ -2456,44 +2456,30 @@ supabaseClient.auth.onAuthStateChange(
 
 verificarSessao();
 <script>
-const LINK_API = "https://jxzbjiwmajjzxcgjhfjgt.supabase.co/functions/v1/quick-endpoint";
-
 async function solicitarSaque() {
-  const valorTexto = document.querySelector("input[type='text']").value;
-  const chavePix = document.querySelectorAll("input[type='text']")[1].value;
-  const mensagemEl = document.querySelector(".mensagem");
-  const valor = parseFloat(valorTexto.replace(",", "."));
-
-  // Pega o e-mail do usuário logado automaticamente
-  let userId = "lukavieira045@gmail.com";
-  if (window.sessaoUsuario && window.sessaoUsuario.email) {
-    userId = window.sessaoUsuario.email;
-  }
-
-  if (mensagemEl) mensagemEl.innerHTML = "⏳ Enviando...";
+  const valor = prompt("Digite o valor:");
+  const chavePix = prompt("Digite sua chave PIX:");
+  const LINK_API = "https://jxzbjiwmajjzxcgjhfjgt.supabase.co/functions/v1/quick-endpoint";
 
   try {
-    const resposta = await fetch(LINK_API, {
+    const resp = await fetch(LINK_API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, valor, chavePix })
+      body: JSON.stringify({
+        userId: "lukavieira045@gmail.com",
+        valor: parseFloat(valor.replace(",", ".")),
+        chavePix: chavePix
+      })
     });
-    const resultado = await resposta.json();
-    if (resultado.sucesso) {
-      if (mensagemEl) mensagemEl.innerHTML = "✅ Saque solicitado com sucesso!";
-      setTimeout(() => location.reload(), 2000);
-    } else {
-      if (mensagemEl) mensagemEl.innerHTML = "❌ Erro: " + resultado.erro;
-    }
-  } catch (erro) {
-    if (mensagemEl) mensagemEl.innerHTML = "⚠️ Erro de conexão!";
+    const res = await resp.json();
+    if (res.sucesso) alert("✅ Saque solicitado!");
+    else alert("❌ Erro: " + res.erro);
+  } catch(e) {
+    alert("⚠️ Erro de conexão!");
   }
 }
 </script>
 
-</script>
-
-</script>
 
 </body>
 </html>
