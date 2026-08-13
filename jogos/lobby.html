@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Lobby Mania - Real</title>
+<title>Lobby Mania - Aposta Real</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-/* [CSS ORIGINAL MANTIDO INTACTO] */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;min-height:100%;background:#02030b;font-family:Arial,sans-serif}
 body{display:flex;justify-content:center;overflow-x:hidden}
@@ -54,10 +53,10 @@ body{display:flex;justify-content:center;overflow-x:hidden}
       <div class="reel"><div class="strip" id="reel3"></div></div>
     </div>
     
-    <div class="message" id="message">Carregando sistema...</div>
+    <div class="message" id="message">Conectando...</div>
     
     <div class="info">
-      <div class="infoItem">👤</div>
+      <div class="infoItem"></div>
       <div class="infoItem">
         <span class="infoSmall">SALDO</span>
         <span class="value" id="balance">R$0,00</span>
@@ -82,60 +81,57 @@ body{display:flex;justify-content:center;overflow-x:hidden}
 
 <script>
 /* =====================================================
-   CONFIGURAÇÃO SUPABASE E SISTEMA DE SALDO
+   CONFIGURAÇÃO SUPABASE E SISTEMA DE SALDO EMBUTIDO
 ===================================================== */
 const SUPABASE_URL = 'https://jxbzjiwmajjzxgihfjgt.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_ANON_KEY = 'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Inicializa o objeto global SistemaSaldo se não existir
-if (!window.SistemaSaldo) {
-    window.SistemaSaldo = {
-        async get() {
-            const { data } = await supabase.auth.getSession();
-            if (!data?.session) throw new Error('Sessão expirada');
-            
-            const { data: saldoData, error } = await supabase
-                .from('saldos')
-                .select('valor')
-                .eq('user_id', data.session.user.id)
-                .single();
-                
-            if (error) throw error;
-            return Number(saldoData?.valor || 0);
-        },
+// Cria o objeto global SistemaSaldo localmente
+window.SistemaSaldo = {
+    async get() {
+        const { data } = await supabase.auth.getSession();
+        if (!data?.session) throw new Error('Sessão expirada');
         
-        async debitar(valor) {
-            const { data } = await supabase.auth.getSession();
-            if (!data?.session) throw new Error('Sessão expirada');
+        const { data: saldoData, error } = await supabase
+            .from('saldos')
+            .select('valor')
+            .eq('user_id', data.session.user.id)
+            .single();
             
-            // Usa RPC ou transação atômica para evitar race conditions
-            const { error } = await supabase.rpc('debitar_saldo', { 
-                p_user_id: data.session.user.id, 
-                p_valor: valor 
-            });
-            
-            if (error) throw error;
-        },
+        if (error) throw error;
+        return Number(saldoData?.valor || 0);
+    },
+    
+    async debitar(valor) {
+        const { data } = await supabase.auth.getSession();
+        if (!data?.session) throw new Error('Sessão expirada');
         
-        async getSession() {
-            const { data } = await supabase.auth.getSession();
-            if (!data?.session) throw new Error('Sessão expirada');
-            return data.session;
-        },
+        const { error } = await supabase.rpc('debitar_saldo', { 
+            p_user_id: data.session.user.id, 
+            p_valor: valor 
+        });
         
-        async atualizarTela() {
-            try {
-                const saldo = await this.get();
-                document.getElementById('balance').textContent = dinheiro(saldo);
-                return saldo;
-            } catch (e) {
-                console.error('Erro ao atualizar tela:', e);
-                return 0;
-            }
+        if (error) throw error;
+    },
+    
+    async getSession() {
+        const { data } = await supabase.auth.getSession();
+        if (!data?.session) throw new Error('Sessão expirada');
+        return data.session;
+    },
+    
+    async atualizarTela() {
+        try {
+            const saldo = await this.get();
+            document.getElementById('balance').textContent = dinheiro(saldo);
+            return saldo;
+        } catch (e) {
+            console.error('Erro ao atualizar tela:', e);
+            return 0;
         }
-    };
-}
+    }
+};
 
 /* =====================================================
    SÍMBOLOS E ELEMENTOS
@@ -159,7 +155,7 @@ let bet = 0.50;
 let spinning = false;
 
 /* =====================================================
-   INICIALIZAÇÃO COM SALDO REAL
+   INICIALIZAÇÃO COM VALIDAÇÃO DE SESSÃO
 ===================================================== */
 async function init() {
     buildReels();
@@ -196,7 +192,7 @@ function atualizarAposta() { betEl.textContent = dinheiro(bet); }
 
 function sound() { 
     if(spinning) return; 
-    messageEl.textContent = "🔊 Som alternado"; 
+    messageEl.textContent = " Som alternado"; 
     messageEl.style.color = "#61fff4"; 
 }
 
@@ -228,7 +224,7 @@ function updateClock() {
 }
 
 /* =====================================================
-   GIRO COM APOSTA REAL
+   GIRO COM APOSTA REAL SEGURA
 ===================================================== */
 async function spin() {
     if (spinning) return;
@@ -253,20 +249,20 @@ async function spin() {
     messageEl.textContent = "Processando aposta...";
     messageEl.style.color = "#61fff4";
 
-    // 2. Debita aposta REAL antes da animação
+    // 2. Debita aposta REAL antes da animação começar
     try {
         await window.SistemaSaldo.debitar(bet);
         balanceEl.classList.add('atualizando');
         setTimeout(() => balanceEl.classList.remove('atualizando'), 300);
     } catch (err) {
-        messageEl.textContent = " Falha no débito";
+        messageEl.textContent = "❌ Falha no débito";
         messageEl.style.color = "#ff4d4d";
         spinning = false;
         spinBtn.disabled = false;
         return;
     }
 
-    // 3. Animação dos rolos
+    // 3. Animação dos rolos (Visual apenas)
     reels.forEach((reel, index) => {
         reel.style.transition = "none";
         reel.style.transform = "translateY(0)";
@@ -281,7 +277,7 @@ async function spin() {
         reel.style.transform = `translateY(${distance}px)`;
     });
 
-    // 4. Aguarda servidor processar resultado REAL
+    // 4. Aguarda servidor processar resultado REAL via Edge Function
     setTimeout(async () => {
         try {
             const session = await window.SistemaSaldo.getSession();
@@ -298,7 +294,7 @@ async function spin() {
             
             if (!res.ok || data.error) throw new Error(data.error || 'Falha na transação');
 
-            // 5. Atualiza UI com dados REAIS do backend
+            // 5. Atualiza UI com dados REAIS retornados pelo backend
             const novoSaldo = data.novoSaldo ?? await window.SistemaSaldo.get();
             balanceEl.textContent = dinheiro(novoSaldo);
             balanceEl.classList.add('atualizando');
@@ -323,7 +319,7 @@ async function spin() {
     }, 1900);
 }
 
-// Inicia o jogo
+// Inicia o jogo automaticamente ao carregar
 init();
 </script>
 </body>
