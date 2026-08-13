@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>Lobby Mania</title>
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Lobby Mania - ApostaXBet</title>
 
 <style>
 
@@ -76,6 +80,7 @@ body{
   margin:18px 7px 9px;
   border-radius:8px;
   border:3px solid #17173c;
+
   display:flex;
   align-items:center;
   justify-content:center;
@@ -93,6 +98,7 @@ body{
   font-size:25px;
   font-weight:900;
   color:#61fff4;
+
   text-shadow:
     0 0 6px #00ffff,
     0 0 15px #00ffff;
@@ -146,15 +152,13 @@ body{
 
 .reel{
   overflow:hidden;
-
   background:#b9d59f;
-
   border-right:3px solid #35435a;
 }
 
 .strip{
-  transition:
-    transform 1.1s cubic-bezier(.12,.78,.18,1);
+  transform:translateY(0);
+  will-change:transform;
 }
 
 /* =========================
@@ -252,7 +256,7 @@ body{
 ========================= */
 
 .message{
-  height:26px;
+  height:38px;
 
   display:flex;
   align-items:center;
@@ -260,6 +264,9 @@ body{
 
   color:#a8ff67;
   font-size:14px;
+  font-weight:bold;
+
+  text-align:center;
 }
 
 /* =========================
@@ -267,10 +274,10 @@ body{
 ========================= */
 
 .info{
-  height:70px;
+  min-height:78px;
 
   display:grid;
-  grid-template-columns:1fr 1fr 1fr;
+  grid-template-columns:1fr 1.4fr 1fr;
 
   align-items:center;
 
@@ -300,9 +307,7 @@ body{
   color:#aaff5d;
   font-size:20px;
   font-weight:bold;
-}
 
-#balance{
   transition:
     transform .25s ease,
     color .25s ease;
@@ -318,7 +323,7 @@ body{
 ========================= */
 
 .controls{
-  height:150px;
+  min-height:150px;
 
   display:grid;
 
@@ -353,6 +358,10 @@ body{
 
   box-shadow:
     0 4px 8px #0008;
+
+  cursor:pointer;
+
+  touch-action:manipulation;
 }
 
 .spin{
@@ -379,12 +388,26 @@ body{
   box-shadow:
     0 0 20px #00eaff,
     inset 0 0 22px #00eaff66;
+
+  cursor:pointer;
+
+  touch-action:manipulation;
 }
 
 .btn:active,
 .spin:active{
   transform:scale(.92);
 }
+
+.btn:disabled,
+.spin:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+/* =========================
+   AVISO
+========================= */
 
 .notice{
   text-align:center;
@@ -409,61 +432,52 @@ body{
 
   z-index:9999;
 
-  color:#61fff4;
-  font-size:15px;
+  color:#62fff6;
+
+  font-size:16px;
   font-weight:bold;
-
-  letter-spacing:1px;
 }
 
 /* =========================
-   ERRO
+   RESPONSIVO
 ========================= */
 
-.erro-saldo{
-  color:#ff5252 !important;
-}
-
-/* =========================
-   CELULAR
-========================= */
-
-@media(max-width:360px){
+@media(max-width:400px){
 
   .reels{
-    height:430px;
+    height:390px;
   }
 
   .symbol{
-    height:142px;
+    height:129px;
   }
 
-  .face{
-    width:90px;
-    height:90px;
-    font-size:48px;
+  .spin{
+    width:96px;
+    height:96px;
   }
 
-  .coin{
-    width:100px;
-    height:72px;
-    font-size:31px;
+  .controls{
+    grid-template-columns:
+      52px
+      52px
+      1fr
+      52px
+      52px;
   }
 
-  .five{
-    font-size:62px;
+  .btn{
+    width:50px;
+    height:50px;
   }
 
 }
 
 </style>
+
 </head>
 
 <body>
-
-<!-- =========================
-     CARREGAMENTO
-========================= -->
 
 <div id="carregando">
   🔐 VERIFICANDO CONTA...
@@ -472,13 +486,10 @@ body{
 
 <div class="game">
 
-  <!-- =========================
-       TOPO
-  ========================= -->
-
   <div class="top">
 
-    <div class="home">
+    <div class="home"
+         onclick="voltarLobby()">
       ⌂
     </div>
 
@@ -486,16 +497,13 @@ body{
       Lobby Mania
     </div>
 
-    <div class="clock" id="clock">
-      00:00:00
+    <div class="clock"
+         id="clock">
+      03:27:59
     </div>
 
   </div>
 
-
-  <!-- =========================
-       BANNER
-  ========================= -->
 
   <div class="banner">
 
@@ -506,43 +514,53 @@ body{
   </div>
 
 
-  <!-- =========================
-       MÁQUINA
-  ========================= -->
-
   <div class="machine">
 
 
     <div class="reels">
 
       <div class="reel">
-        <div class="strip" id="reel1"></div>
+        <div
+          class="strip"
+          id="reel1">
+        </div>
       </div>
 
-      <div class="reel">
-        <div class="strip" id="reel2"></div>
-      </div>
 
       <div class="reel">
-        <div class="strip" id="reel3"></div>
+        <div
+          class="strip"
+          id="reel2">
+        </div>
+      </div>
+
+
+      <div class="reel">
+        <div
+          class="strip"
+          id="reel3">
+        </div>
       </div>
 
     </div>
 
 
-    <div class="message" id="message">
+    <div
+      class="message"
+      id="message">
+
       Pronto para jogar
+
     </div>
 
-
-    <!-- =========================
-         SALDO
-    ========================= -->
 
     <div class="info">
 
+
       <div class="infoItem">
+
         👤
+
       </div>
 
 
@@ -579,17 +597,16 @@ body{
 
       </div>
 
+
     </div>
 
 
-    <!-- =========================
-         CONTROLES
-    ========================= -->
-
     <div class="controls">
+
 
       <button
         class="btn"
+        id="soundBtn"
         onclick="sound()">
 
         🔇
@@ -608,6 +625,7 @@ body{
 
       <button
         class="spin"
+        id="spinButton"
         onclick="spin()">
 
         ★
@@ -632,15 +650,15 @@ body{
 
       </button>
 
+
     </div>
+
 
   </div>
 
 
   <div class="notice">
-
-    Saldo conectado à sua conta.
-
+    ApostaXBet
   </div>
 
 </div>
@@ -675,52 +693,6 @@ createClient(
 
 
 /* =====================================================
-   SÍMBOLOS
-===================================================== */
-
-const symbols = [
-
-  `<div class="symbol">
-     <div class="five">5</div>
-   </div>`,
-
-  `<div class="symbol">
-     <div class="face">🙂</div>
-     <div class="x2">×2</div>
-   </div>`,
-
-  `<div class="symbol">
-     <div class="coin">0,05</div>
-   </div>`,
-
-  `<div class="symbol">
-     <div class="five">5</div>
-   </div>`,
-
-  `<div class="symbol">
-     <div class="face">😄</div>
-     <div class="x2">×2</div>
-   </div>`,
-
-  `<div class="symbol">
-     <div class="coin">0,05</div>
-   </div>`
-
-];
-
-
-const reels = [
-
-  document.getElementById("reel1"),
-
-  document.getElementById("reel2"),
-
-  document.getElementById("reel3")
-
-];
-
-
-/* =====================================================
    VARIÁVEIS
 ===================================================== */
 
@@ -734,7 +706,107 @@ let spinning = false;
 
 
 /* =====================================================
-   FORMATAÇÃO
+   ELEMENTOS
+===================================================== */
+
+const reels = [
+
+  document.getElementById("reel1"),
+
+  document.getElementById("reel2"),
+
+  document.getElementById("reel3")
+
+];
+
+
+const balanceElement =
+document.getElementById("balance");
+
+
+const betElement =
+document.getElementById("bet");
+
+
+const messageElement =
+document.getElementById("message");
+
+
+const spinButton =
+document.getElementById("spinButton");
+
+
+const loading =
+document.getElementById("carregando");
+
+
+/* =====================================================
+   SÍMBOLOS
+===================================================== */
+
+const symbols = [
+
+  `<div class="symbol">
+
+     <div class="five">
+       5
+     </div>
+
+   </div>`,
+
+  `<div class="symbol">
+
+     <div class="face">
+       🙂
+     </div>
+
+     <div class="x2">
+       ×2
+     </div>
+
+   </div>`,
+
+  `<div class="symbol">
+
+     <div class="coin">
+       0,05
+     </div>
+
+   </div>`,
+
+  `<div class="symbol">
+
+     <div class="five">
+       5
+     </div>
+
+   </div>`,
+
+  `<div class="symbol">
+
+     <div class="face">
+       😄
+     </div>
+
+     <div class="x2">
+       ×2
+     </div>
+
+   </div>`,
+
+  `<div class="symbol">
+
+     <div class="coin">
+       0,05
+     </div>
+
+   </div>`
+
+];
+
+
+/* =====================================================
+   DINHEIRO
 ===================================================== */
 
 function dinheiro(valor){
@@ -748,32 +820,35 @@ function dinheiro(valor){
 
 
 /* =====================================================
-   MOSTRAR SALDO
+   ATUALIZAR APOSTA
+===================================================== */
+
+function atualizarAposta(){
+
+  betElement.textContent =
+    dinheiro(bet);
+
+}
+
+
+/* =====================================================
+   ATUALIZAR SALDO
 ===================================================== */
 
 function atualizarSaldo(){
 
-  const balance =
-    document.getElementById(
-      "balance"
-    );
+  balanceElement.textContent =
+    dinheiro(saldoReal);
 
-
-  balance.classList.add(
+  balanceElement.classList.add(
     "atualizando"
   );
-
-
-  balance.textContent =
-    dinheiro(
-      saldoReal
-    );
 
 
   setTimeout(
     function(){
 
-      balance.classList.remove(
+      balanceElement.classList.remove(
         "atualizando"
       );
 
@@ -782,43 +857,56 @@ function atualizarSaldo(){
   );
 
 
-  /*
-     Cor do saldo
-  */
+  atualizarBotao();
 
-  if(saldoReal <= 0){
+}
 
-    balance.classList.add(
-      "erro-saldo"
-    );
 
-  }else{
+/* =====================================================
+   BOTÃO
+===================================================== */
 
-    balance.classList.remove(
-      "erro-saldo"
-    );
+function atualizarBotao(){
+
+  if(spinning){
+
+    spinButton.disabled =
+      true;
+
+    spinButton.textContent =
+      "↻";
+
+    return;
 
   }
 
+
+  if(
+    saldoReal < bet
+  ){
+
+    spinButton.disabled =
+      true;
+
+    spinButton.textContent =
+      "★";
+
+    return;
+
+  }
+
+
+  spinButton.disabled =
+    false;
+
+  spinButton.textContent =
+    "★";
+
 }
 
 
 /* =====================================================
-   ATUALIZAR APOSTA
-===================================================== */
-
-function atualizarAposta(){
-
-  document.getElementById(
-    "bet"
-  ).textContent =
-    dinheiro(bet);
-
-}
-
-
-/* =====================================================
-   PEGAR USUÁRIO
+   USUÁRIO
 ===================================================== */
 
 async function obterUsuario(){
@@ -835,7 +923,6 @@ async function obterUsuario(){
   if(error){
 
     console.error(
-      "Erro ao verificar sessão:",
       error
     );
 
@@ -850,7 +937,7 @@ async function obterUsuario(){
 
 
 /* =====================================================
-   CARREGAR SALDO DO SUPABASE
+   CARREGAR SALDO
 ===================================================== */
 
 async function carregarSaldo(){
@@ -876,28 +963,13 @@ async function carregarSaldo(){
   if(error){
 
     console.error(
-      "Erro ao carregar saldo:",
+      "Erro saldo:",
       error
     );
 
 
-    document.getElementById(
-      "message"
-    ).textContent =
-      "Erro ao carregar saldo";
-
-
-    document.getElementById(
-      "balance"
-    ).textContent =
-      "ERRO";
-
-
-    document.getElementById(
-      "balance"
-    ).classList.add(
-      "erro-saldo"
-    );
+    messageElement.textContent =
+      "❌ ERRO AO CARREGAR SALDO";
 
 
     return false;
@@ -920,7 +992,69 @@ async function carregarSaldo(){
 
 
 /* =====================================================
-   CONSTRUIR ROLOS
+   SALVAR SALDO
+===================================================== */
+
+async function salvarSaldo(
+  novoSaldo
+){
+
+  if(!usuarioAtual)
+    return false;
+
+
+  const valorFinal =
+    Number(
+      Number(novoSaldo)
+      .toFixed(2)
+    );
+
+
+  const {
+    error
+  } =
+  await supabase
+  .from("saldos")
+  .update({
+    valor:valorFinal
+  })
+  .eq(
+    "user_id",
+    usuarioAtual.id
+  );
+
+
+  if(error){
+
+    console.error(
+      "Erro ao salvar saldo:",
+      error
+    );
+
+
+    messageElement.textContent =
+      "❌ ERRO AO ATUALIZAR SALDO";
+
+
+    return false;
+
+  }
+
+
+  saldoReal =
+    valorFinal;
+
+
+  atualizarSaldo();
+
+
+  return true;
+
+}
+
+
+/* =====================================================
+   MONTAR ROLOS
 ===================================================== */
 
 function buildReels(){
@@ -931,17 +1065,21 @@ function buildReels(){
       let html = "";
 
 
+      /*
+         Muitas casas para o movimento
+         ficar visível.
+      */
+
       for(
         let i = 0;
-        i < 30;
+        i < 40;
         i++
       ){
 
         html +=
           symbols[
             (i + col * 2)
-            %
-            symbols.length
+            % symbols.length
           ];
 
       }
@@ -952,7 +1090,11 @@ function buildReels(){
 
 
       reel.style.transform =
-        "translateY(0px)";
+        "translateY(0)";
+
+
+      reel.style.transition =
+        "none";
 
     }
   );
@@ -964,59 +1106,228 @@ function buildReels(){
    GIRAR
 ===================================================== */
 
-function spin(){
+async function spin(){
 
   if(spinning)
     return;
 
+
+  if(!usuarioAtual){
+
+    messageElement.textContent =
+      "❌ USUÁRIO NÃO LOGADO";
+
+    return;
+
+  }
+
+
+  if(
+    saldoReal < bet
+  ){
+
+    messageElement.textContent =
+      "❌ SALDO INSUFICIENTE";
+
+    return;
+
+  }
+
+
   spinning = true;
 
-  const message =
-    document.getElementById("message");
+  atualizarBotao();
 
-  message.textContent =
-    "Girando...";
+
+  /*
+     DESCONTA A APOSTA
+  */
+
+  const saldoAntes =
+    saldoReal;
+
+
+  const saldoDepois =
+    saldoAntes - bet;
+
+
+  const debitado =
+    await salvarSaldo(
+      saldoDepois
+    );
+
+
+  if(!debitado){
+
+    spinning = false;
+
+    atualizarBotao();
+
+    return;
+
+  }
+
+
+  messageElement.textContent =
+    "🎰 Girando...";
+
+
+  /*
+     RECOMEÇA OS ROLOS
+  */
+
+  reels.forEach(
+    function(reel){
+
+      reel.style.transition =
+        "none";
+
+      reel.style.transform =
+        "translateY(0)";
+
+    }
+  );
+
+
+  /*
+     Força o navegador
+     a aplicar a posição inicial.
+  */
+
+  void reels[0].offsetHeight;
+
+
+  /*
+     SORTEIO
+  */
+
+  const ganhou =
+    Math.random() < 0.20;
+
+
+  let simboloVencedor;
+
+
+  if(ganhou){
+
+    simboloVencedor =
+      Math.floor(
+        Math.random() *
+        symbols.length
+      );
+
+  }else{
+
+    simboloVencedor =
+      Math.floor(
+        Math.random() *
+        symbols.length
+      );
+
+  }
+
+
+  /*
+     CADA ROLO PARA EM UMA POSIÇÃO.
+  */
 
   reels.forEach(
     function(reel,index){
 
-      const casas =
-        18 +
+      const casasBase =
+        20 + index * 4;
+
+
+      const casasExtra =
         Math.floor(
-          Math.random() * 8
+          Math.random() * 5
         );
 
-      const distance =
+
+      const casas =
+        casasBase +
+        casasExtra;
+
+
+      const distancia =
         -(casas * 157);
 
+
       const duracao =
-        1.15 +
-        (index * 0.25);
+        1.5 +
+        index * 0.35;
+
 
       reel.style.transition =
         "transform " +
         duracao +
         "s cubic-bezier(.12,.78,.18,1)";
 
+
       reel.style.transform =
         "translateY(" +
-        distance +
+        distancia +
         "px)";
 
     }
   );
 
-  setTimeout(
-    function(){
 
-      message.textContent =
-        "Nova rodada";
+  /*
+     FINAL DA RODADA
+  */
+
+  setTimeout(
+    async function(){
+
+      /*
+         Resultado da rodada.
+      */
+
+      if(ganhou){
+
+        const premio =
+          Number(
+            (bet * 2)
+            .toFixed(2)
+          );
+
+
+        const novoSaldo =
+          saldoReal +
+          premio;
+
+
+        const creditado =
+          await salvarSaldo(
+            novoSaldo
+          );
+
+
+        if(creditado){
+
+          messageElement.textContent =
+            "🎉 VOCÊ GANHOU " +
+            dinheiro(premio);
+
+        }
+
+      }else{
+
+        messageElement.textContent =
+          "Nova rodada";
+
+      }
+
 
       spinning =
         false;
 
+
+      atualizarBotao();
+
     },
-    1800
+    2500
   );
 
 }
@@ -1026,7 +1337,8 @@ function spin(){
    MAIS
 ===================================================== */
 
-function plus(){
+window.plus =
+function(){
 
   if(spinning)
     return;
@@ -1041,14 +1353,17 @@ function plus(){
 
   atualizarAposta();
 
-}
+  atualizarBotao();
+
+};
 
 
 /* =====================================================
    MENOS
 ===================================================== */
 
-function minus(){
+window.minus =
+function(){
 
   if(spinning)
     return;
@@ -1063,25 +1378,62 @@ function minus(){
 
   atualizarAposta();
 
-}
+  atualizarBotao();
+
+};
 
 
 /* =====================================================
    SOM
 ===================================================== */
 
-function sound(){
+let somLigado = false;
 
-  const message =
+window.sound =
+function(){
+
+  somLigado =
+    !somLigado;
+
+
+  const botao =
     document.getElementById(
-      "message"
+      "soundBtn"
     );
 
 
-  message.textContent =
-    "🔊 Som alternado";
+  if(somLigado){
 
-}
+    botao.textContent =
+      "🔊";
+
+    messageElement.textContent =
+      "🔊 Som ligado";
+
+  }else{
+
+    botao.textContent =
+      "🔇";
+
+    messageElement.textContent =
+      "🔇 Som desligado";
+
+  }
+
+};
+
+
+/* =====================================================
+   VOLTAR
+===================================================== */
+
+window.voltarLobby =
+function(){
+
+  window.location.href =
+    "../index.html";
+
+};
 
 
 /* =====================================================
@@ -1116,52 +1468,30 @@ setInterval(
       segundos % 60;
 
 
-    document.getElementById(
-      "clock"
-    ).textContent =
-
-      [
-        h,
-        m,
-        s
-      ]
-
-      .map(
-        function(n){
-
-          return String(n)
-            .padStart(2,"0");
-
-        }
-      )
-
-      .join(":");
-
-  },
-  1000
-);
+    const clock =
+      document.getElementById(
+        "clock"
+      );
 
 
-/* =====================================================
-   OBSERVAR LOGIN
-===================================================== */
+    if(clock){
 
-supabase
-.auth
-.onAuthStateChange(
-  function(
-    event,
-    session
-  ){
+      clock.textContent =
+        [h,m,s]
+        .map(
+          function(n){
 
-    if(!session){
+            return String(n)
+              .padStart(2,"0");
 
-      window.location.href =
-        "./index.html";
+          }
+        )
+        .join(":");
 
     }
 
-  }
+  },
+  1000
 );
 
 
@@ -1180,12 +1510,12 @@ async function iniciar(){
     if(!usuarioAtual){
 
       alert(
-        "Você precisa estar logado."
+        "Você precisa estar logado para jogar."
       );
 
 
       window.location.href =
-        "./index.html";
+        "../index.html";
 
 
       return;
@@ -1199,9 +1529,7 @@ async function iniciar(){
 
     if(!carregou){
 
-      document.getElementById(
-        "carregando"
-      ).style.display =
+      loading.style.display =
         "none";
 
       return;
@@ -1213,10 +1541,10 @@ async function iniciar(){
 
     atualizarAposta();
 
+    atualizarSaldo();
 
-    document.getElementById(
-      "carregando"
-    ).style.display =
+
+    loading.style.display =
       "none";
 
 
@@ -1228,25 +1556,49 @@ async function iniciar(){
     );
 
 
-    document.getElementById(
-      "carregando"
-    ).style.display =
+    loading.style.display =
       "none";
 
 
-    document.getElementById(
-      "message"
-    ).textContent =
-      "Erro ao iniciar Lobby";
+    messageElement.textContent =
+      "❌ ERRO AO INICIAR JOGO";
 
   }
 
 }
 
 
+/* =====================================================
+   LOGIN
+===================================================== */
+
+supabase
+.auth
+.onAuthStateChange(
+  function(
+    event,
+    session
+  ){
+
+    if(!session){
+
+      window.location.href =
+        "../index.html";
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   INICIAR
+===================================================== */
+
 iniciar();
 
 </script>
 
 </body>
+
 </html>
