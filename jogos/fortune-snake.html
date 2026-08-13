@@ -4,18 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Fortune Snake - ApostaXBet</title>
+<title>Fortune Snake - Mini</title>
 
 <style>
-* {
-    box-sizing: border-box;
-}
-
 body {
-    background:
-        radial-gradient(circle at top, #3b1761 0%, #1a0b2e 45%, #08030d 100%);
+    background: #1a0b2e;
     color: white;
-    font-family: Arial, sans-serif;
+    font-family: sans-serif;
 
     display: flex;
     justify-content: center;
@@ -23,108 +18,81 @@ body {
 
     min-height: 100vh;
     margin: 0;
-    padding: 15px;
 }
 
 .game-container {
-    width: 100%;
-    max-width: 360px;
-
     background:
-        linear-gradient(180deg, #2d1b4e 0%, #130820 100%);
+        linear-gradient(
+            180deg,
+            #2d1b4e 0%,
+            #1a0b2e 100%
+        );
 
     border: 2px solid #ffd700;
-    border-radius: 18px;
+    border-radius: 15px;
 
-    padding: 18px;
+    padding: 20px;
+
+    width: 320px;
 
     text-align: center;
 
     box-shadow:
-        0 0 20px rgba(255,215,0,.25),
-        inset 0 0 25px rgba(255,255,255,.03);
-}
-
-h2 {
-    color: #ffd700;
-    margin: 0;
-    font-size: 25px;
-    text-shadow: 0 0 10px rgba(255,215,0,.4);
-}
-
-.message-area {
-    height: 32px;
-    margin-top: 10px;
-
-    color: #00ed91;
-    font-weight: bold;
-    font-size: 14px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    text-shadow: 0 0 7px rgba(0,237,145,.5);
+        0 0 20px rgba(255,215,0,.3);
 }
 
 /* GRID */
 
 .slot-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
 
-    gap: 6px;
+    grid-template-columns:
+        repeat(3, 1fr);
 
-    margin: 18px 0;
+    gap: 5px;
+
+    margin: 20px 0;
 
     background: #0f0518;
 
-    padding: 9px;
+    padding: 10px;
 
-    border-radius: 12px;
+    border-radius: 10px;
 
     border: 1px solid #4a2c7a;
-
-    box-shadow:
-        inset 0 0 15px rgba(0,0,0,.7);
 }
 
 .slot-cell {
-    aspect-ratio: 1 / 1;
+    width: 80px;
+    height: 80px;
 
-    width: 100%;
-    height: auto;
+    background: #2a1b3d;
 
-    min-height: 72px;
-
-    background:
-        linear-gradient(145deg, #35234c, #211530);
-
-    border-radius: 9px;
+    border-radius: 8px;
 
     display: flex;
     justify-content: center;
     align-items: center;
 
-    font-size: 38px;
+    font-size: 40px;
 
-    border: 1px solid #4c3765;
+    border: 1px solid #3d2b5a;
 
     transition:
-        transform .12s ease,
-        background .2s ease,
-        box-shadow .2s ease;
+        transform .12s,
+        box-shadow .12s,
+        background .2s;
 }
 
-/* Movimento durante o giro */
+/* GIRO */
 
 .slot-cell.spinning {
-    transform: scale(1.04);
+    transform:
+        scale(1.05);
 
     box-shadow:
-        0 0 15px rgba(255,215,0,.35);
-
-    filter: brightness(1.25);
+        0 0 18px
+        rgba(255,215,0,.5);
 }
 
 /* WILD */
@@ -135,9 +103,10 @@ h2 {
     border-color: #ffaa00;
 
     box-shadow:
-        0 0 18px #ffd700;
+        0 0 15px #ffd700;
 
-    animation: pulse .7s infinite;
+    animation:
+        pulse 1s infinite;
 }
 
 /* GANHADOR */
@@ -148,9 +117,8 @@ h2 {
     border-color: #00ffaa;
 
     box-shadow:
-        0 0 20px rgba(0,237,145,.8);
-
-    transform: scale(1.05);
+        0 0 18px
+        rgba(0,237,145,.7);
 }
 
 /* CONTROLES */
@@ -158,10 +126,11 @@ h2 {
 .controls {
     display: flex;
 
-    justify-content: space-between;
-    align-items: center;
+    justify-content:
+        space-between;
 
-    gap: 10px;
+    align-items:
+        center;
 
     margin-top: 15px;
 }
@@ -169,7 +138,7 @@ h2 {
 .bet-display {
     background: #0f0518;
 
-    padding: 9px 13px;
+    padding: 8px 15px;
 
     border-radius: 20px;
 
@@ -178,90 +147,93 @@ h2 {
     font-weight: bold;
 
     color: #ffd700;
-
-    white-space: nowrap;
-
-    font-size: 14px;
 }
 
-.spin-btn {
+button.spin-btn {
     background:
-        linear-gradient(45deg, #ff00cc, #3333ff);
+        linear-gradient(
+            45deg,
+            #ff00cc,
+            #3333ff
+        );
 
     border: none;
 
     color: white;
 
-    padding: 12px 25px;
+    padding:
+        12px 30px;
 
-    border-radius: 25px;
+    border-radius:
+        25px;
 
-    font-size: 17px;
+    font-size:
+        18px;
+
+    font-weight:
+        bold;
+
+    cursor:
+        pointer;
+
+    box-shadow:
+        0 4px 15px
+        rgba(255,0,204,.4);
+
+    transition:
+        transform .1s;
+}
+
+button.spin-btn:active {
+    transform:
+        scale(.95);
+}
+
+button.spin-btn:disabled {
+    opacity: .5;
+
+    cursor:
+        not-allowed;
+
+    filter:
+        grayscale(1);
+}
+
+/* MENSAGEM */
+
+.message-area {
+    height: 30px;
+
+    margin-top: 10px;
+
+    color: #00ed91;
 
     font-weight: bold;
 
-    cursor: pointer;
+    font-size: 14px;
 
-    box-shadow:
-        0 4px 15px rgba(255,0,204,.4);
-
-    transition:
-        transform .1s,
-        box-shadow .2s;
+    text-shadow:
+        0 0 5px
+        rgba(0,237,145,.5);
 }
 
-.spin-btn:active {
-    transform: scale(.94);
-}
-
-.spin-btn:hover {
-    box-shadow:
-        0 0 22px rgba(255,0,204,.75);
-}
-
-.spin-btn:disabled {
-    opacity: .5;
-    cursor: not-allowed;
-    filter: grayscale(1);
-}
-
-/* ANIMAÇÃO WILD */
+/* PULSO */
 
 @keyframes pulse {
+
     0% {
-        transform: scale(1);
+        transform:
+            scale(1);
     }
 
     50% {
-        transform: scale(1.06);
+        transform:
+            scale(1.05);
     }
 
     100% {
-        transform: scale(1);
-    }
-}
-
-/* CELULAR */
-
-@media (max-width: 360px) {
-
-    .game-container {
-        padding: 14px;
-    }
-
-    .slot-cell {
-        min-height: 65px;
-        font-size: 32px;
-    }
-
-    .bet-display {
-        font-size: 12px;
-        padding: 8px 10px;
-    }
-
-    .spin-btn {
-        padding: 11px 18px;
-        font-size: 15px;
+        transform:
+            scale(1);
     }
 }
 </style>
@@ -271,7 +243,14 @@ h2 {
 
 <div class="game-container">
 
-    <h2>🐍 Fortune Snake</h2>
+    <h2
+        style="
+            color:#ffd700;
+            margin:0;
+        "
+    >
+        🐍 Fortune Snake
+    </h2>
 
     <div
         class="message-area"
@@ -302,8 +281,11 @@ h2 {
 
 </div>
 
-<!-- SISTEMA DE SALDO -->
-<script type="module" src="../saldo.js"></script>
+<!-- SALDO -->
+<script
+    type="module"
+    src="../saldo.js"
+></script>
 
 <script>
 
@@ -335,23 +317,35 @@ const MULTIPLICADOR_BONUS = 10;
 ===================================================== */
 
 const gridEl =
-    document.getElementById('grid');
+    document.getElementById(
+        'grid'
+    );
 
 const msgEl =
-    document.getElementById('msgArea');
+    document.getElementById(
+        'msgArea'
+    );
 
 const btnSpin =
-    document.getElementById('btnSpin');
+    document.getElementById(
+        'btnSpin'
+    );
 
 
 /* =====================================================
-   CRIA GRID
+   GRID
 ===================================================== */
 
-for (let i = 0; i < 9; i++) {
+for (
+    let i = 0;
+    i < 9;
+    i++
+) {
 
     const cell =
-        document.createElement('div');
+        document.createElement(
+            'div'
+        );
 
     cell.className =
         'slot-cell';
@@ -359,7 +353,9 @@ for (let i = 0; i < 9; i++) {
     cell.textContent =
         '❓';
 
-    gridEl.appendChild(cell);
+    gridEl.appendChild(
+        cell
+    );
 }
 
 
@@ -372,18 +368,23 @@ function atualizarMsg(
     cor = '#00ed91'
 ) {
 
-    msgEl.style.color = cor;
-    msgEl.textContent = texto;
+    msgEl.style.color =
+        cor;
+
+    msgEl.textContent =
+        texto;
 }
 
 
 /* =====================================================
-   SALDO INICIAL
+   SALDO
 ===================================================== */
 
 async function carregarSaldo() {
 
-    if (!window.SistemaSaldo) {
+    if (
+        !window.SistemaSaldo
+    ) {
 
         atualizarMsg(
             '⚠️ Sistema de saldo não encontrado!',
@@ -396,9 +397,13 @@ async function carregarSaldo() {
     try {
 
         const saldo =
-            await window.SistemaSaldo.atualizarTela();
+            await window.SistemaSaldo
+                .atualizarTela();
 
-        if (typeof saldo === 'number') {
+        if (
+            typeof saldo ===
+            'number'
+        ) {
 
             atualizarMsg(
                 `Saldo: R$ ${saldo.toFixed(2)}`
@@ -416,12 +421,12 @@ async function carregarSaldo() {
 
 
 /* =====================================================
-   SÍMBOLO DA ANIMAÇÃO
+   SÍMBOLO DE GIRO
 ===================================================== */
 
 function simboloAleatorio() {
 
-    const simbolosAnimacao = [
+    const lista = [
         '🏆',
         '💰',
         '💎',
@@ -429,99 +434,193 @@ function simboloAleatorio() {
         '🐍'
     ];
 
-    return simbolosAnimacao[
+    return lista[
         Math.floor(
             Math.random() *
-            simbolosAnimacao.length
+            lista.length
         )
     ];
 }
 
 
 /* =====================================================
-   GIRO RÁPIDO E SUAVE
+   GIRO ESTILO SLOT
 ===================================================== */
 
-function animarGiro(cells) {
+function girarColuna(
+    cells,
+    indices,
+    duracao,
+    atrasoFinal
+) {
 
     return new Promise(resolve => {
-
-        const DURACAO = 1900;
 
         const inicio =
             performance.now();
 
-        let ultimoGiro = 0;
+        let ultimo =
+            inicio;
 
-        function frame(agora) {
+        function animar(agora) {
+
+            const tempo =
+                agora - inicio;
 
             const progresso =
                 Math.min(
-                    (agora - inicio) /
-                    DURACAO,
+                    tempo / duracao,
                     1
                 );
 
             /*
-             * Ease-out:
-             * começa rápido
-             * termina devagar
+             * Começa rápido.
+             * Termina devagar.
              */
 
             const ease =
                 1 -
                 Math.pow(
                     1 - progresso,
-                    3
+                    4
                 );
 
             const intervalo =
-                40 +
+                35 +
                 ease * 170;
 
             if (
-                agora -
-                ultimoGiro >=
+                agora - ultimo >=
                 intervalo
             ) {
 
-                ultimoGiro =
+                ultimo =
                     agora;
 
-                cells.forEach(cell => {
+                indices.forEach(
+                    index => {
 
-                    cell.textContent =
-                        simboloAleatorio();
+                        const cell =
+                            cells[index];
 
-                    cell.classList.add(
-                        'spinning'
-                    );
+                        cell.textContent =
+                            simboloAleatorio();
 
-                });
+                        cell.classList.add(
+                            'spinning'
+                        );
+                    }
+                );
             }
 
-            if (progresso < 1) {
+            if (
+                progresso < 1
+            ) {
 
                 requestAnimationFrame(
-                    frame
+                    animar
                 );
 
             } else {
 
-                cells.forEach(cell => {
+                indices.forEach(
+                    index => {
 
-                    cell.classList.remove(
-                        'spinning'
-                    );
+                        cells[index]
+                            .classList
+                            .remove(
+                                'spinning'
+                            );
+                    }
+                );
 
-                });
-
-                resolve();
+                setTimeout(
+                    resolve,
+                    atrasoFinal
+                );
             }
         }
 
-        requestAnimationFrame(frame);
+        requestAnimationFrame(
+            animar
+        );
     });
+}
+
+
+/* =====================================================
+   GIRO COMPLETO
+===================================================== */
+
+async function animarGiro(
+    cells
+) {
+
+    /*
+     * Cada coluna para em um
+     * momento diferente.
+     */
+
+    const coluna1 =
+        [0, 1, 2];
+
+    const coluna2 =
+        [3, 4, 5];
+
+    const coluna3 =
+        [6, 7, 8];
+
+
+    const giro1 =
+        girarColuna(
+            cells,
+            coluna1,
+            1450,
+            0
+        );
+
+
+    await new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                180
+            )
+    );
+
+
+    const giro2 =
+        girarColuna(
+            cells,
+            coluna2,
+            1750,
+            0
+        );
+
+
+    await new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                180
+            )
+    );
+
+
+    const giro3 =
+        girarColuna(
+            cells,
+            coluna3,
+            2050,
+            0
+        );
+
+
+    await Promise.all([
+        giro1,
+        giro2,
+        giro3
+    ]);
 }
 
 
@@ -531,19 +630,17 @@ function animarGiro(cells) {
 
 function gerarResultado() {
 
-    const resultado = [];
+    const resultado =
+        [];
 
-    let temWild = false;
+    let temWild =
+        false;
 
     for (
         let i = 0;
         i < 9;
         i++
     ) {
-
-        /*
-         * Resultado independente e aleatório.
-         */
 
         const isWild =
             Math.random() < 0.20;
@@ -562,8 +659,12 @@ function gerarResultado() {
             simbolo
         );
 
-        if (isWild) {
-            temWild = true;
+        if (
+            isWild
+        ) {
+
+            temWild =
+                true;
         }
     }
 
@@ -575,7 +676,7 @@ function gerarResultado() {
 
 
 /* =====================================================
-   CALCULA PAGAMENTO
+   PAGAMENTO
 ===================================================== */
 
 function calcularGanho(
@@ -583,7 +684,8 @@ function calcularGanho(
     cells
 ) {
 
-    let ganho = 0;
+    let ganho =
+        0;
 
     for (
         let row = 0;
@@ -603,10 +705,13 @@ function calcularGanho(
         const s3 =
             resultado[idx + 2];
 
-        let simboloBase = null;
+
+        let base =
+            null;
+
 
         /*
-         * Trinca normal
+         * TRINCA
          */
 
         if (
@@ -615,11 +720,13 @@ function calcularGanho(
             s1 !== '🐍'
         ) {
 
-            simboloBase = s1;
+            base =
+                s1;
         }
 
+
         /*
-         * Dois iguais + Wild
+         * WILD NA TERCEIRA
          */
 
         else if (
@@ -627,8 +734,14 @@ function calcularGanho(
             s3 === '🐍'
         ) {
 
-            simboloBase = s1;
+            base =
+                s1;
         }
+
+
+        /*
+         * WILD NA PRIMEIRA
+         */
 
         else if (
             s1 === '🐍' &&
@@ -636,8 +749,14 @@ function calcularGanho(
             s2 !== '🐍'
         ) {
 
-            simboloBase = s2;
+            base =
+                s2;
         }
+
+
+        /*
+         * WILD NO MEIO
+         */
 
         else if (
             s1 === s3 &&
@@ -645,28 +764,35 @@ function calcularGanho(
             s1 !== '🐍'
         ) {
 
-            simboloBase = s1;
+            base =
+                s1;
         }
 
-        if (simboloBase) {
+
+        if (
+            base
+        ) {
 
             const valor =
-                VALORES[
-                    simboloBase
-                ] || 0;
+                VALORES[base] ||
+                0;
 
             ganho +=
                 APOSTA_FIXA *
                 valor;
 
+
             cells[idx]
-                .classList.add('win');
+                .classList
+                .add('win');
 
             cells[idx + 1]
-                .classList.add('win');
+                .classList
+                .add('win');
 
             cells[idx + 2]
-                .classList.add('win');
+                .classList
+                .add('win');
         }
     }
 
@@ -675,14 +801,16 @@ function calcularGanho(
 
 
 /* =====================================================
-   GIRO
+   BOTÃO GIRAR
 ===================================================== */
 
 btnSpin.addEventListener(
     'click',
     async () => {
 
-        if (!window.SistemaSaldo) {
+        if (
+            !window.SistemaSaldo
+        ) {
 
             atualizarMsg(
                 '⚠️ Sistema de saldo não carregado!',
@@ -692,16 +820,23 @@ btnSpin.addEventListener(
             return;
         }
 
-        btnSpin.disabled = true;
+
+        btnSpin.disabled =
+            true;
+
 
         try {
 
             const saldo =
-                await window.SistemaSaldo.get();
+                await window.SistemaSaldo
+                    .get();
+
 
             if (
-                typeof saldo !== 'number' ||
-                saldo < APOSTA_FIXA
+                typeof saldo !==
+                    'number' ||
+                saldo <
+                    APOSTA_FIXA
             ) {
 
                 atualizarMsg(
@@ -709,13 +844,16 @@ btnSpin.addEventListener(
                     '#ff4d4d'
                 );
 
-                btnSpin.disabled = false;
+                btnSpin.disabled =
+                    false;
 
                 return;
             }
 
 
-            /* DEBITA A APOSTA */
+            /*
+             * DEBITA
+             */
 
             await window.SistemaSaldo
                 .debitar(
@@ -734,34 +872,41 @@ btnSpin.addEventListener(
                 );
 
 
-            /* LIMPA RESULTADO ANTERIOR */
+            /*
+             * LIMPA EFEITOS
+             */
 
-            cells.forEach(cell => {
+            cells.forEach(
+                cell => {
 
-                cell.className =
-                    'slot-cell';
+                    cell.className =
+                        'slot-cell';
 
-                cell.textContent =
-                    '🌀';
-            });
+                    cell.textContent =
+                        '🌀';
+                }
+            );
 
 
-            /* GIRO */
+            /*
+             * GIRO
+             */
 
             await animarGiro(
                 cells
             );
 
 
-            /* RESULTADO */
+            /*
+             * RESULTADO FINAL
+             */
 
             const {
                 resultado,
                 temWild
-            } = gerarResultado();
+            } =
+                gerarResultado();
 
-
-            /* MOSTRA RESULTADO */
 
             resultado.forEach(
                 (simbolo, index) => {
@@ -770,6 +915,7 @@ btnSpin.addEventListener(
                         .textContent =
                         simbolo;
 
+
                     if (
                         simbolo ===
                         '🐍'
@@ -777,13 +923,17 @@ btnSpin.addEventListener(
 
                         cells[index]
                             .classList
-                            .add('wild');
+                            .add(
+                                'wild'
+                            );
                     }
                 }
             );
 
 
-            /* CALCULA GANHO */
+            /*
+             * CALCULA
+             */
 
             let ganho =
                 calcularGanho(
@@ -792,7 +942,9 @@ btnSpin.addEventListener(
                 );
 
 
-            /* BONUS WILD */
+            /*
+             * WILD
+             */
 
             if (
                 temWild &&
@@ -802,10 +954,12 @@ btnSpin.addEventListener(
                 ganho *=
                     MULTIPLICADOR_BONUS;
 
+
                 atualizarMsg(
                     `🔥 WILD ATIVO! x${MULTIPLICADOR_BONUS}`,
                     '#ffd700'
                 );
+
 
                 await new Promise(
                     resolve =>
@@ -817,9 +971,13 @@ btnSpin.addEventListener(
             }
 
 
-            /* PAGAMENTO */
+            /*
+             * PAGAMENTO
+             */
 
-            if (ganho > 0) {
+            if (
+                ganho > 0
+            ) {
 
                 await window.SistemaSaldo
                     .ganhar(
@@ -827,6 +985,7 @@ btnSpin.addEventListener(
                         ganho /
                         APOSTA_FIXA
                     );
+
 
                 atualizarMsg(
                     `✅ Ganhou R$ ${ganho.toFixed(2)}!`,
@@ -842,7 +1001,9 @@ btnSpin.addEventListener(
             }
 
 
-            /* ATUALIZA SALDO */
+            /*
+             * ATUALIZA SALDO
+             */
 
             if (
                 window.SistemaSaldo
@@ -853,10 +1014,12 @@ btnSpin.addEventListener(
                     .atualizarTela();
             }
 
-        } catch (erro) {
+
+        } catch (
+            erro
+        ) {
 
             console.error(
-                'Erro no Fortune Snake:',
                 erro
             );
 
@@ -875,7 +1038,7 @@ btnSpin.addEventListener(
 
 
 /* =====================================================
-   INICIA
+   INICIALIZA
 ===================================================== */
 
 carregarSaldo();
