@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 
 <meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>Roleta de Relâmpagos - ApostaXBet</title>
 
@@ -226,12 +226,77 @@ body{
     0 0 5px rgba(255,210,70,.12);
 }
 
+/* =====================================================
+   EFEITO DOS NÚMEROS DURANTE O GIRO
+===================================================== */
+
+.numero-conteudo{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    width:100%;
+    height:100%;
+
+    transform:scale(1,1);
+
+    transform-origin:center;
+
+    will-change:transform;
+}
+
+/*
+   Os números ficam esticados alternadamente
+   enquanto a roleta está girando.
+*/
+
+.roleta.girando .numero-conteudo{
+    animation:
+    esticarNumero .20s ease-in-out infinite alternate;
+}
+
+/* Alguns números recebem uma pequena diferença
+   de tempo para o efeito não ficar sincronizado */
+
+.roleta.girando .numero:nth-child(2n) .numero-conteudo{
+    animation-delay:-.10s;
+}
+
+.roleta.girando .numero:nth-child(3n) .numero-conteudo{
+    animation-delay:-.05s;
+}
+
+@keyframes esticarNumero{
+
+    0%{
+        transform:scale(1,1);
+    }
+
+    45%{
+        transform:scale(1.12,.90);
+    }
+
+    75%{
+        transform:scale(1.28,.78);
+    }
+
+    100%{
+        transform:scale(.92,1.10);
+    }
+
+}
+
 .numero.destaque{
     color:#fff4ad;
     border-color:#ffe36a;
 
     box-shadow:
     0 0 10px rgba(255,220,80,.45);
+}
+
+.numero.destaque .numero-conteudo{
+    animation:none !important;
+    transform:scale(1.12,1.12);
 }
 
 .centro{
@@ -329,8 +394,15 @@ body{
 }
 
 @keyframes piscar{
-    from{opacity:.2;}
-    to{opacity:1;}
+
+    from{
+        opacity:.2;
+    }
+
+    to{
+        opacity:1;
+    }
+
 }
 
 .resultado{
@@ -525,6 +597,7 @@ body{
         width:42px;
         margin-left:-21px;
     }
+
 }
 
 </style>
@@ -535,7 +608,6 @@ body{
 <div id="carregando">
     🔐 VERIFICANDO CONTA...
 </div>
-
 
 <div class="topo">
 
@@ -557,7 +629,6 @@ body{
 
 </div>
 
-
 <a href="../index.html" class="lobby">
 
     <div class="lobby-icon">
@@ -567,7 +638,6 @@ body{
     Lobby
 
 </a>
-
 
 <div class="container">
 
@@ -579,7 +649,6 @@ body{
         ESCOLHA O VALOR DA APOSTA
     </div>
 
-
     <div class="roleta-area">
 
         <div class="ponteiro"></div>
@@ -587,7 +656,6 @@ body{
         <div class="raio raio1"></div>
         <div class="raio raio2"></div>
         <div class="raio raio3"></div>
-
 
         <div class="roleta" id="roleta">
 
@@ -614,7 +682,6 @@ body{
 
     </div>
 
-
     <div
         class="resultado"
         id="resultado">
@@ -623,9 +690,7 @@ body{
 
     </div>
 
-
     <div class="painel">
-
 
         <div class="ficha-area">
 
@@ -639,9 +704,7 @@ body{
 
         </div>
 
-
         <div class="valores">
-
 
             <button
                 class="btn-valor ativo"
@@ -651,7 +714,6 @@ body{
 
             </button>
 
-
             <button
                 class="btn-valor"
                 onclick="selecionarValor(1,this)">
@@ -659,7 +721,6 @@ body{
                 R$ 1
 
             </button>
-
 
             <button
                 class="btn-valor"
@@ -669,7 +730,6 @@ body{
 
             </button>
 
-
             <button
                 class="btn-valor"
                 onclick="selecionarValor(5,this)">
@@ -678,9 +738,7 @@ body{
 
             </button>
 
-
         </div>
-
 
         <button
             id="btnApostar"
@@ -691,7 +749,6 @@ body{
             CARREGANDO...
 
         </button>
-
 
         <div class="info">
 
@@ -705,7 +762,6 @@ body{
 
             </span>
 
-
             <span>
 
                 Saldo:
@@ -718,16 +774,13 @@ body{
 
         </div>
 
-
         <div class="mensagem">
             SALDO CONECTADO À SUA CONTA
         </div>
 
-
     </div>
 
 </div>
-
 
 <button
     class="repeat-btn"
@@ -737,7 +790,6 @@ body{
 
 </button>
 
-
 <button
     class="menu-btn"
     onclick="abrirMenu()">
@@ -745,7 +797,6 @@ body{
     ☰
 
 </button>
-
 
 <script type="module">
 
@@ -765,7 +816,6 @@ const SUPABASE_URL =
 
 const SUPABASE_KEY =
 "sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ";
-
 
 const supabase =
 createClient(
@@ -863,7 +913,7 @@ function dinheiro(valor){
 
 
 /* =====================================================
-   ATUALIZAR SALDO NA TELA
+   ATUALIZAR SALDO
 ===================================================== */
 
 function atualizarSaldo(){
@@ -873,7 +923,6 @@ function atualizarSaldo(){
 
     saldoPainel.innerText =
         dinheiro(saldoReal);
-
 
     if(
         saldoReal < valorAposta
@@ -888,7 +937,6 @@ function atualizarSaldo(){
             "#ffe34f";
 
     }
-
 
     atualizarBotao();
 
@@ -909,7 +957,6 @@ async function obterUsuario(){
     .auth
     .getSession();
 
-
     if(error){
 
         console.error(
@@ -920,7 +967,6 @@ async function obterUsuario(){
         return null;
 
     }
-
 
     return data?.session?.user || null;
 
@@ -936,7 +982,6 @@ async function carregarSaldo(){
     if(!usuarioAtual)
         return false;
 
-
     const {
         data,
         error
@@ -950,7 +995,6 @@ async function carregarSaldo(){
     )
     .single();
 
-
     if(error){
 
         console.error(
@@ -958,27 +1002,22 @@ async function carregarSaldo(){
             error
         );
 
-
         resultado.innerHTML =
             "❌ ERRO AO CARREGAR SALDO";
 
         resultado.style.color =
             "#ff4141";
 
-
         return false;
 
     }
-
 
     saldoReal =
         Number(
             data?.valor || 0
         );
 
-
     atualizarSaldo();
-
 
     return true;
 
@@ -994,13 +1033,11 @@ async function salvarSaldo(novoSaldo){
     if(!usuarioAtual)
         return false;
 
-
     const valorFinal =
         Number(
             Number(novoSaldo)
             .toFixed(2)
         );
-
 
     const {
         error
@@ -1015,7 +1052,6 @@ async function salvarSaldo(novoSaldo){
         usuarioAtual.id
     );
 
-
     if(error){
 
         console.error(
@@ -1023,25 +1059,20 @@ async function salvarSaldo(novoSaldo){
             error
         );
 
-
         resultado.innerHTML =
             "❌ ERRO AO ATUALIZAR SALDO";
 
         resultado.style.color =
             "#ff4141";
 
-
         return false;
 
     }
 
-
     saldoReal =
         valorFinal;
 
-
     atualizarSaldo();
-
 
     return true;
 
@@ -1059,13 +1090,10 @@ function criarNumeros(){
             "numeros"
         );
 
-
     area.innerHTML = "";
-
 
     const total =
         premios.length;
-
 
     for(
         let i = 0;
@@ -1078,16 +1106,31 @@ function criarNumeros(){
                 "div"
             );
 
-
         numero.className =
             "numero";
 
+        /*
+           O texto fica dentro de um elemento separado.
+           Assim podemos esticar o número sem mexer
+           na posição dele na roleta.
+        */
 
-        numero.innerText =
+        const conteudo =
+            document.createElement(
+                "span"
+            );
+
+        conteudo.className =
+            "numero-conteudo";
+
+        conteudo.innerText =
             dinheiro(
                 premios[i]
             );
 
+        numero.appendChild(
+            conteudo
+        );
 
         const angulo =
             (
@@ -1095,9 +1138,7 @@ function criarNumeros(){
                 (360 / total)
             ) - 90;
 
-
         const raio = 40;
-
 
         const x =
             Math.cos(
@@ -1105,21 +1146,23 @@ function criarNumeros(){
                 Math.PI / 180
             ) * raio;
 
-
         const y =
             Math.sin(
                 angulo *
                 Math.PI / 180
             ) * raio;
 
+        /*
+           IMPORTANTE:
+           A posição continua sendo controlada
+           pelo elemento .numero.
+        */
 
         numero.style.transform =
             `translate(${x}px,${y}px)`;
 
-
         numero.dataset.index =
             i;
-
 
         area.appendChild(
             numero
@@ -1143,10 +1186,8 @@ function(
     if(girando)
         return;
 
-
     valorAposta =
         Number(valor);
-
 
     document
     .querySelectorAll(
@@ -1162,23 +1203,19 @@ function(
         }
     );
 
-
     botao.classList.add(
         "ativo"
     );
-
 
     apostaInfo.innerText =
         dinheiro(
             valorAposta
         );
 
-
     fichaDisplay.innerText =
         Number(valorAposta)
         .toFixed(2)
         .replace(".",",");
-
 
     atualizarSaldo();
 
@@ -1203,7 +1240,6 @@ function atualizarBotao(){
 
     }
 
-
     if(
         saldoReal <
         valorAposta
@@ -1219,7 +1255,6 @@ function atualizarBotao(){
 
     }
 
-
     btnApostar.disabled =
         false;
 
@@ -1230,7 +1265,34 @@ function atualizarBotao(){
 
 
 /* =====================================================
-   GIRAR
+   COMEÇAR / PARAR EFEITO DOS NÚMEROS
+===================================================== */
+
+function iniciarEfeitoNumeros(){
+
+    /*
+       A classe é colocada na própria roleta.
+       O CSS anima somente o conteúdo dos números.
+    */
+
+    roleta.classList.add(
+        "girando"
+    );
+
+}
+
+
+function pararEfeitoNumeros(){
+
+    roleta.classList.remove(
+        "girando"
+    );
+
+}
+
+
+/* =====================================================
+   GIRAR ROLETA
 ===================================================== */
 
 window.girarRoleta =
@@ -1238,7 +1300,6 @@ async function(){
 
     if(girando)
         return;
-
 
     if(
         !usuarioAtual
@@ -1253,7 +1314,6 @@ async function(){
         return;
 
     }
-
 
     if(
         saldoReal <
@@ -1270,11 +1330,9 @@ async function(){
 
     }
 
-
     girando = true;
 
     atualizarBotao();
-
 
     /*
        DESCONTA A APOSTA
@@ -1283,17 +1341,14 @@ async function(){
     const saldoAnterior =
         saldoReal;
 
-
     const novoSaldo =
         saldoAnterior -
         valorAposta;
-
 
     const debitado =
         await salvarSaldo(
             novoSaldo
         );
-
 
     if(!debitado){
 
@@ -1305,13 +1360,11 @@ async function(){
 
     }
 
-
     resultado.innerHTML =
         "⚡ GIRANDO...";
 
     resultado.style.color =
         "#ffe36a";
-
 
     document
     .querySelectorAll(
@@ -1329,6 +1382,13 @@ async function(){
 
 
     /*
+       COMEÇA O EFEITO DOS NÚMEROS
+    */
+
+    iniciarEfeitoNumeros();
+
+
+    /*
        SORTEIO
     */
 
@@ -1338,24 +1398,19 @@ async function(){
             premios.length
         );
 
-
     const premio =
         premios[indice];
-
 
     const tamanhoCasa =
         360 /
         premios.length;
 
-
     const anguloPremio =
         indice *
         tamanhoCasa;
 
-
     const voltas =
         360 * 7;
-
 
     const novaRotacao =
         rotacaoAtual +
@@ -1363,9 +1418,13 @@ async function(){
         (360 - anguloPremio);
 
 
+    /*
+       AQUI A ROLETA CONTINUA GIRANDO
+       NORMALMENTE.
+    */
+
     roleta.style.transform =
         `rotate(${novaRotacao}deg)`;
-
 
     rotacaoAtual =
         novaRotacao;
@@ -1387,13 +1446,20 @@ async function(){
 
 
 /* =====================================================
-   FINALIZAR
+   FINALIZAR RODADA
 ===================================================== */
 
 async function finalizarRodada(
     indice,
     premio
 ){
+
+    /*
+       PARA O EFEITO DE ESTICAR OS NÚMEROS
+    */
+
+    pararEfeitoNumeros();
+
 
     const numero =
         document.querySelector(
@@ -1417,17 +1483,14 @@ async function finalizarRodada(
     const saldoAtual =
         saldoReal;
 
-
     const novoSaldo =
         saldoAtual +
         premio;
-
 
     const creditado =
         await salvarSaldo(
             novoSaldo
         );
-
 
     if(!creditado){
 
@@ -1445,7 +1508,6 @@ async function finalizarRodada(
         "<span style='font-size:25px;color:#ffe36a'>" +
         dinheiro(premio) +
         "</span>";
-
 
     resultado.style.color =
         "#ffe36a";
@@ -1507,26 +1569,21 @@ async function iniciar(){
         usuarioAtual =
             await obterUsuario();
 
-
         if(!usuarioAtual){
 
             alert(
                 "Você precisa estar logado para jogar."
             );
 
-
             window.location.href =
                 "../index.html";
-
 
             return;
 
         }
 
-
         const carregou =
             await carregarSaldo();
-
 
         if(!carregou){
 
@@ -1537,16 +1594,12 @@ async function iniciar(){
 
         }
 
-
         criarNumeros();
-
 
         atualizarSaldo();
 
-
         carregando.style.display =
             "none";
-
 
     }catch(error){
 
@@ -1555,10 +1608,8 @@ async function iniciar(){
             error
         );
 
-
         carregando.style.display =
             "none";
-
 
         resultado.innerHTML =
             "❌ ERRO AO INICIAR ROLETA";
