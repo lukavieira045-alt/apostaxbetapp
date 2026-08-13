@@ -3,1065 +3,271 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Lobby Mania</title>
-
+<title>Lobby Mania - Real</title>
 <style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-  -webkit-tap-highlight-color:transparent;
-}
-
-html,body{
-  width:100%;
-  min-height:100%;
-  background:#02030b;
-  font-family:Arial,sans-serif;
-}
-
-body{
-  display:flex;
-  justify-content:center;
-  overflow-x:hidden;
-}
-
-.game{
-  width:100%;
-  max-width:650px;
-  min-height:100vh;
-  background:
-    radial-gradient(circle at 50% 22%,#245da9 0,#102d68 28%,#070d29 55%,#02030b 100%);
-  color:white;
-  position:relative;
-  overflow:hidden;
-}
-
-/* =========================
-   TOPO
-========================= */
-
-.top{
-  height:62px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:8px 14px;
-  background:linear-gradient(#101d49,#071127);
-  border-bottom:2px solid #345a9e;
-}
-
-.top .home{
-  font-size:29px;
-}
-
-.top .name{
-  font-size:18px;
-  font-weight:bold;
-  color:#eee;
-}
-
-.clock{
-  font:18px monospace;
-}
-
-/* =========================
-   BANNER
-========================= */
-
-.banner{
-  height:105px;
-  margin:18px 7px 9px;
-  border-radius:8px;
-  border:3px solid #17173c;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-
-  background:
-    radial-gradient(circle,#352083 0,#171747 45%,#08091f 100%);
-
-  box-shadow:
-    0 0 16px #00dff077,
-    inset 0 0 25px #6d38cc88;
-}
-
-.banner span{
-  font-size:25px;
-  font-weight:900;
-  color:#61fff4;
-  text-shadow:
-    0 0 6px #00ffff,
-    0 0 15px #00ffff;
-}
-
-/* =========================
-   MÁQUINA
-========================= */
-
-.machine{
-  margin:0 5px;
-  padding:7px;
-
-  background:
-    linear-gradient(
-      90deg,
-      #101736,
-      #4c2076 25%,
-      #20266b 50%,
-      #4c2076 75%,
-      #101736
-    );
-
-  border-radius:12px 12px 4px 4px;
-
-  box-shadow:
-    0 0 25px #3927a855;
-}
-
-/* =========================
-   ROLOS
-========================= */
-
-.reels{
-  height:475px;
-
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:4px;
-
-  overflow:hidden;
-
-  background:#0b1026;
-
-  border:4px solid #080b1c;
-  border-radius:7px;
-
-  box-shadow:
-    inset 0 0 20px #000;
-}
-
-.reel{
-  overflow:hidden;
-
-  background:#b9d59f;
-
-  border-right:3px solid #35435a;
-}
-
-.strip{
-  transition:
-    transform 1.2s cubic-bezier(.12,.78,.18,1);
-}
-
-/* =========================
-   SÍMBOLOS
-========================= */
-
-.symbol{
-  height:157px;
-
-  position:relative;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  background:
-    linear-gradient(
-      #e8f2d8,
-      #b5d69b 70%,
-      #86ad74
-    );
-
-  border-bottom:4px solid #566a5b;
-}
-
-.five{
-  font-family:Georgia,serif;
-  font-size:72px;
-  font-weight:bold;
-
-  color:#fff2d0;
-
-  text-shadow:
-    4px 4px #69343a,
-    -2px -2px #9c6a2f;
-}
-
-.face{
-  width:105px;
-  height:105px;
-
-  border-radius:50%;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  background:#f0d29c;
-
-  border:7px solid #f8e8bd;
-
-  box-shadow:
-    0 7px #557b49;
-
-  font-size:56px;
-}
-
-.coin{
-  width:116px;
-  height:82px;
-
-  border-radius:50%;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  background:#7fa86e;
-
-  border:5px solid #e4edc8;
-
-  color:#edf5d4;
-
-  font-family:Georgia,serif;
-  font-size:37px;
-
-  text-shadow:3px 3px #48663d;
-}
-
-.x2{
-  position:absolute;
-  bottom:4px;
-
-  font-size:40px;
-  font-weight:bold;
-
-  color:#dce8c3;
-
-  text-shadow:
-    3px 3px #3b4a30;
-}
-
-/* =========================
-   MENSAGEM
-========================= */
-
-.message{
-  height:30px;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  color:#a8ff67;
-  font-size:14px;
-  font-weight:bold;
-}
-
-/* =========================
-   PAINEL
-========================= */
-
-.info{
-  height:70px;
-
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-
-  align-items:center;
-
-  background:
-    linear-gradient(#101c3b,#091328);
-
-  border:1px solid #2d4270;
-
-  border-radius:17px;
-
-  box-shadow:
-    inset 0 0 15px #000;
-}
-
-.infoItem{
-  text-align:center;
-}
-
-.infoSmall{
-  display:block;
-  color:#8796b4;
-  font-size:9px;
-  margin-bottom:5px;
-}
-
-.value{
-  color:#aaff5d;
-  font-size:20px;
-  font-weight:bold;
-}
-
-/* =========================
-   BOTÕES
-========================= */
-
-.controls{
-  min-height:150px;
-
-  display:grid;
-
-  grid-template-columns:
-    58px
-    58px
-    1fr
-    58px
-    58px;
-
-  gap:6px;
-
-  align-items:center;
-
-  padding:10px 3px 18px;
-}
-
-.btn{
-  width:56px;
-  height:56px;
-
-  border-radius:50%;
-
-  border:1px solid #445477;
-
-  background:
-    linear-gradient(#314064,#111a32);
-
-  color:white;
-
-  font-size:27px;
-
-  box-shadow:
-    0 4px 8px #0008;
-
-  cursor:pointer;
-}
-
-.spin{
-  width:112px;
-  height:112px;
-
-  justify-self:center;
-
-  border-radius:50%;
-
-  border:7px solid #25eaf1;
-
-  background:
-    radial-gradient(
-      circle,
-      #173d47,
-      #07121d 70%
-    );
-
-  color:#62fff6;
-
-  font-size:43px;
-
-  box-shadow:
-    0 0 20px #00eaff,
-    inset 0 0 22px #00eaff66;
-
-  cursor:pointer;
-}
-
-.btn:active,
-.spin:active{
-  transform:scale(.92);
-}
-
-.btn:disabled,
-.spin:disabled{
-  opacity:.45;
-  cursor:not-allowed;
-}
-
-/* =========================
-   AVISO
-========================= */
-
-.notice{
-  text-align:center;
-  color:#667799;
-  font-size:10px;
-  padding:4px 5px 20px;
-}
-
-/* =========================
-   SALDO
-========================= */
-
-#balance{
-  transition:
-    transform .25s ease,
-    color .25s ease;
-}
-
-#balance.atualizando{
-  transform:scale(1.12);
-  color:#fff36b;
-}
-
-/* =========================
-   RESPONSIVO
-========================= */
-
-@media(max-width:380px){
-
-  .reels{
-    height:390px;
-  }
-
-  .symbol{
-    height:130px;
-  }
-
-  .controls{
-    grid-template-columns:
-      48px
-      48px
-      1fr
-      48px
-      48px;
-  }
-
-  .btn{
-    width:48px;
-    height:48px;
-    font-size:23px;
-  }
-
-  .spin{
-    width:92px;
-    height:92px;
-    font-size:36px;
-  }
-
-}
+/* [CSS ORIGINAL MANTIDO INTACTO PARA PRESERVAR O DESIGN] */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;min-height:100%;background:#02030b;font-family:Arial,sans-serif}
+body{display:flex;justify-content:center;overflow-x:hidden}
+.game{width:100%;max-width:650px;min-height:100vh;background:radial-gradient(circle at 50% 22%,#245da9 0,#102d68 28%,#070d29 55%,#02030b 100%);color:white;position:relative;overflow:hidden}
+.top{height:62px;display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:linear-gradient(#101d49,#071127);border-bottom:2px solid #345a9e}
+.top .home{font-size:29px}.top .name{font-size:18px;font-weight:bold;color:#eee}.clock{font:18px monospace}
+.banner{height:105px;margin:18px 7px 9px;border-radius:8px;border:3px solid #17173c;display:flex;align-items:center;justify-content:center;text-align:center;background:radial-gradient(circle,#352083 0,#171747 45%,#08091f 100%);box-shadow:0 0 16px #00dff077,inset 0 0 25px #6d38cc88}
+.banner span{font-size:25px;font-weight:900;color:#61fff4;text-shadow:0 0 6px #00ffff,0 0 15px #00ffff}
+.machine{margin:0 5px;padding:7px;background:linear-gradient(90deg,#101736,#4c2076 25%,#20266b 50%,#4c2076 75%,#101736);border-radius:12px 12px 4px 4px;box-shadow:0 0 25px #3927a855}
+.reels{height:475px;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;overflow:hidden;background:#0b1026;border:4px solid #080b1c;border-radius:7px;box-shadow:inset 0 0 20px #000}
+.reel{overflow:hidden;background:#b9d59f;border-right:3px solid #35435a}
+.strip{transition:transform 1.2s cubic-bezier(.12,.78,.18,1)}
+.symbol{height:157px;position:relative;display:flex;align-items:center;justify-content:center;background:linear-gradient(#e8f2d8,#b5d69b 70%,#86ad74);border-bottom:4px solid #566a5b}
+.five{font-family:Georgia,serif;font-size:72px;font-weight:bold;color:#fff2d0;text-shadow:4px 4px #69343a,-2px -2px #9c6a2f}
+.face{width:105px;height:105px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#f0d29c;border:7px solid #f8e8bd;box-shadow:0 7px #557b49;font-size:56px}
+.coin{width:116px;height:82px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#7fa86e;border:5px solid #e4edc8;color:#edf5d4;font-family:Georgia,serif;font-size:37px;text-shadow:3px 3px #48663d}
+.x2{position:absolute;bottom:4px;font-size:40px;font-weight:bold;color:#dce8c3;text-shadow:3px 3px #3b4a30}
+.message{height:30px;display:flex;align-items:center;justify-content:center;color:#a8ff67;font-size:14px;font-weight:bold}
+.info{height:70px;display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;background:linear-gradient(#101c3b,#091328);border:1px solid #2d4270;border-radius:17px;box-shadow:inset 0 0 15px #000}
+.infoItem{text-align:center}.infoSmall{display:block;color:#8796b4;font-size:9px;margin-bottom:5px}.value{color:#aaff5d;font-size:20px;font-weight:bold}
+.controls{min-height:150px;display:grid;grid-template-columns:58px 58px 1fr 58px 58px;gap:6px;align-items:center;padding:10px 3px 18px}
+.btn{width:56px;height:56px;border-radius:50%;border:1px solid #445477;background:linear-gradient(#314064,#111a32);color:white;font-size:27px;box-shadow:0 4px 8px #0008;cursor:pointer}
+.spin{width:112px;height:112px;justify-self:center;border-radius:50%;border:7px solid #25eaf1;background:radial-gradient(circle,#173d47,#07121d 70%);color:#62fff6;font-size:43px;box-shadow:0 0 20px #00eaff,inset 0 0 22px #00eaff66;cursor:pointer}
+.btn:active,.spin:active{transform:scale(.92)}.btn:disabled,.spin:disabled{opacity:.45;cursor:not-allowed}
+.notice{text-align:center;color:#667799;font-size:10px;padding:4px 5px 20px}
+#balance{transition:transform .25s ease,color .25s ease}
+#balance.atualizando{transform:scale(1.12);color:#fff36b}
+@media(max-width:380px){.reels{height:390px}.symbol{height:130px}.controls{grid-template-columns:48px 48px 1fr 48px 48px}.btn{width:48px;height:48px;font-size:23px}.spin{width:92px;height:92px;font-size:36px}}
 </style>
 </head>
-
 <body>
-
 <div class="game">
-
-  <!-- TOPO -->
   <div class="top">
-
-    <div class="home">
-      ⌂
-    </div>
-
-    <div class="name">
-      Lobby Mania
-    </div>
-
-    <div class="clock" id="clock">
-      03:27:59
-    </div>
-
+    <div class="home" onclick="window.history.back()"></div>
+    <div class="name">Lobby Mania</div>
+    <div class="clock" id="clock">00:00:00</div>
   </div>
-
-
-  <!-- BANNER -->
-  <div class="banner">
-
-    <span>
-      » Nova rodada é de empurrar! «
-    </span>
-
-  </div>
-
-
-  <!-- MÁQUINA -->
+  
+  <div class="banner"><span>» Aposta Real Ativada! «</span></div>
+  
   <div class="machine">
-
-    <!-- ROLOS -->
     <div class="reels">
-
-      <div class="reel">
-        <div class="strip" id="reel1"></div>
-      </div>
-
-      <div class="reel">
-        <div class="strip" id="reel2"></div>
-      </div>
-
-      <div class="reel">
-        <div class="strip" id="reel3"></div>
-      </div>
-
+      <div class="reel"><div class="strip" id="reel1"></div></div>
+      <div class="reel"><div class="strip" id="reel2"></div></div>
+      <div class="reel"><div class="strip" id="reel3"></div></div>
     </div>
-
-
-    <!-- MENSAGEM -->
-    <div class="message" id="message">
-      Pronto para jogar
-    </div>
-
-
-    <!-- INFORMAÇÕES -->
+    
+    <div class="message" id="message">Carregando saldo...</div>
+    
     <div class="info">
-
+      <div class="infoItem">👤</div>
       <div class="infoItem">
-        👤
+        <span class="infoSmall">SALDO</span>
+        <span class="value" id="balance">R$0,00</span>
       </div>
-
-
       <div class="infoItem">
-
-        <span class="infoSmall">
-          SALDO
-        </span>
-
-        <span
-          class="value"
-          id="balance">
-          R$0,00
-        </span>
-
+        <span class="infoSmall">APOSTA</span>
+        <span class="value" id="bet">R$0,50</span>
       </div>
-
-
-      <div class="infoItem">
-
-        <span class="infoSmall">
-          APOSTA
-        </span>
-
-        <span
-          class="value"
-          id="bet">
-          R$0,50
-        </span>
-
-      </div>
-
     </div>
-
-
-    <!-- CONTROLES -->
+    
     <div class="controls">
-
-      <button
-        class="btn"
-        type="button"
-        onclick="sound()">
-        🔇
-      </button>
-
-
-      <button
-        class="btn"
-        type="button"
-        onclick="minus()">
-        −
-      </button>
-
-
-      <button
-        class="spin"
-        id="spinButton"
-        type="button"
-        onclick="spin()">
-        ★
-      </button>
-
-
-      <button
-        class="btn"
-        type="button"
-        onclick="plus()">
-        +
-      </button>
-
-
-      <button
-        class="btn"
-        type="button"
-        onclick="spin()">
-        ▶
-      </button>
-
+      <button class="btn" type="button" onclick="sound()">🔇</button>
+      <button class="btn" type="button" onclick="minus()">−</button>
+      <button class="spin" id="spinButton" type="button" onclick="spin()">★</button>
+      <button class="btn" type="button" onclick="plus()">+</button>
+      <button class="btn" type="button" onclick="spin()">▶</button>
     </div>
-
   </div>
-
-
-  <!-- AVISO -->
-  <div class="notice">
-    Jogo sem movimentação de saldo.
-  </div>
-
+  
+  <div class="notice">Jogo integrado ao sistema financeiro real.</div>
 </div>
 
-
 <script>
-
 /* =====================================================
-   SÍMBOLOS
+   SÍMBOLOS E ELEMENTOS
 ===================================================== */
-
 const symbols = [
-
-  `<div class="symbol">
-     <div class="five">5</div>
-   </div>`,
-
-  `<div class="symbol">
-     <div class="face">🙂</div>
-     <div class="x2">×2</div>
-   </div>`,
-
-  `<div class="symbol">
-     <div class="coin">0,05</div>
-   </div>`,
-
-  `<div class="symbol">
-     <div class="five">5</div>
-   </div>`,
-
-  `<div class="symbol">
-     <div class="face">😄</div>
-     <div class="x2">×2</div>
-   </div>`,
-
-  `<div class="symbol">
-     <div class="coin">0,05</div>
-   </div>`
-
+  `<div class="symbol"><div class="five">5</div></div>`,
+  `<div class="symbol"><div class="face">🙂</div><div class="x2">×2</div></div>`,
+  `<div class="symbol"><div class="coin">0,05</div></div>`,
+  `<div class="symbol"><div class="five">5</div></div>`,
+  `<div class="symbol"><div class="face">😄</div><div class="x2">×2</div></div>`,
+  `<div class="symbol"><div class="coin">0,05</div></div>`
 ];
 
-
-/* =====================================================
-   ELEMENTOS
-===================================================== */
-
-const reels = [
-
-  document.getElementById("reel1"),
-  document.getElementById("reel2"),
-  document.getElementById("reel3")
-
-];
-
-const message =
-  document.getElementById("message");
-
-const balanceElement =
-  document.getElementById("balance");
-
-const betElement =
-  document.getElementById("bet");
-
-const spinButton =
-  document.getElementById("spinButton");
-
-
-/* =====================================================
-   ESTADO
-===================================================== */
-
-/*
-   SALDO FIXO EM ZERO.
-
-   O jogo não adiciona nem remove
-   saldo durante as rodadas.
-*/
-
-let balance = 0.00;
+const reels = [document.getElementById("reel1"), document.getElementById("reel2"), document.getElementById("reel3")];
+const messageEl = document.getElementById("message");
+const balanceEl = document.getElementById("balance");
+const betEl = document.getElementById("bet");
+const spinBtn = document.getElementById("spinButton");
 
 let bet = 0.50;
-
 let spinning = false;
 
-
 /* =====================================================
-   MONTAR ROLOS
+   INICIALIZAÇÃO COM SALDO REAL
 ===================================================== */
-
-function buildReels(){
-
-  reels.forEach(
-    function(reel,col){
-
-      let html = "";
-
-      /*
-         Criamos várias casas para garantir
-         espaço suficiente para a animação.
-      */
-
-      for(
-        let i = 0;
-        i < 40;
-        i++
-      ){
-
-        html +=
-          symbols[
-            (i + col * 2)
-            % symbols.length
-          ];
-
-      }
-
-      reel.innerHTML =
-        html;
-
+async function init() {
+    buildReels();
+    updateClock();
+    
+    if (!window.SistemaSaldo) {
+        messageEl.textContent = "⚠️ Sistema indisponível";
+        messageEl.style.color = "#ff4d4d";
+        spinBtn.disabled = true;
+        return;
     }
-  );
 
-}
-
-
-/* =====================================================
-   FORMATAÇÃO
-===================================================== */
-
-function dinheiro(valor){
-
-  return "R$" +
-    Number(valor)
-      .toFixed(2)
-      .replace(".",",");
-
-}
-
-
-/* =====================================================
-   ATUALIZAR TELA
-===================================================== */
-
-function update(){
-
-  balanceElement.textContent =
-    dinheiro(balance);
-
-  betElement.textContent =
-    dinheiro(bet);
-
-}
-
-
-/* =====================================================
-   ATUALIZAR APOSTA
-===================================================== */
-
-function atualizarAposta(){
-
-  betElement.textContent =
-    dinheiro(bet);
-
-}
-
-
-/* =====================================================
-   GIRAR
-===================================================== */
-
-function spin(){
-
-  if(spinning)
-    return;
-
-
-  spinning = true;
-
-  spinButton.disabled =
-    true;
-
-
-  message.textContent =
-    "Girando...";
-
-
-  message.style.color =
-    "#61fff4";
-
-
-  /*
-     Cada rolo recebe uma distância
-     diferente para dar o efeito
-     de máquina real.
-  */
-
-  reels.forEach(
-    function(reel,index){
-
-      /*
-         Reinicia a posição antes
-         de cada rodada.
-
-         Isso evita que a máquina
-         fique parada depois de
-         algumas rodadas.
-      */
-
-      reel.style.transition =
-        "none";
-
-      reel.style.transform =
-        "translateY(0)";
-
-
-      /*
-         Força o navegador a aplicar
-         o reset antes de iniciar
-         a próxima animação.
-      */
-
-      void reel.offsetHeight;
-
-
-      const casas =
-        18 +
-        Math.floor(
-          Math.random() * 8
-        );
-
-
-      /*
-         Pequena diferença entre
-         os três rolos.
-      */
-
-      const casasFinais =
-        casas +
-        index * 2;
-
-
-      const distance =
-        -(casasFinais * 157);
-
-
-      const duracao =
-        1.15 +
-        (index * 0.25);
-
-
-      reel.style.transition =
-        "transform " +
-        duracao +
-        "s cubic-bezier(.12,.78,.18,1)";
-
-
-      reel.style.transform =
-        "translateY(" +
-        distance +
-        "px)";
-
+    try {
+        const saldo = await window.SistemaSaldo.get();
+        balanceEl.textContent = dinheiro(saldo);
+        messageEl.textContent = "Pronto para jogar";
+        messageEl.style.color = "#a8ff67";
+    } catch (e) {
+        messageEl.textContent = "Erro ao carregar saldo";
+        messageEl.style.color = "#ff4d4d";
+        spinBtn.disabled = true;
     }
-  );
-
-
-  /*
-     Finaliza depois que o último
-     rolo termina.
-  */
-
-  const tempoFinal =
-    1900;
-
-
-  setTimeout(
-    function(){
-
-      /*
-         Resultado visual somente.
-         O saldo permanece R$0,00.
-      */
-
-      const ganhou =
-        Math.random() < 0.20;
-
-
-      if(ganhou){
-
-        message.textContent =
-          "Você ganhou!";
-
-        message.style.color =
-          "#aaff5d";
-
-      }else{
-
-        message.textContent =
-          "Você perdeu!";
-
-        message.style.color =
-          "#ff7b7b";
-
-      }
-
-
-      /*
-         IMPORTANTE:
-         não existe aqui:
-
-         balance += ...
-         balance -= ...
-
-         Portanto o saldo não muda.
-      */
-
-      update();
-
-
-      spinning =
-        false;
-
-
-      spinButton.disabled =
-        false;
-
-    },
-    tempoFinal
-  );
-
 }
-
 
 /* =====================================================
-   MAIS
+   FUNÇÕES AUXILIARES
 ===================================================== */
+function dinheiro(v) { return "R$" + Number(v).toFixed(2).replace(".", ","); }
 
-function plus(){
-
-  if(spinning)
-    return;
-
-
-  bet =
-    Math.min(
-      5,
-      Number(
-        (bet + 0.50)
-          .toFixed(2)
-      )
-    );
-
-
-  atualizarAposta();
-
+function buildReels() {
+    reels.forEach((reel, col) => {
+        let html = "";
+        for (let i = 0; i < 40; i++) {
+            html += symbols[(i + col * 2) % symbols.length];
+        }
+        reel.innerHTML = html;
+    });
 }
 
+function atualizarAposta() { betEl.textContent = dinheiro(bet); }
 
-/* =====================================================
-   MENOS
-===================================================== */
-
-function minus(){
-
-  if(spinning)
-    return;
-
-
-  bet =
-    Math.max(
-      0.50,
-      Number(
-        (bet - 0.50)
-          .toFixed(2)
-      )
-    );
-
-
-  atualizarAposta();
-
+function sound() { 
+    if(spinning) return; 
+    messageEl.textContent = "🔊 Som alternado"; 
+    messageEl.style.color = "#61fff4"; 
 }
 
-
-/* =====================================================
-   SOM
-===================================================== */
-
-function sound(){
-
-  if(spinning)
-    return;
-
-
-  message.textContent =
-    "🔊 Som alternado";
-
-  message.style.color =
-    "#61fff4";
-
+function plus() {
+    if(spinning) return;
+    bet = Math.min(5, Number((bet + 0.50).toFixed(2)));
+    atualizarAposta();
 }
 
+function minus() {
+    if(spinning) return;
+    bet = Math.max(0.50, Number((bet - 0.50).toFixed(2)));
+    atualizarAposta();
+}
 
 /* =====================================================
    RELÓGIO
 ===================================================== */
-
-let segundos =
-  3 * 3600 +
-  27 * 60 +
-  59;
-
-
-setInterval(
-  function(){
-
-    segundos++;
-
-
-    const h =
-      Math.floor(
-        segundos / 3600
-      ) % 24;
-
-
-    const m =
-      Math.floor(
-        (segundos % 3600) / 60
-      );
-
-
-    const s =
-      segundos % 60;
-
-
-    document.getElementById(
-      "clock"
-    ).textContent =
-
-      [
-        h,
-        m,
-        s
-      ]
-      .map(
-        function(n){
-          return String(n)
-            .padStart(2,"0");
-        }
-      )
-      .join(":");
-
-  },
-  1000
-);
-
+let segundos = 0;
+function updateClock() {
+    setInterval(() => {
+        segundos++;
+        const h = Math.floor(segundos / 3600) % 24;
+        const m = Math.floor((segundos % 3600) / 60);
+        const s = segundos % 60;
+        document.getElementById("clock").textContent = 
+            [h,m,s].map(n => String(n).padStart(2,"0")).join(":");
+    }, 1000);
+}
 
 /* =====================================================
-   INICIALIZAÇÃO
+   GIRO COM APOSTA REAL
 ===================================================== */
+async function spin() {
+    if (spinning || !window.SistemaSaldo) return;
 
-buildReels();
+    // 1. Validação prévia de saldo REAL
+    const saldoAtual = await window.SistemaSaldo.get();
+    if (saldoAtual < bet) {
+        messageEl.textContent = `❌ Saldo insuficiente (Mín: ${dinheiro(bet)})`;
+        messageEl.style.color = "#ff4d4d";
+        return;
+    }
 
-update();
+    spinning = true;
+    spinBtn.disabled = true;
+    messageEl.textContent = "Processando aposta...";
+    messageEl.style.color = "#61fff4";
 
+    // 2. Debita aposta REAL antes da animação
+    try {
+        await window.SistemaSaldo.debitar(bet);
+        balanceEl.classList.add('atualizando');
+        setTimeout(() => balanceEl.classList.remove('atualizando'), 300);
+    } catch (err) {
+        messageEl.textContent = "❌ Falha no débito";
+        messageEl.style.color = "#ff4d4d";
+        spinning = false;
+        spinBtn.disabled = false;
+        return;
+    }
+
+    // 3. Animação dos rolos (igual à versão original)
+    reels.forEach((reel, index) => {
+        reel.style.transition = "none";
+        reel.style.transform = "translateY(0)";
+        void reel.offsetHeight;
+
+        const casas = 18 + Math.floor(Math.random() * 8);
+        const casasFinais = casas + index * 2;
+        const distance = -(casasFinais * 157);
+        const duracao = 1.15 + (index * 0.25);
+
+        reel.style.transition = `transform ${duracao}s cubic-bezier(.12,.78,.18,1)`;
+        reel.style.transform = `translateY(${distance}px)`;
+    });
+
+    // 4. Aguarda servidor processar resultado REAL
+    setTimeout(async () => {
+        try {
+            const session = await window.SistemaSaldo.getSession();
+            const res = await fetch('https://SEU-PROJETO.supabase.co/functions/v1/spin-lobby-mania', {
+                method: 'POST',
+                headers: { 
+                    'Authorization': `Bearer ${session.access_token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ aposta: bet })
+            });
+
+            const data = await res.json();
+            
+            if (!res.ok || data.error) throw new Error(data.error || 'Falha na transação');
+
+            // 5. Atualiza UI com dados REAIS do backend
+            const novoSaldo = data.novoSaldo ?? await window.SistemaSaldo.get();
+            balanceEl.textContent = dinheiro(novoSaldo);
+            balanceEl.classList.add('atualizando');
+            setTimeout(() => balanceEl.classList.remove('atualizando'), 300);
+
+            if (data.ganho > 0) {
+                messageEl.textContent = `✅ Ganhou ${dinheiro(data.ganho)}!`;
+                messageEl.style.color = "#aaff5d";
+            } else {
+                messageEl.textContent = "Não foi desta vez.";
+                messageEl.style.color = "#ff7b7b";
+            }
+
+        } catch (err) {
+            console.error('Erro no giro:', err);
+            messageEl.textContent = `❌ Erro: ${err.message}`;
+            messageEl.style.color = "#ff4d4d";
+        } finally {
+            spinning = false;
+            spinBtn.disabled = false;
+        }
+    }, 1900);
+}
+
+// Inicia o jogo
+init();
 </script>
-
 </body>
 </html>
