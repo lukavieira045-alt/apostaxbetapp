@@ -550,7 +550,234 @@ h2 {
 <script type="module" src="../saldo.js"></script>
 
 <script>
+// =====================================================
+// SISTEMA DE SOM - FORTUNE SNAKE
+// =====================================================
 
+let audioCtx = null;
+
+function iniciarAudio() {
+
+    if (!audioCtx) {
+
+        audioCtx = new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )();
+
+    }
+
+    if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+    }
+}
+
+
+function tocarTom(
+    frequencia,
+    duracao,
+    tipo = "sine",
+    volume = 0.04
+) {
+
+    iniciarAudio();
+
+    const oscilador =
+        audioCtx.createOscillator();
+
+    const ganho =
+        audioCtx.createGain();
+
+    oscilador.type = tipo;
+
+    oscilador.frequency.setValueAtTime(
+        frequencia,
+        audioCtx.currentTime
+    );
+
+    ganho.gain.setValueAtTime(
+        volume,
+        audioCtx.currentTime
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+        0.001,
+        audioCtx.currentTime + duracao
+    );
+
+    oscilador.connect(ganho);
+
+    ganho.connect(
+        audioCtx.destination
+    );
+
+    oscilador.start();
+
+    oscilador.stop(
+        audioCtx.currentTime + duracao
+    );
+}
+
+
+// =====================================================
+// TOQUE NORMAL
+// =====================================================
+
+function somNormal() {
+
+    tocarTom(
+        440,
+        0.08,
+        "sine",
+        0.025
+    );
+}
+
+
+// =====================================================
+// SOM DO GIRO
+// =====================================================
+
+function somGiro() {
+
+    iniciarAudio();
+
+    tocarTom(
+        180,
+        0.08,
+        "square",
+        0.035
+    );
+
+    setTimeout(() => {
+
+        tocarTom(
+            220,
+            0.08,
+            "square",
+            0.035
+        );
+
+    }, 100);
+
+
+    setTimeout(() => {
+
+        tocarTom(
+            270,
+            0.08,
+            "square",
+            0.035
+        );
+
+    }, 200);
+
+
+    setTimeout(() => {
+
+        tocarTom(
+            330,
+            0.08,
+            "square",
+            0.035
+        );
+
+    }, 300);
+
+
+    setTimeout(() => {
+
+        tocarTom(
+            400,
+            0.10,
+            "square",
+            0.04
+        );
+
+    }, 400);
+}
+
+
+// =====================================================
+// SOM DE VITÓRIA
+// =====================================================
+
+function somVitoria() {
+
+    iniciarAudio();
+
+    tocarTom(
+        523,
+        0.15,
+        "sine",
+        0.07
+    );
+
+
+    setTimeout(() => {
+
+        tocarTom(
+            659,
+            0.15,
+            "sine",
+            0.07
+        );
+
+    }, 130);
+
+
+    setTimeout(() => {
+
+        tocarTom(
+            784,
+            0.20,
+            "sine",
+            0.08
+        );
+
+    }, 260);
+
+
+    setTimeout(() => {
+
+        tocarTom(
+            1046,
+            0.30,
+            "sine",
+            0.06
+        );
+
+    }, 420);
+}
+
+
+// =====================================================
+// SOM DE DERROTA
+// =====================================================
+
+function somDerrota() {
+
+    iniciarAudio();
+
+    tocarTom(
+        190,
+        0.18,
+        "sawtooth",
+        0.045
+    );
+
+
+    setTimeout(() => {
+
+        tocarTom(
+            140,
+            0.25,
+            "sawtooth",
+            0.04
+        );
+
+    }, 180);
+}
 const APOSTA = 1.00;
 
 const SIMBOLOS = [
