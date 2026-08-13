@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Lobby Mania - Real</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-/* [CSS ORIGINAL MANTIDO INTACTO PARA PRESERVAR O DESIGN] */
+/* [CSS ORIGINAL MANTIDO INTACTO] */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;min-height:100%;background:#02030b;font-family:Arial,sans-serif}
 body{display:flex;justify-content:center;overflow-x:hidden}
@@ -39,7 +40,7 @@ body{display:flex;justify-content:center;overflow-x:hidden}
 <body>
 <div class="game">
   <div class="top">
-    <div class="home" onclick="window.history.back()"></div>
+    <div class="home" onclick="window.location.href='index.html'"></div>
     <div class="name">Lobby Mania</div>
     <div class="clock" id="clock">00:00:00</div>
   </div>
@@ -53,7 +54,7 @@ body{display:flex;justify-content:center;overflow-x:hidden}
       <div class="reel"><div class="strip" id="reel3"></div></div>
     </div>
     
-    <div class="message" id="message">Carregando saldo...</div>
+    <div class="message" id="message">Carregando sistema...</div>
     
     <div class="info">
       <div class="infoItem">👤</div>
@@ -80,6 +81,62 @@ body{display:flex;justify-content:center;overflow-x:hidden}
 </div>
 
 <script>
+/* =====================================================
+   CONFIGURAÇÃO SUPABASE E SISTEMA DE SALDO
+===================================================== */
+const SUPABASE_URL = 'https://jxbzjiwmajjzxgihfjgt.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Inicializa o objeto global SistemaSaldo se não existir
+if (!window.SistemaSaldo) {
+    window.SistemaSaldo = {
+        async get() {
+            const { data } = await supabase.auth.getSession();
+            if (!data?.session) throw new Error('Sessão expirada');
+            
+            const { data: saldoData, error } = await supabase
+                .from('saldos')
+                .select('valor')
+                .eq('user_id', data.session.user.id)
+                .single();
+                
+            if (error) throw error;
+            return Number(saldoData?.valor || 0);
+        },
+        
+        async debitar(valor) {
+            const { data } = await supabase.auth.getSession();
+            if (!data?.session) throw new Error('Sessão expirada');
+            
+            // Usa RPC ou transação atômica para evitar race conditions
+            const { error } = await supabase.rpc('debitar_saldo', { 
+                p_user_id: data.session.user.id, 
+                p_valor: valor 
+            });
+            
+            if (error) throw error;
+        },
+        
+        async getSession() {
+            const { data } = await supabase.auth.getSession();
+            if (!data?.session) throw new Error('Sessão expirada');
+            return data.session;
+        },
+        
+        async atualizarTela() {
+            try {
+                const saldo = await this.get();
+                document.getElementById('balance').textContent = dinheiro(saldo);
+                return saldo;
+            } catch (e) {
+                console.error('Erro ao atualizar tela:', e);
+                return 0;
+            }
+        }
+    };
+}
+
 /* =====================================================
    SÍMBOLOS E ELEMENTOS
 ===================================================== */
@@ -108,22 +165,15 @@ async function init() {
     buildReels();
     updateClock();
     
-    if (!window.SistemaSaldo) {
-        messageEl.textContent = "⚠️ Sistema indisponível";
-        messageEl.style.color = "#ff4d4d";
-        spinBtn.disabled = true;
-        return;
-    }
-
     try {
-        const saldo = await window.SistemaSaldo.get();
-        balanceEl.textContent = dinheiro(saldo);
+        await window.SistemaSaldo.atualizarTela();
         messageEl.textContent = "Pronto para jogar";
         messageEl.style.color = "#a8ff67";
     } catch (e) {
-        messageEl.textContent = "Erro ao carregar saldo";
+        messageEl.textContent = "⚠️ Faça login para jogar";
         messageEl.style.color = "#ff4d4d";
         spinBtn.disabled = true;
+        setTimeout(() => window.location.href = 'index.html', 3000);
     }
 }
 
@@ -181,13 +231,20 @@ function updateClock() {
    GIRO COM APOSTA REAL
 ===================================================== */
 async function spin() {
-    if (spinning || !window.SistemaSaldo) return;
+    if (spinning) return;
 
     // 1. Validação prévia de saldo REAL
-    const saldoAtual = await window.SistemaSaldo.get();
-    if (saldoAtual < bet) {
-        messageEl.textContent = `❌ Saldo insuficiente (Mín: ${dinheiro(bet)})`;
+    try {
+        const saldoAtual = await window.SistemaSaldo.get();
+        if (saldoAtual < bet) {
+            messageEl.textContent = `❌ Saldo insuficiente (Mín: ${dinheiro(bet)})`;
+            messageEl.style.color = "#ff4d4d";
+            return;
+        }
+    } catch (err) {
+        messageEl.textContent = "⚠️ Sessão expirada. Redirecionando...";
         messageEl.style.color = "#ff4d4d";
+        setTimeout(() => window.location.href = 'index.html', 2000);
         return;
     }
 
@@ -202,14 +259,14 @@ async function spin() {
         balanceEl.classList.add('atualizando');
         setTimeout(() => balanceEl.classList.remove('atualizando'), 300);
     } catch (err) {
-        messageEl.textContent = "❌ Falha no débito";
+        messageEl.textContent = " Falha no débito";
         messageEl.style.color = "#ff4d4d";
         spinning = false;
         spinBtn.disabled = false;
         return;
     }
 
-    // 3. Animação dos rolos (igual à versão original)
+    // 3. Animação dos rolos
     reels.forEach((reel, index) => {
         reel.style.transition = "none";
         reel.style.transform = "translateY(0)";
@@ -228,7 +285,7 @@ async function spin() {
     setTimeout(async () => {
         try {
             const session = await window.SistemaSaldo.getSession();
-            const res = await fetch('https://SEU-PROJETO.supabase.co/functions/v1/spin-lobby-mania', {
+            const res = await fetch(`${SUPABASE_URL}/functions/v1/spin-lobby-mania`, {
                 method: 'POST',
                 headers: { 
                     'Authorization': `Bearer ${session.access_token}`,
