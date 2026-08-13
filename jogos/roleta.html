@@ -1,16 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>Roleta de Relâmpagos - ApostaXBet</title>
 
 <style>
-
 *{
     box-sizing:border-box;
     margin:0;
@@ -149,11 +145,9 @@ body{
     inset:7px;
     border-radius:50%;
     border:12px solid #101a21;
-
     box-shadow:
     inset 0 0 8px #000,
     0 0 4px #000;
-
     z-index:3;
 }
 
@@ -224,6 +218,79 @@ body{
 
     box-shadow:
     0 0 5px rgba(255,210,70,.12);
+
+    /*
+       A posição de cada número
+       fica guardada nesta variável.
+    */
+    --posicao:translate(0,0);
+
+    transform:
+        var(--posicao)
+        scaleX(1);
+
+    transition:
+        transform .12s ease-out,
+        filter .12s ease-out,
+        text-shadow .12s ease-out;
+}
+
+/* =====================================================
+   NÚMEROS EM ALTA VELOCIDADE
+===================================================== */
+
+.roleta.girando .numero{
+
+    filter:
+        blur(1px)
+        brightness(1.25);
+
+    text-shadow:
+        0 0 4px #fff,
+        0 0 10px #ffe36a,
+        0 0 22px #ffe36a;
+
+    animation:
+        esticarNumero .16s infinite alternate;
+}
+
+@keyframes esticarNumero{
+
+    from{
+
+        transform:
+            var(--posicao)
+            scaleX(1);
+
+    }
+
+    to{
+
+        transform:
+            var(--posicao)
+            scaleX(1.65);
+
+    }
+
+}
+
+/* =====================================================
+   NÚMEROS VOLTAM AO NORMAL
+===================================================== */
+
+.roleta:not(.girando) .numero{
+
+    filter:none;
+
+    animation:none;
+
+    transform:
+        var(--posicao)
+        scaleX(1);
+
+    text-shadow:
+        0 1px 2px #000,
+        0 0 5px rgba(255,210,70,.7);
 }
 
 .numero.destaque{
@@ -474,6 +541,13 @@ body{
     margin-top:8px;
 }
 
+.aviso-demo{
+    text-align:center;
+    margin-top:8px;
+    color:#777;
+    font-size:9px;
+}
+
 .repeat-btn,
 .menu-btn{
     position:fixed;
@@ -501,18 +575,6 @@ body{
     right:8px;
 }
 
-#carregando{
-    position:fixed;
-    inset:0;
-    background:#020303;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    z-index:999;
-    color:#ffe36a;
-    font-size:16px;
-}
-
 @media(max-width:360px){
 
     .roleta{
@@ -526,16 +588,10 @@ body{
         margin-left:-21px;
     }
 }
-
 </style>
 </head>
 
 <body>
-
-<div id="carregando">
-    🔐 VERIFICANDO CONTA...
-</div>
-
 
 <div class="topo">
 
@@ -544,30 +600,21 @@ body{
     </div>
 
     <div class="saldo-topo">
-
         <div class="saldo-label">
-            SALDO
+            SALDO VIRTUAL
         </div>
 
         <div id="displaySaldo">
-            R$ 0,00
+            R$ 100,00
         </div>
-
     </div>
 
 </div>
 
-
 <a href="../index.html" class="lobby">
-
-    <div class="lobby-icon">
-        ⌂
-    </div>
-
+    <div class="lobby-icon">⌂</div>
     Lobby
-
 </a>
-
 
 <div class="container">
 
@@ -579,7 +626,6 @@ body{
         ESCOLHA O VALOR DA APOSTA
     </div>
 
-
     <div class="roleta-area">
 
         <div class="ponteiro"></div>
@@ -588,213 +634,123 @@ body{
         <div class="raio raio2"></div>
         <div class="raio raio3"></div>
 
-
         <div class="roleta" id="roleta">
 
             <div class="roleta-inner"></div>
 
-            <div
-                class="numeros"
-                id="numeros">
-            </div>
+            <div class="numeros" id="numeros"></div>
 
             <div class="centro">
-
-                <strong>
-                    AX
-                </strong>
-
-                <span>
-                    PRÊMIO
-                </span>
-
+                <strong>AX</strong>
+                <span>PRÊMIO</span>
             </div>
 
         </div>
 
     </div>
 
-
-    <div
-        class="resultado"
-        id="resultado">
-
+    <div class="resultado" id="resultado">
         ESCOLHA O VALOR DA APOSTA
-
     </div>
-
 
     <div class="painel">
 
-
         <div class="ficha-area">
 
-            <div
-                class="ficha"
-                id="fichaDisplay">
-
+            <div class="ficha" id="fichaDisplay">
                 0,50
-
             </div>
 
         </div>
 
-
         <div class="valores">
-
 
             <button
                 class="btn-valor ativo"
                 onclick="selecionarValor(0.50,this)">
-
                 R$ 0,50
-
             </button>
-
 
             <button
                 class="btn-valor"
                 onclick="selecionarValor(1,this)">
-
                 R$ 1
-
             </button>
-
 
             <button
                 class="btn-valor"
                 onclick="selecionarValor(2,this)">
-
                 R$ 2
-
             </button>
-
 
             <button
                 class="btn-valor"
                 onclick="selecionarValor(5,this)">
-
                 R$ 5
-
             </button>
 
-
         </div>
-
 
         <button
             id="btnApostar"
             class="btn-apostar"
-            onclick="girarRoleta()"
-            disabled>
+            onclick="girarRoleta">
 
-            CARREGANDO...
+            GIRAR ROLETA
 
         </button>
-
 
         <div class="info">
 
             <span>
-
                 Aposta:
-
                 <strong id="apostaInfo">
                     R$ 0,50
                 </strong>
-
             </span>
-
 
             <span>
-
                 Saldo:
-
                 <strong id="saldoPainel">
-                    R$ 0,00
+                    R$ 100,00
                 </strong>
-
             </span>
 
         </div>
 
-
         <div class="mensagem">
-            SALDO CONECTADO À SUA CONTA
+            MODO DEMONSTRATIVO • SALDO VIRTUAL
         </div>
 
+        <div class="aviso-demo">
+            Os créditos desta página não representam dinheiro real.
+        </div>
 
     </div>
 
 </div>
 
-
 <button
     class="repeat-btn"
     onclick="repetirAposta()">
-
     ↻
-
 </button>
-
 
 <button
     class="menu-btn"
     onclick="abrirMenu()">
-
     ☰
-
 </button>
 
-
-<script type="module">
-
-import {
-    createClient
-}
-from
-"https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-
-
-/* =====================================================
-   SUPABASE
-===================================================== */
-
-const SUPABASE_URL =
-"https://jxbzjiwmajjzxgihfjgt.supabase.co";
-
-const SUPABASE_KEY =
-"sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ";
-
-
-const supabase =
-createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
-
-
-/* =====================================================
-   VARIÁVEIS
-===================================================== */
-
-let usuarioAtual = null;
-
-let saldoReal = 0;
+<script>
 
 let valorAposta = 0.50;
-
 let rotacaoAtual = 0;
-
 let girando = false;
 
-
-/* =====================================================
-   PRÊMIOS
-===================================================== */
+let saldoVirtual = 100;
 
 const premios = [
-
     0.40,
     0.50,
     0.60,
@@ -815,69 +771,49 @@ const premios = [
     1.00,
     0.50,
     0.70
-
 ];
 
-
-/* =====================================================
-   ELEMENTOS
-===================================================== */
-
 const roleta =
-document.getElementById("roleta");
+    document.getElementById("roleta");
 
 const resultado =
-document.getElementById("resultado");
+    document.getElementById("resultado");
 
 const btnApostar =
-document.getElementById("btnApostar");
+    document.getElementById("btnApostar");
 
 const saldoEl =
-document.getElementById("displaySaldo");
+    document.getElementById("displaySaldo");
 
 const saldoPainel =
-document.getElementById("saldoPainel");
+    document.getElementById("saldoPainel");
 
 const apostaInfo =
-document.getElementById("apostaInfo");
+    document.getElementById("apostaInfo");
 
 const fichaDisplay =
-document.getElementById("fichaDisplay");
+    document.getElementById("fichaDisplay");
 
-const carregando =
-document.getElementById("carregando");
-
-
-/* =====================================================
-   FORMATAÇÃO
-===================================================== */
 
 function dinheiro(valor){
 
     return "R$ " +
-        Number(valor || 0)
+        Number(valor)
         .toFixed(2)
         .replace(".",",");
 
 }
 
 
-/* =====================================================
-   ATUALIZAR SALDO NA TELA
-===================================================== */
-
 function atualizarSaldo(){
 
     saldoEl.innerText =
-        dinheiro(saldoReal);
+        dinheiro(saldoVirtual);
 
     saldoPainel.innerText =
-        dinheiro(saldoReal);
+        dinheiro(saldoVirtual);
 
-
-    if(
-        saldoReal < valorAposta
-    ){
+    if(saldoVirtual < valorAposta){
 
         saldoEl.style.color =
             "#ff4141";
@@ -889,253 +825,73 @@ function atualizarSaldo(){
 
     }
 
-
     atualizarBotao();
 
 }
 
 
-/* =====================================================
-   USUÁRIO LOGADO
-===================================================== */
-
-async function obterUsuario(){
-
-    const {
-        data,
-        error
-    } =
-    await supabase
-    .auth
-    .getSession();
-
-
-    if(error){
-
-        console.error(
-            "Erro de sessão:",
-            error
-        );
-
-        return null;
-
-    }
-
-
-    return data?.session?.user || null;
-
-}
-
-
-/* =====================================================
-   CARREGAR SALDO
-===================================================== */
-
-async function carregarSaldo(){
-
-    if(!usuarioAtual)
-        return false;
-
-
-    const {
-        data,
-        error
-    } =
-    await supabase
-    .from("saldos")
-    .select("valor")
-    .eq(
-        "user_id",
-        usuarioAtual.id
-    )
-    .single();
-
-
-    if(error){
-
-        console.error(
-            "Erro ao carregar saldo:",
-            error
-        );
-
-
-        resultado.innerHTML =
-            "❌ ERRO AO CARREGAR SALDO";
-
-        resultado.style.color =
-            "#ff4141";
-
-
-        return false;
-
-    }
-
-
-    saldoReal =
-        Number(
-            data?.valor || 0
-        );
-
-
-    atualizarSaldo();
-
-
-    return true;
-
-}
-
-
-/* =====================================================
-   SALVAR SALDO
-===================================================== */
-
-async function salvarSaldo(novoSaldo){
-
-    if(!usuarioAtual)
-        return false;
-
-
-    const valorFinal =
-        Number(
-            Number(novoSaldo)
-            .toFixed(2)
-        );
-
-
-    const {
-        error
-    } =
-    await supabase
-    .from("saldos")
-    .update({
-        valor: valorFinal
-    })
-    .eq(
-        "user_id",
-        usuarioAtual.id
-    );
-
-
-    if(error){
-
-        console.error(
-            "Erro ao salvar saldo:",
-            error
-        );
-
-
-        resultado.innerHTML =
-            "❌ ERRO AO ATUALIZAR SALDO";
-
-        resultado.style.color =
-            "#ff4141";
-
-
-        return false;
-
-    }
-
-
-    saldoReal =
-        valorFinal;
-
-
-    atualizarSaldo();
-
-
-    return true;
-
-}
-
-
-/* =====================================================
-   CRIAR NÚMEROS
-===================================================== */
-
 function criarNumeros(){
 
     const area =
-        document.getElementById(
-            "numeros"
-        );
-
+        document.getElementById("numeros");
 
     area.innerHTML = "";
-
 
     const total =
         premios.length;
 
-
     for(
-        let i = 0;
-        i < total;
+        let i=0;
+        i<total;
         i++
     ){
 
         const numero =
-            document.createElement(
-                "div"
-            );
-
+            document.createElement("div");
 
         numero.className =
             "numero";
 
-
         numero.innerText =
-            dinheiro(
-                premios[i]
-            );
-
+            dinheiro(premios[i]);
 
         const angulo =
-            (
-                i *
-                (360 / total)
-            ) - 90;
-
+            ((i)*(360/total))-90;
 
         const raio = 40;
 
-
         const x =
             Math.cos(
-                angulo *
-                Math.PI / 180
+                angulo*Math.PI/180
             ) * raio;
-
 
         const y =
             Math.sin(
-                angulo *
-                Math.PI / 180
+                angulo*Math.PI/180
             ) * raio;
 
-
-        numero.style.transform =
+        const posicao =
             `translate(${x}px,${y}px)`;
 
+        numero.style.setProperty(
+            "--posicao",
+            posicao
+        );
+
+        numero.style.transform =
+            `${posicao} scaleX(1)`;
 
         numero.dataset.index =
             i;
 
-
-        area.appendChild(
-            numero
-        );
+        area.appendChild(numero);
 
     }
 
 }
 
 
-/* =====================================================
-   ESCOLHER VALOR
-===================================================== */
-
-window.selecionarValor =
-function(
+function selecionarValor(
     valor,
     botao
 ){
@@ -1143,51 +899,35 @@ function(
     if(girando)
         return;
 
-
     valorAposta =
         Number(valor);
 
-
     document
-    .querySelectorAll(
-        ".btn-valor"
-    )
+    .querySelectorAll(".btn-valor")
     .forEach(
-        function(b){
-
+        b=>{
             b.classList.remove(
                 "ativo"
             );
-
         }
     );
-
 
     botao.classList.add(
         "ativo"
     );
 
-
     apostaInfo.innerText =
-        dinheiro(
-            valorAposta
-        );
-
+        dinheiro(valorAposta);
 
     fichaDisplay.innerText =
         Number(valorAposta)
         .toFixed(2)
         .replace(".",",");
 
-
     atualizarSaldo();
 
-};
+}
 
-
-/* =====================================================
-   BOTÃO
-===================================================== */
 
 function atualizarBotao(){
 
@@ -1203,9 +943,8 @@ function atualizarBotao(){
 
     }
 
-
     if(
-        saldoReal <
+        saldoVirtual <
         valorAposta
     ){
 
@@ -1219,7 +958,6 @@ function atualizarBotao(){
 
     }
 
-
     btnApostar.disabled =
         false;
 
@@ -1229,39 +967,18 @@ function atualizarBotao(){
 }
 
 
-/* =====================================================
-   GIRAR
-===================================================== */
-
-window.girarRoleta =
-async function(){
+function girarRoleta(){
 
     if(girando)
         return;
 
-
     if(
-        !usuarioAtual
-    ){
-
-        resultado.innerHTML =
-            "❌ USUÁRIO NÃO LOGADO";
-
-        resultado.style.color =
-            "#ff4141";
-
-        return;
-
-    }
-
-
-    if(
-        saldoReal <
+        saldoVirtual <
         valorAposta
     ){
 
         resultado.innerHTML =
-            "❌ SALDO INSUFICIENTE";
+            "❌ SALDO VIRTUAL INSUFICIENTE";
 
         resultado.style.color =
             "#ff4141";
@@ -1270,41 +987,21 @@ async function(){
 
     }
 
-
     girando = true;
 
-    atualizarBotao();
-
-
     /*
-       DESCONTA A APOSTA
+       ATIVA O EFEITO DE VELOCIDADE
+       NOS NÚMEROS
     */
 
-    const saldoAnterior =
-        saldoReal;
+    roleta.classList.add(
+        "girando"
+    );
 
-
-    const novoSaldo =
-        saldoAnterior -
+    saldoVirtual -=
         valorAposta;
 
-
-    const debitado =
-        await salvarSaldo(
-            novoSaldo
-        );
-
-
-    if(!debitado){
-
-        girando = false;
-
-        atualizarBotao();
-
-        return;
-
-    }
-
+    atualizarSaldo();
 
     resultado.innerHTML =
         "⚡ GIRANDO...";
@@ -1312,25 +1009,15 @@ async function(){
     resultado.style.color =
         "#ffe36a";
 
-
     document
-    .querySelectorAll(
-        ".numero"
-    )
+    .querySelectorAll(".numero")
     .forEach(
-        function(n){
-
+        n=>{
             n.classList.remove(
                 "destaque"
             );
-
         }
     );
-
-
-    /*
-       SORTEIO
-    */
 
     const indice =
         Math.floor(
@@ -1338,38 +1025,28 @@ async function(){
             premios.length
         );
 
-
     const premio =
         premios[indice];
 
-
     const tamanhoCasa =
-        360 /
-        premios.length;
-
+        360 / premios.length;
 
     const anguloPremio =
-        indice *
-        tamanhoCasa;
-
+        indice * tamanhoCasa;
 
     const voltas =
         360 * 7;
-
 
     const novaRotacao =
         rotacaoAtual +
         voltas +
         (360 - anguloPremio);
 
-
     roleta.style.transform =
         `rotate(${novaRotacao}deg)`;
 
-
     rotacaoAtual =
         novaRotacao;
-
 
     setTimeout(
         function(){
@@ -1383,14 +1060,10 @@ async function(){
         4500
     );
 
-};
+}
 
 
-/* =====================================================
-   FINALIZAR
-===================================================== */
-
-async function finalizarRodada(
+function finalizarRodada(
     indice,
     premio
 ){
@@ -1400,7 +1073,6 @@ async function finalizarRodada(
             `.numero[data-index="${indice}"]`
         );
 
-
     if(numero){
 
         numero.classList.add(
@@ -1409,36 +1081,19 @@ async function finalizarRodada(
 
     }
 
-
     /*
-       CREDITA O PRÊMIO
+       DESLIGA O EFEITO DE
+       ALONGAMENTO DOS NÚMEROS
     */
 
-    const saldoAtual =
-        saldoReal;
+    roleta.classList.remove(
+        "girando"
+    );
 
-
-    const novoSaldo =
-        saldoAtual +
+    saldoVirtual +=
         premio;
 
-
-    const creditado =
-        await salvarSaldo(
-            novoSaldo
-        );
-
-
-    if(!creditado){
-
-        girando = false;
-
-        atualizarBotao();
-
-        return;
-
-    }
-
+    atualizarSaldo();
 
     resultado.innerHTML =
         "⚡ PRÊMIO<br>" +
@@ -1446,10 +1101,8 @@ async function finalizarRodada(
         dinheiro(premio) +
         "</span>";
 
-
     resultado.style.color =
         "#ffe36a";
-
 
     setTimeout(
         function(){
@@ -1465,139 +1118,32 @@ async function finalizarRodada(
 }
 
 
-/* =====================================================
-   REPETIR
-===================================================== */
-
-window.repetirAposta =
-function(){
+function repetirAposta(){
 
     if(girando)
         return;
 
     girarRoleta();
 
-};
+}
 
 
-/* =====================================================
-   MENU
-===================================================== */
-
-window.abrirMenu =
-function(){
+function abrirMenu(){
 
     alert(
         "⚡ APOSTAXBET\n\n" +
         "ROLETA DE RELÂMPAGOS\n\n" +
-        "Seu saldo está conectado à sua conta."
+        "PRÊMIOS DEMONSTRATIVOS\n\n" +
+        "R$ 0,40 até R$ 1,00\n\n" +
+        "SALDO VIRTUAL"
     );
-
-};
-
-
-/* =====================================================
-   INICIAR
-===================================================== */
-
-async function iniciar(){
-
-    try{
-
-        usuarioAtual =
-            await obterUsuario();
-
-
-        if(!usuarioAtual){
-
-            alert(
-                "Você precisa estar logado para jogar."
-            );
-
-
-            window.location.href =
-                "../index.html";
-
-
-            return;
-
-        }
-
-
-        const carregou =
-            await carregarSaldo();
-
-
-        if(!carregou){
-
-            carregando.style.display =
-                "none";
-
-            return;
-
-        }
-
-
-        criarNumeros();
-
-
-        atualizarSaldo();
-
-
-        carregando.style.display =
-            "none";
-
-
-    }catch(error){
-
-        console.error(
-            "Erro:",
-            error
-        );
-
-
-        carregando.style.display =
-            "none";
-
-
-        resultado.innerHTML =
-            "❌ ERRO AO INICIAR ROLETA";
-
-        resultado.style.color =
-            "#ff4141";
-
-    }
 
 }
 
 
-/* =====================================================
-   OBSERVAR LOGIN
-===================================================== */
+criarNumeros();
 
-supabase
-.auth
-.onAuthStateChange(
-function(
-    event,
-    session
-){
-
-    if(!session){
-
-        window.location.href =
-            "../index.html";
-
-    }
-
-});
-
-
-/* =====================================================
-   INICIAR
-===================================================== */
-
-iniciar();
+atualizarSaldo();
 
 </script>
 
