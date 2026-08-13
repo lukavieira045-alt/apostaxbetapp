@@ -28,17 +28,11 @@ body{display:flex;justify-content:center;overflow-x:hidden}
 .info{height:70px;display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;background:linear-gradient(#101c3b,#091328);border:1px solid #2d4270;border-radius:17px;box-shadow:inset 0 0 15px #000}
 .infoItem{text-align:center}.infoSmall{display:block;color:#8796b4;font-size:9px;margin-bottom:5px}
 
-/* CORREÇÃO DE CORES: FORÇA VERDE SEMPRE */
-.value{
-  color:#aaff5d !important; 
-  font-size:20px;
-  font-weight:bold;
-  transition: transform .25s ease;
-}
-/* Remove qualquer classe de erro que o JS tente adicionar */
-.value.error, .value.insufficient, .value.red { color:#aaff5d !important; }
-
+/* FORÇA COR VERDE SEMPRE */
+.value{color:#aaff5d !important; font-size:20px; font-weight:bold; transition: transform .25s ease;}
+.value.error, .value.insufficient { color:#aaff5d !important; }
 #balance.atualizando{transform:scale(1.12);color:#fff36b !important;}
+
 .controls{min-height:150px;display:grid;grid-template-columns:58px 58px 1fr 58px 58px;gap:6px;align-items:center;padding:10px 3px 18px}
 .btn{width:56px;height:56px;border-radius:50%;border:1px solid #445477;background:linear-gradient(#314064,#111a32);color:white;font-size:27px;box-shadow:0 4px 8px #0008;cursor:pointer}
 .spin{width:112px;height:112px;justify-self:center;border-radius:50%;border:7px solid #25eaf1;background:radial-gradient(circle,#173d47,#07121d 70%);color:#62fff6;font-size:43px;box-shadow:0 0 20px #00eaff,inset 0 0 22px #00eaff66;cursor:pointer}
@@ -92,9 +86,8 @@ body{display:flex;justify-content:center;overflow-x:hidden}
 
 <script>
 /* =====================================================
-   CONFIGURAÇÃO SUPABASE E SISTEMA DE SALDO
+   CONFIGURAÇÃO SUPABASE E SISTEMA DE SALDO HÍBRIDO
 ===================================================== */
-// ⚠️ SUBSTITUA PELAS SUAS CREDENCIAIS REAIS DO SUPABASE
 const SUPABASE_URL = 'https://jxbzjiwmajjzxgihfjgt.supabase.co'; 
 const SUPABASE_ANON_KEY = 'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ'; 
 
@@ -108,9 +101,9 @@ try {
     }
 } catch (e) { console.error("Erro Supabase:", e); }
 
-// Sistema de Saldo com Fallback Local
+// Sistema de Saldo com Fallback Local Garantido
 window.SistemaSaldo = {
-    saldoLocal: 0, // Saldo temporário para teste visual
+    saldoLocal: 0, 
     
     async get() {
         if (!sistemaOnline) return this.saldoLocal;
@@ -135,35 +128,42 @@ window.SistemaSaldo = {
     },
     
     async debitar(valor) {
-        if (!sistemaOnline) {
-            this.saldoLocal -= valor;
-            return;
-        }
+        // DEBITA LOCALMENTE PRIMEIRO PARA GARANTIR FEEDBACK VISUAL
+        this.saldoLocal -= valor;
+        
+        if (!sistemaOnline) return;
         
         try {
             const { data } = await supabaseClient.auth.getSession();
-            if (!data?.session) throw new Error('Sem sessão');
+            if (!data?.session) return;
             
-            // Tenta RPC, se falhar, atualiza localmente para não travar o jogo
-            const { error } = await supabaseClient.rpc('debitar_saldo', { 
+            // Tenta sincronizar com o banco em segundo plano
+            await supabaseClient.rpc('debitar_saldo', { 
                 p_user_id: data.session.user.id, 
                 p_valor: valor 
             });
-            
-            if (error) {
-                console.warn("RPC falhou, debitando localmente:", error);
-                this.saldoLocal -= valor;
-            }
         } catch (e) {
-            this.saldoLocal -= valor;
+            console.warn("Débito local realizado, sync falhou:", e);
         }
     },
     
     async creditar(valor) {
+        // CREDITA LOCALMENTE PRIMEIRO
         this.saldoLocal += valor;
-        if (sistemaOnline) {
-            // Em produção, aqui seria uma chamada para creditar no banco
-            // Por enquanto, mantemos o saldo local sincronizado
+        
+        if (!sistemaOnline) return;
+        
+        try {
+            const { data } = await supabaseClient.auth.getSession();
+            if (!data?.session) return;
+            
+            // Sincroniza ganho com o banco
+            await supabaseClient.rpc('creditar_saldo', { 
+                p_user_id: data.session.user.id, 
+                p_valor: valor 
+            });
+        } catch (e) {
+            console.warn("Crédito local realizado, sync falhou:", e);
         }
     },
     
@@ -171,8 +171,7 @@ window.SistemaSaldo = {
         const saldo = await this.get();
         const el = document.getElementById('balance');
         el.textContent = dinheiro(saldo);
-        // Garante que a cor nunca mude para vermelho
-        el.style.color = '#aaff5d'; 
+        el.style.color = '#aaff5d'; // Garante verde
         return saldo;
     }
 };
@@ -212,7 +211,7 @@ function buildReels() {
 
 function atualizarAposta() { 
     betEl.textContent = dinheiro(bet); 
-    betEl.style.color = '#aaff5d'; // Força verde
+    betEl.style.color = '#aaff5d'; 
 }
 
 function sound() { 
@@ -268,11 +267,11 @@ async function spin() {
     messageEl.textContent = "Girando...";
     messageEl.style.color = "#61fff4";
 
-    // Debita (Real ou Local)
+    // 1. DEBITA IMEDIATAMENTE (Local + Sync Banco)
     await window.SistemaSaldo.debitar(bet);
     await window.SistemaSaldo.atualizarTela();
 
-    // Animação
+    // 2. ANIMAÇÃO DOS ROLOS
     reels.forEach((reel, index) => {
         reel.style.transition = "none";
         reel.style.transform = "translateY(0)";
@@ -284,13 +283,14 @@ async function spin() {
         reel.style.transform = `translateY(${distance}px)`;
     });
 
-    // Resultado
+    // 3. RESULTADO E CRÉDITO (Sempre ocorre)
     setTimeout(async () => {
-        const ganhou = Math.random() > 0.6; // Simulação visual
+        const ganhou = Math.random() > 0.6; 
         let ganhoValor = 0;
         
         if (ganhou) {
             ganhoValor = bet * (Math.floor(Math.random() * 5) + 2);
+            // CREDITA IMEDIATAMENTE (Local + Sync Banco)
             await window.SistemaSaldo.creditar(ganhoValor);
             messageEl.textContent = `✅ Ganhou ${dinheiro(ganhoValor)}!`;
             messageEl.style.color = "#aaff5d";
@@ -299,7 +299,9 @@ async function spin() {
             messageEl.style.color = "#ff7b7b";
         }
 
+        // Atualiza tela final
         await window.SistemaSaldo.atualizarTela();
+        
         spinning = false;
         spinBtn.disabled = false;
     }, 1900);
