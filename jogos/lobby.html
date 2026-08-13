@@ -1,17 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>Lobby Mania - ApostaXBet</title>
 
 <style>
-
 *{
   box-sizing:border-box;
   margin:0;
@@ -43,9 +38,7 @@ body{
   overflow:hidden;
 }
 
-/* =========================
-   TOPO
-========================= */
+/* TOPO */
 
 .top{
   height:62px;
@@ -59,6 +52,7 @@ body{
 
 .top .home{
   font-size:29px;
+  cursor:pointer;
 }
 
 .top .name{
@@ -71,16 +65,13 @@ body{
   font:18px monospace;
 }
 
-/* =========================
-   BANNER
-========================= */
+/* BANNER */
 
 .banner{
   height:105px;
   margin:18px 7px 9px;
   border-radius:8px;
   border:3px solid #17173c;
-
   display:flex;
   align-items:center;
   justify-content:center;
@@ -98,15 +89,12 @@ body{
   font-size:25px;
   font-weight:900;
   color:#61fff4;
-
   text-shadow:
     0 0 6px #00ffff,
     0 0 15px #00ffff;
 }
 
-/* =========================
-   MÁQUINA
-========================= */
+/* MÁQUINA */
 
 .machine{
   margin:0 5px;
@@ -128,9 +116,7 @@ body{
     0 0 25px #3927a855;
 }
 
-/* =========================
-   ROLOS
-========================= */
+/* ROLOS */
 
 .reels{
   height:475px;
@@ -156,14 +142,16 @@ body{
   border-right:3px solid #35435a;
 }
 
-.strip{
-  transform:translateY(0);
-  will-change:transform;
+.reel:last-child{
+  border-right:0;
 }
 
-/* =========================
-   SÍMBOLOS
-========================= */
+.strip{
+  will-change:transform;
+  transform:translate3d(0,0,0);
+}
+
+/* SÍMBOLOS */
 
 .symbol{
   height:157px;
@@ -251,9 +239,7 @@ body{
     3px 3px #3b4a30;
 }
 
-/* =========================
-   MENSAGEM
-========================= */
+/* MENSAGEM */
 
 .message{
   height:38px;
@@ -265,19 +251,15 @@ body{
   color:#a8ff67;
   font-size:14px;
   font-weight:bold;
-
-  text-align:center;
 }
 
-/* =========================
-   PAINEL
-========================= */
+/* PAINEL */
 
 .info{
-  min-height:78px;
+  min-height:70px;
 
   display:grid;
-  grid-template-columns:1fr 1.4fr 1fr;
+  grid-template-columns:1fr 1fr 1fr;
 
   align-items:center;
 
@@ -307,20 +289,17 @@ body{
   color:#aaff5d;
   font-size:20px;
   font-weight:bold;
-
   transition:
     transform .25s ease,
     color .25s ease;
 }
 
-#balance.atualizando{
+.value.atualizando{
   transform:scale(1.12);
   color:#fff36b;
 }
 
-/* =========================
-   BOTÕES
-========================= */
+/* BOTÕES */
 
 .controls{
   min-height:150px;
@@ -360,8 +339,6 @@ body{
     0 4px 8px #0008;
 
   cursor:pointer;
-
-  touch-action:manipulation;
 }
 
 .spin{
@@ -390,8 +367,6 @@ body{
     inset 0 0 22px #00eaff66;
 
   cursor:pointer;
-
-  touch-action:manipulation;
 }
 
 .btn:active,
@@ -399,15 +374,23 @@ body{
   transform:scale(.92);
 }
 
-.btn:disabled,
-.spin:disabled{
-  opacity:.45;
-  cursor:not-allowed;
+.spin.girando{
+  animation:pulsar .55s infinite alternate;
 }
 
-/* =========================
-   AVISO
-========================= */
+@keyframes pulsar{
+  from{
+    box-shadow:
+      0 0 12px #00eaff,
+      inset 0 0 15px #00eaff66;
+  }
+
+  to{
+    box-shadow:
+      0 0 35px #00ffff,
+      inset 0 0 30px #00eaff99;
+  }
+}
 
 .notice{
   text-align:center;
@@ -416,80 +399,33 @@ body{
   padding:4px 5px 20px;
 }
 
-/* =========================
-   CARREGANDO
-========================= */
-
 #carregando{
   position:fixed;
   inset:0;
-
   background:#02030b;
-
   display:flex;
   align-items:center;
   justify-content:center;
-
   z-index:9999;
-
-  color:#62fff6;
-
-  font-size:16px;
+  color:#61fff4;
   font-weight:bold;
 }
-
-/* =========================
-   RESPONSIVO
-========================= */
-
-@media(max-width:400px){
-
-  .reels{
-    height:390px;
-  }
-
-  .symbol{
-    height:129px;
-  }
-
-  .spin{
-    width:96px;
-    height:96px;
-  }
-
-  .controls{
-    grid-template-columns:
-      52px
-      52px
-      1fr
-      52px
-      52px;
-  }
-
-  .btn{
-    width:50px;
-    height:50px;
-  }
-
-}
-
 </style>
-
 </head>
 
 <body>
 
 <div id="carregando">
-  🔐 VERIFICANDO CONTA...
+  🔐 CARREGANDO CONTA...
 </div>
-
 
 <div class="game">
 
   <div class="top">
 
-    <div class="home"
-         onclick="voltarLobby()">
+    <div
+      class="home"
+      onclick="voltarLobby()">
       ⌂
     </div>
 
@@ -497,8 +433,9 @@ body{
       Lobby Mania
     </div>
 
-    <div class="clock"
-         id="clock">
+    <div
+      class="clock"
+      id="clock">
       03:27:59
     </div>
 
@@ -506,16 +443,11 @@ body{
 
 
   <div class="banner">
-
-    <span>
-      » Nova rodada é de empurrar! «
-    </span>
-
+    <span>» Nova rodada é de empurrar! «</span>
   </div>
 
 
   <div class="machine">
-
 
     <div class="reels">
 
@@ -526,14 +458,12 @@ body{
         </div>
       </div>
 
-
       <div class="reel">
         <div
           class="strip"
           id="reel2">
         </div>
       </div>
-
 
       <div class="reel">
         <div
@@ -556,11 +486,8 @@ body{
 
     <div class="info">
 
-
       <div class="infoItem">
-
         👤
-
       </div>
 
 
@@ -573,9 +500,7 @@ body{
         <span
           class="value"
           id="balance">
-
           R$ 0,00
-
         </span>
 
       </div>
@@ -590,69 +515,57 @@ body{
         <span
           class="value"
           id="bet">
-
           R$ 0,50
-
         </span>
 
       </div>
-
 
     </div>
 
 
     <div class="controls">
 
-
       <button
         class="btn"
-        id="soundBtn"
+        type="button"
         onclick="sound()">
-
         🔇
-
       </button>
 
 
       <button
         class="btn"
+        type="button"
         onclick="minus()">
-
         −
-
       </button>
 
 
       <button
         class="spin"
         id="spinButton"
+        type="button"
         onclick="spin()">
-
         ★
-
       </button>
 
 
       <button
         class="btn"
+        type="button"
         onclick="plus()">
-
         +
-
       </button>
 
 
       <button
         class="btn"
+        type="button"
         onclick="spin()">
-
         ▶
-
       </button>
-
 
     </div>
-
 
   </div>
 
@@ -672,8 +585,7 @@ body{
 
 import {
   createClient
-}
-from
+} from
 "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 
@@ -693,19 +605,6 @@ createClient(
 
 
 /* =====================================================
-   VARIÁVEIS
-===================================================== */
-
-let usuarioAtual = null;
-
-let saldoReal = 0;
-
-let bet = 0.50;
-
-let spinning = false;
-
-
-/* =====================================================
    ELEMENTOS
 ===================================================== */
 
@@ -720,6 +619,10 @@ const reels = [
 ];
 
 
+const message =
+document.getElementById("message");
+
+
 const balanceElement =
 document.getElementById("balance");
 
@@ -728,81 +631,108 @@ const betElement =
 document.getElementById("bet");
 
 
-const messageElement =
-document.getElementById("message");
-
-
 const spinButton =
 document.getElementById("spinButton");
 
 
-const loading =
-document.getElementById("carregando");
-
-
 /* =====================================================
-   SÍMBOLOS
+   DADOS
 ===================================================== */
 
 const symbols = [
 
   `<div class="symbol">
-
-     <div class="five">
-       5
-     </div>
-
+     <div class="five">5</div>
    </div>`,
 
   `<div class="symbol">
-
-     <div class="face">
-       🙂
-     </div>
-
-     <div class="x2">
-       ×2
-     </div>
-
+     <div class="face">🙂</div>
+     <div class="x2">×2</div>
    </div>`,
 
   `<div class="symbol">
-
-     <div class="coin">
-       0,05
-     </div>
-
+     <div class="coin">0,05</div>
    </div>`,
 
   `<div class="symbol">
-
-     <div class="five">
-       5
-     </div>
-
+     <div class="five">5</div>
    </div>`,
 
   `<div class="symbol">
-
-     <div class="face">
-       😄
-     </div>
-
-     <div class="x2">
-       ×2
-     </div>
-
+     <div class="face">😄</div>
+     <div class="x2">×2</div>
    </div>`,
 
   `<div class="symbol">
-
-     <div class="coin">
-       0,05
-     </div>
-
+     <div class="coin">0,05</div>
    </div>`
 
 ];
+
+
+let usuarioAtual = null;
+
+let saldoReal = 0;
+
+let bet = 0.50;
+
+let spinning = false;
+
+
+/* =====================================================
+   CRIAR ROLOS
+===================================================== */
+
+function buildReels(){
+
+  reels.forEach(
+    function(reel,index){
+
+      let html = "";
+
+      /*
+        Bastante conteúdo para garantir
+        movimento real dos rolos.
+      */
+
+      for(
+        let i = 0;
+        i < 40;
+        i++
+      ){
+
+        const indice =
+          (
+            i +
+            index * 2
+          ) %
+          symbols.length;
+
+
+        html +=
+          symbols[indice];
+
+      }
+
+
+      reel.innerHTML =
+        html;
+
+
+      /*
+        Começa exatamente no zero.
+      */
+
+      reel.style.transition =
+        "none";
+
+      reel.style.transform =
+        "translate3d(0,0,0)";
+
+    }
+  );
+
+}
 
 
 /* =====================================================
@@ -820,6 +750,31 @@ function dinheiro(valor){
 
 
 /* =====================================================
+   ATUALIZAR SALDO
+===================================================== */
+
+function atualizarSaldo(){
+
+  balanceElement.textContent =
+    dinheiro(saldoReal);
+
+
+  balanceElement.classList.remove(
+    "atualizando"
+  );
+
+
+  void balanceElement.offsetWidth;
+
+
+  balanceElement.classList.add(
+    "atualizando"
+  );
+
+}
+
+
+/* =====================================================
    ATUALIZAR APOSTA
 ===================================================== */
 
@@ -832,84 +787,10 @@ function atualizarAposta(){
 
 
 /* =====================================================
-   ATUALIZAR SALDO
+   CARREGAR USUÁRIO
 ===================================================== */
 
-function atualizarSaldo(){
-
-  balanceElement.textContent =
-    dinheiro(saldoReal);
-
-  balanceElement.classList.add(
-    "atualizando"
-  );
-
-
-  setTimeout(
-    function(){
-
-      balanceElement.classList.remove(
-        "atualizando"
-      );
-
-    },
-    250
-  );
-
-
-  atualizarBotao();
-
-}
-
-
-/* =====================================================
-   BOTÃO
-===================================================== */
-
-function atualizarBotao(){
-
-  if(spinning){
-
-    spinButton.disabled =
-      true;
-
-    spinButton.textContent =
-      "↻";
-
-    return;
-
-  }
-
-
-  if(
-    saldoReal < bet
-  ){
-
-    spinButton.disabled =
-      true;
-
-    spinButton.textContent =
-      "★";
-
-    return;
-
-  }
-
-
-  spinButton.disabled =
-    false;
-
-  spinButton.textContent =
-    "★";
-
-}
-
-
-/* =====================================================
-   USUÁRIO
-===================================================== */
-
-async function obterUsuario(){
+async function carregarUsuario(){
 
   const {
     data,
@@ -922,9 +803,7 @@ async function obterUsuario(){
 
   if(error){
 
-    console.error(
-      error
-    );
+    console.error(error);
 
     return null;
 
@@ -937,13 +816,13 @@ async function obterUsuario(){
 
 
 /* =====================================================
-   CARREGAR SALDO
+   CARREGAR SALDO REAL
 ===================================================== */
 
 async function carregarSaldo(){
 
   if(!usuarioAtual)
-    return false;
+    return;
 
 
   const {
@@ -963,16 +842,16 @@ async function carregarSaldo(){
   if(error){
 
     console.error(
-      "Erro saldo:",
+      "Erro ao carregar saldo:",
       error
     );
 
 
-    messageElement.textContent =
-      "❌ ERRO AO CARREGAR SALDO";
+    message.textContent =
+      "❌ Erro ao carregar saldo";
 
 
-    return false;
+    return;
 
   }
 
@@ -985,195 +864,36 @@ async function carregarSaldo(){
 
   atualizarSaldo();
 
-
-  return true;
-
 }
 
 
 /* =====================================================
-   SALVAR SALDO
+   GIRAR OS ROLOS
 ===================================================== */
 
-async function salvarSaldo(
-  novoSaldo
-){
-
-  if(!usuarioAtual)
-    return false;
-
-
-  const valorFinal =
-    Number(
-      Number(novoSaldo)
-      .toFixed(2)
-    );
-
-
-  const {
-    error
-  } =
-  await supabase
-  .from("saldos")
-  .update({
-    valor:valorFinal
-  })
-  .eq(
-    "user_id",
-    usuarioAtual.id
-  );
-
-
-  if(error){
-
-    console.error(
-      "Erro ao salvar saldo:",
-      error
-    );
-
-
-    messageElement.textContent =
-      "❌ ERRO AO ATUALIZAR SALDO";
-
-
-    return false;
-
-  }
-
-
-  saldoReal =
-    valorFinal;
-
-
-  atualizarSaldo();
-
-
-  return true;
-
-}
-
-
-/* =====================================================
-   MONTAR ROLOS
-===================================================== */
-
-function buildReels(){
-
-  reels.forEach(
-    function(reel,col){
-
-      let html = "";
-
-
-      /*
-         Muitas casas para o movimento
-         ficar visível.
-      */
-
-      for(
-        let i = 0;
-        i < 40;
-        i++
-      ){
-
-        html +=
-          symbols[
-            (i + col * 2)
-            % symbols.length
-          ];
-
-      }
-
-
-      reel.innerHTML =
-        html;
-
-
-      reel.style.transform =
-        "translateY(0)";
-
-
-      reel.style.transition =
-        "none";
-
-    }
-  );
-
-}
-
-
-/* =====================================================
-   GIRAR
-===================================================== */
-
-async function spin(){
+function spin(){
 
   if(spinning)
     return;
 
 
-  if(!usuarioAtual){
-
-    messageElement.textContent =
-      "❌ USUÁRIO NÃO LOGADO";
-
-    return;
-
-  }
-
-
-  if(
-    saldoReal < bet
-  ){
-
-    messageElement.textContent =
-      "❌ SALDO INSUFICIENTE";
-
-    return;
-
-  }
-
-
   spinning = true;
 
-  atualizarBotao();
+
+  spinButton.classList.add(
+    "girando"
+  );
 
 
-  /*
-     DESCONTA A APOSTA
-  */
-
-  const saldoAntes =
-    saldoReal;
-
-
-  const saldoDepois =
-    saldoAntes - bet;
-
-
-  const debitado =
-    await salvarSaldo(
-      saldoDepois
-    );
-
-
-  if(!debitado){
-
-    spinning = false;
-
-    atualizarBotao();
-
-    return;
-
-  }
-
-
-  messageElement.textContent =
+  message.textContent =
     "🎰 Girando...";
 
 
   /*
-     RECOMEÇA OS ROLOS
+    Cada rolo começa novamente
+    no ponto inicial antes de girar.
+    Isso evita o problema de a tela
+    parecer parada depois de uma rodada.
   */
 
   reels.forEach(
@@ -1183,79 +903,44 @@ async function spin(){
         "none";
 
       reel.style.transform =
-        "translateY(0)";
+        "translate3d(0,0,0)";
 
     }
   );
 
 
   /*
-     Força o navegador
-     a aplicar a posição inicial.
+    Força o navegador a aplicar
+    o estado inicial antes da animação.
   */
 
-  void reels[0].offsetHeight;
+  void document.body.offsetHeight;
 
-
-  /*
-     SORTEIO
-  */
-
-  const ganhou =
-    Math.random() < 0.20;
-
-
-  let simboloVencedor;
-
-
-  if(ganhou){
-
-    simboloVencedor =
-      Math.floor(
-        Math.random() *
-        symbols.length
-      );
-
-  }else{
-
-    simboloVencedor =
-      Math.floor(
-        Math.random() *
-        symbols.length
-      );
-
-  }
-
-
-  /*
-     CADA ROLO PARA EM UMA POSIÇÃO.
-  */
 
   reels.forEach(
     function(reel,index){
 
-      const casasBase =
-        20 + index * 4;
-
-
-      const casasExtra =
+      const casas =
+        18 +
         Math.floor(
-          Math.random() * 5
+          Math.random() * 8
         );
 
 
-      const casas =
-        casasBase +
-        casasExtra;
-
+      /*
+        Pequena diferença entre
+        os três rolos.
+      */
 
       const distancia =
-        -(casas * 157);
+        -(
+          casas * 157
+        );
 
 
       const duracao =
-        1.5 +
-        index * 0.35;
+        1.4 +
+        (index * 0.25);
 
 
       reel.style.transition =
@@ -1265,69 +950,36 @@ async function spin(){
 
 
       reel.style.transform =
-        "translateY(" +
+        "translate3d(0," +
         distancia +
-        "px)";
+        "px,0)";
 
     }
   );
 
 
   /*
-     FINAL DA RODADA
+    Libera depois que o último rolo
+    terminou.
   */
 
   setTimeout(
-    async function(){
+    function(){
 
-      /*
-         Resultado da rodada.
-      */
-
-      if(ganhou){
-
-        const premio =
-          Number(
-            (bet * 2)
-            .toFixed(2)
-          );
+      message.textContent =
+        "⚡ Nova rodada";
 
 
-        const novoSaldo =
-          saldoReal +
-          premio;
+      spinning = false;
 
 
-        const creditado =
-          await salvarSaldo(
-            novoSaldo
-          );
+      spinButton.classList.remove(
+        "girando"
+      );
 
-
-        if(creditado){
-
-          messageElement.textContent =
-            "🎉 VOCÊ GANHOU " +
-            dinheiro(premio);
-
-        }
-
-      }else{
-
-        messageElement.textContent =
-          "Nova rodada";
-
-      }
-
-
-      spinning =
-        false;
-
-
-      atualizarBotao();
 
     },
-    2500
+    2200
   );
 
 }
@@ -1347,13 +999,15 @@ function(){
   bet =
     Math.min(
       5,
-      bet + 0.50
+      Number(
+        (
+          bet + 0.50
+        ).toFixed(2)
+      )
     );
 
 
   atualizarAposta();
-
-  atualizarBotao();
 
 };
 
@@ -1372,13 +1026,15 @@ function(){
   bet =
     Math.max(
       0.50,
-      bet - 0.50
+      Number(
+        (
+          bet - 0.50
+        ).toFixed(2)
+      )
     );
 
 
   atualizarAposta();
-
-  atualizarBotao();
 
 };
 
@@ -1387,38 +1043,11 @@ function(){
    SOM
 ===================================================== */
 
-let somLigado = false;
-
 window.sound =
 function(){
 
-  somLigado =
-    !somLigado;
-
-
-  const botao =
-    document.getElementById(
-      "soundBtn"
-    );
-
-
-  if(somLigado){
-
-    botao.textContent =
-      "🔊";
-
-    messageElement.textContent =
-      "🔊 Som ligado";
-
-  }else{
-
-    botao.textContent =
-      "🔇";
-
-    messageElement.textContent =
-      "🔇 Som desligado";
-
-  }
+  message.textContent =
+    "🔊 Som alternado";
 
 };
 
@@ -1468,104 +1097,28 @@ setInterval(
       segundos % 60;
 
 
-    const clock =
-      document.getElementById(
-        "clock"
-      );
+    document.getElementById(
+      "clock"
+    ).textContent =
 
+      [
+        h,
+        m,
+        s
+      ]
+      .map(
+        function(n){
 
-    if(clock){
+          return String(n)
+            .padStart(2,"0");
 
-      clock.textContent =
-        [h,m,s]
-        .map(
-          function(n){
-
-            return String(n)
-              .padStart(2,"0");
-
-          }
-        )
-        .join(":");
-
-    }
+        }
+      )
+      .join(":");
 
   },
   1000
 );
-
-
-/* =====================================================
-   INICIAR
-===================================================== */
-
-async function iniciar(){
-
-  try{
-
-    usuarioAtual =
-      await obterUsuario();
-
-
-    if(!usuarioAtual){
-
-      alert(
-        "Você precisa estar logado para jogar."
-      );
-
-
-      window.location.href =
-        "../index.html";
-
-
-      return;
-
-    }
-
-
-    const carregou =
-      await carregarSaldo();
-
-
-    if(!carregou){
-
-      loading.style.display =
-        "none";
-
-      return;
-
-    }
-
-
-    buildReels();
-
-    atualizarAposta();
-
-    atualizarSaldo();
-
-
-    loading.style.display =
-      "none";
-
-
-  }catch(error){
-
-    console.error(
-      "Erro ao iniciar:",
-      error
-    );
-
-
-    loading.style.display =
-      "none";
-
-
-    messageElement.textContent =
-      "❌ ERRO AO INICIAR JOGO";
-
-  }
-
-}
 
 
 /* =====================================================
@@ -1575,10 +1128,7 @@ async function iniciar(){
 supabase
 .auth
 .onAuthStateChange(
-  function(
-    event,
-    session
-  ){
+  function(event,session){
 
     if(!session){
 
@@ -1595,10 +1145,64 @@ supabase
    INICIAR
 ===================================================== */
 
+async function iniciar(){
+
+  try{
+
+    buildReels();
+
+    atualizarAposta();
+
+
+    usuarioAtual =
+      await carregarUsuario();
+
+
+    if(!usuarioAtual){
+
+      window.location.href =
+        "../index.html";
+
+      return;
+
+    }
+
+
+    await carregarSaldo();
+
+
+    document
+      .getElementById(
+        "carregando"
+      )
+      .style.display =
+      "none";
+
+
+  }catch(error){
+
+    console.error(error);
+
+
+    document
+      .getElementById(
+        "carregando"
+      )
+      .style.display =
+      "none";
+
+
+    message.textContent =
+      "❌ Erro ao iniciar";
+
+  }
+
+}
+
+
 iniciar();
 
 </script>
 
 </body>
-
 </html>
