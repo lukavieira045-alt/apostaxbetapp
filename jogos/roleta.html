@@ -1,149 +1,1142 @@
-<script type="module">
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-const SUPABASE_URL = "https://jxbzjiwmajjzxgihfjgt.supabase.co";
-const SUPABASE_KEY = "sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ";
+<title>Roleta de Relâmpagos - ApostaXBet</title>
 
-const supabase = createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    -webkit-tap-highlight-color:transparent;
+}
 
-window.SistemaSaldoRoleta = {
+body{
+    background:
+    radial-gradient(circle at 50% 30%,#18231f,#070a0a 45%,#020303 85%);
+    color:white;
+    font-family:Arial,sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+    padding-bottom:30px;
+}
 
-    async usuario() {
-        const { data, error } =
-            await supabase.auth.getSession();
+.topo{
+    height:58px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 14px;
+    background:#050708;
+    border-bottom:1px solid #292929;
+}
 
-        if (error) {
-            console.error(error);
-            return null;
-        }
+.logo{
+    color:#f5d76e;
+    font-weight:900;
+    letter-spacing:1px;
+}
 
-        return data?.session?.user || null;
-    },
+.saldo-topo{
+    text-align:right;
+}
 
-    async saldo() {
-        const usuario = await this.usuario();
+.saldo-label{
+    font-size:9px;
+    color:#777;
+}
 
-        if (!usuario) return 0;
+#displaySaldo{
+    color:#ffe34f;
+    font-weight:bold;
+    font-size:16px;
+}
 
-        const { data, error } =
-            await supabase
-                .from("saldos")
-                .select("valor")
-                .eq("user_id", usuario.id)
-                .single();
+.container{
+    width:100%;
+    max-width:520px;
+    margin:auto;
+    padding:10px 8px 40px;
+}
 
-        if (error) {
-            console.error("Erro ao buscar saldo:", error);
-            return 0;
-        }
+.lobby{
+    position:absolute;
+    top:68px;
+    left:7px;
+    width:60px;
+    height:60px;
+    border:1px solid #777;
+    border-radius:10px;
+    background:#090b0c;
+    color:white;
+    text-decoration:none;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    font-size:10px;
+    z-index:30;
+}
 
-        return Number(data?.valor || 0);
-    },
+.lobby-icon{
+    font-size:27px;
+}
 
-    async debitar(valor) {
-        valor = Number(valor);
+.titulo{
+    text-align:center;
+    margin-top:10px;
+    color:#d8c36a;
+    font-size:13px;
+    letter-spacing:3px;
+    font-weight:bold;
+}
 
-        if (!Number.isFinite(valor) || valor <= 0)
-            return false;
+.subtitulo{
+    text-align:center;
+    color:#555;
+    font-size:9px;
+    letter-spacing:2px;
+    margin:5px 0 10px;
+}
 
-        const usuario = await this.usuario();
+.roleta-area{
+    position:relative;
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin-bottom:10px;
+}
 
-        if (!usuario) {
-            alert("Você precisa estar logado.");
-            return false;
-        }
+.roleta{
+    width:min(92vw,390px);
+    height:min(92vw,390px);
+    border-radius:50%;
+    position:relative;
 
-        const saldoAtual = await this.saldo();
+    border:5px solid #d7ae31;
 
-        if (saldoAtual < valor) {
-            alert("Saldo insuficiente!");
-            return false;
-        }
+    background:
+    radial-gradient(
+        circle,
+        #1b2925 0 15%,
+        #060a09 16% 23%,
+        transparent 24%
+    );
 
-        const novoSaldo =
-            Number((saldoAtual - valor).toFixed(2));
+    box-shadow:
+    0 0 8px #ffd84a,
+    0 0 25px rgba(255,205,45,.45),
+    0 0 55px rgba(255,190,20,.2),
+    inset 0 0 25px #000;
 
-        const { error } =
-            await supabase
-                .from("saldos")
-                .update({
-                    valor: novoSaldo
-                })
-                .eq("user_id", usuario.id);
+    transition:
+    transform 4.5s cubic-bezier(.08,.75,.12,1);
 
-        if (error) {
-            console.error("Erro ao debitar:", error);
-            alert("Não foi possível atualizar o saldo.");
-            return false;
-        }
+    overflow:hidden;
+}
 
-        return true;
-    },
+.roleta::before{
+    content:"";
+    position:absolute;
+    inset:7px;
+    border-radius:50%;
+    border:12px solid #101a21;
+    box-shadow:
+    inset 0 0 8px #000,
+    0 0 4px #000;
+    z-index:3;
+}
 
-    async creditar(valor) {
-        valor = Number(valor);
+.roleta::after{
+    content:"";
+    position:absolute;
+    inset:28px;
+    border-radius:50%;
 
-        if (!Number.isFinite(valor) || valor <= 0)
-            return false;
+    background:
+    repeating-conic-gradient(
+        from 0deg,
+        rgba(255,225,100,.7) 0deg 1deg,
+        transparent 1deg 18deg
+    );
 
-        const usuario = await this.usuario();
+    z-index:2;
+}
 
-        if (!usuario) return false;
+.roleta-inner{
+    position:absolute;
+    inset:30px;
+    border-radius:50%;
 
-        const saldoAtual = await this.saldo();
+    background:
+    repeating-conic-gradient(
+        #28645b 0deg 9deg,
+        #668c82 9deg 18deg
+    );
 
-        const novoSaldo =
-            Number((saldoAtual + valor).toFixed(2));
+    box-shadow:
+    inset 0 0 35px rgba(0,0,0,.85),
+    inset 0 0 8px #ffe05b;
+}
 
-        const { error } =
-            await supabase
-                .from("saldos")
-                .update({
-                    valor: novoSaldo
-                })
-                .eq("user_id", usuario.id);
+.numeros{
+    position:absolute;
+    inset:0;
+    z-index:7;
+}
 
-        if (error) {
-            console.error("Erro ao creditar:", error);
-            return false;
-        }
+.numero{
+    position:absolute;
+    left:50%;
+    top:50%;
 
-        return true;
-    },
+    width:46px;
+    height:34px;
 
-    async atualizarTela() {
-        const saldoAtual = await this.saldo();
+    margin-left:-23px;
+    margin-top:-17px;
 
-        const texto =
-            "R$ " +
-            saldoAtual.toFixed(2).replace(".", ",");
+    display:flex;
+    align-items:center;
+    justify-content:center;
 
-        document
-            .querySelectorAll(
-                "#displaySaldo, #display-saldo, #saldo, .saldo"
-            )
-            .forEach(elemento => {
-                elemento.textContent = texto;
-            });
+    color:#ffe36a;
+    font-size:11px;
+    font-weight:900;
 
-        return saldoAtual;
+    background:rgba(0,0,0,.38);
+    border:1px solid rgba(255,220,90,.35);
+    border-radius:5px;
+
+    text-shadow:
+    0 1px 2px #000,
+    0 0 5px rgba(255,210,70,.7);
+
+    box-shadow:
+    0 0 5px rgba(255,210,70,.12);
+}
+
+.numero.destaque{
+    color:#fff4ad;
+    border-color:#ffe36a;
+
+    box-shadow:
+    0 0 10px rgba(255,220,80,.45);
+}
+
+.centro{
+    position:absolute;
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+    width:82px;
+    height:82px;
+
+    border-radius:50%;
+
+    background:
+    radial-gradient(circle,#283d38,#08100e 65%,#020303);
+
+    border:4px solid #d5ad36;
+
+    z-index:12;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    box-shadow:
+    0 0 15px rgba(255,211,53,.55),
+    inset 0 0 15px #000;
+}
+
+.centro strong{
+    color:#ffe36a;
+    font-size:18px;
+    letter-spacing:2px;
+}
+
+.centro span{
+    color:#777;
+    font-size:8px;
+    letter-spacing:2px;
+}
+
+.ponteiro{
+    position:absolute;
+    z-index:20;
+    top:-3px;
+    left:50%;
+    transform:translateX(-50%);
+
+    width:0;
+    height:0;
+
+    border-left:13px solid transparent;
+    border-right:13px solid transparent;
+    border-top:27px solid white;
+
+    filter:
+    drop-shadow(0 0 4px white)
+    drop-shadow(0 0 9px #ffe66b);
+}
+
+.raio{
+    position:absolute;
+    width:100px;
+    height:4px;
+    background:white;
+    opacity:.7;
+    z-index:18;
+
+    box-shadow:
+    0 0 5px white,
+    0 0 15px #dfffca;
+
+    animation:piscar .7s infinite alternate;
+}
+
+.raio1{
+    left:4px;
+    bottom:50px;
+    transform:rotate(-35deg);
+}
+
+.raio2{
+    right:4px;
+    top:65px;
+    transform:rotate(35deg);
+}
+
+.raio3{
+    left:45px;
+    top:20px;
+    width:70px;
+    transform:rotate(65deg);
+}
+
+@keyframes piscar{
+    from{opacity:.2;}
+    to{opacity:1;}
+}
+
+.resultado{
+    min-height:52px;
+    text-align:center;
+    color:#ddd;
+    font-size:18px;
+    font-weight:900;
+    text-shadow:0 0 10px currentColor;
+    line-height:24px;
+}
+
+.painel{
+    position:relative;
+    padding:16px 12px 13px;
+
+    background:
+    linear-gradient(145deg,#0d1113,#050708);
+
+    border:1px solid #77642d;
+
+    box-shadow:
+    0 0 15px rgba(0,0,0,.9),
+    inset 0 0 15px rgba(255,200,50,.05);
+}
+
+.ficha-area{
+    height:38px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin-bottom:5px;
+}
+
+.ficha{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+
+    background:
+    radial-gradient(
+        circle,
+        #555 0 45%,
+        #eee 46% 54%,
+        #666 55% 70%,
+        #eee 71% 74%,
+        #333 75%
+    );
+
+    border:2px solid #eee;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:white;
+    font-size:9px;
+    font-weight:bold;
+
+    text-shadow:0 1px 2px #000;
+
+    box-shadow:
+    0 0 8px rgba(255,255,255,.3),
+    0 2px 4px #000;
+}
+
+.valores{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:5px;
+    margin-bottom:8px;
+}
+
+.btn-valor{
+    height:39px;
+    border:1px solid #5c4d26;
+    background:#090b0c;
+    color:#aaa;
+    border-radius:4px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.btn-valor.ativo{
+    color:#ffe36a;
+    border-color:#ffe36a;
+
+    box-shadow:
+    0 0 10px rgba(255,215,60,.35),
+    inset 0 0 12px rgba(255,215,60,.1);
+}
+
+.btn-apostar{
+    width:100%;
+    height:54px;
+
+    margin-top:9px;
+
+    border:1px solid #d5af3d;
+
+    background:
+    linear-gradient(180deg,#332b12,#171306);
+
+    color:#f5d76b;
+
+    font-size:16px;
+    font-weight:900;
+
+    letter-spacing:2px;
+
+    border-radius:4px;
+
+    box-shadow:
+    0 0 12px rgba(255,215,60,.18),
+    inset 0 0 10px #000;
+}
+
+.btn-apostar:disabled{
+    opacity:.35;
+    filter:grayscale(1);
+}
+
+.info{
+    display:flex;
+    justify-content:space-between;
+
+    margin-top:9px;
+
+    color:#aaa;
+    font-size:12px;
+}
+
+.info strong{
+    color:#ffe04f;
+}
+
+.mensagem{
+    text-align:center;
+    color:#555;
+    font-size:9px;
+    margin-top:8px;
+}
+
+.aviso-demo{
+    text-align:center;
+    margin-top:8px;
+    color:#777;
+    font-size:9px;
+}
+
+.repeat-btn,
+.menu-btn{
+    position:fixed;
+    bottom:15px;
+
+    width:52px;
+    height:52px;
+
+    border-radius:50%;
+
+    border:1px solid #777;
+    background:#090b0c;
+
+    color:#ddd;
+    font-size:23px;
+
+    z-index:40;
+}
+
+.repeat-btn{
+    left:8px;
+}
+
+.menu-btn{
+    right:8px;
+}
+
+@media(max-width:360px){
+
+    .roleta{
+        width:310px;
+        height:310px;
     }
-};
 
-document.addEventListener("DOMContentLoaded", async () => {
+    .numero{
+        font-size:9px;
+        width:42px;
+        margin-left:-21px;
+    }
+}
+</style>
+</head>
 
-    const usuario =
-        await window.SistemaSaldoRoleta.usuario();
+<body>
 
-    if (!usuario) {
-        alert("Você precisa estar logado para jogar.");
-        window.location.href = "../index.html";
+<div class="topo">
+
+    <div class="logo">
+        ⚡ APOSTAXBET
+    </div>
+
+    <div class="saldo-topo">
+        <div class="saldo-label">
+            SALDO VIRTUAL
+        </div>
+
+        <div id="displaySaldo">
+            R$ 100,00
+        </div>
+    </div>
+
+</div>
+
+
+<a href="../index.html" class="lobby">
+    <div class="lobby-icon">⌂</div>
+    Lobby
+</a>
+
+
+<div class="container">
+
+    <div class="titulo">
+        ROLETA DE RELÂMPAGOS
+    </div>
+
+    <div class="subtitulo">
+        ESCOLHA O VALOR DA APOSTA
+    </div>
+
+
+    <div class="roleta-area">
+
+        <div class="ponteiro"></div>
+
+        <div class="raio raio1"></div>
+        <div class="raio raio2"></div>
+        <div class="raio raio3"></div>
+
+        <div class="roleta" id="roleta">
+
+            <div class="roleta-inner"></div>
+
+            <div class="numeros" id="numeros"></div>
+
+            <div class="centro">
+                <strong>AX</strong>
+                <span>PRÊMIO</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="resultado" id="resultado">
+        ESCOLHA O VALOR DA APOSTA
+    </div>
+
+
+    <div class="painel">
+
+        <div class="ficha-area">
+
+            <div class="ficha" id="fichaDisplay">
+                0,50
+            </div>
+
+        </div>
+
+
+        <div class="valores">
+
+            <button
+                class="btn-valor ativo"
+                onclick="selecionarValor(0.50,this)">
+                R$ 0,50
+            </button>
+
+            <button
+                class="btn-valor"
+                onclick="selecionarValor(1,this)">
+                R$ 1
+            </button>
+
+            <button
+                class="btn-valor"
+                onclick="selecionarValor(2,this)">
+                R$ 2
+            </button>
+
+            <button
+                class="btn-valor"
+                onclick="selecionarValor(5,this)">
+                R$ 5
+            </button>
+
+        </div>
+
+
+        <button
+            id="btnApostar"
+            class="btn-apostar"
+            onclick="girarRoleta()">
+
+            GIRAR ROLETA
+
+        </button>
+
+
+        <div class="info">
+
+            <span>
+                Aposta:
+                <strong id="apostaInfo">
+                    R$ 0,50
+                </strong>
+            </span>
+
+            <span>
+                Saldo:
+                <strong id="saldoPainel">
+                    R$ 100,00
+                </strong>
+            </span>
+
+        </div>
+
+
+        <div class="mensagem">
+            MODO DEMONSTRATIVO • SALDO VIRTUAL
+        </div>
+
+        <div class="aviso-demo">
+            Os créditos desta página não representam dinheiro real.
+        </div>
+
+    </div>
+
+</div>
+
+
+<button
+    class="repeat-btn"
+    onclick="repetirAposta()">
+    ↻
+</button>
+
+
+<button
+    class="menu-btn"
+    onclick="abrirMenu()">
+    ☰
+</button>
+
+
+<script>
+
+/* =====================================================
+   CONFIGURAÇÃO
+===================================================== */
+
+let valorAposta = 0.50;
+let rotacaoAtual = 0;
+let girando = false;
+
+let saldoVirtual = 100;
+
+
+/*
+   PRÊMIOS DEMONSTRATIVOS
+*/
+
+const premios = [
+    0.40,
+    0.50,
+    0.60,
+    0.70,
+    0.80,
+    0.90,
+    1.00,
+    0.40,
+    0.60,
+    0.80,
+    1.00,
+    0.50,
+    0.70,
+    0.90,
+    0.40,
+    0.80,
+    0.60,
+    1.00,
+    0.50,
+    0.70
+];
+
+
+const roleta =
+    document.getElementById("roleta");
+
+const resultado =
+    document.getElementById("resultado");
+
+const btnApostar =
+    document.getElementById("btnApostar");
+
+const saldoEl =
+    document.getElementById("displaySaldo");
+
+const saldoPainel =
+    document.getElementById("saldoPainel");
+
+const apostaInfo =
+    document.getElementById("apostaInfo");
+
+const fichaDisplay =
+    document.getElementById("fichaDisplay");
+
+
+/* =====================================================
+   FORMATAR
+===================================================== */
+
+function dinheiro(valor){
+
+    return "R$ " +
+        Number(valor)
+        .toFixed(2)
+        .replace(".",",");
+
+}
+
+
+/* =====================================================
+   ATUALIZAR SALDO
+===================================================== */
+
+function atualizarSaldo(){
+
+    saldoEl.innerText =
+        dinheiro(saldoVirtual);
+
+    saldoPainel.innerText =
+        dinheiro(saldoVirtual);
+
+    if(saldoVirtual < valorAposta){
+
+        saldoEl.style.color =
+            "#ff4141";
+
+    }else{
+
+        saldoEl.style.color =
+            "#ffe34f";
+
+    }
+
+    atualizarBotao();
+
+}
+
+
+/* =====================================================
+   CRIAR NÚMEROS
+===================================================== */
+
+function criarNumeros(){
+
+    const area =
+        document.getElementById("numeros");
+
+    area.innerHTML = "";
+
+    const total =
+        premios.length;
+
+    for(
+        let i=0;
+        i<total;
+        i++
+    ){
+
+        const numero =
+            document.createElement("div");
+
+        numero.className =
+            "numero";
+
+        numero.innerText =
+            dinheiro(premios[i]);
+
+        const angulo =
+            ((i)*(360/total))-90;
+
+        const raio = 40;
+
+        const x =
+            Math.cos(
+                angulo*Math.PI/180
+            ) * raio;
+
+        const y =
+            Math.sin(
+                angulo*Math.PI/180
+            ) * raio;
+
+        numero.style.transform =
+            `translate(${x}px,${y}px)`;
+
+        numero.dataset.index =
+            i;
+
+        area.appendChild(numero);
+
+    }
+
+}
+
+
+/* =====================================================
+   SELECIONAR VALOR
+===================================================== */
+
+function selecionarValor(
+    valor,
+    botao
+){
+
+    if(girando)
         return;
+
+    valorAposta =
+        Number(valor);
+
+    document
+    .querySelectorAll(".btn-valor")
+    .forEach(
+        b=>{
+            b.classList.remove(
+                "ativo"
+            );
+        }
+    );
+
+    botao.classList.add(
+        "ativo"
+    );
+
+    apostaInfo.innerText =
+        dinheiro(valorAposta);
+
+    fichaDisplay.innerText =
+        Number(valorAposta)
+        .toFixed(2)
+        .replace(".",",");
+
+    atualizarSaldo();
+
+}
+
+
+/* =====================================================
+   BOTÃO
+===================================================== */
+
+function atualizarBotao(){
+
+    if(girando){
+
+        btnApostar.disabled =
+            true;
+
+        btnApostar.innerText =
+            "ROLETA GIRANDO...";
+
+        return;
+
     }
 
-    await window.SistemaSaldoRoleta.atualizarTela();
-});
+    if(
+        saldoVirtual <
+        valorAposta
+    ){
+
+        btnApostar.disabled =
+            true;
+
+        btnApostar.innerText =
+            "SALDO INSUFICIENTE";
+
+        return;
+
+    }
+
+    btnApostar.disabled =
+        false;
+
+    btnApostar.innerText =
+        "GIRAR ROLETA";
+
+}
+
+
+/* =====================================================
+   GIRO
+===================================================== */
+
+function girarRoleta(){
+
+    if(girando)
+        return;
+
+    if(
+        saldoVirtual <
+        valorAposta
+    ){
+
+        resultado.innerHTML =
+            "❌ SALDO VIRTUAL INSUFICIENTE";
+
+        resultado.style.color =
+            "#ff4141";
+
+        return;
+
+    }
+
+    girando = true;
+
+    /*
+       DESCONTA A FICHA VIRTUAL
+    */
+
+    saldoVirtual -=
+        valorAposta;
+
+    atualizarSaldo();
+
+
+    resultado.innerHTML =
+        "⚡ GIRANDO...";
+
+    resultado.style.color =
+        "#ffe36a";
+
+
+    document
+    .querySelectorAll(".numero")
+    .forEach(
+        n=>{
+            n.classList.remove(
+                "destaque"
+            );
+        }
+    );
+
+
+    /*
+       SORTEIO
+    */
+
+    const indice =
+        Math.floor(
+            Math.random() *
+            premios.length
+        );
+
+    const premio =
+        premios[indice];
+
+
+    const tamanhoCasa =
+        360 / premios.length;
+
+    const anguloPremio =
+        indice * tamanhoCasa;
+
+
+    /*
+       SETE VOLTAS
+    */
+
+    const voltas =
+        360 * 7;
+
+
+    const novaRotacao =
+        rotacaoAtual +
+        voltas +
+        (360 - anguloPremio);
+
+
+    roleta.style.transform =
+        `rotate(${novaRotacao}deg)`;
+
+    rotacaoAtual =
+        novaRotacao;
+
+
+    setTimeout(
+        function(){
+
+            finalizarRodada(
+                indice,
+                premio
+            );
+
+        },
+        4500
+    );
+
+}
+
+
+/* =====================================================
+   FINALIZAR
+===================================================== */
+
+function finalizarRodada(
+    indice,
+    premio
+){
+
+    const numero =
+        document.querySelector(
+            `.numero[data-index="${indice}"]`
+        );
+
+    if(numero){
+
+        numero.classList.add(
+            "destaque"
+        );
+
+    }
+
+
+    /*
+       CRÉDITO VIRTUAL
+    */
+
+    saldoVirtual +=
+        premio;
+
+    atualizarSaldo();
+
+
+    resultado.innerHTML =
+        "⚡ PRÊMIO<br>" +
+        "<span style='font-size:25px;color:#ffe36a'>" +
+        dinheiro(premio) +
+        "</span>";
+
+
+    resultado.style.color =
+        "#ffe36a";
+
+
+    setTimeout(
+        function(){
+
+            girando = false;
+
+            atualizarBotao();
+
+        },
+        1200
+    );
+
+}
+
+
+/* =====================================================
+   REPETIR
+===================================================== */
+
+function repetirAposta(){
+
+    if(girando)
+        return;
+
+    girarRoleta();
+
+}
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+function abrirMenu(){
+
+    alert(
+        "⚡ APOSTAXBET\n\n" +
+        "ROLETA DE RELÂMPAGOS\n\n" +
+        "PRÊMIOS DEMONSTRATIVOS\n\n" +
+        "R$ 0,40 até R$ 1,00\n\n" +
+        "SALDO VIRTUAL"
+    );
+
+}
+
+
+/* =====================================================
+   INICIAR
+===================================================== */
+
+criarNumeros();
+
+atualizarSaldo();
+
 </script>
+
+</body>
+</html>
