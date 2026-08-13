@@ -1,263 +1,191 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Fortune Snake - Mini</title>
-
-    <style>
-
-        body {
-            background: #1a0b2e;
-            color: white;
-            font-family: sans-serif;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            min-height: 100vh;
-            margin: 0;
-        }
-
-        .game-container {
-            background:
-                linear-gradient(
-                    180deg,
-                    #2d1b4e 0%,
-                    #1a0b2e 100%
-                );
-
-            border: 2px solid #ffd700;
-            border-radius: 15px;
-
-            padding: 20px;
-
-            width: 320px;
-
-            text-align: center;
-
-            box-shadow:
-                0 0 20px
-                rgba(255, 215, 0, 0.3);
-        }
-
-        .slot-grid {
-            display: grid;
-
-            grid-template-columns:
-                repeat(3, 1fr);
-
-            gap: 5px;
-
-            margin: 20px 0;
-
-            background: #0f0518;
-
-            padding: 10px;
-
-            border-radius: 10px;
-
-            border: 1px solid #4a2c7a;
-        }
-
-        .slot-cell {
-            width: 80px;
-            height: 80px;
-
-            background: #2a1b3d;
-
-            border-radius: 8px;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            font-size: 40px;
-
-            border: 1px solid #3d2b5a;
-
-            transition:
-                transform .08s,
-                box-shadow .08s;
-        }
-
-        /*
-         * Efeito durante o giro
-         */
-
-        .slot-cell.spinning {
-            transform:
-                scale(1.04);
-
-            box-shadow:
-                0 0 14px
-                rgba(255, 215, 0, .45);
-        }
-
-        .slot-cell.wild {
-            background: #ffd700;
-
-            border-color: #ffaa00;
-
-            box-shadow:
-                0 0 15px #ffd700;
-
-            animation:
-                pulse 1s infinite;
-        }
-
-        .slot-cell.win {
-            background: #00ed91;
-
-            border-color: #00ffaa;
-
-            box-shadow:
-                0 0 18px
-                rgba(0, 237, 145, .7);
-        }
-
-        .controls {
-            display: flex;
-
-            justify-content:
-                space-between;
-
-            align-items:
-                center;
-
-            margin-top: 15px;
-        }
-
-        .bet-display {
-            background: #0f0518;
-
-            padding: 8px 15px;
-
-            border-radius: 20px;
-
-            border: 1px solid #4a2c7a;
-
-            font-weight: bold;
-
-            color: #ffd700;
-        }
-
-        button.spin-btn {
-            background:
-                linear-gradient(
-                    45deg,
-                    #ff00cc,
-                    #3333ff
-                );
-
-            border: none;
-
-            color: white;
-
-            padding:
-                12px 30px;
-
-            border-radius:
-                25px;
-
-            font-size:
-                18px;
-
-            font-weight:
-                bold;
-
-            cursor:
-                pointer;
-
-            box-shadow:
-                0 4px 15px
-                rgba(255, 0, 204, .4);
-
-            transition:
-                transform .1s;
-        }
-
-        button.spin-btn:active {
-            transform:
-                scale(.95);
-        }
-
-        button.spin-btn:disabled {
-            opacity: .5;
-
-            cursor:
-                not-allowed;
-
-            filter:
-                grayscale(1);
-        }
-
-        .message-area {
-            height: 30px;
-
-            margin-top: 10px;
-
-            color: #00ed91;
-
-            font-weight: bold;
-
-            font-size: 14px;
-
-            text-shadow:
-                0 0 5px
-                rgba(0, 237, 145, .5);
-        }
-
-        @keyframes pulse {
-
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.05);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fortune Snake - ApostaXBet</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    min-height:100vh;
+    background:
+        radial-gradient(circle at top,#4b2375 0%,#1a0b2e 45%,#08030d 100%);
+    color:#fff;
+    font-family:Arial,sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.game-container{
+    width:350px;
+    max-width:94vw;
+    padding:20px;
+    text-align:center;
+    border:2px solid #ffd700;
+    border-radius:20px;
+    background:linear-gradient(180deg,#321957,#160922);
+    box-shadow:0 0 30px rgba(255,215,0,.25);
+}
+
+h2{
+    margin:0 0 5px;
+    color:#ffd700;
+}
+
+.subtitle{
+    color:#aaa;
+    font-size:13px;
+}
+
+.message-area{
+    min-height:30px;
+    margin:12px 0;
+    font-weight:bold;
+    color:#00ed91;
+}
+
+.slot-machine{
+    display:flex;
+    gap:7px;
+    padding:12px;
+    background:#09030e;
+    border:2px solid #4a2c7a;
+    border-radius:15px;
+    overflow:hidden;
+}
+
+.reel{
+    flex:1;
+    height:88px;
+    overflow:hidden;
+    position:relative;
+    background:#211331;
+    border:2px solid #51306d;
+    border-radius:10px;
+    box-shadow:inset 0 0 15px #000;
+}
+
+.reel-strip{
+    position:absolute;
+    width:100%;
+    top:0;
+    left:0;
+}
+
+.symbol{
+    height:88px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:42px;
+}
+
+.reel.stopping{
+    box-shadow:
+        0 0 20px rgba(255,215,0,.6),
+        inset 0 0 15px #000;
+}
+
+.result{
+    margin-top:12px;
+    min-height:32px;
+    font-weight:bold;
+    font-size:18px;
+}
+
+.controls{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-top:18px;
+}
+
+.bet{
+    background:#0b0610;
+    border:1px solid #4a2c7a;
+    border-radius:20px;
+    padding:10px 13px;
+    color:#ffd700;
+    font-weight:bold;
+    white-space:nowrap;
+}
+
+button{
+    border:0;
+    color:white;
+    font-weight:bold;
+    font-size:17px;
+    padding:13px 25px;
+    border-radius:25px;
+    background:linear-gradient(45deg,#ff00cc,#3333ff);
+    box-shadow:0 5px 18px rgba(255,0,204,.35);
+    cursor:pointer;
+}
+
+button:active{
+    transform:scale(.95);
+}
+
+button:disabled{
+    opacity:.5;
+    filter:grayscale(1);
+}
+
+@keyframes pulse{
+    0%,100%{transform:scale(1)}
+    50%{transform:scale(1.08)}
+}
+
+.win{
+    animation:pulse .5s infinite;
+    text-shadow:0 0 15px #ffd700;
+}
+</style>
 </head>
 
 <body>
 
 <div class="game-container">
 
-    <h2 style="color:#ffd700; margin:0;">
-        🐍 Fortune Snake
-    </h2>
+    <h2>🐍 Fortune Snake</h2>
+    <div class="subtitle">Fortuna está girando...</div>
 
-    <div
-        class="message-area"
-        id="msgArea"
-    >
+    <div class="message-area" id="msgArea">
         Carregando saldo...
     </div>
 
-    <div
-        class="slot-grid"
-        id="grid"
-    ></div>
+    <div class="slot-machine">
+
+        <div class="reel" id="reel0">
+            <div class="reel-strip" id="strip0"></div>
+        </div>
+
+        <div class="reel" id="reel1">
+            <div class="reel-strip" id="strip1"></div>
+        </div>
+
+        <div class="reel" id="reel2">
+            <div class="reel-strip" id="strip2"></div>
+        </div>
+
+    </div>
+
+    <div class="result" id="result">
+        Boa sorte!
+    </div>
 
     <div class="controls">
 
-        <div class="bet-display">
+        <div class="bet">
             Aposta: R$ 1,00
         </div>
 
-        <button
-            class="spin-btn"
-            id="btnSpin"
-        >
+        <button id="btnSpin">
             GIRAR
         </button>
 
@@ -265,702 +193,412 @@
 
 </div>
 
+<!-- SISTEMA DE SALDO -->
 <script type="module" src="../saldo.js"></script>
 
 <script>
+const APOSTA = 1.00;
 
-/* =====================================================
-   CONFIGURAÇÃO
-===================================================== */
-
+/*
+ * Símbolos e valores.
+ *
+ * A tabela de pagamentos é fixa.
+ * O resultado continua aleatório.
+ */
 const SIMBOLOS = [
-    '🏆',
-    '💰',
-    '💎',
-    '🧧'
+    "🍒",
+    "🍋",
+    "💰",
+    "💎",
+    "🏆",
+    "🐍"
 ];
 
-const VALORES = {
-    '🏆': 5,
-    '💰': 3,
-    '💎': 4,
-    '🧧': 2
+/*
+ * Pagamentos por linha de 3 símbolos iguais.
+ *
+ * 3x 🍒 = 1.50
+ * 3x 🍋 = 2.00
+ * 3x 💰 = 3.00
+ * 3x 💎 = 4.00
+ * 3x 🏆 = 6.00
+ * 3x 🐍 = 10.00
+ */
+const PAGAMENTOS = {
+    "🍒":1.5,
+    "🍋":2,
+    "💰":3,
+    "💎":4,
+    "🏆":6,
+    "🐍":10
 };
 
-const APOSTA_FIXA = 1.00;
+const msg = document.getElementById("msgArea");
+const result = document.getElementById("result");
+const button = document.getElementById("btnSpin");
 
-const MULTIPLICADOR_BONUS = 10;
+const reels = [
+    document.getElementById("reel0"),
+    document.getElementById("reel1"),
+    document.getElementById("reel2")
+];
 
-
-/* =====================================================
-   ELEMENTOS
-===================================================== */
-
-const gridEl =
-    document.getElementById(
-        'grid'
-    );
-
-const msgEl =
-    document.getElementById(
-        'msgArea'
-    );
-
-const btnSpin =
-    document.getElementById(
-        'btnSpin'
-    );
+const strips = [
+    document.getElementById("strip0"),
+    document.getElementById("strip1"),
+    document.getElementById("strip2")
+];
 
 
-/* =====================================================
-   CRIA GRID
-===================================================== */
-
-for (
-    let i = 0;
-    i < 9;
-    i++
-) {
-
-    const cell =
-        document.createElement(
-            'div'
-        );
-
-    cell.className =
-        'slot-cell';
-
-    cell.textContent =
-        '❓';
-
-    gridEl.appendChild(
-        cell
-    );
-}
-
-
-/* =====================================================
+/* --------------------------------
    MENSAGEM
-===================================================== */
+-------------------------------- */
 
-function atualizarMsg(
-    texto,
-    cor = '#00ed91'
-) {
-
-    msgEl.style.color =
-        cor;
-
-    msgEl.textContent =
-        texto;
+function mensagem(texto, cor="#00ed91"){
+    msg.textContent = texto;
+    msg.style.color = cor;
 }
 
 
-/* =====================================================
-   SÍMBOLO PARA O GIRO
-===================================================== */
+/* --------------------------------
+   CRIA OS ROLOS
+-------------------------------- */
 
-function simboloAleatorio() {
+function criarRolo(strip){
 
-    const lista = [
-        '🏆',
-        '💰',
-        '💎',
-        '🧧',
-        '🐍'
-    ];
+    strip.innerHTML = "";
 
-    return lista[
+    /*
+     * Repetimos símbolos para criar
+     * uma faixa longa de máquina.
+     */
+    for(let volta=0; volta<8; volta++){
+
+        for(const simbolo of SIMBOLOS){
+
+            const div = document.createElement("div");
+
+            div.className="symbol";
+            div.textContent=simbolo;
+
+            strip.appendChild(div);
+        }
+    }
+}
+
+
+/* --------------------------------
+   INICIALIZA
+-------------------------------- */
+
+strips.forEach(criarRolo);
+
+
+/* --------------------------------
+   SÍMBOLO ALEATÓRIO
+-------------------------------- */
+
+function simboloAleatorio(){
+
+    return SIMBOLOS[
         Math.floor(
-            Math.random() *
-            lista.length
+            Math.random()*SIMBOLOS.length
         )
     ];
 }
 
 
-/* =====================================================
-   GIRO ESTILO SLOT
-===================================================== */
+/* --------------------------------
+   PREPARA ROTAÇÃO
+-------------------------------- */
 
-function animarGiro(cells) {
+function prepararRolo(strip){
 
-    return new Promise(resolve => {
+    strip.style.transition="none";
+    strip.style.transform="translateY(0px)";
+
+    /*
+     * Força o navegador a aplicar
+     * a posição inicial antes da animação.
+     */
+    strip.offsetHeight;
+}
+
+
+/* --------------------------------
+   GIRO DE UM ROLO
+-------------------------------- */
+
+function girarRolo(index, resultado, duracao){
+
+    return new Promise(resolve=>{
+
+        const strip = strips[index];
+        const reel = reels[index];
+
+        const altura=88;
+        const simbolosPorVolta=SIMBOLOS.length;
 
         /*
-         * Giro rápido.
+         * Escolhe a posição final.
          */
+        const simboloFinal=resultado[index];
 
-        const DURACAO =
-            2200;
-
-        const inicio =
-            performance.now();
-
-        let ultimoFrame =
-            inicio;
-
-        let intervalo =
-            45;
-
-
-        function girar(agora) {
-
-            const passado =
-                agora - inicio;
-
-            const progresso =
-                Math.min(
-                    passado / DURACAO,
-                    1
-                );
-
-
-            /*
-             * Começa extremamente rápido
-             * e desacelera no final.
-             */
-
-            const desaceleracao =
-                Math.pow(
-                    progresso,
-                    3
-                );
-
-
-            intervalo =
-                38 +
-                desaceleracao * 190;
-
-
-            /*
-             * Troca os símbolos.
-             */
-
-            if (
-                agora - ultimoFrame >=
-                intervalo
-            ) {
-
-                ultimoFrame =
-                    agora;
-
-
-                cells.forEach(
-                    cell => {
-
-                        cell.textContent =
-                            simboloAleatorio();
-
-                        cell.classList.add(
-                            'spinning'
-                        );
-
-                    }
-                );
-            }
-
-
-            /*
-             * Ainda girando.
-             */
-
-            if (
-                progresso < 1
-            ) {
-
-                requestAnimationFrame(
-                    girar
-                );
-
-                return;
-            }
-
-
-            /*
-             * Final.
-             */
-
-            cells.forEach(
-                cell => {
-
-                    cell.classList.remove(
-                        'spinning'
-                    );
-
-                }
-            );
-
-
-            resolve();
-        }
-
-
-        requestAnimationFrame(
-            girar
+        const posFinal=SIMBOLOS.indexOf(
+            simboloFinal
         );
 
+        /*
+         * Muitas voltas antes de parar.
+         * Isso cria o efeito de caça-níquel.
+         */
+        const voltas=5+Math.floor(
+            Math.random()*3
+        );
+
+        const deslocamento=
+            -(
+                (
+                    voltas*
+                    simbolosPorVolta
+                )+
+                posFinal
+            )*altura;
+
+        prepararRolo(strip);
+
+        reel.classList.remove("stopping");
+
+        /*
+         * Pequeno atraso deixa os três
+         * rolos começarem de maneira natural.
+         */
+        setTimeout(()=>{
+
+            strip.style.transition=
+                `transform ${duracao}ms cubic-bezier(.12,.7,.18,1)`;
+
+            strip.style.transform=
+                `translateY(${deslocamento}px)`;
+
+            setTimeout(()=>{
+
+                reel.classList.add(
+                    "stopping"
+                );
+
+                resolve();
+
+            },duracao);
+
+        },index*120);
     });
 }
 
 
-/* =====================================================
+/* --------------------------------
+   GIRO COMPLETO
+-------------------------------- */
+
+async function executarGiro(resultado){
+
+    /*
+     * Cada rolo possui duração diferente.
+     */
+    const promessas=[
+        girarRolo(0,resultado,1900),
+        girarRolo(1,resultado,2300),
+        girarRolo(2,resultado,2700)
+    ];
+
+    await Promise.all(promessas);
+}
+
+
+/* --------------------------------
    RESULTADO
-===================================================== */
+-------------------------------- */
 
-function gerarResultado() {
+function calcularPremio(resultado){
 
-    const resultado =
-        [];
+    /*
+     * Só existe prêmio quando
+     * os três símbolos são iguais.
+     */
+    if(
+        resultado[0] === resultado[1] &&
+        resultado[1] === resultado[2]
+    ){
 
-    let temWild =
-        false;
+        return PAGAMENTOS[
+            resultado[0]
+        ] || 0;
+    }
 
-
-    for (
-        let i = 0;
-        i < 9;
-        i++
-    ) {
-
-        const isWild =
-            Math.random() < 0.20;
-
-
-        const simbolo =
-            isWild
-                ? '🐍'
-                : SIMBOLOS[
-                    Math.floor(
-                        Math.random() *
-                        SIMBOLOS.length
-                    )
-                ];
+    return 0;
+}
 
 
-        resultado.push(
-            simbolo
+/* --------------------------------
+   GIRO
+-------------------------------- */
+
+button.addEventListener(
+"click",
+async function(){
+
+    if(!window.SistemaSaldo){
+
+        mensagem(
+            "⚠️ Sistema de saldo não encontrado!",
+            "#ff4d4d"
         );
 
-
-        if (
-            isWild
-        ) {
-
-            temWild =
-                true;
-        }
-
+        return;
     }
 
+    button.disabled=true;
 
-    return {
-        resultado,
-        temWild
-    };
-}
+    try{
 
+        const saldo=
+            await window.SistemaSaldo.get();
 
-/* =====================================================
-   CALCULA GANHO
-===================================================== */
+        if(
+            typeof saldo !== "number" ||
+            saldo < APOSTA
+        ){
 
-function calcularGanho(
-    resultado,
-    cells
-) {
-
-    let ganho =
-        0;
-
-
-    for (
-        let row = 0;
-        row < 3;
-        row++
-    ) {
-
-        const idx =
-            row * 3;
-
-
-        const s1 =
-            resultado[idx];
-
-        const s2 =
-            resultado[idx + 1];
-
-        const s3 =
-            resultado[idx + 2];
-
-
-        let base =
-            null;
-
-
-        /*
-         * TRINCA
-         */
-
-        if (
-            s1 === s2 &&
-            s2 === s3 &&
-            s1 !== '🐍'
-        ) {
-
-            base =
-                s1;
-        }
-
-
-        /*
-         * WILD
-         */
-
-        else if (
-            s1 === s2 &&
-            s3 === '🐍'
-        ) {
-
-            base =
-                s1;
-        }
-
-        else if (
-            s1 === '🐍' &&
-            s2 === s3 &&
-            s2 !== '🐍'
-        ) {
-
-            base =
-                s2;
-        }
-
-        else if (
-            s1 === s3 &&
-            s2 === '🐍' &&
-            s1 !== '🐍'
-        ) {
-
-            base =
-                s1;
-        }
-
-
-        if (
-            base
-        ) {
-
-            const valor =
-                VALORES[base] ||
-                0;
-
-
-            ganho +=
-                APOSTA_FIXA *
-                valor;
-
-
-            cells[idx]
-                .classList
-                .add('win');
-
-            cells[idx + 1]
-                .classList
-                .add('win');
-
-            cells[idx + 2]
-                .classList
-                .add('win');
-        }
-    }
-
-
-    return ganho;
-}
-
-
-/* =====================================================
-   BOTÃO GIRAR
-===================================================== */
-
-btnSpin.addEventListener(
-    'click',
-    async () => {
-
-        if (
-            !window.SistemaSaldo
-        ) {
-
-            atualizarMsg(
-                '⚠️ Sistema de saldo não carregado!',
-                '#ff4d4d'
+            mensagem(
+                "❌ Saldo insuficiente!",
+                "#ff4d4d"
             );
 
+            button.disabled=false;
             return;
         }
 
 
-        btnSpin.disabled =
-            true;
+        /*
+         * Debita a aposta.
+         */
+        await window.SistemaSaldo.debitar(
+            APOSTA
+        );
 
 
-        try {
+        mensagem(
+            "🎰 Os rolos estão girando..."
+        );
 
-            const saldo =
-                await window.SistemaSaldo
-                    .get();
+        result.textContent="";
 
-
-            if (
-                saldo <
-                APOSTA_FIXA
-            ) {
-
-                atualizarMsg(
-                    '❌ Saldo insuficiente!',
-                    '#ff4d4d'
-                );
-
-                btnSpin.disabled =
-                    false;
-
-                return;
-            }
-
-
-            /*
-             * DEBITA APOSTA
-             */
-
-            await window.SistemaSaldo
-                .debitar(
-                    APOSTA_FIXA
-                );
-
-
-            atualizarMsg(
-                '🎰 Girando...'
-            );
-
-
-            const cells =
-                document.querySelectorAll(
-                    '.slot-cell'
-                );
-
-
-            /*
-             * LIMPA EFEITOS
-             */
-
-            cells.forEach(
-                cell => {
-
-                    cell.className =
-                        'slot-cell';
-
-                    cell.textContent =
-                        '🌀';
-                }
-            );
-
-
-            /*
-             * GIRO
-             */
-
-            await animarGiro(
-                cells
-            );
-
-
-            /*
-             * RESULTADO FINAL
-             */
-
-            const {
-                resultado,
-                temWild
-            } =
-                gerarResultado();
-
-
-            resultado.forEach(
-                (simbolo, index) => {
-
-                    cells[index]
-                        .textContent =
-                        simbolo;
-
-
-                    if (
-                        simbolo ===
-                        '🐍'
-                    ) {
-
-                        cells[index]
-                            .classList
-                            .add(
-                                'wild'
-                            );
-                    }
-                }
-            );
-
-
-            /*
-             * CALCULA
-             */
-
-            let ganho =
-                calcularGanho(
-                    resultado,
-                    cells
-                );
-
-
-            /*
-             * BONUS WILD
-             */
-
-            if (
-                temWild &&
-                ganho > 0
-            ) {
-
-                ganho *=
-                    MULTIPLICADOR_BONUS;
-
-
-                atualizarMsg(
-                    `🔥 WILD ATIVO! x${MULTIPLICADOR_BONUS}`,
-                    '#ffd700'
-                );
-
-
-                await new Promise(
-                    resolve =>
-                        setTimeout(
-                            resolve,
-                            700
-                        )
-                );
-            }
-
-
-            /*
-             * PAGAMENTO
-             */
-
-            if (
-                ganho > 0
-            ) {
-
-                await window.SistemaSaldo
-                    .ganhar(
-                        APOSTA_FIXA,
-                        ganho /
-                        APOSTA_FIXA
-                    );
-
-
-                atualizarMsg(
-                    `✅ Ganhou R$ ${ganho.toFixed(2)}!`,
-                    '#00ed91'
-                );
-
-            } else {
-
-                atualizarMsg(
-                    '❌ Não ganhou desta vez.',
-                    '#aaa'
-                );
-            }
-
-
-            /*
-             * ATUALIZA SALDO
-             */
-
-            if (
-                window.SistemaSaldo
-                    .atualizarTela
-            ) {
-
-                await window.SistemaSaldo
-                    .atualizarTela();
-            }
-
-
-        } catch (
-            erro
-        ) {
-
-            console.error(
-                'Fortune Snake:',
-                erro
-            );
-
-
-            atualizarMsg(
-                '⚠️ Erro ao processar o giro.',
-                '#ff4d4d'
-            );
-
-        } finally {
-
-            btnSpin.disabled =
-                false;
-        }
-    }
-);
-
-
-/* =====================================================
-   INÍCIO
-===================================================== */
-
-async function iniciar() {
-
-    if (
-        window.SistemaSaldo
-    ) {
-
-        try {
-
-            const saldo =
-                await window.SistemaSaldo
-                    .get();
-
-            atualizarMsg(
-                `Saldo: R$ ${saldo.toFixed(2)}`
-            );
-
-        } catch {
-
-            atualizarMsg(
-                'Saldo indisponível.',
-                '#ff4d4d'
-            );
-        }
-
-    } else {
 
         /*
-         * saldo.js é módulo e pode
-         * ainda estar carregando.
+         * Resultado aleatório.
+         *
+         * Não escolhemos previamente
+         * vitória ou derrota.
          */
+        const resultado=[
+            simboloAleatorio(),
+            simboloAleatorio(),
+            simboloAleatorio()
+        ];
 
-        setTimeout(
-            iniciar,
-            150
+
+        await executarGiro(
+            resultado
         );
+
+
+        /*
+         * Mostra o resultado final.
+         */
+        result.textContent=
+            resultado.join("   ");
+
+
+        /*
+         * Calcula pagamento.
+         */
+        const premio=
+            calcularPremio(
+                resultado
+            );
+
+
+        if(premio>0){
+
+            /*
+             * Destaca os rolos.
+             */
+            reels.forEach(reel=>{
+                reel.classList.add("win");
+            });
+
+
+            await window.SistemaSaldo.ganhar(
+                APOSTA,
+                premio / APOSTA
+            );
+
+
+            mensagem(
+                `🎉 Ganhou R$ ${premio.toFixed(2)}!`,
+                "#00ed91"
+            );
+
+            result.textContent=
+                `${resultado.join("   ")}  💰`;
+
+        }else{
+
+            mensagem(
+                "😈 Não foi dessa vez...",
+                "#aaa"
+            );
+        }
+
+
+        /*
+         * Atualiza o saldo visual.
+         */
+        if(
+            window.SistemaSaldo.atualizarTela
+        ){
+
+            await window.SistemaSaldo
+                .atualizarTela();
+        }
+
+
+    }catch(erro){
+
+        console.error(erro);
+
+        mensagem(
+            "⚠️ Ocorreu um erro no giro.",
+            "#ff4d4d"
+        );
+
+    }finally{
+
+        setTimeout(()=>{
+
+            reels.forEach(reel=>{
+                reel.classList.remove(
+                    "stopping",
+                    "win"
+                );
+            });
+
+            button.disabled=false;
+
+        },500);
     }
-}
 
-iniciar();
-
+});
 </script>
 
 </body>
