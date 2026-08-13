@@ -2455,6 +2455,54 @@ supabaseClient.auth.onAuthStateChange(
 ================================================== */
 
 verificarSessao();
+<script>
+// 🔗 Link da sua função do Supabase
+const LINK_API = "https://jxzbjiwmajjzxcgjhfjgt.supabase.co/functions/v1/quick-endpoint";
+
+// ⚠️ ID do usuário (ajuste se precisar)
+const USER_ID = "lukavieira045@gmail.com";
+
+async function solicitarSaque() {
+  const valorTexto = document.querySelector("input[type='text']").value;
+  const chavePix = document.querySelectorAll("input[type='text']")[1].value;
+  const mensagemEl = document.querySelector(".mensagem");
+
+  // Converte vírgula para ponto
+  const valor = parseFloat(valorTexto.replace(",", "."));
+
+  if (mensagemEl) mensagemEl.innerHTML = "⏳ Enviando...";
+
+  try {
+    const resposta = await fetch(LINK_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: USER_ID,
+        valor: valor,
+        chavePix: chavePix
+      })
+    });
+
+    const resultado = await resposta.json();
+
+    if (resultado.sucesso) {
+      if (mensagemEl) mensagemEl.innerHTML = "✅ Saque solicitado com sucesso!";
+      setTimeout(() => location.reload(), 2000);
+    } else {
+      if (mensagemEl) mensagemEl.innerHTML = "❌ Erro: " + resultado.erro;
+    }
+  } catch (erro) {
+    if (mensagemEl) mensagemEl.innerHTML = "⚠️ Erro ao conectar!";
+    console.log(erro);
+  }
+}
+
+// Conecta o botão à função
+document.addEventListener("DOMContentLoaded", () => {
+  const botao = document.querySelector("button");
+  if (botao) botao.setAttribute("onclick", "solicitarSaque()");
+});
+</script>
 
 </script>
 
