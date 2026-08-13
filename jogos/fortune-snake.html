@@ -2,159 +2,721 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Fortune Snake - Mini</title>
+
     <style>
-        body { background: #1a0b2e; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .game-container { background: linear-gradient(180deg, #2d1b4e 0%, #1a0b2e 100%); border: 2px solid #ffd700; border-radius: 15px; padding: 20px; width: 320px; text-align: center; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
-        
-        /* Grid do Jogo */
-        .slot-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin: 20px 0; background: #0f0518; padding: 10px; border-radius: 10px; border: 1px solid #4a2c7a; }
-        .slot-cell { width: 80px; height: 80px; background: #2a1b3d; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 40px; border: 1px solid #3d2b5a; transition: all 0.3s; }
-        .slot-cell.wild { background: #ffd700; border-color: #ffaa00; box-shadow: 0 0 15px #ffd700; animation: pulse 1s infinite; }
-        .slot-cell.win { background: #00ed91; border-color: #00ffaa; }
+        body {
+            background: #1a0b2e;
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
 
-        /* Controles */
-        .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
-        .bet-display { background: #0f0518; padding: 8px 15px; border-radius: 20px; border: 1px solid #4a2c7a; font-weight: bold; color: #ffd700; }
-        button.spin-btn { background: linear-gradient(45deg, #ff00cc, #3333ff); border: none; color: white; padding: 12px 30px; border-radius: 25px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(255, 0, 204, 0.4); transition: transform 0.1s; }
-        button.spin-btn:active { transform: scale(0.95); }
-        button.spin-btn:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+        .game-container {
+            background: linear-gradient(
+                180deg,
+                #2d1b4e 0%,
+                #1a0b2e 100%
+            );
 
-        /* Mensagens */
-        .message-area { height: 30px; margin-top: 10px; color: #00ed91; font-weight: bold; font-size: 14px; text-shadow: 0 0 5px rgba(0, 237, 145, 0.5); }
+            border: 2px solid #ffd700;
+            border-radius: 15px;
+            padding: 20px;
+            width: 320px;
+            text-align: center;
 
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+            box-shadow:
+                0 0 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .slot-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+
+            margin: 20px 0;
+
+            background: #0f0518;
+            padding: 10px;
+
+            border-radius: 10px;
+            border: 1px solid #4a2c7a;
+        }
+
+        .slot-cell {
+            width: 80px;
+            height: 80px;
+
+            background: #2a1b3d;
+
+            border-radius: 8px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-size: 40px;
+
+            border: 1px solid #3d2b5a;
+
+            transition:
+                background 0.2s,
+                transform 0.15s,
+                box-shadow 0.2s;
+        }
+
+        .slot-cell.spinning {
+            transform: scale(1.04);
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.25);
+        }
+
+        .slot-cell.wild {
+            background: #ffd700;
+            border-color: #ffaa00;
+
+            box-shadow:
+                0 0 15px #ffd700;
+
+            animation: pulse 1s infinite;
+        }
+
+        .slot-cell.win {
+            background: #00ed91;
+            border-color: #00ffaa;
+
+            box-shadow:
+                0 0 18px rgba(0, 237, 145, 0.7);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-top: 15px;
+        }
+
+        .bet-display {
+            background: #0f0518;
+
+            padding: 8px 15px;
+
+            border-radius: 20px;
+
+            border: 1px solid #4a2c7a;
+
+            font-weight: bold;
+
+            color: #ffd700;
+        }
+
+        button.spin-btn {
+            background:
+                linear-gradient(
+                    45deg,
+                    #ff00cc,
+                    #3333ff
+                );
+
+            border: none;
+
+            color: white;
+
+            padding: 12px 30px;
+
+            border-radius: 25px;
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 4px 15px rgba(255, 0, 204, 0.4);
+
+            transition:
+                transform 0.1s,
+                box-shadow 0.2s;
+        }
+
+        button.spin-btn:active {
+            transform: scale(0.95);
+        }
+
+        button.spin-btn:hover {
+            box-shadow:
+                0 0 20px rgba(255, 0, 204, 0.7);
+        }
+
+        button.spin-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(1);
+        }
+
+        .message-area {
+            height: 30px;
+
+            margin-top: 10px;
+
+            color: #00ed91;
+
+            font-weight: bold;
+
+            font-size: 14px;
+
+            text-shadow:
+                0 0 5px rgba(0, 237, 145, 0.5);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
     </style>
 </head>
+
 <body>
 
 <div class="game-container">
-    <h2 style="color:#ffd700; margin:0;">🐍 Fortune Snake</h2>
-    <div class="message-area" id="msgArea">Carregando saldo...</div>
-    
+
+    <h2 style="color:#ffd700; margin:0;">
+        🐍 Fortune Snake
+    </h2>
+
+    <div class="message-area" id="msgArea">
+        Carregando saldo...
+    </div>
+
     <div class="slot-grid" id="grid">
         <!-- Células geradas via JS -->
     </div>
 
     <div class="controls">
-        <div class="bet-display">Aposta: R$ 1,00</div>
-        <button class="spin-btn" id="btnSpin">GIRAR</button>
+
+        <div class="bet-display">
+            Aposta: R$ 1,00
+        </div>
+
+        <button
+            class="spin-btn"
+            id="btnSpin"
+        >
+            GIRAR
+        </button>
+
     </div>
+
 </div>
+
+
+<!-- SISTEMA DE SALDO -->
 <script type="module" src="../saldo.js"></script>
+
+
 <script>
-// === CONFIGURAÇÃO DO JOGO ===
-const SIMBOLOS = ['🏆', '💰', '💎', '🧧']; 
-const VALORES = { '🏆': 5, '💰': 3, '💎': 4, '🧧': 2 };
+
+// =====================================================
+// CONFIGURAÇÃO
+// =====================================================
+
+const SIMBOLOS = [
+    '🏆',
+    '💰',
+    '💎',
+    '🧧'
+];
+
+const VALORES = {
+    '🏆': 5,
+    '💰': 3,
+    '💎': 4,
+    '🧧': 2
+};
+
 const APOSTA_FIXA = 1.00;
+
 const MULTIPLICADOR_BONUS = 10;
 
-const gridEl = document.getElementById('grid');
-const msgEl = document.getElementById('msgArea');
-const btnSpin = document.getElementById('btnSpin');
 
-// Inicializa Grid 3x3
-for(let i=0; i<9; i++) {
-    const cell = document.createElement('div');
-    cell.className = 'slot-cell';
-    cell.textContent = '❓';
+// =====================================================
+// ELEMENTOS
+// =====================================================
+
+const gridEl =
+    document.getElementById('grid');
+
+const msgEl =
+    document.getElementById('msgArea');
+
+const btnSpin =
+    document.getElementById('btnSpin');
+
+
+// =====================================================
+// CRIA GRID 3x3
+// =====================================================
+
+for (let i = 0; i < 9; i++) {
+
+    const cell =
+        document.createElement('div');
+
+    cell.className =
+        'slot-cell';
+
+    cell.textContent =
+        '❓';
+
     gridEl.appendChild(cell);
 }
 
-async function atualizarMsg(texto, cor='#00ed91') {
+
+// =====================================================
+// MENSAGEM
+// =====================================================
+
+async function atualizarMsg(
+    texto,
+    cor = '#00ed91'
+) {
+
     msgEl.style.color = cor;
+
     msgEl.textContent = texto;
 }
 
-// Carrega saldo inicial
-if(window.SistemaSaldo) {
-    window.SistemaSaldo.atualizarTela().then(s => atualizarMsg(`Saldo: R$ ${s.toFixed(2)}`));
+
+// =====================================================
+// CARREGA SALDO
+// =====================================================
+
+if (window.SistemaSaldo) {
+
+    window.SistemaSaldo
+        .atualizarTela()
+        .then(s => {
+
+            atualizarMsg(
+                `Saldo: R$ ${s.toFixed(2)}`
+            );
+
+        });
+
 } else {
-    atualizarMsg('⚠️ Sistema de saldo não encontrado!', '#ff4d4d');
+
+    atualizarMsg(
+        '⚠️ Sistema de saldo não encontrado!',
+        '#ff4d4d'
+    );
 }
 
-// === LÓGICA DE GIRO ===
-btnSpin.addEventListener('click', async () => {
-    if (!window.SistemaSaldo) {
-        alert('Sistema de saldo não carregado! Verifique se o script.js principal está funcionando.');
-        return;
-    }
 
-    const saldo = await window.SistemaSaldo.get();
-    if (saldo < APOSTA_FIXA) {
-        await atualizarMsg('❌ Saldo insuficiente!', '#ff4d4d');
-        return;
-    }
+// =====================================================
+// SÍMBOLO ALEATÓRIO PARA ANIMAÇÃO
+// =====================================================
 
-    // Debita aposta
-    btnSpin.disabled = true;
-    await window.SistemaSaldo.debitar(APOSTA_FIXA);
-    await atualizarMsg('Girando...');
+function simboloAleatorio() {
 
-    // Simula animação de giro
-    const cells = document.querySelectorAll('.slot-cell');
-    cells.forEach(c => { c.className = 'slot-cell'; c.textContent = '🌀'; });
+    const simbolosAnimacao = [
+        '🏆',
+        '💰',
+        '💎',
+        '🧧',
+        '🐍'
+    ];
 
-    await new Promise(r => setTimeout(r, 800)); 
+    return simbolosAnimacao[
+        Math.floor(
+            Math.random() *
+            simbolosAnimacao.length
+        )
+    ];
+}
 
-    // Gera resultado
-    const resultado = [];
-    let temWild = false;
-    
-    for(let i=0; i<9; i++) {
-        // 20% de chance de sair Wild (Cobra)
-        const isWild = Math.random() < 0.2; 
-        const simbolo = isWild ? '🐍' : SIMBOLOS[Math.floor(Math.random() * SIMBOLOS.length)];
-        resultado.push(simbolo);
-        if(isWild) temWild = true;
 
-        cells[i].textContent = simbolo;
-        if(isWild) cells[i].classList.add('wild');
-    }
+// =====================================================
+// ANIMAÇÃO DE GIRO
+// =====================================================
 
-    // Calcula ganhos (3 linhas horizontais)
-    let ganho = 0;
-    
-    for(let row=0; row<3; row++) {
-        const idx = row * 3;
-        const s1 = resultado[idx], s2 = resultado[idx+1], s3 = resultado[idx+2];
-        
-        // Verifica combinações com Wild
-        if ((s1 === s2 && s2 === s3) || 
-            (s1 === s2 && s3 === '') || 
-            (s1 === '' && s2 === s3) ||
-            (s1 === s3 && s2 === '🐍')) {
-            
-            const simboloBase = (s1 !== '🐍') ? s1 : (s2 !== '🐍' ? s2 : s3);
-            const valorBase = VALORES[simboloBase] || 2;
-            
-            ganho += (APOSTA_FIXA * valorBase);
-            
-            // Destaca células vencedoras
-            cells[idx].classList.add('win');
-            cells[idx+1].classList.add('win');
-            cells[idx+2].classList.add('win');
+async function animarGiro(cells) {
+
+    const DURACAO =
+        3000;
+
+    const INTERVALO_INICIAL =
+        55;
+
+    const INTERVALO_FINAL =
+        350;
+
+    const inicio =
+        performance.now();
+
+
+    return new Promise(resolve => {
+
+        function animarAgora(tempoAtual) {
+
+            const decorrido =
+                tempoAtual - inicio;
+
+            const progresso =
+                Math.min(
+                    decorrido / DURACAO,
+                    1
+                );
+
+
+            // Ease-out:
+            // começa rápido e vai desacelerando
+            const desaceleracao =
+                1 - Math.pow(
+                    1 - progresso,
+                    3
+                );
+
+
+            const intervalo =
+                INTERVALO_INICIAL +
+                (
+                    INTERVALO_FINAL -
+                    INTERVALO_INICIAL
+                ) * desaceleracao;
+
+
+            cells.forEach(cell => {
+
+                cell.textContent =
+                    simboloAleatorio();
+
+                cell.classList.add(
+                    'spinning'
+                );
+
+            });
+
+
+            if (progresso >= 1) {
+
+                cells.forEach(cell => {
+
+                    cell.classList.remove(
+                        'spinning'
+                    );
+
+                });
+
+                resolve();
+
+                return;
+            }
+
+
+            setTimeout(
+                () => {
+
+                    requestAnimationFrame(
+                        animarAgora
+                    );
+
+                },
+                intervalo
+            );
         }
-    }
 
-    // Aplica Multiplicador x10 se tiver Wild na tela E houver ganho
-    if (temWild && ganho > 0) {
-        ganho *= MULTIPLICADOR_BONUS;
-        await atualizarMsg(`🔥 WILD ATIVO! x${MULTIPLICADOR_BONUS}`, '#ffd700');
-        await new Promise(r => setTimeout(r, 1000));
-    }
 
-    // Credita ganhos
-    if (ganho > 0) {
-        await window.SistemaSaldo.ganhar(APOSTA_FIXA, ganho / APOSTA_FIXA);
-        await atualizarMsg(`✅ Ganhou R$ ${ganho.toFixed(2)}!`, '#00ed91');
-    } else {
-        await atualizarMsg('Tente novamente...', '#aaa');
-    }
+        requestAnimationFrame(
+            animarAgora
+        );
 
-    btnSpin.disabled = false;
-});
+    });
+}
+
+
+// =====================================================
+// GIRO
+// =====================================================
+
+btnSpin.addEventListener(
+    'click',
+    async () => {
+
+        if (!window.SistemaSaldo) {
+
+            alert(
+                'Sistema de saldo não carregado!'
+            );
+
+            return;
+        }
+
+
+        const saldo =
+            await window.SistemaSaldo.get();
+
+
+        if (saldo < APOSTA_FIXA) {
+
+            await atualizarMsg(
+                '❌ Saldo insuficiente!',
+                '#ff4d4d'
+            );
+
+            return;
+        }
+
+
+        // Desabilita botão
+        btnSpin.disabled = true;
+
+
+        // Debita aposta
+        await window.SistemaSaldo
+            .debitar(APOSTA_FIXA);
+
+
+        await atualizarMsg(
+            '🎰 Girando...'
+        );
+
+
+        const cells =
+            document.querySelectorAll(
+                '.slot-cell'
+            );
+
+
+        // Limpa efeitos anteriores
+        cells.forEach(cell => {
+
+            cell.className =
+                'slot-cell';
+
+        });
+
+
+        // =================================================
+        // GIRO VISUAL
+        // =================================================
+
+        await animarGiro(cells);
+
+
+        // =================================================
+        // RESULTADO REAL
+        // =================================================
+
+        const resultado = [];
+
+        let temWild = false;
+
+
+        for (let i = 0; i < 9; i++) {
+
+            const isWild =
+                Math.random() < 0.2;
+
+
+            const simbolo =
+                isWild
+                    ? '🐍'
+                    : SIMBOLOS[
+                        Math.floor(
+                            Math.random() *
+                            SIMBOLOS.length
+                        )
+                    ];
+
+
+            resultado.push(
+                simbolo
+            );
+
+
+            if (isWild) {
+
+                temWild = true;
+
+            }
+
+
+            cells[i].textContent =
+                simbolo;
+
+
+            if (isWild) {
+
+                cells[i].classList.add(
+                    'wild'
+                );
+
+            }
+
+        }
+
+
+        // =================================================
+        // CALCULA GANHOS
+        // =================================================
+
+        let ganho = 0;
+
+
+        for (
+            let row = 0;
+            row < 3;
+            row++
+        ) {
+
+            const idx =
+                row * 3;
+
+
+            const s1 =
+                resultado[idx];
+
+            const s2 =
+                resultado[idx + 1];
+
+            const s3 =
+                resultado[idx + 2];
+
+
+            if (
+                (s1 === s2 && s2 === s3) ||
+                (s1 === s2 && s3 === '') ||
+                (s1 === '' && s2 === s3) ||
+                (s1 === s3 && s2 === '🐍')
+            ) {
+
+                const simboloBase =
+                    (s1 !== '🐍')
+                        ? s1
+                        : (
+                            s2 !== '🐍'
+                                ? s2
+                                : s3
+                        );
+
+
+                const valorBase =
+                    VALORES[
+                        simboloBase
+                    ] || 2;
+
+
+                ganho +=
+                    APOSTA_FIXA *
+                    valorBase;
+
+
+                cells[idx]
+                    .classList.add('win');
+
+                cells[idx + 1]
+                    .classList.add('win');
+
+                cells[idx + 2]
+                    .classList.add('win');
+
+            }
+
+        }
+
+
+        // =================================================
+        // BONUS WILD
+        // =================================================
+
+        if (
+            temWild &&
+            ganho > 0
+        ) {
+
+            ganho *=
+                MULTIPLICADOR_BONUS;
+
+
+            await atualizarMsg(
+                `🔥 WILD ATIVO! x${MULTIPLICADOR_BONUS}`,
+                '#ffd700'
+            );
+
+
+            await new Promise(
+                r => setTimeout(
+                    r,
+                    1000
+                )
+            );
+
+        }
+
+
+        // =================================================
+        // PAGAMENTO
+        // =================================================
+
+        if (ganho > 0) {
+
+            await window.SistemaSaldo
+                .ganhar(
+                    APOSTA_FIXA,
+                    ganho / APOSTA_FIXA
+                );
+
+
+            await atualizarMsg(
+                `✅ Ganhou R$ ${ganho.toFixed(2)}!`,
+                '#00ed91'
+            );
+
+        } else {
+
+            await atualizarMsg(
+                '❌ Não ganhou desta vez. Tente novamente...',
+                '#aaa'
+            );
+
+        }
+
+
+        // Atualiza saldo novamente
+        if (
+            window.SistemaSaldo
+                .atualizarTela
+        ) {
+
+            await window.SistemaSaldo
+                .atualizarTela();
+
+        }
+
+
+        // Libera botão
+        btnSpin.disabled = false;
+
+    }
+);
+
 </script>
+
 </body>
 </html>
