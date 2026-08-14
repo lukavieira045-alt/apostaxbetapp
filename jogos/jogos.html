@@ -289,6 +289,48 @@
     }
 
     /* =========================================
+       BOTÃO DE SOM
+    ========================================= */
+
+    #botaoSom {
+      position: fixed;
+
+      right: 15px;
+      top: 15px;
+
+      width: 46px;
+      height: 46px;
+
+      border: 1px solid rgba(230,194,41,.65);
+
+      border-radius: 50%;
+
+      background: rgba(0,0,0,.72);
+
+      color: white;
+
+      font-size: 21px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      cursor: pointer;
+
+      z-index: 200;
+
+      box-shadow:
+        0 0 10px rgba(230,194,41,.25);
+
+      backdrop-filter: blur(5px);
+    }
+
+    #botaoSom:active {
+      transform: scale(.92);
+    }
+
+    /* =========================================
        CONTEÚDO
     ========================================= */
 
@@ -535,6 +577,18 @@
 
 
   <!-- =========================================
+       BOTÃO DE SOM
+  ========================================= -->
+
+  <button
+    id="botaoSom"
+    type="button"
+    aria-label="Ativar ou desativar música">
+    🔇
+  </button>
+
+
+  <!-- =========================================
        CABEÇALHO
   ========================================= -->
 
@@ -765,6 +819,320 @@
     </a>
 
   </nav>
+
+
+  <!-- =========================================
+       MÚSICA ANIMADA
+  ========================================= -->
+
+  <script>
+
+    let audioContext = null;
+
+    let masterGain = null;
+
+    let musicTimer = null;
+
+    let musicAtiva = false;
+
+    let notaAtual = 0;
+
+
+    /*
+     * Melodia eletrônica simples.
+     * Não usa arquivo externo.
+     */
+
+    const melodia = [
+
+      261.63,
+      329.63,
+      392.00,
+      523.25,
+
+      392.00,
+      329.63,
+      293.66,
+      392.00,
+
+      261.63,
+      329.63,
+      440.00,
+      523.25,
+
+      440.00,
+      392.00,
+      329.63,
+      293.66
+
+    ];
+
+
+    function iniciarMusica() {
+
+      if (musicAtiva) {
+        return;
+      }
+
+
+      try {
+
+        if (!audioContext) {
+
+          audioContext =
+            new (
+              window.AudioContext ||
+              window.webkitAudioContext
+            )();
+
+          masterGain =
+            audioContext.createGain();
+
+          masterGain.gain.value = 0.045;
+
+          masterGain.connect(
+            audioContext.destination
+          );
+
+        }
+
+
+        if (
+          audioContext.state === "suspended"
+        ) {
+
+          audioContext.resume();
+
+        }
+
+
+        musicAtiva = true;
+
+        notaAtual = 0;
+
+        tocarNota();
+
+
+        document
+          .getElementById("botaoSom")
+          .innerText = "🔊";
+
+
+      } catch (erro) {
+
+        console.log(
+          "Áudio não pôde ser iniciado:",
+          erro
+        );
+
+      }
+
+    }
+
+
+    function tocarNota() {
+
+      if (!musicAtiva) {
+        return;
+      }
+
+
+      const frequencia =
+        melodia[notaAtual];
+
+
+      const agora =
+        audioContext.currentTime;
+
+
+      const oscilador =
+        audioContext.createOscillator();
+
+
+      const ganho =
+        audioContext.createGain();
+
+
+      oscilador.type =
+        "sine";
+
+
+      oscilador.frequency.setValueAtTime(
+        frequencia,
+        agora
+      );
+
+
+      ganho.gain.setValueAtTime(
+        0.0001,
+        agora
+      );
+
+
+      ganho.gain.exponentialRampToValueAtTime(
+        0.30,
+        agora + 0.025
+      );
+
+
+      ganho.gain.exponentialRampToValueAtTime(
+        0.0001,
+        agora + 0.22
+      );
+
+
+      oscilador.connect(ganho);
+
+      ganho.connect(masterGain);
+
+
+      oscilador.start(agora);
+
+      oscilador.stop(
+        agora + 0.24
+      );
+
+
+      notaAtual++;
+
+      if (
+        notaAtual >= melodia.length
+      ) {
+
+        notaAtual = 0;
+
+      }
+
+
+      musicTimer =
+        setTimeout(
+          tocarNota,
+          250
+        );
+
+    }
+
+
+    function pararMusica() {
+
+      musicAtiva = false;
+
+
+      if (musicTimer) {
+
+        clearTimeout(
+          musicTimer
+        );
+
+        musicTimer = null;
+
+      }
+
+
+      if (masterGain) {
+
+        masterGain.gain.cancelScheduledValues(
+          audioContext.currentTime
+        );
+
+        masterGain.gain.setTargetAtTime(
+          0,
+          audioContext.currentTime,
+          0.05
+        );
+
+      }
+
+
+      document
+        .getElementById("botaoSom")
+        .innerText = "🔇";
+
+    }
+
+
+    function alternarMusica() {
+
+      if (musicAtiva) {
+
+        pararMusica();
+
+      } else {
+
+        iniciarMusica();
+
+      }
+
+    }
+
+
+    /*
+     * Botão de som.
+     */
+
+    document
+      .getElementById("botaoSom")
+      .addEventListener(
+        "click",
+        function(event) {
+
+          event.stopPropagation();
+
+          alternarMusica();
+
+        }
+      );
+
+
+    /*
+     * No celular, o navegador exige
+     * uma interação do usuário.
+     *
+     * O primeiro toque na página
+     * libera a música.
+     */
+
+    document.addEventListener(
+      "pointerdown",
+      function() {
+
+        if (!musicAtiva) {
+
+          iniciarMusica();
+
+        }
+
+      },
+      {
+        once: true
+      }
+    );
+
+
+    /*
+     * Se o usuário tocar diretamente
+     * em um jogo, a música é iniciada
+     * antes da navegação.
+     */
+
+    document
+      .querySelectorAll(".jogo")
+      .forEach(
+        function(jogo) {
+
+          jogo.addEventListener(
+            "pointerdown",
+            function() {
+
+              iniciarMusica();
+
+            }
+          );
+
+        }
+      );
+
+  </script>
 
 </body>
 </html>
