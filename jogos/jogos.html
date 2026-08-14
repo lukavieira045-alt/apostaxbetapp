@@ -298,18 +298,18 @@
       right: 15px;
       top: 15px;
 
-      width: 46px;
-      height: 46px;
+      width: 48px;
+      height: 48px;
 
-      border: 1px solid rgba(230,194,41,.65);
+      border: none;
 
       border-radius: 50%;
 
-      background: rgba(0,0,0,.72);
+      background: #e6c229;
 
-      color: white;
+      color: #000;
 
-      font-size: 21px;
+      font-size: 22px;
 
       display: flex;
 
@@ -318,16 +318,16 @@
 
       cursor: pointer;
 
-      z-index: 200;
+      z-index: 999;
 
       box-shadow:
-        0 0 10px rgba(230,194,41,.25);
+        0 0 15px rgba(230,194,41,.6);
 
-      backdrop-filter: blur(5px);
+      transition: .2s ease;
     }
 
     #botaoSom:active {
-      transform: scale(.92);
+      transform: scale(.90);
     }
 
     /* =========================================
@@ -577,6 +577,22 @@
 
 
   <!-- =========================================
+       MÚSICA
+  ========================================= -->
+
+  <audio
+    id="musicaJogos"
+    loop
+    preload="auto">
+
+    <source
+      src="musica-jogos.mp3"
+      type="audio/mpeg">
+
+  </audio>
+
+
+  <!-- =========================================
        BOTÃO DE SOM
   ========================================= -->
 
@@ -584,7 +600,9 @@
     id="botaoSom"
     type="button"
     aria-label="Ativar ou desativar música">
+
     🔇
+
   </button>
 
 
@@ -755,7 +773,9 @@
 
       <!-- 9 - FORTUNE SNAKE -->
 
-      <a class="jogo" href="fortune-snake.html">
+      <a
+        class="jogo"
+        href="fortune-snake.html">
 
         <div class="icone">🐍</div>
 
@@ -822,345 +842,8 @@
 
 
   <!-- =========================================
-       MÚSICA ANIMADA
+       CONTROLE DA MÚSICA
   ========================================= -->
-
-  <script>
-
-    let audioContext = null;
-
-    let masterGain = null;
-
-    let musicTimer = null;
-
-    let musicAtiva = false;
-
-    let notaAtual = 0;
-
-
-    /*
-     * Melodia eletrônica simples.
-     * Não usa arquivo externo.
-     */
-
-    const melodia = [
-
-      261.63,
-      329.63,
-      392.00,
-      523.25,
-
-      392.00,
-      329.63,
-      293.66,
-      392.00,
-
-      261.63,
-      329.63,
-      440.00,
-      523.25,
-
-      440.00,
-      392.00,
-      329.63,
-      293.66
-
-    ];
-
-
-    function iniciarMusica() {
-
-      if (musicAtiva) {
-        return;
-      }
-
-
-      try {
-
-        if (!audioContext) {
-
-          audioContext =
-            new (
-              window.AudioContext ||
-              window.webkitAudioContext
-            )();
-
-          masterGain =
-            audioContext.createGain();
-
-          masterGain.gain.value = 0.045;
-
-          masterGain.connect(
-            audioContext.destination
-          );
-
-        }
-
-
-        if (
-          audioContext.state === "suspended"
-        ) {
-
-          audioContext.resume();
-
-        }
-
-
-        musicAtiva = true;
-
-        notaAtual = 0;
-
-        tocarNota();
-
-
-        document
-          .getElementById("botaoSom")
-          .innerText = "🔊";
-
-
-      } catch (erro) {
-
-        console.log(
-          "Áudio não pôde ser iniciado:",
-          erro
-        );
-
-      }
-
-    }
-
-
-    function tocarNota() {
-
-      if (!musicAtiva) {
-        return;
-      }
-
-
-      const frequencia =
-        melodia[notaAtual];
-
-
-      const agora =
-        audioContext.currentTime;
-
-
-      const oscilador =
-        audioContext.createOscillator();
-
-
-      const ganho =
-        audioContext.createGain();
-
-
-      oscilador.type =
-        "sine";
-
-
-      oscilador.frequency.setValueAtTime(
-        frequencia,
-        agora
-      );
-
-
-      ganho.gain.setValueAtTime(
-        0.0001,
-        agora
-      );
-
-
-      ganho.gain.exponentialRampToValueAtTime(
-        0.30,
-        agora + 0.025
-      );
-
-
-      ganho.gain.exponentialRampToValueAtTime(
-        0.0001,
-        agora + 0.22
-      );
-
-
-      oscilador.connect(ganho);
-
-      ganho.connect(masterGain);
-
-
-      oscilador.start(agora);
-
-      oscilador.stop(
-        agora + 0.24
-      );
-
-
-      notaAtual++;
-
-      if (
-        notaAtual >= melodia.length
-      ) {
-
-        notaAtual = 0;
-
-      }
-
-
-      musicTimer =
-        setTimeout(
-          tocarNota,
-          250
-        );
-
-    }
-
-
-    function pararMusica() {
-
-      musicAtiva = false;
-
-
-      if (musicTimer) {
-
-        clearTimeout(
-          musicTimer
-        );
-
-        musicTimer = null;
-
-      }
-
-
-      if (masterGain) {
-
-        masterGain.gain.cancelScheduledValues(
-          audioContext.currentTime
-        );
-
-        masterGain.gain.setTargetAtTime(
-          0,
-          audioContext.currentTime,
-          0.05
-        );
-
-      }
-
-
-      document
-        .getElementById("botaoSom")
-        .innerText = "🔇";
-
-    }
-
-
-    function alternarMusica() {
-
-      if (musicAtiva) {
-
-        pararMusica();
-
-      } else {
-
-        iniciarMusica();
-
-      }
-
-    }
-
-
-    /*
-     * Botão de som.
-     */
-
-    document
-      .getElementById("botaoSom")
-      .addEventListener(
-        "click",
-        function(event) {
-
-          event.stopPropagation();
-
-          alternarMusica();
-
-        }
-      );
-
-
-    /*
-     * No celular, o navegador exige
-     * uma interação do usuário.
-     *
-     * O primeiro toque na página
-     * libera a música.
-     */
-
-    document.addEventListener(
-      "pointerdown",
-      function() {
-
-        if (!musicAtiva) {
-
-          iniciarMusica();
-
-        }
-
-      },
-      {
-        once: true
-      }
-    );
-
-
-    /*
-     * Se o usuário tocar diretamente
-     * em um jogo, a música é iniciada
-     * antes da navegação.
-     */
-
-    document
-      .querySelectorAll(".jogo")
-      .forEach(
-        function(jogo) {
-
-          jogo.addEventListener(
-            "pointerdown",
-            function() {
-
-              iniciarMusica();
-
-            }
-          );
-
-        }
-      );
-
-  </script>
-  <!-- MÚSICA DO MENU DE JOGOS -->
-
-  <audio id="musicaJogos" loop preload="auto">
-    <source src="musica-jogos.mp3" type="audio/mpeg">
-  </audio>
-
-  <button
-    id="botaoSom"
-    type="button"
-    onclick="alternarMusica()"
-    style="
-      position:fixed;
-      top:15px;
-      right:15px;
-      z-index:999;
-      width:48px;
-      height:48px;
-      border:none;
-      border-radius:50%;
-      background:#e6c229;
-      color:#000;
-      font-size:22px;
-      box-shadow:0 0 15px rgba(230,194,41,.6);
-      cursor:pointer;
-    "
-  >
-    🔇
-  </button>
 
   <script>
 
@@ -1170,37 +853,156 @@
     const botaoSom =
       document.getElementById("botaoSom");
 
-    musica.volume = 0.35;
+
+    /*
+     * Volume da música.
+     * 0.70 = 70%
+     */
+
+    musica.volume = 0.70;
 
 
-    function alternarMusica(){
+    /*
+     * Atualiza o botão.
+     */
 
-      if(musica.paused){
+    function atualizarBotao() {
 
-        musica.play()
-        .then(function(){
+      if (musica.paused) {
+
+        botaoSom.innerText = "🔇";
+
+      } else {
+
+        botaoSom.innerText = "🔊";
+
+      }
+
+    }
+
+
+    /*
+     * Ligar/desligar música.
+     */
+
+    async function alternarMusica() {
+
+      if (musica.paused) {
+
+        try {
+
+          await musica.play();
 
           botaoSom.innerText = "🔊";
 
-        })
-        .catch(function(erro){
+        } catch (erro) {
 
           console.log(
-            "Erro ao tocar música:",
+            "Não foi possível iniciar a música:",
             erro
           );
 
-        });
+          botaoSom.innerText = "🔇";
 
-      }else{
+        }
+
+      } else {
 
         musica.pause();
+
+        musica.currentTime = musica.currentTime;
 
         botaoSom.innerText = "🔇";
 
       }
 
     }
+
+
+    /*
+     * Clique no botão.
+     */
+
+    botaoSom.addEventListener(
+      "click",
+      function(event) {
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+        alternarMusica();
+
+      }
+    );
+
+
+    /*
+     * Se a música terminar por algum motivo,
+     * o botão volta para 🔇.
+     */
+
+    musica.addEventListener(
+      "pause",
+      atualizarBotao
+    );
+
+
+    musica.addEventListener(
+      "play",
+      atualizarBotao
+    );
+
+
+    /*
+     * IMPORTANTE:
+     *
+     * Quando o usuário sair da página de jogos,
+     * a música é parada imediatamente.
+     */
+
+    window.addEventListener(
+      "pagehide",
+      function() {
+
+        musica.pause();
+
+        musica.currentTime = 0;
+
+      }
+    );
+
+
+    /*
+     * Também para quando a página
+     * fica escondida.
+     */
+
+    document.addEventListener(
+      "visibilitychange",
+      function() {
+
+        if (
+          document.visibilityState === "hidden"
+        ) {
+
+          musica.pause();
+
+          musica.currentTime = 0;
+
+          botaoSom.innerText = "🔇";
+
+        }
+
+      }
+    );
+
+
+    /*
+     * Estado inicial.
+     */
+
+    atualizarBotao();
 
   </script>
 
