@@ -1,5 +1,3 @@
-jogos.html — ApostaXBet
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -15,130 +13,523 @@ jogos.html — ApostaXBet
       padding: 0;
     }
 
+    html,
     body {
-      background: #050505;
+      min-height: 100%;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 20% 20%, rgba(0, 237, 145, .12), transparent 30%),
+        radial-gradient(circle at 80% 30%, rgba(230, 194, 41, .12), transparent 30%),
+        radial-gradient(circle at 50% 90%, rgba(0, 255, 170, .08), transparent 35%),
+        #050505;
+
       color: white;
       font-family: Arial, sans-serif;
       padding-bottom: 90px;
+      overflow-x: hidden;
+      position: relative;
     }
+
+    /* ==================================================
+       FUNDO ANIMADO
+    ================================================== */
+
+    body::before {
+      content: "APOSTAXBET";
+      position: fixed;
+      inset: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: clamp(60px, 16vw, 150px);
+      font-weight: 900;
+      letter-spacing: 5px;
+
+      color: rgba(230, 194, 41, .035);
+
+      transform: rotate(-15deg);
+
+      pointer-events: none;
+      z-index: -3;
+
+      animation: marcaFlutuar 6s ease-in-out infinite;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -100px;
+
+      background:
+        radial-gradient(circle at 10% 20%,
+          rgba(0,255,170,.18) 0,
+          transparent 12%),
+
+        radial-gradient(circle at 90% 25%,
+          rgba(230,194,41,.18) 0,
+          transparent 13%),
+
+        radial-gradient(circle at 30% 80%,
+          rgba(0,255,170,.12) 0,
+          transparent 12%),
+
+        radial-gradient(circle at 80% 85%,
+          rgba(230,194,41,.13) 0,
+          transparent 13%);
+
+      pointer-events: none;
+      z-index: -2;
+
+      animation: luzes 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes marcaFlutuar {
+      0% {
+        transform: rotate(-15deg) scale(1);
+        opacity: .7;
+      }
+
+      50% {
+        transform: rotate(-12deg) scale(1.05);
+        opacity: 1;
+      }
+
+      100% {
+        transform: rotate(-15deg) scale(1);
+        opacity: .7;
+      }
+    }
+
+    @keyframes luzes {
+      0% {
+        transform: translate(-20px, -10px) scale(1);
+      }
+
+      50% {
+        transform: translate(20px, 15px) scale(1.08);
+      }
+
+      100% {
+        transform: translate(-10px, 25px) scale(1);
+      }
+    }
+
+    /* PONTOS DE LUZ */
+
+    .luzes {
+      position: fixed;
+      inset: 0;
+
+      overflow: hidden;
+
+      pointer-events: none;
+
+      z-index: -1;
+    }
+
+    .luz {
+      position: absolute;
+
+      width: 5px;
+      height: 5px;
+
+      border-radius: 50%;
+
+      background: #e6c229;
+
+      box-shadow:
+        0 0 8px #e6c229,
+        0 0 18px #e6c229;
+
+      opacity: .7;
+
+      animation:
+        subir 7s linear infinite,
+        piscar 2s ease-in-out infinite alternate;
+    }
+
+    .luz:nth-child(1) {
+      left: 8%;
+      bottom: -20px;
+      animation-delay: 0s;
+    }
+
+    .luz:nth-child(2) {
+      left: 20%;
+      bottom: -30px;
+      animation-delay: 2s;
+    }
+
+    .luz:nth-child(3) {
+      left: 35%;
+      bottom: -20px;
+      animation-delay: 4s;
+    }
+
+    .luz:nth-child(4) {
+      left: 52%;
+      bottom: -30px;
+      animation-delay: 1s;
+    }
+
+    .luz:nth-child(5) {
+      left: 68%;
+      bottom: -20px;
+      animation-delay: 3s;
+    }
+
+    .luz:nth-child(6) {
+      left: 84%;
+      bottom: -30px;
+      animation-delay: 5s;
+    }
+
+    .luz:nth-child(7) {
+      left: 95%;
+      bottom: -20px;
+      animation-delay: 2.5s;
+    }
+
+    @keyframes subir {
+      0% {
+        transform: translateY(0) scale(.5);
+        opacity: 0;
+      }
+
+      15% {
+        opacity: .8;
+      }
+
+      85% {
+        opacity: .8;
+      }
+
+      100% {
+        transform: translateY(-110vh) scale(1.4);
+        opacity: 0;
+      }
+    }
+
+    @keyframes piscar {
+      from {
+        filter: brightness(.7);
+      }
+
+      to {
+        filter: brightness(1.8);
+      }
+    }
+
+    /* ==================================================
+       CABEÇALHO
+    ================================================== */
 
     header {
       text-align: center;
-      padding: 25px 15px;
+
+      padding: 20px 15px;
+
       border-bottom: 2px solid #d8af16;
-      background: #111;
+
+      background:
+        linear-gradient(
+          180deg,
+          rgba(17,17,17,.96),
+          rgba(10,10,10,.88)
+        );
+
+      box-shadow:
+        0 5px 25px rgba(0,0,0,.5);
     }
 
     header h1 {
       color: #e6bc24;
+
       font-size: 28px;
-      margin-bottom: 8px;
+
+      margin-bottom: 6px;
+
+      text-shadow:
+        0 0 10px rgba(230,188,36,.35);
     }
 
     header p {
       color: #aaa;
     }
 
+    /* ==================================================
+       CONTAINER
+    ================================================== */
+
     .container {
+      width: 94%;
       max-width: 700px;
+
       margin: auto;
-      padding: 20px;
+
+      padding: 18px 0 25px;
     }
 
     .titulo {
       text-align: center;
-      color: #e6bc24;
-      font-size: 28px;
-      margin: 10px 0 25px;
+
+      color: #e6c229;
+
+      font-size: 26px;
+
+      margin: 5px 0 20px;
+
+      text-shadow:
+        0 0 12px rgba(230,194,41,.25);
     }
+
+    /* ==================================================
+       JOGOS
+    ================================================== */
 
     .jogos {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
+
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+      gap: 11px;
     }
 
     .jogo {
-      background: #171717;
-      border: 2px solid #d8af16;
-      border-radius: 20px;
-      min-height: 180px;
-      padding: 20px 10px;
+      position: relative;
+
+      overflow: hidden;
+
+      min-height: 135px;
+
+      padding: 13px 8px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(28,28,28,.97),
+          rgba(12,12,12,.94)
+        );
+
+      border: 1px solid rgba(216,175,22,.85);
+
+      border-radius: 14px;
 
       text-align: center;
+
       text-decoration: none;
+
       color: white;
 
       display: flex;
+
       flex-direction: column;
+
       justify-content: center;
 
-      transition: .2s;
+      align-items: center;
+
+      box-shadow:
+        0 5px 15px rgba(0,0,0,.45),
+        inset 0 0 20px rgba(230,194,41,.025);
+
+      transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
+    }
+
+    /* brilho passando pelo card */
+
+    .jogo::before {
+      content: "";
+
+      position: absolute;
+
+      width: 80px;
+      height: 220px;
+
+      top: -100px;
+      left: -100px;
+
+      background:
+        linear-gradient(
+          90deg,
+          transparent,
+          rgba(255,255,255,.12),
+          transparent
+        );
+
+      transform: rotate(25deg);
+
+      animation: brilhoCard 5s linear infinite;
+
+      pointer-events: none;
+    }
+
+    @keyframes brilhoCard {
+      0% {
+        left: -120px;
+      }
+
+      35%,
+      100% {
+        left: 130%;
+      }
+    }
+
+    .jogo:hover {
+      transform: translateY(-3px);
+
+      border-color: #f0d34a;
+
+      box-shadow:
+        0 8px 25px rgba(0,0,0,.6),
+        0 0 18px rgba(230,194,41,.15);
     }
 
     .jogo:active {
-      transform: scale(.97);
+      transform: scale(.96);
     }
 
     .icone {
-      font-size: 55px;
-      margin-bottom: 12px;
+      font-size: 42px;
+
+      line-height: 1;
+
+      margin-bottom: 8px;
+
+      filter:
+        drop-shadow(
+          0 0 7px rgba(255,255,255,.12)
+        );
     }
 
     .nome {
-      font-size: 20px;
+      font-size: 17px;
+
       font-weight: bold;
-      margin-bottom: 7px;
+
+      margin-bottom: 5px;
     }
 
     .descricao {
       color: #aaa;
-      font-size: 14px;
+
+      font-size: 12px;
+
+      line-height: 1.2;
     }
+
+    /* ==================================================
+       VOLTAR
+    ================================================== */
 
     .voltar {
       display: block;
+
       text-align: center;
-      margin: 25px auto;
+
+      margin: 22px auto;
+
       color: #e6bc24;
+
       text-decoration: none;
+
       font-weight: bold;
+
+      text-shadow:
+        0 0 8px rgba(230,194,41,.2);
     }
+
+    /* ==================================================
+       MENU
+    ================================================== */
 
     nav {
       position: fixed;
+
       bottom: 0;
       left: 0;
       right: 0;
 
       height: 75px;
 
-      background: #111;
+      background:
+        rgba(17,17,17,.96);
+
       border-top: 2px solid #d8af16;
 
       display: flex;
+
       justify-content: space-around;
+
       align-items: center;
 
       z-index: 100;
+
+      box-shadow:
+        0 -5px 25px rgba(0,0,0,.55);
     }
 
     nav a {
       color: white;
+
       text-decoration: none;
+
       text-align: center;
-      font-size: 14px;
+
+      font-size: 13px;
     }
 
     nav span {
       display: block;
-      font-size: 27px;
-      margin-bottom: 3px;
+
+      font-size: 25px;
+
+      margin-bottom: 2px;
     }
 
+    /* ==================================================
+       CELULAR
+    ================================================== */
+
     @media (max-width: 380px) {
+
+      .container {
+        width: 92%;
+      }
+
       .jogos {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+
+        gap: 8px;
+      }
+
+      .jogo {
+        min-height: 125px;
+
+        padding: 11px 5px;
+      }
+
+      .icone {
+        font-size: 37px;
+
+        margin-bottom: 7px;
+      }
+
+      .nome {
+        font-size: 15px;
+      }
+
+      .descricao {
+        font-size: 11px;
       }
     }
   </style>
@@ -146,21 +537,45 @@ jogos.html — ApostaXBet
 
 <body>
 
+  <!-- LUZES ANIMADAS -->
+
+  <div class="luzes">
+
+    <div class="luz"></div>
+    <div class="luz"></div>
+    <div class="luz"></div>
+    <div class="luz"></div>
+    <div class="luz"></div>
+    <div class="luz"></div>
+    <div class="luz"></div>
+
+  </div>
+
+
+  <!-- CABEÇALHO -->
+
   <header>
+
     <h1>🎰 ApostaXBet</h1>
+
     <p>🎮 Escolha um jogo</p>
+
   </header>
 
 
+  <!-- CONTEÚDO -->
+
   <main class="container">
 
-    <h2 class="titulo">🎮 Jogos</h2>
+    <h2 class="titulo">
+      🎮 Jogos
+    </h2>
 
 
     <div class="jogos">
 
 
-      <!-- 1 - ROLETA ANTIGA -->
+      <!-- 1 - ROLETA -->
 
       <a class="jogo" href="roleta.html">
 
@@ -281,7 +696,9 @@ jogos.html — ApostaXBet
 
       <!-- 8 - NIGHT MONSTERS -->
 
-      <a class="jogo" href="hotel-transylvania/index.html">
+      <a
+        class="jogo"
+        href="hotel-transylvania/index.html">
 
         <div class="icone">🧛</div>
 
@@ -316,28 +733,47 @@ jogos.html — ApostaXBet
     </div>
 
 
-    <a class="voltar" href="../index.html">
+    <!-- VOLTAR -->
+
+    <a
+      class="voltar"
+      href="../index.html">
+
       ← Voltar para o início
+
     </a>
 
   </main>
 
 
+  <!-- MENU INFERIOR -->
+
   <nav>
 
     <a href="../index.html">
+
       <span>🏠</span>
+
       Início
+
     </a>
+
 
     <a href="jogos.html">
+
       <span>🎮</span>
+
       Jogos
+
     </a>
 
+
     <a href="../index.html">
+
       <span>👤</span>
+
       Conta
+
     </a>
 
   </nav>
