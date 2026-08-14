@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Saque - ApostaXBet</title>
 
 <style>
-
 * {
     box-sizing: border-box;
 }
@@ -45,57 +43,50 @@ body {
 }
 
 .card {
-
     background: #151515;
     border: 2px solid #d9b21f;
     border-radius: 20px;
     padding: 25px;
-
 }
 
 h2 {
-
     text-align: center;
     color: #e6c229;
-
 }
 
 .info {
-
     color: #aaa;
     text-align: center;
     line-height: 1.5;
-
 }
 
 input {
-
     width: 100%;
     padding: 15px;
-    margin: 15px 0;
-
+    margin: 10px 0;
     border-radius: 10px;
     border: 1px solid #d9b21f;
-
     background: #080808;
     color: white;
-
     font-size: 17px;
-
 }
 
 .botao {
     width: 100%;
     padding: 16px;
-
+    margin-top: 10px;
     border: 0;
     border-radius: 12px;
-
     background: #00df8a;
     color: #000;
-
     font-weight: bold;
     font-size: 17px;
+    cursor: pointer;
+}
+
+.botao:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .resultado {
@@ -104,195 +95,419 @@ input {
     text-align: center;
 }
 
+.sucesso {
+    color: #00ed91;
+}
 
-
-.resultado {
-    display: none;
-    margin-top: 20px;
-    text-align: center;
+.erro {
+    color: #ff5555;
 }
 
 .aviso {
-
     color: #777;
     font-size: 12px;
-
 }
 
 .voltar {
-
     display: block;
-
     margin-top: 25px;
-
     text-align: center;
-
     padding: 15px;
-
     background: #d9b21f;
-
     color: #000;
-
     text-decoration: none;
-
     border-radius: 12px;
-
     font-weight: bold;
-
 }
-
 </style>
-
 </head>
-
 
 <body>
 
-
 <header class="topo">
+    <h1>🎰 ApostaXBet</h1>
 
-<h1>🎰 ApostaXBet</h1>
-
-<div class="saldo" id="displaySaldo">
-💰 Saldo: R$ 0,00
-</div>
-
+    <div class="saldo" id="displaySaldo">
+        💰 Saldo: R$ 0,00
+    </div>
 </header>
-
 
 <main class="container">
 
-
 <section class="card">
-
 
 <h2>💵 Solicitar Saque</h2>
 
-
 <p class="info">
-
-Digite o valor que deseja sacar.
-
+    Digite o valor que deseja sacar e sua chave PIX.
 </p>
-
-
-<input 
-id="valor"
-type="number"
-placeholder="Valor do saque">
-
 
 <input
-id="pix"
-placeholder="Chave PIX">
+    id="valor"
+    type="number"
+    min="0.01"
+    step="0.01"
+    placeholder="Valor do saque"
+>
 
+<input
+    id="pix"
+    type="text"
+    placeholder="Chave PIX"
+>
 
-<button class="botao" onclick="sacar()">
-
-💵 Solicitar saque
-
+<button
+    id="btnSaque"
+    class="botao"
+    onclick="sacar()"
+>
+    💵 Solicitar saque
 </button>
 
-
-
-<div id="resultado" class="resultado" style="display:none;">
-
-<h3>✅ Solicitação criada</h3>
-
-<p>
-Seu saque foi enviado para análise.
-</p>
-
-<p class="aviso">
-
-Área demonstrativa.
-
-</p>
-
-</div>
-
-
+<div id="resultado" class="resultado"></div>
 
 <a href="index.html" class="voltar">
-
-← Voltar para o início
-
+    ← Voltar para o início
 </a>
-
-
 
 </section>
 
-
 </main>
 
-
-
-<script>
-
-function sacar(){
-
-let valor =
-document.getElementById("valor").value;
-
-let pix =
-document.getElementById("pix").value;
-
-
-if(valor == "" || pix == ""){
-
-alert("Preencha todos os campos.");
-
-return;
-
-}
-
-
-document.getElementById("resultado")
-.style.display="block";
-
-
-}
-
-</script>
-
 <script type="module">
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-const supabase = createClient(
-    "https://jxbzjiwmajjzxgihfjgt.supabase.co",
-    "sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ"
+import { createClient }
+from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const SUPABASE_URL =
+"https://jxbzjiwmajjzxgihfjgt.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ";
+
+const ENDPOINT =
+"https://jxbzjiwmajjzxgihfjgt.supabase.co/functions/v1/quick-endpoint";
+
+const supabase =
+createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
 );
 
-async function atualizarSaldoSaque() {
+const displaySaldo =
+document.getElementById("displaySaldo");
 
-    const { data: sessionData } =
-        await supabase.auth.getSession();
+const resultado =
+document.getElementById("resultado");
 
-    const user = sessionData?.session?.user;
+const btnSaque =
+document.getElementById("btnSaque");
 
-    if (!user) return;
 
-    const { data, error } =
-        await supabase
-        .from("saldos")
-        .select("valor")
-        .eq("user_id", user.id)
-        .single();
+function mostrarResultado(
+    mensagem,
+    sucesso = false
+) {
 
-    if (error) {
-        console.error("Erro ao buscar saldo:", error);
+    resultado.style.display = "block";
+
+    resultado.className =
+        sucesso
+        ? "resultado sucesso"
+        : "resultado erro";
+
+    resultado.innerHTML =
+        mensagem;
+}
+
+
+async function atualizarSaldo() {
+
+    const {
+        data: sessionData,
+        error: sessionError
+    } = await supabase.auth.getSession();
+
+    if (sessionError) {
+        console.error(sessionError);
         return;
     }
 
-    const saldo = Number(data?.valor || 0);
+    const session =
+        sessionData?.session;
 
-    document.getElementById("displaySaldo").innerText =
+    if (!session?.user) {
+
+        displaySaldo.innerText =
+            "💰 Faça login para ver seu saldo";
+
+        return;
+    }
+
+    const {
+        data,
+        error
+    } = await supabase
+        .from("saldos")
+        .select("valor")
+        .eq("user_id", session.user.id)
+        .maybeSingle();
+
+    if (error) {
+
+        console.error(
+            "Erro ao buscar saldo:",
+            error
+        );
+
+        return;
+    }
+
+    const saldo =
+        Number(data?.valor || 0);
+
+    displaySaldo.innerText =
         "💰 Saldo: R$ " +
-        saldo.toFixed(2).replace(".", ",");
+        saldo
+        .toFixed(2)
+        .replace(".", ",");
 }
 
-atualizarSaldoSaque();
+
+window.sacar = async function () {
+
+    resultado.style.display = "none";
+
+    const valorInput =
+        document.getElementById("valor");
+
+    const pixInput =
+        document.getElementById("pix");
+
+    const valor =
+        Number(valorInput.value);
+
+    const pix =
+        pixInput.value.trim();
+
+
+    if (!valor || valor <= 0) {
+
+        mostrarResultado(
+            "❌ Digite um valor de saque válido."
+        );
+
+        return;
+    }
+
+
+    if (!pix) {
+
+        mostrarResultado(
+            "❌ Digite sua chave PIX."
+        );
+
+        return;
+    }
+
+
+    btnSaque.disabled = true;
+
+    btnSaque.innerText =
+        "⏳ Enviando saque...";
+
+
+    try {
+
+        const {
+            data: sessionData,
+            error: sessionError
+        } = await supabase.auth.getSession();
+
+
+        if (sessionError) {
+            throw new Error(
+                "Não foi possível verificar sua sessão."
+            );
+        }
+
+
+        const session =
+            sessionData?.session;
+
+
+        if (!session?.user) {
+
+            mostrarResultado(
+                "❌ Sua sessão expirou. Faça login novamente."
+            );
+
+            return;
+        }
+
+
+        const {
+            data: saldoData,
+            error: saldoError
+        } = await supabase
+            .from("saldos")
+            .select("valor")
+            .eq("user_id", session.user.id)
+            .maybeSingle();
+
+
+        if (saldoError) {
+
+            throw new Error(
+                "Não foi possível consultar seu saldo."
+            );
+        }
+
+
+        const saldoAtual =
+            Number(saldoData?.valor || 0);
+
+
+        if (valor > saldoAtual) {
+
+            mostrarResultado(
+                "❌ Saldo insuficiente."
+            );
+
+            return;
+        }
+
+
+        /*
+         * Envia o saque para a Edge Function
+         * usando a sessão REAL do usuário.
+         */
+
+        const resposta =
+            await fetch(
+                ENDPOINT,
+                {
+                    method: "POST",
+
+                    headers: {
+
+                        "Authorization":
+                            "Bearer " +
+                            session.access_token,
+
+                        "apikey":
+                            SUPABASE_KEY,
+
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        valor: valor,
+
+                        pix: pix
+
+                    })
+                }
+            );
+
+
+        let dados = null;
+
+        try {
+
+            dados =
+                await resposta.json();
+
+        } catch {
+
+            dados = null;
+
+        }
+
+
+        if (!resposta.ok) {
+
+            console.error(
+                "Erro da quick-endpoint:",
+                resposta.status,
+                dados
+            );
+
+
+            const mensagem =
+                dados?.erro ||
+                dados?.error ||
+                dados?.message ||
+                "A solicitação de saque foi recusada.";
+
+            mostrarResultado(
+                "❌ " + mensagem
+            );
+
+            return;
+        }
+
+
+        /*
+         * SOMENTE aqui mostramos sucesso.
+         * Antes disso, nunca mostramos
+         * "Solicitação criada".
+         */
+
+        mostrarResultado(
+            `
+            <h3>✅ Solicitação criada</h3>
+
+            <p>
+            Seu saque foi enviado para análise.
+            </p>
+
+            <p class="aviso">
+            Valor: R$ ${valor.toFixed(2).replace(".", ",")}
+            </p>
+            `,
+            true
+        );
+
+
+        valorInput.value = "";
+        pixInput.value = "";
+
+
+        /*
+         * Atualiza o saldo depois
+         * da resposta da função.
+         */
+
+        await atualizarSaldo();
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao solicitar saque:",
+            erro
+        );
+
+        mostrarResultado(
+            "❌ Não foi possível enviar o saque. Tente novamente."
+        );
+
+    } finally {
+
+        btnSaque.disabled = false;
+
+        btnSaque.innerText =
+            "💵 Solicitar saque";
+    }
+};
+
+
+await atualizarSaldo();
+
 </script>
+
 </body>
 </html>
