@@ -1,976 +1,345 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Crash ApostaXBet</title>
+<title>Avião ApostaXBet</title>
 
 <style>
-
-/* =========================
-   BASE
-========================= */
-
 *{
     box-sizing:border-box;
     font-family:Arial,sans-serif;
 }
 
 body{
-
     margin:0;
-
     min-height:100vh;
-
     background:
     radial-gradient(circle at 20% 20%,#002b55,transparent 30%),
     radial-gradient(circle at 80% 70%,#33002f,transparent 30%),
     linear-gradient(135deg,#02030a,#080014,#001322);
-
     background-size:180% 180%;
-
     animation:fundo 10s ease-in-out infinite alternate;
-
     color:white;
-
     text-align:center;
-
     overflow-x:hidden;
 }
 
 @keyframes fundo{
-
-    0%{
-        background-position:0% 0%;
-    }
-
-    50%{
-        background-position:100% 50%;
-    }
-
-    100%{
-        background-position:0% 100%;
-    }
-
+    0%{background-position:0% 0%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 100%}
 }
-
-
-/* =========================
-   LUZ DE FUNDO
-========================= */
-
-.luz{
-
-    position:fixed;
-
-    width:280px;
-    height:280px;
-
-    border-radius:50%;
-
-    filter:blur(100px);
-
-    opacity:.35;
-
-    pointer-events:none;
-
-    z-index:-3;
-
-}
-
-.luz1{
-
-    background:#0066ff;
-
-    left:-120px;
-    top:10%;
-
-    animation:luz1 8s infinite alternate;
-
-}
-
-.luz2{
-
-    background:#ff0088;
-
-    right:-120px;
-    bottom:10%;
-
-    animation:luz2 9s infinite alternate;
-
-}
-
-@keyframes luz1{
-
-    to{
-        transform:translate(180px,100px) scale(1.4);
-    }
-
-}
-
-@keyframes luz2{
-
-    to{
-        transform:translate(-180px,-100px) scale(1.4);
-    }
-
-}
-
-
-/* =========================
-   PARTICULAS
-========================= */
-
-.particulas{
-
-    position:fixed;
-
-    inset:0;
-
-    overflow:hidden;
-
-    pointer-events:none;
-
-    z-index:-2;
-
-}
-
-.particulas span{
-
-    position:absolute;
-
-    bottom:-20px;
-
-    width:4px;
-    height:4px;
-
-    border-radius:50%;
-
-    background:#00ffcc;
-
-    box-shadow:
-    0 0 8px #00ffcc,
-    0 0 18px #0088ff;
-
-    animation:subir linear infinite;
-
-}
-
-.particulas span:nth-child(1){
-    left:5%;
-    animation-duration:6s;
-}
-
-.particulas span:nth-child(2){
-    left:15%;
-    animation-duration:9s;
-}
-
-.particulas span:nth-child(3){
-    left:25%;
-    animation-duration:7s;
-}
-
-.particulas span:nth-child(4){
-    left:35%;
-    animation-duration:11s;
-}
-
-.particulas span:nth-child(5){
-    left:45%;
-    animation-duration:8s;
-}
-
-.particulas span:nth-child(6){
-    left:55%;
-    animation-duration:10s;
-}
-
-.particulas span:nth-child(7){
-    left:65%;
-    animation-duration:7s;
-}
-
-.particulas span:nth-child(8){
-    left:75%;
-    animation-duration:9s;
-}
-
-.particulas span:nth-child(9){
-    left:85%;
-    animation-duration:6s;
-}
-
-.particulas span:nth-child(10){
-    left:95%;
-    animation-duration:12s;
-}
-
-@keyframes subir{
-
-    0%{
-        transform:translateY(0);
-        opacity:0;
-    }
-
-    20%{
-        opacity:1;
-    }
-
-    100%{
-        transform:translateY(-110vh);
-        opacity:0;
-    }
-
-}
-
-
-/* =========================
-   TITULO
-========================= */
 
 h1{
-
     margin-top:25px;
-
     color:#ffd700;
-
-    font-size:38px;
-
+    font-size:36px;
     text-shadow:
     0 0 8px #fff,
     0 0 18px #ffd700,
     0 0 35px #ff8800;
-
 }
-
-
-/* =========================
-   SALDO
-========================= */
 
 #saldo{
-
     display:inline-block;
-
     color:#00ff88;
-
-    font-size:22px;
-
+    font-size:21px;
     margin:10px 15px 20px;
-
     padding:10px 20px;
-
     border:1px solid #00ff88;
-
     border-radius:30px;
-
     background:rgba(0,0,0,.55);
-
-    box-shadow:
-    0 0 15px rgba(0,255,136,.25);
-
 }
 
-
-/* =========================
-   CAIXA
-========================= */
-
 .box{
-
-    width:92%;
-
-    max-width:430px;
-
+    width:94%;
+    max-width:450px;
     margin:auto;
-
     background:
-    linear-gradient(
-        145deg,
-        rgba(20,25,40,.95),
-        rgba(3,5,15,.97)
-    );
-
+    linear-gradient(145deg,rgba(20,25,40,.95),rgba(3,5,15,.97));
     border:2px solid #ffd700;
-
     border-radius:25px;
-
     padding:20px;
-
     box-shadow:
     0 0 25px rgba(255,215,0,.25),
     0 20px 70px rgba(0,0,0,.7);
-
-    backdrop-filter:blur(10px);
-
 }
 
-
-/* =========================
-   MULTIPLICADOR
-========================= */
-
 #numero{
-
     font-size:58px;
-
     font-weight:900;
-
     color:#00ff88;
-
     margin:5px 0 15px;
-
     text-shadow:
     0 0 8px #00ff88,
     0 0 25px #00ff88;
-
-    transition:.1s;
-
 }
-
-
-/* BRILHO DO NUMERO */
-
-#numero.subindo{
-
-    animation:pulsar .35s infinite alternate;
-
-}
-
-@keyframes pulsar{
-
-    from{
-        transform:scale(1);
-    }
-
-    to{
-        transform:scale(1.05);
-
-        text-shadow:
-        0 0 12px #00ff88,
-        0 0 35px #00ff88;
-    }
-
-}
-
-
-/* =========================
-   ÁREA DO CRASH
-========================= */
 
 .area{
-
-    height:280px;
-
+    height:290px;
     background:
-
-    radial-gradient(
-        circle at 20% 80%,
-        rgba(0,255,136,.18),
-        transparent 30%
-    ),
-
-    radial-gradient(
-        circle at 80% 20%,
-        rgba(0,100,255,.20),
-        transparent 35%
-    ),
-
-    linear-gradient(
-        160deg,
-        #020711,
-        #050014
-    );
-
+    radial-gradient(circle at 20% 80%,rgba(0,255,136,.18),transparent 30%),
+    radial-gradient(circle at 80% 20%,rgba(0,100,255,.20),transparent 35%),
+    linear-gradient(160deg,#020711,#050014);
     border-radius:18px;
-
     overflow:hidden;
-
     position:relative;
-
     border:1px solid rgba(0,255,136,.35);
-
-    box-shadow:
-    inset 0 0 40px rgba(0,0,0,.8);
-
+    box-shadow:inset 0 0 40px rgba(0,0,0,.8);
 }
-
-
-/* =========================
-   EFEITO DE ENERGIA
-========================= */
-
-#energia{
-
-    position:absolute;
-
-    width:180px;
-    height:180px;
-
-    border-radius:50%;
-
-    background:
-    radial-gradient(
-        circle,
-        rgba(0,255,136,.55),
-        rgba(0,150,255,.15),
-        transparent 70%
-    );
-
-    filter:blur(15px);
-
-    left:5px;
-
-    bottom:0;
-
-    opacity:.2;
-
-    transform:scale(.7);
-
-    transition:
-    transform .15s,
-    opacity .15s;
-
-}
-
-
-/* =========================
-   GRADE
-========================= */
 
 .grade{
-
     position:absolute;
-
     inset:0;
-
-    opacity:.13;
-
+    opacity:.14;
     background-image:
-
-    linear-gradient(
-        rgba(0,255,136,.35) 1px,
-        transparent 1px
-    ),
-
-    linear-gradient(
-        90deg,
-        rgba(0,255,136,.35) 1px,
-        transparent 1px
-    );
-
+    linear-gradient(rgba(0,255,136,.35) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,255,136,.35) 1px,transparent 1px);
     background-size:35px 35px;
-
 }
 
-
-/* =========================
-   LINHA
-========================= */
-
 #linha{
-
     position:absolute;
-
     width:5px;
-
     height:0;
-
-    background:
-    linear-gradient(
-        to top,
-        #00ff88,
-        #00ffff
-    );
-
-    bottom:20px;
-
-    left:55px;
-
-    transform-origin:bottom center;
-
+    background:linear-gradient(to top,#00ff88,#00ffff);
+    bottom:25px;
+    left:45px;
     transform:rotate(-35deg);
-
+    transform-origin:bottom center;
     border-radius:10px;
-
     box-shadow:
     0 0 8px #00ff88,
     0 0 20px #00ff88,
     0 0 35px #00ffff;
-
-    transition:
-    height .12s,
-    left .12s;
-
+    transition:.12s;
 }
 
-
-/* =========================
-   FOGUETE
-========================= */
-
-#foguete{
-
+#aviao{
     position:absolute;
-
+    left:30px;
     bottom:20px;
-
-    left:40px;
-
-    font-size:58px;
-
+    font-size:55px;
     z-index:5;
-
     filter:
-    drop-shadow(0 0 8px #ff6600)
-    drop-shadow(0 0 18px #ff2200);
-
-    transition:
-
-    bottom .12s,
-    left .12s;
-
+    drop-shadow(0 0 8px #00ffff)
+    drop-shadow(0 0 18px #0088ff);
+    transform:rotate(-18deg);
+    transition:.12s;
 }
 
-
-/* =========================
-   FOGO DO FOGUETE
-========================= */
-
-#fogo{
-
+#fundoVelocidade{
     position:absolute;
-
-    left:42px;
-
-    bottom:8px;
-
-    font-size:32px;
-
-    z-index:4;
-
+    inset:0;
+    pointer-events:none;
     opacity:0;
-
-    filter:
-    drop-shadow(0 0 8px #ffcc00)
-    drop-shadow(0 0 15px #ff4400);
-
-    transition:.1s;
-
-}
-
-#fogo.ativo{
-
-    opacity:1;
-
-    animation:fogo .12s infinite alternate;
-
-}
-
-@keyframes fogo{
-
-    from{
-        transform:scale(.8);
-    }
-
-    to{
-        transform:scale(1.2);
-    }
-
-}
-
-
-/* =========================
-   CRASH
-========================= */
-
-.area.crash{
-
-    animation:tremer .35s;
-
-    border-color:#ff1744;
-
-    box-shadow:
-    0 0 25px #ff1744,
-    inset 0 0 50px rgba(255,0,40,.4);
-
-}
-
-@keyframes tremer{
-
-    0%{
-        transform:translateX(0);
-    }
-
-    25%{
-        transform:translateX(-8px);
-    }
-
-    50%{
-        transform:translateX(8px);
-    }
-
-    75%{
-        transform:translateX(-5px);
-    }
-
-    100%{
-        transform:translateX(0);
-    }
-
-}
-
-
-/* =========================
-   INPUT
-========================= */
-
-input{
-
-    width:110px;
-
-    padding:12px;
-
-    margin:15px;
-
-    border-radius:10px;
-
-    border:2px solid #444;
-
-    background:#050505;
-
-    color:white;
-
-    font-size:19px;
-
-    text-align:center;
-
-}
-
-
-/* =========================
-   BOTÕES
-========================= */
-
-button{
-
-    padding:15px 28px;
-
-    margin:4px;
-
-    border:0;
-
-    border-radius:12px;
-
     background:
-    linear-gradient(
-        180deg,
-        #ffe66b,
-        #ffb000
+    repeating-linear-gradient(
+        -25deg,
+        transparent 0 18px,
+        rgba(255,255,255,.18) 19px 21px,
+        transparent 22px 40px
     );
-
-    color:#211600;
-
-    font-weight:bold;
-
-    font-size:18px;
-
-    box-shadow:
-    0 0 12px rgba(255,215,0,.45);
-
-    cursor:pointer;
-
 }
 
-button:active{
-
-    transform:scale(.95);
-
-}
-
-button:disabled{
-
+#fundoVelocidade.ativo{
     opacity:.5;
-
+    animation:velocidade .18s linear infinite;
 }
 
-.sacar{
-
-    background:
-    linear-gradient(
-        180deg,
-        #66ffbb,
-        #00cc77
-    );
-
-    color:#001f12;
-
+@keyframes velocidade{
+    from{background-position:0 0}
+    to{background-position:-80px 100px}
 }
-
-
-/* =========================
-   HISTÓRICO
-========================= */
-
-#historico{
-
-    margin-top:20px;
-
-    padding-top:15px;
-
-    border-top:1px solid rgba(255,255,255,.12);
-
-    color:#aaa;
-
-    line-height:2;
-
-}
-
-
-/* =========================
-   MENSAGEM CRASH
-========================= */
 
 #mensagem{
-
-    min-height:25px;
-
-    margin-top:8px;
-
+    min-height:30px;
+    margin-top:10px;
     font-size:18px;
-
     font-weight:bold;
-
 }
 
-.mensagemCrash{
-
-    color:#ff416d;
-
-    text-shadow:
-    0 0 12px #ff1744;
-
+.valores{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:7px;
+    margin-top:15px;
 }
 
-.mensagemSaque{
+.valor{
+    padding:12px 5px;
+    border:1px solid #555;
+    border-radius:10px;
+    background:#080b12;
+    color:#aaa;
+    font-size:16px;
+    font-weight:bold;
+}
 
+.valor.ativo{
     color:#00ff88;
-
-    text-shadow:
-    0 0 12px #00ff88;
-
+    border-color:#00ff88;
+    box-shadow:0 0 12px rgba(0,255,136,.35);
 }
 
+button{
+    cursor:pointer;
+}
 
-/* =========================
-   CELULAR
-========================= */
+#historico{
+    margin-top:20px;
+    padding-top:15px;
+    border-top:1px solid rgba(255,255,255,.12);
+    color:#aaa;
+    line-height:2;
+}
+
+#carregando{
+    position:fixed;
+    inset:0;
+    z-index:999;
+    background:#02030a;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:#ffe36a;
+    font-size:17px;
+}
 
 @media(max-width:450px){
-
-    h1{
-        font-size:32px;
-    }
-
-    .box{
-        width:94%;
-    }
-
-    .area{
-        height:270px;
-    }
-
-    #numero{
-        font-size:52px;
-    }
-
-    #foguete{
-        font-size:52px;
-    }
-
+    h1{font-size:31px}
+    #numero{font-size:52px}
+    #aviao{font-size:48px}
+    .area{height:270px}
 }
-
 </style>
-
 </head>
-
 
 <body>
 
-
-<!-- LUZES -->
-
-<div class="luz luz1"></div>
-<div class="luz luz2"></div>
-
-
-<!-- PARTÍCULAS -->
-
-<div class="particulas">
-
-<span></span>
-<span></span>
-<span></span>
-<span></span>
-<span></span>
-<span></span>
-<span></span>
-<span></span>
-<span></span>
-<span></span>
-
+<div id="carregando">
+    🔐 CARREGANDO CONTA...
 </div>
 
+<h1>✈️ Avião ApostaXBet</h1>
 
-<h1>
-🚀 Crash ApostaXBet
-</h1>
-
-
-<div id="saldo"></div>
-
+<div id="saldo">
+    💰 Saldo: R$ 0,00
+</div>
 
 <div class="box">
 
+    <div id="numero">1.00x</div>
 
-<!-- MULTIPLICADOR -->
+    <div class="area" id="area">
 
-<div id="numero">
-1.00x
-</div>
+        <div class="grade"></div>
 
+        <div id="fundoVelocidade"></div>
 
-<!-- ÁREA -->
+        <div id="linha"></div>
 
-<div class="area" id="area">
+        <div id="aviao">✈️</div>
 
+    </div>
 
-<div class="grade"></div>
+    <div id="mensagem">
+        AVIÃO PRONTO PARA DECOLAR
+    </div>
 
+    <div class="valores">
 
-<div id="energia"></div>
+        <button class="valor ativo" onclick="selecionarValor(1,this)">
+            R$ 1
+        </button>
 
+        <button class="valor" onclick="selecionarValor(2,this)">
+            R$ 2
+        </button>
 
-<div id="linha"></div>
+        <button class="valor" onclick="selecionarValor(5,this)">
+            R$ 5
+        </button>
 
+        <button class="valor" onclick="selecionarValor(10,this)">
+            R$ 10
+        </button>
 
-<div id="fogo">
-🔥
-</div>
+        <button class="valor" onclick="selecionarValor(20,this)">
+            R$ 20
+        </button>
 
+        <button class="valor" onclick="selecionarValor(50,this)">
+            R$ 50
+        </button>
 
-<div id="foguete">
-🚀
-</div>
+        <button class="valor" onclick="selecionarValor(100,this)">
+            R$ 100
+        </button>
 
+    </div>
 
-</div>
-
-
-<div id="mensagem"></div>
-
-
-<input
-id="aposta"
-type="number"
-value="1"
-min="0.10"
-step="0.10"
->
-
-
-<br>
-
-
-<button
-id="jogarBtn"
-onclick="jogar()"
->
-
-🚀 JOGAR
-
-</button>
-
-
-<button
-class="sacar"
-id="sacarBtn"
-onclick="sacar()"
->
-
-💰 SACAR
-
-</button>
-
-
-<div id="historico">
-
-Últimas rodadas:
+    <div id="historico">
+        Últimas rodadas:
+    </div>
 
 </div>
 
+<script type="module">
 
-</div>
+import {
+    createClient
+} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 
-<script>
+/* =========================================
+   SUPABASE
+========================================= */
 
+const SUPABASE_URL =
+"https://jxbzjiwmajjzxgihfjgt.supabase.co";
 
-/*
-========================================
-SALDO
-========================================
-*/
+const SUPABASE_KEY =
+"sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ";
 
-let saldo =
-Number(
-localStorage.getItem("saldo") || 2
+const supabase =
+createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
 );
 
 
-/*
-========================================
-VARIÁVEIS
-========================================
-*/
+/* =========================================
+   VARIÁVEIS
+========================================= */
 
-let rodando = false;
+let usuarioAtual = null;
+let saldoReal = 0;
+let valorSelecionado = 1;
 
-let valor = 1;
-
-let aposta = 0;
-
-let queda = 0;
-
-let tempo = null;
+let multiplicador = 1;
+let intervalo = null;
+let voando = false;
 
 let historico = [];
 
 
-/*
-========================================
-ELEMENTOS
-========================================
-*/
+/* =========================================
+   ELEMENTOS
+========================================= */
+
+const saldoEl =
+document.getElementById("saldo");
 
 const numero =
 document.getElementById("numero");
 
-const foguete =
-document.getElementById("foguete");
+const aviao =
+document.getElementById("aviao");
 
 const linha =
 document.getElementById("linha");
-
-const energia =
-document.getElementById("energia");
-
-const fogo =
-document.getElementById("fogo");
 
 const area =
 document.getElementById("area");
@@ -978,478 +347,636 @@ document.getElementById("area");
 const mensagem =
 document.getElementById("mensagem");
 
-const jogarBtn =
-document.getElementById("jogarBtn");
+const fundoVelocidade =
+document.getElementById("fundoVelocidade");
 
-const sacarBtn =
-document.getElementById("sacarBtn");
+const carregando =
+document.getElementById("carregando");
 
 
-/*
-========================================
-SALDO
-========================================
-*/
+/* =========================================
+   FORMATAÇÃO
+========================================= */
 
-function atualizar(){
+function dinheiro(valor){
 
-    document.getElementById("saldo").innerHTML =
-    "💰 Saldo: R$ " +
-    saldo.toFixed(2);
-
-    localStorage.setItem(
-        "saldo",
-        saldo
-    );
+    return Number(valor || 0)
+        .toFixed(2)
+        .replace(".",",");
 
 }
 
-atualizar();
 
+/* =========================================
+   BUSCAR USUÁRIO
+========================================= */
 
-/*
-========================================
-JOGAR
-========================================
-*/
+async function obterUsuario(){
 
-function jogar(){
+    const {
+        data,
+        error
+    } =
+    await supabase
+        .auth
+        .getSession();
 
+    if(error){
 
-    if(rodando){
-        return;
-    }
-
-
-    aposta =
-    Number(
-        document.getElementById("aposta").value
-    );
-
-
-    /*
-    VALIDAÇÃO
-    */
-
-    if(
-        !Number.isFinite(aposta) ||
-        aposta <= 0 ||
-        aposta > saldo
-    ){
-
-        alert("Saldo ou aposta inválida.");
-
-        return;
-    }
-
-
-    /*
-    DESCONTA APOSTA
-    */
-
-    saldo -= aposta;
-
-    atualizar();
-
-
-    /*
-    COMEÇA
-    */
-
-    valor = 1;
-
-    /*
-    Mantém o limite de Crash
-    */
-
-    queda =
-    Math.random() * 5 + 1;
-
-
-    rodando = true;
-
-
-    mensagem.className = "";
-
-    mensagem.innerHTML = "";
-
-
-    area.classList.remove("crash");
-
-    numero.classList.add("subindo");
-
-    fogo.classList.add("ativo");
-
-
-    jogarBtn.disabled = true;
-
-
-    /*
-    ================================
-    ANIMAÇÃO
-    ================================
-    */
-
-    tempo =
-    setInterval(function(){
-
-
-        /*
-        AUMENTA MULTIPLICADOR
-        */
-
-        valor += 0.05;
-
-
-        numero.innerHTML =
-        valor.toFixed(2) + "x";
-
-
-        /*
-        ================================
-        POSIÇÃO DO FOGUETE
-        ================================
-        */
-
-        let altura =
-        20 + valor * 25;
-
-
-        /*
-        Limita dentro da área
-        */
-
-        if(altura > 190){
-            altura = 190;
-        }
-
-
-        foguete.style.bottom =
-        altura + "px";
-
-
-        /*
-        ================================
-        LINHA
-        ================================
-        */
-
-        let tamanhoLinha =
-        valor * 35;
-
-
-        if(tamanhoLinha > 230){
-            tamanhoLinha = 230;
-        }
-
-
-        linha.style.height =
-        tamanhoLinha + "px";
-
-
-        /*
-        ================================
-        MOVIMENTO HORIZONTAL
-        ================================
-        */
-
-        let esquerda =
-        40 + (valor - 1) * 9;
-
-
-        if(esquerda > 280){
-            esquerda = 280;
-        }
-
-
-        foguete.style.left =
-        esquerda + "px";
-
-
-        linha.style.left =
-        (esquerda + 15) + "px";
-
-
-        /*
-        ================================
-        ENERGIA NO FUNDO
-        ================================
-        */
-
-        let escala =
-        0.7 + valor * 0.08;
-
-
-        if(escala > 2.5){
-            escala = 2.5;
-        }
-
-
-        energia.style.transform =
-        "scale(" + escala + ")";
-
-
-        energia.style.opacity =
-        Math.min(
-            0.2 + valor * 0.04,
-            0.8
+        console.error(
+            "Erro de sessão:",
+            error
         );
 
+        return null;
 
-        /*
-        ================================
-        CRASH
-        ================================
-        */
-
-        if(valor >= queda){
-
-            finalizarCrash();
-
-        }
-
-
-    },100);
-
-}
-
-
-/*
-========================================
-SACAR
-========================================
-*/
-
-function sacar(){
-
-
-    if(!rodando){
-
-        return;
     }
 
-
-    /*
-    CALCULA PRÊMIO
-    */
-
-    let premio =
-    aposta * valor;
-
-
-    /*
-    DEVOLVE PARA SALDO
-    */
-
-    saldo += premio;
-
-
-    atualizar();
-
-
-    /*
-    MENSAGEM
-    */
-
-    mensagem.className =
-    "mensagemSaque";
-
-
-    mensagem.innerHTML =
-    "🎉 Saque de R$ " +
-    premio.toFixed(2);
-
-
-    /*
-    REGISTRA
-    */
-
-    adicionarHistorico(
-        valor.toFixed(2) + "x"
-    );
-
-
-    /*
-    PARA
-    */
-
-    pararJogo();
+    return data?.session?.user || null;
 
 }
 
 
-/*
-========================================
-CRASH
-========================================
-*/
+/* =========================================
+   BUSCAR SALDO REAL EXISTENTE
+========================================= */
 
-function finalizarCrash(){
+async function carregarSaldo(){
+
+    if(!usuarioAtual)
+        return false;
+
+    const {
+        data,
+        error
+    } =
+    await supabase
+        .from("saldos")
+        .select("valor")
+        .eq(
+            "user_id",
+            usuarioAtual.id
+        )
+        .single();
+
+    if(error){
+
+        console.error(
+            "Erro ao carregar saldo:",
+            error
+        );
+
+        saldoEl.innerText =
+            "💰 Saldo: R$ 0,00";
+
+        mensagem.innerText =
+            "❌ NÃO FOI POSSÍVEL CARREGAR O SALDO";
+
+        mensagem.style.color =
+            "#ff416d";
+
+        return false;
+
+    }
+
+    saldoReal =
+        Number(data?.valor || 0);
+
+    saldoEl.innerText =
+        "💰 Saldo: R$ " +
+        dinheiro(saldoReal);
+
+    return true;
+
+}
 
 
-    clearInterval(tempo);
+/* =========================================
+   ÁUDIO
+========================================= */
+
+let audioContext = null;
+
+function iniciarAudio(){
+
+    if(!audioContext){
+
+        const AudioContext =
+            window.AudioContext ||
+            window.webkitAudioContext;
+
+        if(!AudioContext)
+            return;
+
+        audioContext =
+            new AudioContext();
+
+    }
+
+    if(
+        audioContext.state ===
+        "suspended"
+    ){
+
+        audioContext.resume();
+
+    }
+
+}
 
 
-    rodando = false;
+/* =========================================
+   SOM DE DECOLAGEM
+========================================= */
 
+function somDecolagem(){
 
-    numero.classList.remove("subindo");
+    iniciarAudio();
 
-    fogo.classList.remove("ativo");
+    if(!audioContext)
+        return;
 
+    const agora =
+        audioContext.currentTime;
 
-    area.classList.add("crash");
+    const osc =
+        audioContext.createOscillator();
 
+    const ganho =
+        audioContext.createGain();
 
-    numero.style.color =
-    "#ff416d";
+    osc.type = "sawtooth";
 
-
-    numero.style.textShadow =
-    "0 0 10px #ff1744,0 0 30px #ff1744";
-
-
-    mensagem.className =
-    "mensagemCrash";
-
-
-    mensagem.innerHTML =
-    "💥 CRASH em " +
-    valor.toFixed(2) +
-    "x";
-
-
-    adicionarHistorico(
-        valor.toFixed(2) + "x"
+    osc.frequency.setValueAtTime(
+        90,
+        agora
     );
 
+    osc.frequency.exponentialRampToValueAtTime(
+        240,
+        agora + .8
+    );
 
-    jogarBtn.disabled = false;
+    ganho.gain.setValueAtTime(
+        .001,
+        agora
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+        .12,
+        agora + .12
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+        .001,
+        agora + .9
+    );
+
+    osc.connect(ganho);
+    ganho.connect(
+        audioContext.destination
+    );
+
+    osc.start(agora);
+    osc.stop(agora + .9);
+
+}
 
 
-    /*
-    VOLTA AO NORMAL DEPOIS
-    */
+/* =========================================
+   SOM DE VOO
+========================================= */
 
-    setTimeout(function(){
+let somVoo = null;
+let ganhoVoo = null;
 
-        numero.style.color =
-        "";
+function iniciarSomVoo(){
 
-        numero.style.textShadow =
-        "";
+    iniciarAudio();
 
-        area.classList.remove("crash");
+    if(!audioContext)
+        return;
 
-        foguete.style.bottom =
-        "20px";
+    pararSomVoo();
 
-        foguete.style.left =
-        "40px";
+    somVoo =
+        audioContext.createOscillator();
 
-        linha.style.height =
-        "0px";
+    ganhoVoo =
+        audioContext.createGain();
 
-        linha.style.left =
-        "55px";
+    somVoo.type =
+        "triangle";
 
-        energia.style.transform =
-        "scale(.7)";
+    somVoo.frequency.value =
+        105;
 
-        energia.style.opacity =
-        ".2";
+    ganhoVoo.gain.value =
+        .025;
 
-        numero.innerHTML =
+    somVoo.connect(
+        ganhoVoo
+    );
+
+    ganhoVoo.connect(
+        audioContext.destination
+    );
+
+    somVoo.start();
+
+}
+
+
+function pararSomVoo(){
+
+    if(
+        somVoo &&
+        ganhoVoo &&
+        audioContext
+    ){
+
+        const agora =
+            audioContext.currentTime;
+
+        ganhoVoo.gain.exponentialRampToValueAtTime(
+            .001,
+            agora + .15
+        );
+
+        try{
+
+            somVoo.stop(
+                agora + .16
+            );
+
+        }catch(e){}
+
+        somVoo = null;
+        ganhoVoo = null;
+
+    }
+
+}
+
+
+/* =========================================
+   SOM "VUM"
+========================================= */
+
+function somVum(){
+
+    iniciarAudio();
+
+    if(!audioContext)
+        return;
+
+    const agora =
+        audioContext.currentTime;
+
+    const osc =
+        audioContext.createOscillator();
+
+    const ganho =
+        audioContext.createGain();
+
+    osc.type =
+        "sine";
+
+    osc.frequency.setValueAtTime(
+        180,
+        agora
+    );
+
+    osc.frequency.exponentialRampToValueAtTime(
+        70,
+        agora + .3
+    );
+
+    ganho.gain.setValueAtTime(
+        .001,
+        agora
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+        .18,
+        agora + .03
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+        .001,
+        agora + .35
+    );
+
+    osc.connect(ganho);
+    ganho.connect(
+        audioContext.destination
+    );
+
+    osc.start(agora);
+    osc.stop(agora + .36);
+
+}
+
+
+/* =========================================
+   SELECIONAR VALOR
+========================================= */
+
+window.selecionarValor =
+function(valor,botao){
+
+    valorSelecionado =
+        Number(valor);
+
+    document
+        .querySelectorAll(".valor")
+        .forEach(
+            b =>
+            b.classList.remove("ativo")
+        );
+
+    botao.classList.add("ativo");
+
+};
+
+
+/* =========================================
+   ANIMAÇÃO
+========================================= */
+
+function iniciarVoo(){
+
+    multiplicador = 1;
+
+    voando = true;
+
+    numero.innerText =
         "1.00x";
 
-    },900);
+    numero.style.color =
+        "#00ff88";
 
-}
+    mensagem.innerText =
+        "✈️ DECOLANDO...";
 
+    mensagem.style.color =
+        "#00ff88";
 
-/*
-========================================
-PARAR JOGO
-========================================
-*/
-
-function pararJogo(){
-
-
-    clearInterval(tempo);
-
-
-    rodando = false;
-
-
-    numero.classList.remove("subindo");
-
-    fogo.classList.remove("ativo");
-
-
-    foguete.style.bottom =
-    "20px";
-
-    foguete.style.left =
-    "40px";
-
-
-    linha.style.height =
-    "0px";
-
-    linha.style.left =
-    "55px";
-
-
-    energia.style.transform =
-    "scale(.7)";
-
-    energia.style.opacity =
-    ".2";
-
-
-    numero.innerHTML =
-    "1.00x";
-
-
-    jogarBtn.disabled = false;
-
-}
-
-
-/*
-========================================
-HISTÓRICO
-========================================
-*/
-
-function adicionarHistorico(valorHistorico){
-
-
-    historico.unshift(
-        valorHistorico
+    fundoVelocidade.classList.add(
+        "ativo"
     );
 
+    somDecolagem();
 
-    if(historico.length > 5){
+    setTimeout(
+        iniciarSomVoo,
+        700
+    );
+
+    intervalo =
+        setInterval(
+            function(){
+
+                multiplicador +=
+                    0.03 +
+                    multiplicador * 0.008;
+
+                numero.innerText =
+                    multiplicador.toFixed(2) +
+                    "x";
+
+                numero.style.color =
+                    "#00ff88";
+
+                let altura =
+                    20 +
+                    multiplicador * 24;
+
+                if(altura > 210)
+                    altura = 210;
+
+                aviao.style.bottom =
+                    altura + "px";
+
+                let esquerda =
+                    30 +
+                    multiplicador * 8;
+
+                if(esquerda > 300)
+                    esquerda = 300;
+
+                aviao.style.left =
+                    esquerda + "px";
+
+                let tamanho =
+                    35 +
+                    multiplicador * 38;
+
+                if(tamanho > 240)
+                    tamanho = 240;
+
+                linha.style.height =
+                    tamanho + "px";
+
+                linha.style.left =
+                    (esquerda + 18) +
+                    "px";
+
+                if(
+                    multiplicador > 3 &&
+                    multiplicador < 3.2
+                ){
+
+                    somVum();
+
+                }
+
+                if(
+                    multiplicador > 6
+                ){
+
+                    fundoVelocidade.style.opacity =
+                        ".8";
+
+                }
+
+                mensagem.innerText =
+                    "✈️ VOANDO " +
+                    multiplicador.toFixed(2) +
+                    "x";
+
+            },
+            100
+        );
+
+}
+
+
+/* =========================================
+   CRASH VISUAL
+========================================= */
+
+function crash(){
+
+    clearInterval(intervalo);
+
+    pararSomVoo();
+
+    voando = false;
+
+    fundoVelocidade.classList.remove(
+        "ativo"
+    );
+
+    numero.style.color =
+        "#ff416d";
+
+    numero.innerText =
+        multiplicador.toFixed(2) +
+        "x";
+
+    mensagem.innerText =
+        "💥 CRASH EM " +
+        multiplicador.toFixed(2) +
+        "x";
+
+    mensagem.style.color =
+        "#ff416d";
+
+    area.style.borderColor =
+        "#ff1744";
+
+    somVum();
+
+    setTimeout(
+        function(){
+
+            area.style.borderColor =
+                "";
+
+            aviao.style.left =
+                "30px";
+
+            aviao.style.bottom =
+                "20px";
+
+            linha.style.height =
+                "0px";
+
+            linha.style.left =
+                "45px";
+
+            numero.style.color =
+                "#00ff88";
+
+            numero.innerText =
+                "1.00x";
+
+            mensagem.innerText =
+                "AVIÃO PRONTO PARA DECOLAR";
+
+            mensagem.style.color =
+                "";
+
+        },
+        1200
+    );
+
+}
+
+
+/* =========================================
+   HISTÓRICO VISUAL
+========================================= */
+
+function adicionarHistorico(valor){
+
+    historico.unshift(valor);
+
+    if(
+        historico.length > 5
+    ){
 
         historico.pop();
 
     }
 
-
     document.getElementById(
         "historico"
     ).innerHTML =
-
-    "Últimas rodadas:<br>" +
-
-    historico.join(" | ");
+        "Últimas rodadas:<br>" +
+        historico.join(" | ");
 
 }
+
+
+/* =========================================
+   INICIAR
+========================================= */
+
+async function iniciar(){
+
+    usuarioAtual =
+        await obterUsuario();
+
+    if(!usuarioAtual){
+
+        alert(
+            "Você precisa estar logado."
+        );
+
+        window.location.href =
+            "../index.html";
+
+        return;
+
+    }
+
+    const carregou =
+        await carregarSaldo();
+
+    if(!carregou){
+
+        carregando.style.display =
+            "none";
+
+        return;
+
+    }
+
+    carregando.style.display =
+        "none";
+
+}
+
+
+/* =========================================
+   LOGIN
+========================================= */
+
+supabase
+.auth
+.onAuthStateChange(
+    function(event,session){
+
+        if(!session){
+
+            window.location.href =
+                "../index.html";
+
+        }
+
+    }
+);
+
+
+/*
+   Inicialização
+*/
+
+iniciar();
 
 </script>
 
 </body>
-
 </html>
