@@ -6,6 +6,8 @@
 
   <title>Jogos - ApostaXBet</title>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     * {
       box-sizing: border-box;
@@ -28,50 +30,33 @@
       position: relative;
     }
 
-    /* =========================================
-       APOSTAXBET GIGANTE NO FUNDO
-    ========================================= */
-
     body::before {
       content: "ApostaXBet";
-
       position: fixed;
       top: 50%;
       left: 50%;
-
       transform: translate(-50%, -50%);
-
       width: 110%;
-
       text-align: center;
-
       font-size: clamp(75px, 22vw, 210px);
       font-weight: 900;
       letter-spacing: -6px;
-
       color: rgba(230, 194, 41, 0.18);
-
       -webkit-text-stroke: 2px rgba(230, 194, 41, 0.18);
-
       text-shadow:
         0 0 10px rgba(230, 194, 41, 0.65),
         0 0 25px rgba(230, 194, 41, 0.55),
         0 0 50px rgba(230, 194, 41, 0.40),
         0 0 90px rgba(230, 194, 41, 0.25);
-
       pointer-events: none;
-
       z-index: 0;
-
       white-space: nowrap;
-
       animation: brilhoApostaX 2.5s ease-in-out infinite alternate;
     }
 
     @keyframes brilhoApostaX {
       0% {
         opacity: 0.45;
-
         text-shadow:
           0 0 10px rgba(230,194,41,.35),
           0 0 25px rgba(230,194,41,.25),
@@ -80,7 +65,6 @@
 
       100% {
         opacity: 1;
-
         text-shadow:
           0 0 15px rgba(230,194,41,.9),
           0 0 35px rgba(230,194,41,.75),
@@ -88,10 +72,6 @@
           0 0 120px rgba(230,194,41,.35);
       }
     }
-
-    /* =========================================
-       LUZES DO FUNDO
-    ========================================= */
 
     body::after {
       content: "";
@@ -124,7 +104,6 @@
         );
 
       pointer-events: none;
-
       z-index: 1;
 
       animation: luzesFundo 8s ease-in-out infinite alternate;
@@ -144,29 +123,19 @@
       }
     }
 
-    /* =========================================
-       PONTOS DE LUZ
-    ========================================= */
-
     .luzes {
       position: fixed;
       inset: 0;
-
       overflow: hidden;
-
       pointer-events: none;
-
       z-index: 1;
     }
 
     .luz {
       position: absolute;
-
       width: 5px;
       height: 5px;
-
       border-radius: 50%;
-
       background: #e6c229;
 
       box-shadow:
@@ -254,30 +223,18 @@
       }
     }
 
-    /* =========================================
-       CABEÇALHO
-    ========================================= */
-
     header {
       position: relative;
       z-index: 3;
-
       text-align: center;
-
       padding: 20px 15px;
-
-      border-bottom: none;
-
       background: rgba(17,17,17,.72);
-
       backdrop-filter: blur(5px);
     }
 
     header h1 {
       color: #e6bc24;
-
       font-size: 28px;
-
       margin-bottom: 8px;
 
       text-shadow:
@@ -288,36 +245,23 @@
       color: #aaa;
     }
 
-    /* =========================================
-       BOTÃO DE SOM
-    ========================================= */
-
     #botaoSom {
       position: fixed;
-
       right: 15px;
       top: 15px;
-
       width: 48px;
       height: 48px;
-
       border: none;
-
       border-radius: 50%;
-
       background: #e6c229;
-
       color: #000;
-
       font-size: 22px;
 
       display: flex;
-
       align-items: center;
       justify-content: center;
 
       cursor: pointer;
-
       z-index: 999;
 
       box-shadow:
@@ -330,75 +274,49 @@
       transform: scale(.90);
     }
 
-    /* =========================================
-       CONTEÚDO
-    ========================================= */
-
     .container {
       position: relative;
       z-index: 3;
-
       max-width: 700px;
-
       margin: auto;
-
       padding: 15px;
     }
 
     .titulo {
       text-align: center;
-
       color: #e6bc24;
-
       font-size: 25px;
-
       margin: 8px 0 15px;
 
       text-shadow:
         0 0 12px rgba(230,194,41,.35);
     }
 
-    /* =========================================
-       JOGOS PEQUENOS E SEM QUADRADO
-    ========================================= */
-
     .jogos {
       display: grid;
-
       grid-template-columns: repeat(3, 1fr);
-
       gap: 6px;
     }
 
     .jogo {
       position: relative;
-
       z-index: 4;
 
       background: transparent;
-
       border: none;
-
       outline: none;
-
       border-radius: 12px;
 
       min-height: 105px;
-
       padding: 8px 3px;
 
       text-align: center;
-
       text-decoration: none;
-
       color: white;
 
       display: flex;
-
       flex-direction: column;
-
       justify-content: center;
-
       align-items: center;
 
       transition:
@@ -419,9 +337,7 @@
 
     .icone {
       font-size: 46px;
-
       line-height: 1;
-
       margin-bottom: 7px;
 
       filter:
@@ -430,47 +346,28 @@
 
     .nome {
       font-size: 15px;
-
       font-weight: bold;
-
       margin-bottom: 3px;
     }
 
     .descricao {
       color: #aaa;
-
       font-size: 10px;
     }
 
-    /* =========================================
-       VOLTAR
-    ========================================= */
-
     .voltar {
       display: block;
-
       text-align: center;
-
       margin: 20px auto;
-
       color: #e6bc24;
-
       text-decoration: none;
-
       font-weight: bold;
-
       position: relative;
-
       z-index: 4;
     }
 
-    /* =========================================
-       MENU
-    ========================================= */
-
     nav {
       position: fixed;
-
       bottom: 0;
       left: 0;
       right: 0;
@@ -482,9 +379,7 @@
       border-top: 2px solid #d8af16;
 
       display: flex;
-
       justify-content: space-around;
-
       align-items: center;
 
       z-index: 100;
@@ -495,13 +390,9 @@
 
     nav a {
       color: white;
-
       text-decoration: none;
-
       text-align: center;
-
       font-size: 14px;
-
       min-width: 60px;
     }
 
@@ -511,27 +402,19 @@
 
     nav span {
       display: block;
-
       font-size: 27px;
-
       margin-bottom: 3px;
     }
-
-    /* =========================================
-       CELULAR PEQUENO
-    ========================================= */
 
     @media (max-width: 380px) {
 
       .jogos {
         grid-template-columns: repeat(3, 1fr);
-
         gap: 3px;
       }
 
       .jogo {
         min-height: 95px;
-
         padding: 6px 2px;
       }
 
@@ -549,15 +432,113 @@
 
       body::before {
         font-size: 70px;
-
         letter-spacing: -4px;
       }
+    }
+
+    /* =========================================
+       TELA DE BLOQUEIO
+    ========================================= */
+
+    #bloqueio {
+      display: none;
+
+      position: fixed;
+      inset: 0;
+
+      background:
+        radial-gradient(circle at 50% 30%, #173b30 0%, #050505 65%);
+
+      z-index: 9999;
+
+      align-items: center;
+      justify-content: center;
+
+      text-align: center;
+      padding: 25px;
+    }
+
+    .bloqueio-caixa {
+      width: 100%;
+      max-width: 400px;
+      padding: 30px 20px;
+
+      background: #111;
+      border: 2px solid #d9b21f;
+      border-radius: 20px;
+
+      box-shadow:
+        0 0 30px rgba(230,194,41,.20);
+    }
+
+    .bloqueio-icone {
+      font-size: 55px;
+      margin-bottom: 15px;
+    }
+
+    .bloqueio-caixa h2 {
+      color: #e6c229;
+      margin-bottom: 12px;
+    }
+
+    .bloqueio-caixa p {
+      color: #aaa;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .botao-login {
+      display: block;
+      width: 100%;
+      padding: 15px;
+
+      border-radius: 12px;
+
+      background: #e1bd28;
+      color: #000;
+
+      text-decoration: none;
+      font-weight: bold;
     }
 
   </style>
 </head>
 
 <body>
+
+  <!-- =========================================
+       PROTEÇÃO
+  ========================================= -->
+
+  <div id="bloqueio">
+
+    <div class="bloqueio-caixa">
+
+      <div class="bloqueio-icone">
+        🔐
+      </div>
+
+      <h2>
+        Acesso necessário
+      </h2>
+
+      <p>
+        Você saiu da sua conta.
+        Faça login novamente para acessar os jogos.
+      </p>
+
+      <a
+        class="botao-login"
+        href="../index.html">
+
+        ENTRAR NA CONTA
+
+      </a>
+
+    </div>
+
+  </div>
+
 
   <!-- =========================================
        LUZES
@@ -629,11 +610,7 @@
       🎮 Jogos
     </h2>
 
-
     <div class="jogos">
-
-
-      <!-- 1 - ROLETA -->
 
       <a class="jogo" href="roleta.html">
 
@@ -650,8 +627,6 @@
       </a>
 
 
-      <!-- 2 - ROLETA CASSINO -->
-
       <a class="jogo" href="roleta-cassino.html">
 
         <div class="icone">🎰</div>
@@ -666,8 +641,6 @@
 
       </a>
 
-
-      <!-- 3 - MINES -->
 
       <a class="jogo" href="mines.html">
 
@@ -684,8 +657,6 @@
       </a>
 
 
-      <!-- 4 - CRASH -->
-
       <a class="jogo" href="crash.html">
 
         <div class="icone">🚀</div>
@@ -700,8 +671,6 @@
 
       </a>
 
-
-      <!-- 5 - PLINKO -->
 
       <a class="jogo" href="plinko.html">
 
@@ -718,8 +687,6 @@
       </a>
 
 
-      <!-- 6 - DICE -->
-
       <a class="jogo" href="dice.html">
 
         <div class="icone">🎲</div>
@@ -735,8 +702,6 @@
       </a>
 
 
-      <!-- 7 - LOBBY -->
-
       <a class="jogo" href="lobby.html">
 
         <div class="icone">🐺</div>
@@ -751,8 +716,6 @@
 
       </a>
 
-
-      <!-- 8 - NIGHT MONSTERS -->
 
       <a
         class="jogo"
@@ -771,8 +734,6 @@
       </a>
 
 
-      <!-- 9 - FORTUNE SNAKE -->
-
       <a
         class="jogo"
         href="fortune-snake.html">
@@ -788,7 +749,6 @@
         </div>
 
       </a>
-
 
     </div>
 
@@ -842,10 +802,174 @@
 
 
   <!-- =========================================
-       CONTROLE DA MÚSICA
+       SUPABASE + PROTEÇÃO
   ========================================= -->
 
   <script>
+
+    const SUPABASE_URL =
+      'https://jxbzjiwmajjzxgihfjgt.supabase.co';
+
+    const SUPABASE_KEY =
+      'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ';
+
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+    /*
+     * =========================================
+     * PROTEÇÃO DA PÁGINA
+     * =========================================
+     *
+     * Primeiro verifica se existe uma sessão.
+     *
+     * Se não existir:
+     * - esconde os jogos
+     * - mostra a tela de bloqueio
+     *
+     * Se existir:
+     * - libera normalmente
+     */
+
+    async function verificarAcesso() {
+
+      try {
+
+        const resultado =
+          await supabaseClient.auth.getSession();
+
+        const session =
+          resultado.data?.session;
+
+
+        /*
+         * NÃO ESTÁ LOGADO
+         */
+
+        if (!session) {
+
+          bloquearPagina();
+
+          return;
+
+        }
+
+
+        /*
+         * ESTÁ LOGADO
+         */
+
+        liberarPagina();
+
+      } catch (erro) {
+
+        console.error(
+          "Erro ao verificar sessão:",
+          erro
+        );
+
+        bloquearPagina();
+
+      }
+
+    }
+
+
+    function bloquearPagina() {
+
+      document
+        .getElementById("bloqueio")
+        .style.display = "flex";
+
+      document
+        .querySelector("header")
+        .style.display = "none";
+
+      document
+        .querySelector("main")
+        .style.display = "none";
+
+      document
+        .querySelector("nav")
+        .style.display = "none";
+
+      document
+        .getElementById("botaoSom")
+        .style.display = "none";
+
+
+      /*
+       * Para a música se houver.
+       */
+
+      musica.pause();
+
+      musica.currentTime = 0;
+
+    }
+
+
+    function liberarPagina() {
+
+      document
+        .getElementById("bloqueio")
+        .style.display = "none";
+
+      document
+        .querySelector("header")
+        .style.display = "block";
+
+      document
+        .querySelector("main")
+        .style.display = "block";
+
+      document
+        .querySelector("nav")
+        .style.display = "flex";
+
+      document
+        .getElementById("botaoSom")
+        .style.display = "flex";
+
+    }
+
+
+    /*
+     * Se a sessão mudar enquanto a pessoa
+     * estiver nesta página, verifica novamente.
+     */
+
+    supabaseClient.auth.onAuthStateChange(
+      function(event, session) {
+
+        if (!session) {
+
+          bloquearPagina();
+
+        } else {
+
+          liberarPagina();
+
+        }
+
+      }
+    );
+
+
+    /*
+     * Verificação inicial.
+     */
+
+    verificarAcesso();
+
+
+    /* =========================================
+       MÚSICA
+    ========================================= */
 
     const musica =
       document.getElementById("musicaJogos");
@@ -854,17 +978,8 @@
       document.getElementById("botaoSom");
 
 
-    /*
-     * Volume da música.
-     * 0.70 = 70%
-     */
-
     musica.volume = 0.70;
 
-
-    /*
-     * Atualiza o botão.
-     */
 
     function atualizarBotao() {
 
@@ -880,10 +995,6 @@
 
     }
 
-
-    /*
-     * Ligar/desligar música.
-     */
 
     async function alternarMusica() {
 
@@ -910,18 +1021,12 @@
 
         musica.pause();
 
-        musica.currentTime = musica.currentTime;
-
         botaoSom.innerText = "🔇";
 
       }
 
     }
 
-
-    /*
-     * Clique no botão.
-     */
 
     botaoSom.addEventListener(
       "click",
@@ -937,11 +1042,6 @@
     );
 
 
-    /*
-     * Se a música terminar por algum motivo,
-     * o botão volta para 🔇.
-     */
-
     musica.addEventListener(
       "pause",
       atualizarBotao
@@ -954,13 +1054,6 @@
     );
 
 
-    /*
-     * IMPORTANTE:
-     *
-     * Quando o usuário sair da página de jogos,
-     * a música é parada imediatamente.
-     */
-
     window.addEventListener(
       "pagehide",
       function() {
@@ -972,11 +1065,6 @@
       }
     );
 
-
-    /*
-     * Também para quando a página
-     * fica escondida.
-     */
 
     document.addEventListener(
       "visibilitychange",
@@ -997,10 +1085,6 @@
       }
     );
 
-
-    /*
-     * Estado inicial.
-     */
 
     atualizarBotao();
 
