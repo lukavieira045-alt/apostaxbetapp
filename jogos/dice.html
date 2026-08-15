@@ -11,261 +11,376 @@ box-sizing:border-box;
 font-family:Arial,sans-serif;
 }
 
-body{
+html,body{
 margin:0;
+min-height:100%;
+}
+
+body{
 min-height:100vh;
 color:white;
 text-align:center;
 overflow-x:hidden;
 
 background:
-radial-gradient(circle at 15% 15%,#0066ff 0,transparent 25%),
-radial-gradient(circle at 85% 20%,#e600ff 0,transparent 25%),
-radial-gradient(circle at 50% 100%,#ff0066 0,transparent 30%),
-linear-gradient(135deg,#02020c,#09001c,#00132c);
+radial-gradient(circle at 10% 10%,rgba(0,255,255,.55),transparent 25%),
+radial-gradient(circle at 90% 15%,rgba(255,0,200,.45),transparent 28%),
+radial-gradient(circle at 50% 90%,rgba(255,220,0,.35),transparent 30%),
+linear-gradient(135deg,#f8fbff,#dfeeff,#f5e9ff);
 
 background-size:180% 180%;
-animation:fundo 12s ease-in-out infinite alternate;
+animation:fundoAnimado 10s ease-in-out infinite alternate;
+
+position:relative;
 }
 
-@keyframes fundo{
-0%{background-position:0% 0%}
-50%{background-position:100% 50%}
-100%{background-position:0% 100%}
-}
-
-/* LUZES */
-.luz{
+/* CAMADA DE LUZ */
+body::before{
+content:"";
 position:fixed;
-width:280px;
-height:280px;
-border-radius:50%;
-filter:blur(90px);
-opacity:.45;
+inset:-20%;
 pointer-events:none;
-z-index:-2;
-}
+z-index:-5;
 
-.luz1{
-background:#0066ff;
-left:-100px;
-top:15%;
-animation:mov1 8s infinite alternate;
-}
+background:
+radial-gradient(circle at 20% 25%,
+rgba(0,210,255,.30),
+transparent 20%),
 
-.luz2{
-background:#ff0088;
-right:-100px;
-top:40%;
-animation:mov2 9s infinite alternate;
-}
+radial-gradient(circle at 80% 30%,
+rgba(255,0,180,.25),
+transparent 22%),
 
-.luz3{
-background:#7b00ff;
-left:30%;
-bottom:-180px;
-animation:mov3 7s infinite alternate;
-}
+radial-gradient(circle at 50% 80%,
+rgba(255,210,0,.25),
+transparent 24%);
 
-@keyframes mov1{
-to{transform:translate(180px,100px) scale(1.3)}
-}
+filter:blur(35px);
 
-@keyframes mov2{
-to{transform:translate(-150px,-80px) scale(1.4)}
-}
-
-@keyframes mov3{
-to{transform:translate(80px,-100px) scale(1.3)}
+animation:luzes 8s ease-in-out infinite alternate;
 }
 
 /* PARTÍCULAS */
-.particulas{
+body::after{
+content:"";
 position:fixed;
 inset:0;
-overflow:hidden;
 pointer-events:none;
-z-index:-1;
+z-index:-4;
+
+background-image:
+radial-gradient(
+circle,
+rgba(255,255,255,.95) 1px,
+transparent 2px
+);
+
+background-size:45px 45px;
+
+opacity:.55;
+
+animation:particulas 9s linear infinite;
 }
 
-.particulas i{
-position:absolute;
-bottom:-20px;
-width:4px;
-height:4px;
-border-radius:50%;
-background:white;
-box-shadow:
-0 0 10px #00ccff,
-0 0 20px #ff00aa;
-animation:subir linear infinite;
-}
+@keyframes fundoAnimado{
 
-.particulas i:nth-child(1){left:5%;animation-duration:7s}
-.particulas i:nth-child(2){left:15%;animation-duration:11s}
-.particulas i:nth-child(3){left:25%;animation-duration:8s}
-.particulas i:nth-child(4){left:35%;animation-duration:13s}
-.particulas i:nth-child(5){left:45%;animation-duration:9s}
-.particulas i:nth-child(6){left:55%;animation-duration:12s}
-.particulas i:nth-child(7){left:65%;animation-duration:8s}
-.particulas i:nth-child(8){left:75%;animation-duration:10s}
-.particulas i:nth-child(9){left:85%;animation-duration:7s}
-.particulas i:nth-child(10){left:95%;animation-duration:12s}
-
-@keyframes subir{
 0%{
-transform:translateY(0);
-opacity:0;
+background-position:0% 0%;
 }
-20%{opacity:1}
+
+50%{
+background-position:100% 50%;
+}
+
 100%{
-transform:translateY(-110vh);
-opacity:0;
+background-position:0% 100%;
+}
+
+}
+
+@keyframes luzes{
+
+0%{
+transform:translate(-4%,-3%) scale(1);
+}
+
+50%{
+transform:translate(5%,4%) scale(1.08);
+}
+
+100%{
+transform:translate(-3%,6%) scale(1.04);
+}
+
+}
+
+@keyframes particulas{
+
+from{
+transform:translateY(0);
+}
+
+to{
+transform:translateY(-90px);
+}
+
+}
+
+/* LUZES LATERAIS */
+
+.luz{
+position:fixed;
+width:260px;
+height:260px;
+border-radius:50%;
+filter:blur(80px);
+opacity:.38;
+pointer-events:none;
+z-index:-3;
+}
+
+.luz1{
+background:#00d9ff;
+left:-100px;
+top:15%;
+animation:mov1 7s infinite alternate;
+}
+
+.luz2{
+background:#ff00aa;
+right:-100px;
+top:35%;
+animation:mov2 8s infinite alternate;
+}
+
+.luz3{
+background:#ffe000;
+left:35%;
+bottom:-180px;
+animation:mov3 9s infinite alternate;
+}
+
+@keyframes mov1{
+to{
+transform:translate(170px,100px) scale(1.25);
+}
+}
+
+@keyframes mov2{
+to{
+transform:translate(-150px,-90px) scale(1.3);
+}
+}
+
+@keyframes mov3{
+to{
+transform:translate(80px,-100px) scale(1.25);
 }
 }
 
 /* SALDO */
+
 #saldo{
 display:inline-block;
+
 margin:25px auto 20px;
+
 padding:12px 25px;
+
 border-radius:30px;
-background:rgba(0,0,0,.6);
-border:1px solid #00ff91;
+
+background:rgba(5,15,30,.85);
+
+border:2px solid #00ff91;
+
 color:#00ff91;
+
 font-size:21px;
+
 font-weight:bold;
-box-shadow:0 0 15px rgba(0,255,145,.18);
+
+box-shadow:
+0 0 12px rgba(0,255,145,.35),
+0 0 30px rgba(0,255,145,.12);
 }
 
 /* CAIXA */
+
 .caixa{
+
 width:92%;
 max-width:440px;
+
 margin:auto;
+
 padding:25px 18px 30px;
-border:1px solid rgba(255,210,28,.35);
+
+border:1px solid rgba(0,120,255,.25);
+
 border-radius:28px;
 
 background:
 linear-gradient(
 145deg,
-rgba(20,20,35,.94),
-rgba(3,4,15,.96)
+rgba(255,255,255,.92),
+rgba(238,246,255,.94)
 );
 
 box-shadow:
-0 0 25px rgba(255,215,0,.18),
-0 0 70px rgba(0,100,255,.18);
+0 12px 40px rgba(0,60,130,.20),
+0 0 60px rgba(0,200,255,.12);
 
 backdrop-filter:blur(12px);
+
+color:#111;
 }
 
 /* ÁREA DO DADO */
+
 .area-dado{
+
 height:300px;
+
 display:flex;
+
 align-items:center;
+
 justify-content:center;
+
 position:relative;
+
 perspective:900px;
 }
 
 /* SOMBRA */
+
 .sombra{
+
 position:absolute;
+
 bottom:48px;
+
 width:150px;
+
 height:30px;
+
 border-radius:50%;
+
 background:#000;
+
 filter:blur(15px);
-opacity:.7;
-transition:.2s;
+
+opacity:.45;
 }
 
-/* DADO 3D */
+/* DADO */
+
 .dado-3d{
+
 position:relative;
+
 width:125px;
+
 height:125px;
+
 transform-style:preserve-3d;
-transform:rotateX(-18deg) rotateY(25deg);
-transition:transform .15s;
+
+transform:
+rotateX(-18deg)
+rotateY(25deg);
+
 }
+
+/* FACES */
 
 .face{
+
 position:absolute;
+
 width:125px;
+
 height:125px;
+
 background:
 linear-gradient(
 145deg,
 #ffffff,
-#d9d9d9
+#dedede
 );
+
 border:4px solid #aaa;
+
 border-radius:18px;
 
 display:flex;
+
 align-items:center;
+
 justify-content:center;
 
 box-shadow:
 inset 0 0 20px rgba(0,0,0,.18),
-0 18px 25px rgba(0,0,0,.5);
+0 18px 25px rgba(0,0,0,.35);
 
 backface-visibility:hidden;
 }
 
 /* PONTOS */
-.face::before,
-.face::after{
-content:"";
+
+.ponto{
+
 position:absolute;
+
 width:19px;
+
 height:19px;
+
 border-radius:50%;
+
 background:#171717;
+
 box-shadow:
 inset 0 2px 4px rgba(255,255,255,.25);
 }
 
-.ponto{
-position:absolute;
-width:19px;
-height:19px;
-border-radius:50%;
-background:#171717;
-box-shadow:inset 0 2px 4px rgba(255,255,255,.25);
-}
-
 /* FACES */
+
 .frente{
 transform:translateZ(62.5px);
 }
 
 .tras{
-transform:rotateY(180deg) translateZ(62.5px);
+transform:
+rotateY(180deg)
+translateZ(62.5px);
 }
 
 .direita{
-transform:rotateY(90deg) translateZ(62.5px);
+transform:
+rotateY(90deg)
+translateZ(62.5px);
 }
 
 .esquerda{
-transform:rotateY(-90deg) translateZ(62.5px);
+transform:
+rotateY(-90deg)
+translateZ(62.5px);
 }
 
 .cima{
-transform:rotateX(90deg) translateZ(62.5px);
+transform:
+rotateX(90deg)
+translateZ(62.5px);
 }
 
 .baixo{
-transform:rotateX(-90deg) translateZ(62.5px);
+transform:
+rotateX(-90deg)
+translateZ(62.5px);
 }
 
-/* PONTOS DE CADA FACE */
+/* POSIÇÕES */
+
 .p1{
 top:50%;
 left:50%;
@@ -276,7 +391,11 @@ transform:translate(-50%,-50%);
 .p2b{bottom:20%;right:20%}
 
 .p3a{top:20%;left:20%}
-.p3b{top:50%;left:50%;transform:translate(-50%,-50%)}
+.p3b{
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+}
 .p3c{bottom:20%;right:20%}
 
 .p4a{top:20%;left:20%}
@@ -286,21 +405,38 @@ transform:translate(-50%,-50%);
 
 .p5a{top:20%;left:20%}
 .p5b{top:20%;right:20%}
-.p5c{top:50%;left:50%;transform:translate(-50%,-50%)}
+.p5c{
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+}
 .p5d{bottom:20%;left:20%}
 .p5e{bottom:20%;right:20%}
 
 .p6a{top:17%;left:20%}
 .p6b{top:17%;right:20%}
-.p6c{top:50%;left:20%;transform:translateY(-50%)}
-.p6d{top:50%;right:20%;transform:translateY(-50%)}
+.p6c{
+top:50%;
+left:20%;
+transform:translateY(-50%);
+}
+.p6d{
+top:50%;
+right:20%;
+transform:translateY(-50%);
+}
 .p6e{bottom:17%;left:20%}
 .p6f{bottom:17%;right:20%}
 
-/* GIRO REALISTA */
+/* GIRO MAIS RÁPIDO */
+
 .dado-3d.rolando{
+
 animation:
-rolarDado 1.35s cubic-bezier(.18,.75,.25,1) forwards;
+rolarDado .95s
+cubic-bezier(.15,.75,.25,1)
+forwards;
+
 }
 
 @keyframes rolarDado{
@@ -313,152 +449,223 @@ rotateY(20deg)
 rotateZ(0);
 }
 
-18%{
+20%{
 transform:
-translateY(-80px)
-rotateX(120deg)
-rotateY(180deg)
-rotateZ(35deg);
+translateY(-95px)
+rotateX(180deg)
+rotateY(240deg)
+rotateZ(40deg);
 }
 
-38%{
+40%{
 transform:
-translateY(-35px)
-rotateX(260deg)
-rotateY(390deg)
-rotateZ(-40deg);
+translateY(-40px)
+rotateX(390deg)
+rotateY(520deg)
+rotateZ(-45deg);
 }
 
-58%{
+60%{
 transform:
-translateY(-65px)
-rotateX(430deg)
-rotateY(610deg)
-rotateZ(35deg);
+translateY(-75px)
+rotateX(600deg)
+rotateY(780deg)
+rotateZ(40deg);
 }
 
-76%{
+78%{
 transform:
-translateY(-15px)
-rotateX(560deg)
-rotateY(820deg)
-rotateZ(-18deg);
+translateY(-20px)
+rotateX(780deg)
+rotateY(1040deg)
+rotateZ(-20deg);
 }
 
 90%{
 transform:
 translateY(5px)
-rotateX(690deg)
-rotateY(1010deg)
+rotateX(900deg)
+rotateY(1210deg)
 rotateZ(8deg);
 }
 
 100%{
 transform:
 translateY(0)
-rotateX(720deg)
-rotateY(1080deg)
+rotateX(1080deg)
+rotateY(1440deg)
 rotateZ(0);
 }
+
 }
 
 /* RESULTADO */
+
 #faceResultado{
+
 position:relative;
+
 z-index:3;
+
 margin-top:-5px;
+
 min-width:70px;
+
 height:70px;
+
 display:flex;
+
 align-items:center;
+
 justify-content:center;
+
 font-size:52px;
+
 font-weight:900;
-color:white;
+
+color:#111;
+
 text-shadow:
-0 0 8px #fff,
+0 0 8px white,
 0 0 20px #00ccff;
+
 opacity:0;
+
 transform:scale(.5);
+
 transition:.25s;
+
 }
 
 #faceResultado.mostrar{
+
 opacity:1;
+
 transform:scale(1);
+
 }
 
+/* TEXTO */
+
 #resultado{
+
 min-height:40px;
+
 margin:5px 0 20px;
+
 font-size:24px;
+
 font-weight:bold;
-color:#ffd21c;
-text-shadow:0 0 12px #ffd21c;
+
+color:#b37a00;
+
+text-shadow:
+0 0 10px rgba(255,190,0,.45);
+
 }
 
 .vitoria{
-color:#00ff91 !important;
+
+color:#00a866 !important;
+
 text-shadow:
 0 0 10px #00ff91,
-0 0 30px #00ff91 !important;
+0 0 25px #00ff91 !important;
+
 }
 
 .derrota{
-color:#ff416d !important;
+
+color:#e72b55 !important;
+
 text-shadow:
 0 0 10px #ff416d,
-0 0 25px #ff416d !important;
+0 0 20px #ff416d !important;
+
 }
 
 /* INPUT */
+
 label{
+
 display:block;
-color:#aaa;
+
+color:#555;
+
 font-size:14px;
+
 margin-bottom:6px;
+
 }
 
 input{
+
 width:170px;
+
 padding:14px;
+
 border-radius:13px;
-border:2px solid #444;
-background:#050505;
-color:white;
+
+border:2px solid #bbb;
+
+background:#fff;
+
+color:#111;
+
 font-size:21px;
+
 font-weight:bold;
+
 text-align:center;
+
 outline:none;
+
 }
 
 input:focus{
-border-color:#ffd21c;
-box-shadow:0 0 10px #ffd21c;
+
+border-color:#00aaff;
+
+box-shadow:
+0 0 10px rgba(0,170,255,.35);
+
 }
 
 /* BOTÃO */
+
 button{
+
 width:90%;
+
 max-width:320px;
+
 margin-top:15px;
+
 padding:17px;
+
 border:2px solid #ffe78a;
+
 border-radius:16px;
+
 background:
 linear-gradient(
 180deg,
 #ffe66b,
 #ffb000
 );
+
 color:#211600;
+
 font-size:22px;
+
 font-weight:900;
+
 cursor:pointer;
 
 box-shadow:
 0 0 12px #ffd21c,
-0 0 35px rgba(255,170,0,.45);
+0 0 35px rgba(255,170,0,.35);
+
 }
 
 button:active{
@@ -470,16 +677,28 @@ opacity:.55;
 }
 
 /* INFO */
+
 .info{
+
 margin-top:25px;
+
 padding-top:18px;
-border-top:1px solid rgba(255,255,255,.12);
+
+border-top:1px solid rgba(0,0,0,.12);
+
 font-size:14px;
+
 line-height:1.7;
+
 }
 
-.ganha{color:#00ff91}
-.perde{color:#ff416d}
+.ganha{
+color:#00a866;
+}
+
+.perde{
+color:#e72b55;
+}
 
 @media(max-width:450px){
 
@@ -506,11 +725,6 @@ border-radius:16px;
 <div class="luz luz1"></div>
 <div class="luz luz2"></div>
 <div class="luz luz3"></div>
-
-<div class="particulas">
-<i></i><i></i><i></i><i></i><i></i>
-<i></i><i></i><i></i><i></i><i></i>
-</div>
 
 <div id="saldo">💰 Saldo: R$ 0,00</div>
 
@@ -571,7 +785,9 @@ border-radius:16px;
 Escolha sua sorte
 </div>
 
-<label>VALOR DA APOSTA</label>
+<label>
+VALOR DA APOSTA
+</label>
 
 <input
 id="aposta"
@@ -604,8 +820,9 @@ step="0.10"
 <script type="module" src="../saldo.js"></script>
 
 <script>
+
 /* =====================================================
-   SISTEMA DE SOM DE DADO
+   SOM REALISTA DE DADO
 ===================================================== */
 
 let audioCtx = null;
@@ -627,17 +844,17 @@ audioCtx.resume();
 
 }
 
-/* pequeno impacto do dado */
 function impactoDado(){
 
 iniciarAudio();
 
-const agora = audioCtx.currentTime;
+const agora =
+audioCtx.currentTime;
 
 const buffer =
 audioCtx.createBuffer(
 1,
-audioCtx.sampleRate * 0.06,
+audioCtx.sampleRate * .055,
 audioCtx.sampleRate
 );
 
@@ -648,7 +865,9 @@ for(let i=0;i<dados.length;i++){
 
 dados[i] =
 (Math.random()*2-1) *
-Math.exp(-i/(audioCtx.sampleRate*.012));
+Math.exp(
+-i/(audioCtx.sampleRate*.010)
+);
 
 }
 
@@ -661,16 +880,20 @@ audioCtx.createGain();
 const filtro =
 audioCtx.createBiquadFilter();
 
-filtro.type = "lowpass";
-filtro.frequency.value = 2400;
+filtro.type="lowpass";
+filtro.frequency.value=2300;
 
-ganho.gain.setValueAtTime(.22,agora);
-ganho.gain.exponentialRampToValueAtTime(
-.001,
-agora+.06
+ganho.gain.setValueAtTime(
+.20,
+agora
 );
 
-fonte.buffer = buffer;
+ganho.gain.exponentialRampToValueAtTime(
+.001,
+agora+.055
+);
+
+fonte.buffer=buffer;
 
 fonte.connect(filtro);
 filtro.connect(ganho);
@@ -679,28 +902,27 @@ ganho.connect(audioCtx.destination);
 fonte.start();
 }
 
-/* som do dado batendo algumas vezes */
 function somDado(){
 
 iniciarAudio();
 
 impactoDado();
 
-setTimeout(impactoDado,150);
-setTimeout(impactoDado,290);
-setTimeout(impactoDado,430);
-setTimeout(impactoDado,570);
-setTimeout(impactoDado,710);
-setTimeout(impactoDado,850);
-setTimeout(impactoDado,1000);
+setTimeout(impactoDado,120);
+setTimeout(impactoDado,240);
+setTimeout(impactoDado,360);
+setTimeout(impactoDado,480);
+setTimeout(impactoDado,600);
+setTimeout(impactoDado,720);
+setTimeout(impactoDado,840);
+
 }
 
-/* som final de resultado */
 function somResultado(numero){
 
 iniciarAudio();
 
-const frequencias = {
+const frequencias={
 1:180,
 2:220,
 3:260,
@@ -715,7 +937,7 @@ audioCtx.createOscillator();
 const ganho =
 audioCtx.createGain();
 
-oscilador.type = "triangle";
+oscilador.type="triangle";
 
 oscilador.frequency.value =
 frequencias[numero] || 300;
@@ -743,6 +965,7 @@ oscilador.start();
 oscilador.stop(
 audioCtx.currentTime+.24
 );
+
 }
 
 /* =====================================================
@@ -770,10 +993,9 @@ function vibrar(){
 if("vibrate" in navigator){
 
 navigator.vibrate([
+25,35,
 35,45,
-45,55,
-55,70,
-70
+45
 ]);
 
 }
@@ -781,7 +1003,48 @@ navigator.vibrate([
 }
 
 /* =====================================================
-   GIRO
+   SALDO REAL
+===================================================== */
+
+async function atualizarSaldo(){
+
+try{
+
+if(
+window.SistemaSaldo &&
+window.SistemaSaldo.atualizarTela
+){
+
+await window.SistemaSaldo.atualizarTela();
+
+}
+
+}catch(erro){
+
+console.error(
+"Erro ao atualizar saldo:",
+erro
+);
+
+}
+
+}
+
+/* Aguarda o saldo.js */
+window.addEventListener(
+"load",
+async function(){
+
+await new Promise(
+resolve=>setTimeout(resolve,150)
+);
+
+await atualizarSaldo();
+
+});
+
+/* =====================================================
+   JOGAR
 ===================================================== */
 
 botao.addEventListener(
@@ -790,7 +1053,9 @@ async function(){
 
 if(!window.SistemaSaldo){
 
-resultado.textContent =
+resultado.className="derrota";
+
+resultado.textContent=
 "⚠️ Sistema de saldo não encontrado.";
 
 return;
@@ -804,132 +1069,162 @@ document.getElementById("aposta").value
 
 if(!Number.isFinite(aposta)){
 
-alert("Digite um valor válido.");
+alert(
+"Digite um valor válido."
+);
+
 return;
 
 }
 
-if(aposta < 0.10){
+if(aposta<0.10){
 
-alert("A aposta mínima é R$ 0,10.");
+alert(
+"A aposta mínima é R$ 0,10."
+);
+
 return;
 
 }
 
-/* busca saldo REAL */
+/* SALDO REAL */
 const saldoAtual =
-await window.SistemaSaldo.get();
+Number(
+await window.SistemaSaldo.get()
+);
 
 if(
-typeof saldoAtual !== "number" ||
-saldoAtual < aposta
+!Number.isFinite(saldoAtual) ||
+saldoAtual<aposta
 ){
 
-resultado.className =
+resultado.className=
 "derrota";
 
-resultado.textContent =
+resultado.textContent=
 "❌ Saldo insuficiente";
+
+await atualizarSaldo();
 
 return;
 
 }
 
-/* bloqueia */
-botao.disabled = true;
+botao.disabled=true;
 
-/* começa som e vibração imediatamente */
+/*
+Som e animação começam
+IMEDIATAMENTE no clique.
+*/
+
 iniciarAudio();
+
 somDado();
+
 vibrar();
 
-/* desconta no sistema real */
-await window.SistemaSaldo.debitar(aposta);
+resultado.className="";
 
-/* atualiza saldo imediatamente */
-if(window.SistemaSaldo.atualizarTela){
-
-await window.SistemaSaldo.atualizarTela();
-
-}
-
-faceResultado.classList.remove("mostrar");
-faceResultado.textContent = "";
-
-resultado.className = "";
-resultado.textContent =
+resultado.textContent=
 "🎲 JOGANDO...";
 
-/* número sorteado */
-const numero =
-Math.floor(Math.random()*6)+1;
+faceResultado.classList.remove(
+"mostrar"
+);
 
-/* inicia animação imediatamente */
-dado.classList.remove("rolando");
+faceResultado.textContent="";
+
+/* DEBITA */
+await window.SistemaSaldo.debitar(
+aposta
+);
+
+await atualizarSaldo();
+
+/* SORTEIO */
+const numero=
+Math.floor(
+Math.random()*6
+)+1;
+
+/* GIRO IMEDIATO */
+dado.classList.remove(
+"rolando"
+);
+
 void dado.offsetWidth;
-dado.classList.add("rolando");
 
-/* pequenos impactos durante a queda */
-setTimeout(vibrar,420);
-setTimeout(vibrar,720);
-setTimeout(vibrar,1010);
+dado.classList.add(
+"rolando"
+);
 
-/* resultado */
-setTimeout(async function(){
+/* IMPACTOS */
+setTimeout(vibrar,300);
+setTimeout(vibrar,600);
+setTimeout(vibrar,850);
 
-dado.classList.remove("rolando");
+/* RESULTADO */
 
-faceResultado.textContent =
+setTimeout(
+async function(){
+
+dado.classList.remove(
+"rolando"
+);
+
+faceResultado.textContent=
 numero;
 
-faceResultado.classList.add("mostrar");
+faceResultado.classList.add(
+"mostrar"
+);
 
 somResultado(numero);
 
-if(numero >= 4){
+if(numero>=4){
 
-const premio =
-aposta * 2;
+const premio=
+aposta*2;
 
 /*
-   O saldo já foi debitado.
-   Aqui entra somente o prêmio.
+Somente o prêmio é creditado,
+pois a aposta já foi debitada.
 */
+
 await window.SistemaSaldo.ganhar(
 aposta,
-premio / aposta
+premio/aposta
 );
 
-resultado.className =
+resultado.className=
 "vitoria";
 
-resultado.textContent =
-"🎉 GANHOU R$ " +
+resultado.textContent=
+"🎉 GANHOU R$ "+
 premio.toFixed(2);
 
 vibrar();
 
 }else{
 
-resultado.className =
+resultado.className=
 "derrota";
 
-resultado.textContent =
+resultado.textContent=
 "😢 PERDEU";
 
 }
 
-if(window.SistemaSaldo.atualizarTela){
+await atualizarSaldo();
 
-await window.SistemaSaldo.atualizarTela();
+botao.disabled=false;
 
-}
-
-botao.disabled = false;
-
-},1350);
+},
+950
+);
 
 });
+
 </script>
 
 </body>
