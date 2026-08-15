@@ -563,6 +563,358 @@ window.supabase.createClient(
 
 
 /* ==================================================
+   SISTEMA DE SOM
+   VOLUME: 100%
+================================================== */
+
+let audioContext = null;
+
+let somLiberado = false;
+
+const VOLUME_SOM = 1.0;
+
+
+/*
+   O navegador do celular pode bloquear
+   áudio automático. O primeiro toque do
+   jogador libera o sistema de som.
+*/
+
+function iniciarAudio(){
+
+  try{
+
+    if(!audioContext){
+
+      audioContext =
+        new (
+          window.AudioContext ||
+          window.webkitAudioContext
+        )();
+
+    }
+
+    if(
+      audioContext.state ===
+      "suspended"
+    ){
+
+      audioContext.resume();
+
+    }
+
+    somLiberado = true;
+
+  }catch(error){
+
+    console.log(
+      "Áudio não disponível:",
+      error
+    );
+
+  }
+
+}
+
+
+document.addEventListener(
+  "pointerdown",
+  iniciarAudio,
+  {
+    once:false,
+    passive:true
+  }
+);
+
+
+/*
+   Toca um tom simples usando
+   o próprio navegador.
+
+   Não depende de arquivo MP3 externo.
+*/
+
+function tocarSom(
+  frequencia,
+  duracao,
+  tipo="sine",
+  volume=1
+){
+
+  if(!somLiberado)
+    return;
+
+  try{
+
+    if(!audioContext)
+      return;
+
+    if(
+      audioContext.state ===
+      "suspended"
+    ){
+
+      audioContext.resume();
+
+    }
+
+    const agora =
+      audioContext.currentTime;
+
+    const oscilador =
+      audioContext.createOscillator();
+
+    const ganho =
+      audioContext.createGain();
+
+    oscilador.type =
+      tipo;
+
+    oscilador.frequency.setValueAtTime(
+      frequencia,
+      agora
+    );
+
+    ganho.gain.setValueAtTime(
+      0,
+      agora
+    );
+
+    ganho.gain.linearRampToValueAtTime(
+      VOLUME_SOM * volume,
+      agora + 0.01
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+      0.001,
+      agora + duracao
+    );
+
+    oscilador.connect(
+      ganho
+    );
+
+    ganho.connect(
+      audioContext.destination
+    );
+
+    oscilador.start(
+      agora
+    );
+
+    oscilador.stop(
+      agora + duracao + 0.03
+    );
+
+  }catch(error){
+
+    console.log(
+      "Erro no som:",
+      error
+    );
+
+  }
+
+}
+
+
+/* ==================================================
+   SOM DA FICHA
+================================================== */
+
+function somFicha(){
+
+  tocarSom(
+    620,
+    0.08,
+    "square",
+    1
+  );
+
+}
+
+
+/* ==================================================
+   SOM DA APOSTA
+================================================== */
+
+function somAposta(){
+
+  tocarSom(
+    760,
+    0.09,
+    "sine",
+    1
+  );
+
+  setTimeout(
+    function(){
+
+      tocarSom(
+        980,
+        0.10,
+        "sine",
+        1
+      );
+
+    },
+    70
+  );
+
+}
+
+
+/* ==================================================
+   SOM DE LIMPAR
+================================================== */
+
+function somLimpar(){
+
+  tocarSom(
+    260,
+    0.12,
+    "triangle",
+    1
+  );
+
+}
+
+
+/* ==================================================
+   SOM DE CONTAGEM
+================================================== */
+
+function somContagem(){
+
+  tocarSom(
+    850,
+    0.10,
+    "square",
+    1
+  );
+
+}
+
+
+/* ==================================================
+   SOM DE GIRO
+================================================== */
+
+let intervaloSomRoleta = null;
+
+function iniciarSomRoleta(){
+
+  if(!somLiberado)
+    return;
+
+  pararSomRoleta();
+
+  /*
+     Pequenos cliques rápidos imitam
+     a roleta passando pelo ponteiro.
+  */
+
+  intervaloSomRoleta =
+    setInterval(
+      function(){
+
+        tocarSom(
+          105 + Math.random() * 100,
+          0.045,
+          "square",
+          0.85
+        );
+
+      },
+      95
+    );
+
+}
+
+
+function pararSomRoleta(){
+
+  if(intervaloSomRoleta){
+
+    clearInterval(
+      intervaloSomRoleta
+    );
+
+    intervaloSomRoleta =
+      null;
+
+  }
+
+}
+
+
+/* ==================================================
+   SOM DE RESULTADO
+================================================== */
+
+function somResultado(){
+
+  tocarSom(
+    520,
+    0.13,
+    "triangle",
+    1
+  );
+
+  setTimeout(
+    function(){
+
+      tocarSom(
+        700,
+        0.16,
+        "triangle",
+        1
+      );
+
+    },
+    120
+  );
+
+}
+
+
+/* ==================================================
+   SOM DE PRÊMIO
+================================================== */
+
+function somPremio(){
+
+  const notas = [
+    523,
+    659,
+    784,
+    1047
+  ];
+
+  notas.forEach(
+    function(nota,index){
+
+      setTimeout(
+        function(){
+
+          tocarSom(
+            nota,
+            0.22,
+            "sine",
+            1
+          );
+
+        },
+        index * 130
+      );
+
+    }
+  );
+
+}
+
+
+/* ==================================================
    ELEMENTOS
 ================================================== */
 
@@ -880,6 +1232,10 @@ function(botao){
     if(!apostasAbertas)
       return;
 
+    iniciarAudio();
+
+    somFicha();
+
     document
     .querySelectorAll(".ficha")
     .forEach(
@@ -917,6 +1273,8 @@ function fazerAposta(
   elemento
 ){
 
+  iniciarAudio();
+
   if(!apostasAbertas){
 
     mensagem.textContent =
@@ -933,6 +1291,13 @@ function fazerAposta(
 
     mensagem.textContent =
       "Saldo virtual insuficiente.";
+
+    tocarSom(
+      180,
+      0.18,
+      "sawtooth",
+      1
+    );
 
     return;
 
@@ -953,6 +1318,8 @@ function fazerAposta(
 
   mensagem.textContent =
     "Aposta virtual adicionada.";
+
+  somAposta();
 
 }
 
@@ -1040,6 +1407,8 @@ document
 .onclick =
 function(){
 
+  iniciarAudio();
+
   if(!apostasAbertas)
     return;
 
@@ -1069,6 +1438,8 @@ function(){
   mensagem.textContent =
     "Apostas limpas.";
 
+  somLimpar();
+
 };
 
 
@@ -1096,33 +1467,6 @@ function iniciarRodada(){
 
   mensagem.textContent =
     "Faça suas apostas.";
-
-  contador =
-    setInterval(
-    function(){
-
-      tempoAposta--;
-
-      if(tempoAposta > 0){
-
-        aviso.innerHTML =
-          "⏱️ APOSTAS: <b>" +
-          tempoAposta +
-          "s</b>";
-
-      }
-
-      if(tempoAposta <= 0){
-
-        clearInterval(contador);
-
-        fecharApostas();
-
-      }
-
-    },
-    1000
-    );
 
 }
 
@@ -1161,6 +1505,61 @@ function fecharApostas(){
 
 
 /* ==================================================
+   CONTADOR
+================================================== */
+
+function iniciarContador(){
+
+  clearInterval(contador);
+
+  tempoAposta = 10;
+
+  aviso.innerHTML =
+    "⏱️ APOSTAS: <b>10s</b>";
+
+  contador =
+    setInterval(
+    function(){
+
+      tempoAposta--;
+
+      if(tempoAposta > 0){
+
+        aviso.innerHTML =
+          "⏱️ APOSTAS: <b>" +
+          tempoAposta +
+          "s</b>";
+
+        /*
+           Som nos últimos segundos.
+        */
+
+        if(
+          tempoAposta <= 5
+        ){
+
+          somContagem();
+
+        }
+
+      }
+
+      if(tempoAposta <= 0){
+
+        clearInterval(contador);
+
+        fecharApostas();
+
+      }
+
+    },
+    1000
+    );
+
+}
+
+
+/* ==================================================
    GIRAR
 ================================================== */
 
@@ -1168,6 +1567,8 @@ function girarAutomaticamente(){
 
   if(girando)
     return;
+
+  iniciarAudio();
 
   girando = true;
 
@@ -1212,8 +1613,16 @@ function girarAutomaticamente(){
     rotacao +
     "deg)";
 
+  /*
+     SOM DA ROLETA
+  */
+
+  iniciarSomRoleta();
+
   setTimeout(
   function(){
+
+    pararSomRoleta();
 
     finalizarRodada(
       resultado
@@ -1233,6 +1642,10 @@ function girarAutomaticamente(){
 async function finalizarRodada(
   resultado
 ){
+
+  pararSomRoleta();
+
+  somResultado();
 
   let premio = 0;
 
@@ -1293,6 +1706,8 @@ async function finalizarRodada(
   }
 
   if(premio > 0){
+
+    somPremio();
 
     mensagem.textContent =
       "🏆 Resultado: " +
@@ -1390,7 +1805,13 @@ async function iniciar(){
       "none";
 
     setTimeout(
-      iniciarRodada,
+      function(){
+
+        iniciarRodada();
+
+        iniciarContador();
+
+      },
       500
     );
 
