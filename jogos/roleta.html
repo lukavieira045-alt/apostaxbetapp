@@ -816,8 +816,11 @@ let girando = false;
 ===================================================== */
 
 let audioContext = null;
-let somGirando = null;
-let ganhoGirando = null;
+
+let timerRoleta = null;
+
+let velocidadeSom = 45;
+
 
 function iniciarAudio(){
 
@@ -891,16 +894,23 @@ function tocarClique(){
     );
 
     oscilador.connect(ganho);
-    ganho.connect(audioContext.destination);
+
+    ganho.connect(
+        audioContext.destination
+    );
 
     oscilador.start(agora);
-    oscilador.stop(agora + 0.08);
+
+    oscilador.stop(
+        agora + 0.08
+    );
 
 }
 
 
 /* =====================================================
    SOM DA ROLETA
+   TIC TIC TIC + DESACELERAÇÃO
 ===================================================== */
 
 function iniciarSomRoleta(){
@@ -912,73 +922,102 @@ function iniciarSomRoleta(){
 
     pararSomRoleta();
 
-    somGirando =
+    velocidadeSom = 45;
+
+    tocarTic();
+
+}
+
+
+function tocarTic(){
+
+    if(!audioContext)
+        return;
+
+    const agora =
+        audioContext.currentTime;
+
+    const oscilador =
         audioContext.createOscillator();
 
-    ganhoGirando =
+    const ganho =
         audioContext.createGain();
 
-    somGirando.type =
-        "triangle";
+    oscilador.type =
+        "square";
 
-    somGirando.frequency.setValueAtTime(
-        130,
-        audioContext.currentTime
+    /*
+       TIC curto
+    */
+
+    oscilador.frequency.setValueAtTime(
+        850,
+        agora
     );
 
-    ganhoGirando.gain.setValueAtTime(
-        1.0,
-        audioContext.currentTime
+    oscilador.frequency.exponentialRampToValueAtTime(
+        420,
+        agora + 0.035
     );
 
-    somGirando.connect(
-        ganhoGirando
+    ganho.gain.setValueAtTime(
+        0.45,
+        agora
     );
 
-    ganhoGirando.connect(
+    ganho.gain.exponentialRampToValueAtTime(
+        0.001,
+        agora + 0.055
+    );
+
+    oscilador.connect(
+        ganho
+    );
+
+    ganho.connect(
         audioContext.destination
     );
 
-    somGirando.start();
+    oscilador.start(
+        agora
+    );
+
+    oscilador.stop(
+        agora + 0.06
+    );
+
+    /*
+       Vai ficando mais lento
+    */
+
+    velocidadeSom += 8;
+
+    if(
+        velocidadeSom > 280
+    ){
+
+        velocidadeSom = 280;
+
+    }
+
+    timerRoleta =
+        setTimeout(
+            tocarTic,
+            velocidadeSom
+        );
 
 }
 
 
 function pararSomRoleta(){
 
-    if(
-        somGirando &&
-        ganhoGirando &&
-        audioContext
-    ){
+    if(timerRoleta){
 
-        const agora =
-            audioContext.currentTime;
-
-        ganhoGirando.gain.cancelScheduledValues(
-            agora
+        clearTimeout(
+            timerRoleta
         );
 
-        ganhoGirando.gain.setValueAtTime(
-            1.0,
-            agora
-        );
-
-        ganhoGirando.gain.exponentialRampToValueAtTime(
-            0.001,
-            agora + 0.15
-        );
-
-        try{
-
-            somGirando.stop(
-                agora + 0.16
-            );
-
-        }catch(e){}
-
-        somGirando = null;
-        ganhoGirando = null;
+        timerRoleta = null;
 
     }
 
@@ -1034,10 +1073,18 @@ function tocarPremio(){
             );
 
             oscilador.connect(ganho);
-            ganho.connect(audioContext.destination);
 
-            oscilador.start(inicio);
-            oscilador.stop(inicio + 0.45);
+            ganho.connect(
+                audioContext.destination
+            );
+
+            oscilador.start(
+                inicio
+            );
+
+            oscilador.stop(
+                inicio + 0.45
+            );
 
         }
     );
@@ -1571,6 +1618,10 @@ async function(){
         }
     );
 
+    /*
+       INICIA O TIC-TIC-TIC
+    */
+
     iniciarSomRoleta();
 
     iniciarEfeitoNumeros();
@@ -1630,6 +1681,10 @@ async function finalizarRodada(
     premio
 ){
 
+    /*
+       PARA O TIC-TIC
+    */
+
     pararSomRoleta();
 
     pararEfeitoNumeros();
@@ -1668,6 +1723,10 @@ async function finalizarRodada(
         return;
 
     }
+
+    /*
+       SOM DO PRÊMIO
+    */
 
     tocarPremio();
 
