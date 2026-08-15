@@ -6,6 +6,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
+<title>Dice ApostaXBet</title>
+
 <style>
 
 *{
@@ -32,7 +34,6 @@ linear-gradient(135deg,#071329,#10051d,#06152b);
 
 position:relative;
 }
-
 
 /* FUNDO */
 
@@ -61,9 +62,8 @@ transform:scale(1.08);
 
 }
 
-
 /* =====================================================
-   SALDO
+SALDO
 ===================================================== */
 
 #saldo{
@@ -91,9 +91,8 @@ box-shadow:
 
 }
 
-
 /* =====================================================
-   TÍTULO
+TÍTULO
 ===================================================== */
 
 .titulo{
@@ -113,9 +112,8 @@ text-shadow:
 
 }
 
-
 /* =====================================================
-   ÁREA DOS DADOS
+ÁREA DOS DADOS
 ===================================================== */
 
 .area-dados{
@@ -142,126 +140,146 @@ perspective:700px;
 
 }
 
-
 /* =====================================================
-   DADO PEQUENO
+DADO 3D
 ===================================================== */
 
 .dado{
 
-width:64px;
+width:62px;
 
-height:64px;
+height:62px;
 
-border-radius:13px;
+position:relative;
+
+transform-style:preserve-3d;
+
+transform:
+rotateX(-18deg)
+rotateY(22deg);
+
+margin:0 auto;
+
+user-select:none;
+
+will-change:transform;
+
+filter:
+drop-shadow(
+0 12px 8px rgba(0,0,0,.65)
+)
+drop-shadow(
+0 0 12px rgba(255,215,0,.25)
+);
+
+}
+
+/* CUBO */
+
+.dado-cubo{
+
+width:62px;
+
+height:62px;
+
+position:relative;
+
+transform-style:preserve-3d;
+
+}
+
+/* FACES */
+
+.face-dado{
+
+position:absolute;
+
+width:62px;
+
+height:62px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
 
 background:
 linear-gradient(
 145deg,
 #ffffff,
-#d8d8d8
+#dedede
 );
 
 border:2px solid #aaa;
 
-position:relative;
+border-radius:10px;
 
 box-shadow:
-0 10px 16px rgba(0,0,0,.5),
-inset 0 0 10px rgba(0,0,0,.15);
+inset 0 0 8px rgba(0,0,0,.25);
 
-transform-style:preserve-3d;
+font-size:25px;
 
-will-change:transform;
+font-weight:900;
+
+color:#111;
+
+backface-visibility:hidden;
 
 }
 
+/* POSIÇÃO DAS FACES */
+
+.face-1{
+transform:
+translateZ(31px);
+}
+
+.face-6{
+transform:
+rotateY(180deg)
+translateZ(31px);
+}
+
+.face-2{
+transform:
+rotateY(90deg)
+translateZ(31px);
+}
+
+.face-5{
+transform:
+rotateY(-90deg)
+translateZ(31px);
+}
+
+.face-3{
+transform:
+rotateX(90deg)
+translateZ(31px);
+}
+
+.face-4{
+transform:
+rotateX(-90deg)
+translateZ(31px);
+}
 
 /* =====================================================
-   PONTOS
+ROLAGEM DO DADO
 ===================================================== */
 
-.ponto{
-
-position:absolute;
-
-width:10px;
-
-height:10px;
-
-border-radius:50%;
-
-background:#151515;
-
-box-shadow:
-inset 0 1px 2px #555;
-
-}
-
-.centro{
-
-top:50%;
-left:50%;
-
-transform:
-translate(-50%,-50%);
-
-}
-
-.tl{
-top:16%;
-left:16%;
-}
-
-.tr{
-top:16%;
-right:16%;
-}
-
-.ml{
-
-top:50%;
-left:16%;
-
-transform:
-translateY(-50%);
-
-}
-
-.mr{
-
-top:50%;
-right:16%;
-
-transform:
-translateY(-50%);
-
-}
-
-.bl{
-bottom:16%;
-left:16%;
-}
-
-.br{
-bottom:16%;
-right:16%;
-}
-
-
-/* =====================================================
-   ROLAGEM COMO DADO SENDO JOGADO
-===================================================== */
-
-.dado.rolando{
+.dado.girando{
 
 animation:
-arremessoDado .78s
-cubic-bezier(.18,.72,.22,1);
+dadoRolando
+0.75s
+cubic-bezier(.15,.75,.25,1)
+forwards;
 
 }
 
-@keyframes arremessoDado{
+@keyframes dadoRolando{
 
 0%{
 
@@ -276,60 +294,50 @@ rotateZ(0deg);
 15%{
 
 transform:
-translate3d(-13px,-32px,15px)
-rotateX(120deg)
-rotateY(100deg)
-rotateZ(25deg);
-
-}
-
-30%{
-
-transform:
-translate3d(12px,-12px,5px)
-rotateX(250deg)
-rotateY(210deg)
-rotateZ(-20deg);
-
-}
-
-45%{
-
-transform:
-translate3d(-10px,8px,0)
-rotateX(390deg)
-rotateY(330deg)
+translate3d(-12px,-20px,0)
+rotateX(110deg)
+rotateY(80deg)
 rotateZ(20deg);
 
 }
 
-60%{
+35%{
 
 transform:
-translate3d(8px,-14px,4px)
-rotateX(520deg)
-rotateY(460deg)
-rotateZ(-15deg);
+translate3d(15px,-35px,0)
+rotateX(250deg)
+rotateY(180deg)
+rotateZ(-35deg);
+
+}
+
+55%{
+
+transform:
+translate3d(-12px,-18px,0)
+rotateX(410deg)
+rotateY(300deg)
+rotateZ(25deg);
 
 }
 
 75%{
 
 transform:
-translate3d(-5px,3px,0)
-rotateX(650deg)
-rotateY(580deg)
-rotateZ(8deg);
+translate3d(8px,-8px,0)
+rotateX(530deg)
+rotateY(420deg)
+rotateZ(-15deg);
 
 }
 
 90%{
 
 transform:
-translate3d(2px,-4px,0)
-rotateX(760deg)
-rotateY(690deg)
-rotateZ(-3deg);
+translate3d(-3px,2px,0)
+rotateX(620deg)
+rotateY(510deg)
+rotateZ(5deg);
 
 }
 
@@ -337,17 +345,16 @@ rotateZ(-3deg);
 
 transform:
 translate3d(0,0,0)
-rotateX(810deg)
-rotateY(720deg)
+rotateX(720deg)
+rotateY(540deg)
 rotateZ(0deg);
 
 }
 
 }
 
-
 /* =====================================================
-   RESULTADO
+RESULTADO
 ===================================================== */
 
 .resultado-dados{
@@ -365,9 +372,8 @@ text-shadow:
 
 }
 
-
 /* =====================================================
-   MENSAGEM
+MENSAGEM
 ===================================================== */
 
 #mensagem{
@@ -398,9 +404,8 @@ text-shadow:
 
 }
 
-
 /* =====================================================
-   SELEÇÃO DO NÚMERO
+SELEÇÃO
 ===================================================== */
 
 .selecao{
@@ -491,9 +496,8 @@ box-shadow:
 
 }
 
-
 /* =====================================================
-   APOSTA
+APOSTAS
 ===================================================== */
 
 .apostas{
@@ -553,9 +557,8 @@ font-weight:bold;
 
 }
 
-
 /* =====================================================
-   BOTÃO
+BOTÃO
 ===================================================== */
 
 #jogar{
@@ -604,9 +607,8 @@ opacity:.55;
 
 }
 
-
 /* =====================================================
-   INFO
+INFO
 ===================================================== */
 
 .info{
@@ -629,7 +631,6 @@ color:#00ff91;
 color:#ff416d;
 }
 
-
 @media(max-width:430px){
 
 .titulo{
@@ -646,18 +647,62 @@ gap:18px;
 
 .dado{
 
-width:58px;
+width:56px;
 
-height:58px;
+height:56px;
 
 }
 
-.ponto{
+.dado-cubo{
 
-width:9px;
+width:56px;
 
-height:9px;
+height:56px;
 
+}
+
+.face-dado{
+
+width:56px;
+
+height:56px;
+
+font-size:23px;
+
+}
+
+.face-1{
+transform:translateZ(28px);
+}
+
+.face-6{
+transform:
+rotateY(180deg)
+translateZ(28px);
+}
+
+.face-2{
+transform:
+rotateY(90deg)
+translateZ(28px);
+}
+
+.face-5{
+transform:
+rotateY(-90deg)
+translateZ(28px);
+}
+
+.face-3{
+transform:
+rotateX(90deg)
+translateZ(28px);
+}
+
+.face-4{
+transform:
+rotateX(-90deg)
+translateZ(28px);
 }
 
 .numero{
@@ -674,21 +719,14 @@ height:42px;
 
 </head>
 
-
 <body>
 
-
 <div id="saldo">
-
 💰 Saldo: R$ 0,00
-
 </div>
 
-
 <div class="titulo">
-
 🎲 DICE
-
 </div>
 
 
@@ -696,20 +734,40 @@ height:42px;
 
 <div class="area-dados">
 
+<div
+class="dado"
+id="dado1">
 
-<div class="dado" id="dado1">
+<div class="dado-cubo">
 
-<span class="ponto centro"></span>
+<div class="face-dado face-1">1</div>
+<div class="face-dado face-2">2</div>
+<div class="face-dado face-3">3</div>
+<div class="face-dado face-4">4</div>
+<div class="face-dado face-5">5</div>
+<div class="face-dado face-6">6</div>
+
+</div>
 
 </div>
 
 
-<div class="dado" id="dado2">
+<div
+class="dado"
+id="dado2">
 
-<span class="ponto centro"></span>
+<div class="dado-cubo">
+
+<div class="face-dado face-1">1</div>
+<div class="face-dado face-2">2</div>
+<div class="face-dado face-3">3</div>
+<div class="face-dado face-4">4</div>
+<div class="face-dado face-5">5</div>
+<div class="face-dado face-6">6</div>
 
 </div>
 
+</div>
 
 </div>
 
@@ -724,46 +782,53 @@ id="resultadoDados">
 
 
 <div id="mensagem">
-
 Escolha o número
-
 </div>
 
 
-<!-- ESCOLHA DO NÚMERO -->
+<!-- ESCOLHA -->
 
 <div class="selecao">
 
 <div class="selecao-titulo">
-
 ESCOLHA O NÚMERO
-
 </div>
-
 
 <div class="numeros">
 
-<button class="numero ativo" data-numero="1">
+<button
+class="numero ativo"
+data-numero="1">
 1
 </button>
 
-<button class="numero" data-numero="2">
+<button
+class="numero"
+data-numero="2">
 2
 </button>
 
-<button class="numero" data-numero="3">
+<button
+class="numero"
+data-numero="3">
 3
 </button>
 
-<button class="numero" data-numero="4">
+<button
+class="numero"
+data-numero="4">
 4
 </button>
 
-<button class="numero" data-numero="5">
+<button
+class="numero"
+data-numero="5">
 5
 </button>
 
-<button class="numero" data-numero="6">
+<button
+class="numero"
+data-numero="6">
 6
 </button>
 
@@ -777,11 +842,8 @@ ESCOLHA O NÚMERO
 <div class="apostas">
 
 <div class="apostas-titulo">
-
 VALOR DA APOSTA
-
 </div>
-
 
 <div class="valores">
 
@@ -811,24 +873,18 @@ R$ 10,00
 
 
 <button id="jogar">
-
 🎲 JOGAR
-
 </button>
 
 
 <div class="info">
 
 <div class="ganha">
-
 🎉 Se o número escolhido aparecer nos dados, ganha 2X
-
 </div>
 
 <div class="perde">
-
 😢 Se não aparecer, perde a aposta
-
 </div>
 
 </div>
@@ -840,23 +896,16 @@ R$ 10,00
 <script>
 
 /* =====================================================
-   CONFIGURAÇÃO
+CONFIGURAÇÃO
 ===================================================== */
 
 const APOSTA = 1.00;
-
-
-/*
- O resultado precisa conter
- EXATAMENTE o número escolhido
- para ser considerado acerto.
-*/
 
 const MULTIPLICADOR = 2;
 
 
 /* =====================================================
-   ELEMENTOS
+ELEMENTOS
 ===================================================== */
 
 const saldoEl =
@@ -887,7 +936,7 @@ let jogando = false;
 
 
 /* =====================================================
-   SALDO
+SALDO
 ===================================================== */
 
 async function atualizarSaldo(){
@@ -923,7 +972,7 @@ erro
 
 
 /* =====================================================
-   ESCOLHA
+ESCOLHA
 ===================================================== */
 
 botoesNumero.forEach(botao=>{
@@ -935,20 +984,16 @@ botao.addEventListener(
 if(jogando)
 return;
 
-
 botoesNumero.forEach(b=>{
 b.classList.remove("ativo");
 });
 
-
 botao.classList.add("ativo");
-
 
 numeroEscolhido =
 Number(
 botao.dataset.numero
 );
-
 
 mensagem.className="";
 
@@ -956,15 +1001,13 @@ mensagem.textContent =
 "🎯 Número escolhido: " +
 numeroEscolhido;
 
-}
-
-);
+});
 
 });
 
 
 /* =====================================================
-   FACE DO DADO
+FACE FINAL
 ===================================================== */
 
 function mostrarFace(
@@ -972,50 +1015,35 @@ dado,
 numero
 ){
 
-dado.innerHTML="";
+const cubo =
+dado.querySelector(".dado-cubo");
 
+const faces =
+cubo.querySelectorAll(".face-dado");
 
-const faces={
-
-1:["centro"],
-
-2:["tl","br"],
-
-3:["tl","centro","br"],
-
-4:["tl","tr","bl","br"],
-
-5:["tl","tr","centro","bl","br"],
-
-6:["tl","tr","ml","mr","bl","br"]
-
-};
-
-
-faces[numero].forEach(pos=>{
-
-const ponto =
-document.createElement("span");
-
-ponto.className =
-"ponto "+pos;
-
-dado.appendChild(ponto);
-
+faces.forEach(face=>{
+face.style.opacity="0";
 });
+
+const face =
+cubo.querySelector(
+".face-"+numero
+);
+
+if(face){
+face.style.opacity="1";
+}
 
 }
 
 
 /* =====================================================
-   VIBRAÇÃO
+VIBRAÇÃO
 ===================================================== */
 
 function vibrar(){
 
-if(
-navigator.vibrate
-){
+if(navigator.vibrate){
 
 navigator.vibrate([
 25,
@@ -1029,11 +1057,10 @@ navigator.vibrate([
 
 
 /* =====================================================
-   SOM DE DADO
+SOM DE DADO
 ===================================================== */
 
 let audioCtx=null;
-
 
 function somDado(){
 
@@ -1050,22 +1077,19 @@ window.webkitAudioContext
 }
 
 if(
-audioCtx.state ===
-"suspended"
+audioCtx.state==="suspended"
 ){
 
 audioCtx.resume();
 
 }
 
-
 const agora =
 audioCtx.currentTime;
 
-
 for(
 let i=0;
-i<6;
+i<7;
 i++
 ){
 
@@ -1075,32 +1099,26 @@ audioCtx.createOscillator();
 const ganho =
 audioCtx.createGain();
 
-
 osc.type="triangle";
 
-
 osc.frequency.value =
-130 +
-Math.random()*100;
-
+100 +
+Math.random()*130;
 
 ganho.gain.setValueAtTime(
 0.0001,
-agora+i*.10
+agora+i*.085
 );
-
 
 ganho.gain.exponentialRampToValueAtTime(
-0.07,
-agora+i*.10+.015
+0.06,
+agora+i*.085+.012
 );
-
 
 ganho.gain.exponentialRampToValueAtTime(
 0.0001,
-agora+i*.10+.065
+agora+i*.085+.055
 );
-
 
 osc.connect(ganho);
 
@@ -1108,14 +1126,12 @@ ganho.connect(
 audioCtx.destination
 );
 
-
 osc.start(
-agora+i*.10
+agora+i*.085
 );
 
-
 osc.stop(
-agora+i*.10+.075
+agora+i*.085+.065
 );
 
 }
@@ -1130,21 +1146,17 @@ console.log(e);
 
 
 /* =====================================================
-   JOGAR
+JOGAR
 ===================================================== */
 
 jogar.addEventListener(
 "click",
 async()=>{
 
-
 if(jogando)
 return;
 
-
-if(
-!window.SistemaSaldo
-){
+if(!window.SistemaSaldo){
 
 mensagem.className="perde";
 
@@ -1155,18 +1167,14 @@ return;
 
 }
 
-
 jogando=true;
 
 jogar.disabled=true;
 
 
-/* =====================================================
-   BUSCA SALDO
-===================================================== */
+/* BUSCA SALDO */
 
 let saldoAtual=0;
-
 
 try{
 
@@ -1181,6 +1189,8 @@ console.error(e);
 
 }
 
+
+/* SALDO INSUFICIENTE */
 
 if(
 !Number.isFinite(saldoAtual) ||
@@ -1201,9 +1211,7 @@ return;
 }
 
 
-/* =====================================================
-   DEBITA
-===================================================== */
+/* DEBITA */
 
 try{
 
@@ -1234,45 +1242,37 @@ return;
 }
 
 
-/* MOSTRA DESCONTO */
+/* MOSTRA SALDO ATUALIZADO */
 
 await atualizarSaldo();
 
 
-/* =====================================================
-   COMEÇA A ROLAGEM
-===================================================== */
+/* INÍCIO */
 
 mensagem.className="";
 
 mensagem.textContent =
 "🎲 Os dados estão rolando...";
 
-
 resultadoDados.textContent =
 "🎲 🎲";
 
 
-dado1.classList.remove(
-"rolando"
-);
+/* REINICIA ANIMAÇÃO */
 
-dado2.classList.remove(
-"rolando"
-);
+dado1.classList.remove("girando");
 
+dado2.classList.remove("girando");
 
 void dado1.offsetWidth;
 void dado2.offsetWidth;
 
 
-dado1.classList.add(
-"rolando"
-);
+/* COMEÇA */
 
-dado2.classList.add(
-"rolando"
-);
+dado1.classList.add("girando");
+
+dado2.classList.add("girando");
 
 
 somDado();
@@ -1280,15 +1280,12 @@ somDado();
 vibrar();
 
 
-/* =====================================================
-   SORTEIO
-===================================================== */
+/* SORTEIO */
 
 const numero1 =
 Math.floor(
 Math.random()*6
 )+1;
-
 
 const numero2 =
 Math.floor(
@@ -1296,21 +1293,14 @@ Math.random()*6
 )+1;
 
 
-/* =====================================================
-   RESULTADO
-===================================================== */
+/* RESULTADO */
 
 setTimeout(
 async()=>{
 
+dado1.classList.remove("girando");
 
-dado1.classList.remove(
-"rolando"
-);
-
-dado2.classList.remove(
-"rolando"
-);
+dado2.classList.remove("girando");
 
 
 mostrarFace(
@@ -1332,26 +1322,7 @@ numero2 +
 (numero1+numero2);
 
 
-/*
-=======================================================
-VERIFICAÇÃO CORRETA
-
-Exemplo:
-
-Escolheu 1
-Saiu 3 + 3
-
-numero1 === 1  -> false
-numero2 === 1  -> false
-
-Resultado:
-PERDE.
-
-Só existe vitória se um dos dois
-números for EXATAMENTE igual
-ao número escolhido.
-=======================================================
-*/
+/* VERIFICAÇÃO */
 
 const acertouPrimeiro =
 numero1 === numeroEscolhido;
@@ -1364,16 +1335,13 @@ acertouPrimeiro ||
 acertouSegundo;
 
 
-/* =====================================================
-   VITÓRIA
-===================================================== */
+/* VITÓRIA */
 
 if(ganhou){
 
 const premio =
 APOSTA *
 MULTIPLICADOR;
-
 
 try{
 
@@ -1396,21 +1364,15 @@ premio
 
 }
 
-
-mensagem.className =
-"ganha";
-
+mensagem.className="ganha";
 
 mensagem.textContent =
-"🎉 ACERTOU! +" +
-"R$ " +
+"🎉 ACERTOU! + R$ " +
 premio
 .toFixed(2)
 .replace(".",",");
 
-
 vibrar();
-
 
 }catch(erro){
 
@@ -1419,8 +1381,7 @@ console.error(
 erro
 );
 
-mensagem.className =
-"perde";
+mensagem.className="perde";
 
 mensagem.textContent =
 "⚠️ Erro ao registrar o prêmio.";
@@ -1430,46 +1391,37 @@ mensagem.textContent =
 }
 
 
-/* =====================================================
-   DERROTA
-===================================================== */
+/* DERROTA */
 
 else{
 
-mensagem.className =
-"perde";
-
+mensagem.className="perde";
 
 mensagem.textContent =
 "😢 PERDEU! O número " +
 numeroEscolhido +
 " não saiu.";
 
-
 }
 
 
-/* =====================================================
-   SALDO FINAL
-===================================================== */
+/* SALDO FINAL */
 
 await atualizarSaldo();
-
 
 jogando=false;
 
 jogar.disabled=false;
 
-
 },
-780
+750
 );
 
 });
 
 
 /* =====================================================
-   INÍCIO
+INÍCIO
 ===================================================== */
 
 atualizarSaldo();
