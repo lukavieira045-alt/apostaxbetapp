@@ -6,10 +6,14 @@
 <title>Fortune Snake - ApostaXBet</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    -webkit-tap-highlight-color:transparent;
+}
 
 html,body{
-    margin:0;
     width:100%;
     min-height:100%;
 }
@@ -17,7 +21,7 @@ html,body{
 body{
     min-height:100vh;
     overflow-x:hidden;
-    background:#08000f;
+    background:#07000d;
     color:white;
     font-family:Arial,sans-serif;
     display:flex;
@@ -26,19 +30,26 @@ body{
     position:relative;
 }
 
+/* =====================================================
+   FUNDO COM LUZES, FUMAÇA E PARTÍCULAS
+===================================================== */
+
 body::before{
     content:"";
     position:fixed;
     inset:-20%;
     pointer-events:none;
     z-index:-10;
+
     background:
-        radial-gradient(circle at 15% 25%,rgba(255,0,204,.35),transparent 24%),
-        radial-gradient(circle at 85% 20%,rgba(0,140,255,.30),transparent 25%),
-        radial-gradient(circle at 80% 80%,rgba(255,190,0,.25),transparent 25%),
-        radial-gradient(circle at 20% 85%,rgba(120,0,255,.35),transparent 28%);
-    filter:blur(30px);
-    animation:luzesFundo 10s ease-in-out infinite alternate;
+        radial-gradient(circle at 15% 25%,rgba(180,0,255,.35),transparent 25%),
+        radial-gradient(circle at 85% 20%,rgba(0,130,255,.30),transparent 25%),
+        radial-gradient(circle at 80% 80%,rgba(255,0,180,.30),transparent 27%),
+        radial-gradient(circle at 15% 85%,rgba(80,0,255,.32),transparent 27%);
+
+    filter:blur(35px);
+
+    animation:luzesFundo 12s ease-in-out infinite alternate;
 }
 
 body::after{
@@ -47,89 +58,245 @@ body::after{
     inset:0;
     pointer-events:none;
     z-index:-9;
+
     background-image:
-        radial-gradient(circle,rgba(255,255,255,.8) 1px,transparent 2px);
+        radial-gradient(circle,rgba(255,255,255,.7) 1px,transparent 2px);
+
     background-size:55px 55px;
-    opacity:.30;
-    animation:estrelas 14s linear infinite;
+    opacity:.20;
+
+    animation:particulas 15s linear infinite;
 }
 
 @keyframes luzesFundo{
-    0%{transform:translate(-3%,-2%) scale(1)}
-    50%{transform:translate(4%,3%) scale(1.08)}
-    100%{transform:translate(-2%,5%) scale(1.04)}
+    0%{
+        transform:translate(-4%,-3%) scale(1);
+    }
+    50%{
+        transform:translate(4%,3%) scale(1.08);
+    }
+    100%{
+        transform:translate(-2%,5%) scale(1.04);
+    }
 }
 
-@keyframes estrelas{
-    from{transform:translateY(0)}
-    to{transform:translateY(-120px)}
+@keyframes particulas{
+    from{transform:translateY(0);}
+    to{transform:translateY(-120px);}
 }
 
-.background-glow{
-    position:fixed;
-    width:520px;
-    height:520px;
-    border-radius:50%;
-    background:
-        radial-gradient(circle,
-        rgba(255,215,0,.16),
-        rgba(160,0,255,.14),
-        transparent 70%);
-    filter:blur(20px);
-    pointer-events:none;
-    z-index:-8;
-    animation:brilho 6s ease-in-out infinite alternate;
-}
+/* =====================================================
+   FUMAÇA
+===================================================== */
 
-@keyframes brilho{
-    from{transform:scale(.90);opacity:.45}
-    to{transform:scale(1.15);opacity:.85}
-}
-
-.lightning{
+.fumaca{
     position:fixed;
     inset:0;
     pointer-events:none;
-    z-index:50;
-    opacity:0;
-    background:
-        radial-gradient(ellipse at center,
-        rgba(120,220,255,.28),
-        transparent 55%);
-    transition:opacity .18s ease;
+    z-index:-8;
+    overflow:hidden;
 }
 
-.lightning.flash{
-    opacity:1;
+.fumaca span{
+    position:absolute;
+    width:180px;
+    height:180px;
+    border-radius:50%;
+    background:rgba(150,150,170,.08);
+    filter:blur(35px);
+    animation:fumar 14s ease-in-out infinite alternate;
 }
+
+.fumaca span:nth-child(1){
+    left:-40px;
+    bottom:5%;
+}
+
+.fumaca span:nth-child(2){
+    right:-50px;
+    top:15%;
+    animation-delay:3s;
+}
+
+.fumaca span:nth-child(3){
+    left:35%;
+    bottom:-70px;
+    animation-delay:6s;
+}
+
+@keyframes fumar{
+    0%{
+        transform:translate(0,30px) scale(.8);
+        opacity:.15;
+    }
+    50%{
+        transform:translate(50px,-80px) scale(1.25);
+        opacity:.35;
+    }
+    100%{
+        transform:translate(-40px,-150px) scale(1.5);
+        opacity:.08;
+    }
+}
+
+/* =====================================================
+   RAIOS LENTOS
+===================================================== */
+
+.raios{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:-5;
+    overflow:hidden;
+    opacity:0;
+}
+
+.raio{
+    position:absolute;
+    width:4px;
+    height:65vh;
+
+    background:linear-gradient(
+        180deg,
+        transparent,
+        #bfffff,
+        #00eaff,
+        transparent
+    );
+
+    filter:
+        drop-shadow(0 0 8px #00eaff)
+        drop-shadow(0 0 20px #00eaff);
+
+    clip-path:polygon(
+        50% 0,
+        62% 30%,
+        52% 30%,
+        72% 58%,
+        58% 57%,
+        68% 100%,
+        43% 65%,
+        50% 65%,
+        31% 38%,
+        45% 39%
+    );
+
+    transform:rotate(8deg);
+}
+
+.raio1{
+    left:13%;
+    top:-5%;
+}
+
+.raio2{
+    right:16%;
+    top:-8%;
+    transform:rotate(-10deg);
+}
+
+.raios.ativo{
+    animation:raioLento 2.8s ease-out;
+}
+
+@keyframes raioLento{
+    0%{opacity:0;}
+    18%{opacity:.9;}
+    30%{opacity:.15;}
+    48%{opacity:.8;}
+    65%{opacity:.08;}
+    100%{opacity:0;}
+}
+
+/* =====================================================
+   TREMOR DA MÁQUINA
+===================================================== */
+
+.game-container.impacto{
+    animation:tremor 0.65s ease;
+}
+
+@keyframes tremor{
+    0%,100%{transform:translate(0,0);}
+    10%{transform:translate(-4px,2px);}
+    20%{transform:translate(4px,-2px);}
+    30%{transform:translate(-5px,-2px);}
+    40%{transform:translate(5px,3px);}
+    50%{transform:translate(-3px,-3px);}
+    60%{transform:translate(3px,2px);}
+    70%{transform:translate(-2px,0);}
+}
+
+/* =====================================================
+   JOGO
+===================================================== */
 
 .game-container{
-    width:420px;
+    width:430px;
     max-width:94vw;
     padding:22px;
+
     text-align:center;
-    border:none;
+
+    border:2px solid #4d2375;
     border-radius:20px;
+
     background:
         linear-gradient(
             180deg,
             rgba(50,25,87,.97),
-            rgba(22,9,34,.98)
+            rgba(16,5,27,.98)
         );
+
     box-shadow:
-        0 0 30px rgba(145,0,255,.22),
-        0 0 80px rgba(255,0,204,.10);
+        0 0 25px rgba(145,0,255,.28),
+        0 0 70px rgba(0,80,255,.12),
+        inset 0 0 30px rgba(0,0,0,.7);
+
     backdrop-filter:blur(8px);
+
     position:relative;
 }
 
+/* sem quadrado amarelo */
 .game-container::before{
-    display:none !important;
+    content:"";
+    position:absolute;
+    inset:-2px;
+    border-radius:20px;
+    pointer-events:none;
+
+    background:
+        linear-gradient(
+            120deg,
+            transparent,
+            rgba(160,0,255,.45),
+            transparent,
+            rgba(0,220,255,.35),
+            transparent
+        );
+
+    background-size:300% 300%;
+    animation:borda 7s linear infinite;
+
+    z-index:-1;
 }
+
+@keyframes borda{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+/* =====================================================
+   TÍTULO
+===================================================== */
 
 h2{
     margin:0 0 5px;
     color:#ffd700;
+
     text-shadow:
         0 0 8px #ffd700,
         0 0 18px #ff00cc;
@@ -140,38 +307,84 @@ h2{
     font-size:13px;
 }
 
+/* =====================================================
+   MENSAGEM
+===================================================== */
+
 .message-area{
     min-height:30px;
     margin:12px 0;
+
     font-weight:bold;
     color:#00ed91;
-    text-shadow:0 0 8px rgba(0,237,145,.35);
+
+    text-shadow:
+        0 0 8px rgba(0,237,145,.35);
 }
+
+/* =====================================================
+   MÁQUINA
+===================================================== */
 
 .slot-machine{
     display:flex;
     gap:8px;
+
     padding:12px;
+
     background:
-        linear-gradient(145deg,#100719,#050207);
-    border:2px solid #4a2c7a;
+        linear-gradient(
+            145deg,
+            #100719,
+            #030105
+        );
+
+    border:2px solid #412565;
     border-radius:15px;
+
     overflow:hidden;
+
     box-shadow:
         inset 0 0 25px #000,
-        0 0 20px rgba(115,0,255,.20);
+        0 0 18px rgba(115,0,255,.20);
 }
 
 .reel{
     flex:1;
+
     height:100px;
+
     overflow:hidden;
     position:relative;
+
     background:
-        linear-gradient(180deg,#29153c,#13091d);
+        linear-gradient(
+            180deg,
+            #29153c,
+            #13091d
+        );
+
     border:2px solid #51306d;
     border-radius:10px;
-    box-shadow:inset 0 0 15px #000;
+
+    box-shadow:
+        inset 0 0 15px #000;
+}
+
+.reel::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.12),
+            transparent 25%,
+            transparent 75%,
+            rgba(0,0,0,.35)
+        );
 }
 
 .reel-strip{
@@ -179,63 +392,75 @@ h2{
     width:100%;
     top:0;
     left:0;
+
+    will-change:transform;
 }
 
 .symbol{
     height:100px;
+
     display:flex;
     justify-content:center;
     align-items:center;
+
     font-size:48px;
+
+    text-shadow:
+        0 0 8px rgba(255,255,255,.35);
 }
 
 .reel.stopping{
     box-shadow:
-        0 0 20px rgba(255,215,0,.45),
+        0 0 20px rgba(170,0,255,.55),
         inset 0 0 15px #000;
 }
 
 .win{
     animation:pulse .5s infinite;
+
+    text-shadow:
+        0 0 12px #ffd700,
+        0 0 25px #ff00cc;
 }
 
 @keyframes pulse{
-    0%,100%{transform:scale(1)}
-    50%{transform:scale(1.08)}
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.08);}
 }
 
-.slot-machine.girando{
-    animation:maquinaVibrando .12s infinite;
-}
-
-@keyframes maquinaVibrando{
-    0%{transform:translateX(0)}
-    25%{transform:translateX(-1px)}
-    50%{transform:translateX(1px)}
-    75%{transform:translateX(-1px)}
-    100%{transform:translateX(0)}
-}
+/* =====================================================
+   RESULTADO
+===================================================== */
 
 .result{
     margin-top:12px;
     min-height:32px;
+
     font-weight:bold;
     font-size:18px;
 }
+
+/* =====================================================
+   CONTROLES
+===================================================== */
 
 .controls{
     display:flex;
     justify-content:space-between;
     align-items:center;
     gap:10px;
+
     margin-top:18px;
 }
 
 .bet{
     background:#0b0610;
+
     border:1px solid #4a2c7a;
     border-radius:20px;
+
     padding:10px 13px;
+
     color:#ffd700;
     font-weight:bold;
     white-space:nowrap;
@@ -244,13 +469,23 @@ h2{
 button{
     border:0;
     color:white;
+
     font-weight:bold;
     font-size:17px;
+
     padding:13px 25px;
     border-radius:25px;
+
     background:
-        linear-gradient(45deg,#ff00cc,#3333ff);
-    box-shadow:0 5px 18px rgba(255,0,204,.35);
+        linear-gradient(
+            45deg,
+            #ff00cc,
+            #3333ff
+        );
+
+    box-shadow:
+        0 5px 18px rgba(255,0,204,.35);
+
     cursor:pointer;
 }
 
@@ -259,37 +494,28 @@ button:active{
 }
 
 button:hover{
-    box-shadow:0 0 25px rgba(255,0,204,.65);
+    box-shadow:
+        0 0 25px rgba(255,0,204,.65);
 }
 
 button:disabled{
     opacity:.5;
     filter:grayscale(1);
-}
-
-body.girando::before{
-    animation:luzesGiro 2.8s ease-in-out infinite alternate;
-}
-
-@keyframes luzesGiro{
-    0%{transform:translate(-4%,-2%) scale(1)}
-    50%{transform:translate(4%,2%) scale(1.12)}
-    100%{transform:translate(-2%,4%) scale(1.05)}
+    cursor:not-allowed;
 }
 
 @media(max-width:380px){
     .game-container{
-        width:94vw;
-        padding:17px;
+        padding:16px;
     }
 
     .reel{
-        height:88px;
+        height:82px;
     }
 
     .symbol{
-        height:88px;
-        font-size:42px;
+        height:82px;
+        font-size:39px;
     }
 }
 </style>
@@ -297,10 +523,20 @@ body.girando::before{
 
 <body>
 
-<div class="background-glow"></div>
-<div class="lightning" id="lightning"></div>
+<div class="fumaca">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
 
-<div class="game-container">
+<div class="raios" id="raios">
+    <div class="raio raio1"></div>
+    <div class="raio raio2"></div>
+</div>
+
+<div class="background-glow"></div>
+
+<div class="game-container" id="gameContainer">
 
     <h2>🐍 Fortune Snake</h2>
 
@@ -312,7 +548,7 @@ body.girando::before{
         Carregando saldo...
     </div>
 
-    <div class="slot-machine" id="slotMachine">
+    <div class="slot-machine">
 
         <div class="reel" id="reel0">
             <div class="reel-strip" id="strip0"></div>
@@ -338,7 +574,7 @@ body.girando::before{
             Aposta: R$ 1,00
         </div>
 
-        <button id="btnSpin">
+        <button id="btnSpin" type="button">
             GIRAR
         </button>
 
@@ -349,36 +585,44 @@ body.girando::before{
 <script type="module" src="../saldo.js"></script>
 
 <script>
-let audioCtx=null;
-let somAtivo=true;
+// =====================================================
+// AUDIO
+// =====================================================
+
+let audioCtx = null;
 
 function iniciarAudio(){
+
     if(!audioCtx){
-        audioCtx=new(
-            window.AudioContext||
+
+        audioCtx = new(
+            window.AudioContext ||
             window.webkitAudioContext
         )();
+
     }
 
-    if(audioCtx.state==="suspended"){
+    if(audioCtx.state === "suspended"){
         audioCtx.resume();
     }
 }
 
-function tocarNota(
+function tocarTom(
     frequencia,
     duracao,
     tipo="sine",
     volume=.04
 ){
-    if(!somAtivo)return;
 
     iniciarAudio();
 
-    const osc=audioCtx.createOscillator();
-    const ganho=audioCtx.createGain();
+    const osc =
+        audioCtx.createOscillator();
 
-    osc.type=tipo;
+    const ganho =
+        audioCtx.createGain();
+
+    osc.type = tipo;
 
     osc.frequency.setValueAtTime(
         frequencia,
@@ -392,7 +636,7 @@ function tocarNota(
 
     ganho.gain.exponentialRampToValueAtTime(
         .001,
-        audioCtx.currentTime+duracao
+        audioCtx.currentTime + duracao
     );
 
     osc.connect(ganho);
@@ -401,142 +645,172 @@ function tocarNota(
     osc.start();
 
     osc.stop(
-        audioCtx.currentTime+duracao
+        audioCtx.currentTime + duracao
     );
 }
 
-function cliqueRolo(){
-    if(!somAtivo)return;
+// =====================================================
+// SOM DE CAÇA-NÍQUEL
+// =====================================================
 
-    tocarNota(
-        115+Math.random()*35,
-        .055,
-        "square",
-        .035
-    );
-}
+let somGiroInterval = null;
 
-function somCacaNiquel(){
-
-    if(!somAtivo)return;
+function iniciarSomGiro(){
 
     iniciarAudio();
 
-    let inicio=Date.now();
-    let ultimo=0;
+    let passo = 0;
 
-    function tocar(){
+    somGiroInterval =
+        setInterval(() => {
 
-        const agora=Date.now();
-        const decorrido=agora-inicio;
+            if(!audioCtx) return;
 
-        if(decorrido>2700)return;
+            const frequencias = [
+                220,
+                260,
+                300,
+                340,
+                390,
+                330
+            ];
 
-        cliqueRolo();
+            tocarTom(
+                frequencias[passo % frequencias.length],
+                .055,
+                "square",
+                .025
+            );
 
-        let intervalo;
+            passo++;
 
-        if(decorrido<1800){
-            intervalo=75;
-        }else{
-            intervalo=120;
-        }
+        }, 115);
+}
 
-        setTimeout(
-            tocar,
-            intervalo
+function pararSomGiro(){
+
+    if(somGiroInterval){
+
+        clearInterval(
+            somGiroInterval
         );
+
+        somGiroInterval = null;
     }
-
-    tocar();
 }
 
-function somParada(){
+// =====================================================
+// SOM DE MOEDAS
+// =====================================================
 
-    if(!somAtivo)return;
+function somMoedas(){
 
-    [330,440,550].forEach(
-        (nota,index)=>{
-            setTimeout(()=>{
-                tocarNota(
-                    nota,
-                    .09,
-                    "square",
-                    .045
-                );
-            },index*80);
-        }
+    iniciarAudio();
+
+    const notas = [
+        880,
+        1174,
+        1396,
+        1760,
+        2093
+    ];
+
+    notas.forEach((nota,index)=>{
+
+        setTimeout(()=>{
+
+            tocarTom(
+                nota,
+                .16,
+                "sine",
+                .065
+            );
+
+        },index * 105);
+
+    });
+}
+
+// =====================================================
+// SOM DE TROVÃO
+// =====================================================
+
+function somTrovao(){
+
+    iniciarAudio();
+
+    tocarTom(
+        65,
+        .65,
+        "sawtooth",
+        .055
     );
-}
-
-function somVitoria(){
-
-    if(!somAtivo)return;
-
-    [523,659,784,1046].forEach(
-        (nota,index)=>{
-            setTimeout(()=>{
-                tocarNota(
-                    nota,
-                    .18,
-                    "sine",
-                    .06
-                );
-            },index*120);
-        }
-    );
-}
-
-const lightning=
-    document.getElementById("lightning");
-
-function raio(){
-
-    if(!lightning)return;
-
-    lightning.classList.add("flash");
 
     setTimeout(()=>{
-        lightning.classList.remove("flash");
+
+        tocarTom(
+            48,
+            .9,
+            "sawtooth",
+            .045
+        );
+
     },180);
 }
 
-function iniciarTrovoes(){
+// =====================================================
+// EFEITOS
+// =====================================================
 
-    let ativo=true;
+function efeitosGiro(){
 
-    function ciclo(){
+    const raios =
+        document.getElementById("raios");
 
-        if(!ativo)return;
+    const jogo =
+        document.getElementById("gameContainer");
 
-        raio();
+    raios.classList.remove("ativo");
 
-        if(navigator.vibrate){
-            try{
-                navigator.vibrate([
-                    60,
-                    100,
-                    35
-                ]);
-            }catch(e){}
-        }
+    void raios.offsetWidth;
 
-        setTimeout(
-            ciclo,
-            1100+Math.random()*900
-        );
+    raios.classList.add("ativo");
+
+    jogo.classList.remove("impacto");
+
+    void jogo.offsetWidth;
+
+    jogo.classList.add("impacto");
+
+    if(
+        navigator.vibrate
+    ){
+
+        navigator.vibrate([
+            80,
+            70,
+            110,
+            80,
+            140
+        ]);
     }
 
-    ciclo();
+    somTrovao();
 
     setTimeout(()=>{
-        ativo=false;
-    },3300);
+
+        raios.classList.remove("ativo");
+
+    },2800);
 }
 
-const APOSTA=1.00;
+// =====================================================
+// CONFIGURAÇÃO
+// =====================================================
 
-const SIMBOLOS=[
+const APOSTA = 1.00;
+
+const SIMBOLOS = [
     "🍒",
     "🍋",
     "💰",
@@ -545,7 +819,7 @@ const SIMBOLOS=[
     "🐍"
 ];
 
-const PAGAMENTOS={
+const PAGAMENTOS = {
     "🍒":1.20,
     "🍋":1.50,
     "💰":2.00,
@@ -554,25 +828,22 @@ const PAGAMENTOS={
     "🐍":7.00
 };
 
-const msg=
+const msg =
     document.getElementById("msgArea");
 
-const result=
+const result =
     document.getElementById("result");
 
-const button=
+const button =
     document.getElementById("btnSpin");
 
-const slotMachine=
-    document.getElementById("slotMachine");
-
-const reels=[
+const reels = [
     document.getElementById("reel0"),
     document.getElementById("reel1"),
     document.getElementById("reel2")
 ];
 
-const strips=[
+const strips = [
     document.getElementById("strip0"),
     document.getElementById("strip1"),
     document.getElementById("strip2")
@@ -582,23 +853,37 @@ function mensagem(
     texto,
     cor="#00ed91"
 ){
-    msg.textContent=texto;
-    msg.style.color=cor;
+
+    msg.textContent = texto;
+    msg.style.color = cor;
 }
+
+// =====================================================
+// CRIA ROLOS GRANDES
+// IMPORTANTE: MUITAS VOLTAS PARA OS ÍCONES NÃO SUMIREM
+// =====================================================
 
 function criarRolo(strip){
 
-    strip.innerHTML="";
+    strip.innerHTML = "";
 
-    for(let volta=0;volta<8;volta++){
+    for(
+        let volta = 0;
+        volta < 18;
+        volta++
+    ){
 
-        for(const simbolo of SIMBOLOS){
+        for(
+            const simbolo of SIMBOLOS
+        ){
 
-            const div=
+            const div =
                 document.createElement("div");
 
-            div.className="symbol";
-            div.textContent=simbolo;
+            div.className = "symbol";
+
+            div.textContent =
+                simbolo;
 
             strip.appendChild(div);
         }
@@ -611,20 +896,30 @@ function simboloAleatorio(){
 
     return SIMBOLOS[
         Math.floor(
-            Math.random()*SIMBOLOS.length
+            Math.random() *
+            SIMBOLOS.length
         )
     ];
 }
 
+// =====================================================
+// PREPARAR ROLO
+// =====================================================
+
 function prepararRolo(strip){
 
-    strip.style.transition="none";
+    strip.style.transition =
+        "none";
 
-    strip.style.transform=
-        "translateY(0px)";
+    strip.style.transform =
+        "translate3d(0,0,0)";
 
     strip.offsetHeight;
 }
+
+// =====================================================
+// GIRO
+// =====================================================
 
 function girarRolo(
     index,
@@ -634,30 +929,39 @@ function girarRolo(
 
     return new Promise(resolve=>{
 
-        const strip=strips[index];
-        const reel=reels[index];
+        const strip =
+            strips[index];
 
-        const altura=100;
+        const reel =
+            reels[index];
 
-        const posFinal=
+        const altura = 100;
+
+        const quantidade =
+            SIMBOLOS.length;
+
+        const simboloFinal =
+            resultado[index];
+
+        const posFinal =
             SIMBOLOS.indexOf(
-                resultado[index]
+                simboloFinal
             );
 
-        const voltas=
-            6+
-            Math.floor(
-                Math.random()*3
-            );
+        /*
+         * Mantemos o resultado bem dentro
+         * do rolo para nunca ficar vazio.
+         */
+        const voltas =
+            10 + index * 2;
 
-        const deslocamento=
-            -(
-                (
-                    voltas*
-                    SIMBOLOS.length
-                )+
-                posFinal
-            )*altura;
+        const indiceFinal =
+            (
+                voltas * quantidade
+            ) + posFinal;
+
+        const deslocamento =
+            -(indiceFinal * altura);
 
         prepararRolo(strip);
 
@@ -667,11 +971,11 @@ function girarRolo(
 
         setTimeout(()=>{
 
-            strip.style.transition=
-                `transform ${duracao}ms cubic-bezier(.12,.7,.18,1)`;
+            strip.style.transition =
+                `transform ${duracao}ms cubic-bezier(.10,.72,.18,1)`;
 
-            strip.style.transform=
-                `translateY(${deslocamento}px)`;
+            strip.style.transform =
+                `translate3d(0,${deslocamento}px,0)`;
 
             setTimeout(()=>{
 
@@ -679,30 +983,35 @@ function girarRolo(
                     "stopping"
                 );
 
-                somParada();
-
                 resolve();
 
             },duracao);
 
-        },index*120);
+        },index * 120);
+
     });
 }
 
-async function executarGiro(resultado){
+// =====================================================
+// EXECUTAR GIRO
+// =====================================================
+
+async function executarGiro(
+    resultado
+){
 
     await Promise.all([
 
         girarRolo(
             0,
             resultado,
-            1900
+            1850
         ),
 
         girarRolo(
             1,
             resultado,
-            2250
+            2200
         ),
 
         girarRolo(
@@ -714,19 +1023,31 @@ async function executarGiro(resultado){
     ]);
 }
 
-function calcularPremio(resultado){
+// =====================================================
+// PREMIAÇÃO
+// =====================================================
+
+function calcularPremio(
+    resultado
+){
 
     if(
-        resultado[0]===resultado[1] &&
-        resultado[1]===resultado[2]
+        resultado[0] === resultado[1] &&
+        resultado[1] === resultado[2]
     ){
+
         return PAGAMENTOS[
             resultado[0]
-        ]||0;
+        ] || 0;
+
     }
 
     return 0;
 }
+
+// =====================================================
+// GIRO PRINCIPAL
+// =====================================================
 
 button.addEventListener(
     "click",
@@ -742,32 +1063,26 @@ button.addEventListener(
             return;
         }
 
-        button.disabled=true;
+        button.disabled = true;
 
-        document.body.classList.add(
-            "girando"
-        );
-
-        slotMachine.classList.add(
-            "girando"
-        );
+        iniciarAudio();
 
         try{
 
-            iniciarAudio();
-
-            const saldo=
+            const saldo =
                 await window.SistemaSaldo.get();
 
             if(
-                typeof saldo!=="number"||
-                saldo<APOSTA
+                typeof saldo !== "number" ||
+                saldo < APOSTA
             ){
 
                 mensagem(
                     "❌ Saldo insuficiente!",
                     "#ff4d4d"
                 );
+
+                button.disabled = false;
 
                 return;
             }
@@ -776,42 +1091,43 @@ button.addEventListener(
                 APOSTA
             );
 
-            mensagem("🎰 GIRANDO...");
+            /* efeitos ao apertar */
+            efeitosGiro();
 
-            result.textContent="";
+            /* som contínuo de caça-níquel */
+            iniciarSomGiro();
 
-            somCacaNiquel();
-            iniciarTrovoes();
+            mensagem(
+                "🎰 Os rolos estão girando..."
+            );
 
-            if(navigator.vibrate){
-                try{
-                    navigator.vibrate([
-                        80,
-                        50,
-                        40
-                    ]);
-                }catch(e){}
-            }
+            result.textContent =
+                "🎰 • 🎰 • 🎰";
 
-            const resultado=[
+            const resultado = [
+
                 simboloAleatorio(),
                 simboloAleatorio(),
                 simboloAleatorio()
+
             ];
 
             await executarGiro(
                 resultado
             );
 
-            result.textContent=
+            /* para o som dos rolos */
+            pararSomGiro();
+
+            result.textContent =
                 resultado.join("   ");
 
-            const premio=
+            const premio =
                 calcularPremio(
                     resultado
                 );
 
-            if(premio>0){
+            if(premio > 0){
 
                 reels.forEach(
                     reel=>{
@@ -823,21 +1139,22 @@ button.addEventListener(
 
                 await window.SistemaSaldo.ganhar(
                     APOSTA,
-                    premio/APOSTA
+                    premio / APOSTA
                 );
 
-                somVitoria();
+                somMoedas();
 
-                if(navigator.vibrate){
-                    try{
-                        navigator.vibrate([
-                            80,
-                            60,
-                            120,
-                            60,
-                            180
-                        ]);
-                    }catch(e){}
+                if(
+                    navigator.vibrate
+                ){
+
+                    navigator.vibrate([
+                        100,
+                        80,
+                        100,
+                        80,
+                        180
+                    ]);
                 }
 
                 mensagem(
@@ -845,7 +1162,7 @@ button.addEventListener(
                     "#00ed91"
                 );
 
-                result.textContent=
+                result.textContent =
                     `${resultado.join("   ")} 💰`;
 
             }else{
@@ -859,13 +1176,17 @@ button.addEventListener(
             if(
                 window.SistemaSaldo.atualizarTela
             ){
+
                 await window.SistemaSaldo
                     .atualizarTela();
+
             }
 
         }catch(erro){
 
             console.error(erro);
+
+            pararSomGiro();
 
             mensagem(
                 "⚠️ Ocorreu um erro no giro.",
@@ -874,26 +1195,22 @@ button.addEventListener(
 
         }finally{
 
-            document.body.classList.remove(
-                "girando"
-            );
-
-            slotMachine.classList.remove(
-                "girando"
-            );
+            pararSomGiro();
 
             setTimeout(()=>{
 
                 reels.forEach(
                     reel=>{
+
                         reel.classList.remove(
                             "stopping",
                             "win"
                         );
+
                     }
                 );
 
-                button.disabled=false;
+                button.disabled = false;
 
             },600);
         }
