@@ -1254,6 +1254,70 @@ SUPABASE_KEY
 
 
 /* ==================================================
+   PROTEÇÃO DE LOGOUT
+================================================== */
+
+const LOGOUT_KEY =
+"ApostaXBet_logout_realizado";
+
+
+/*
+ * Se o usuário já saiu anteriormente,
+ * o navegador não pode restaurar a tela
+ * protegida pelo botão Voltar.
+ */
+
+function logoutMarcado(){
+
+    return localStorage.getItem(
+        LOGOUT_KEY
+    ) === "1";
+
+}
+
+
+function marcarLogout(){
+
+    try{
+
+        localStorage.setItem(
+            LOGOUT_KEY,
+            "1"
+        );
+
+    }catch(error){
+
+        console.log(
+            "Erro ao marcar logout:",
+            error
+        );
+
+    }
+
+}
+
+
+function limparLogout(){
+
+    try{
+
+        localStorage.removeItem(
+            LOGOUT_KEY
+        );
+
+    }catch(error){
+
+        console.log(
+            "Erro ao limpar logout:",
+            error
+        );
+
+    }
+
+}
+
+
+/* ==================================================
    ELEMENTOS
 ================================================== */
 
@@ -1287,6 +1351,7 @@ function mostrarMenu(){
 
 }
 
+
 function esconderMenu(){
 
     menuPrincipal.style.display =
@@ -1318,6 +1383,7 @@ function mostrarCadastro(){
     .classList.remove("active");
 
 }
+
 
 function mostrarLogin(){
 
@@ -1600,6 +1666,8 @@ async function salvarNovaSenha(event){
         setTimeout(
             async function(){
 
+                marcarLogout();
+
                 await supabaseClient.auth
                 .signOut();
 
@@ -1732,6 +1800,13 @@ async function cadastrar(event){
 
         if(data.session){
 
+            /*
+             * Se entrou por cadastro,
+             * remove a marca de logout.
+             */
+
+            limparLogout();
+
             mensagem(
                 "mensagemCadastro",
 
@@ -1833,6 +1908,13 @@ async function entrar(event){
 
         }
 
+        /*
+         * Login novo:
+         * libera novamente o acesso.
+         */
+
+        limparLogout();
+
         mensagem(
             "mensagemLogin",
 
@@ -1880,6 +1962,20 @@ async function entrar(event){
 ================================================== */
 
 function mostrarSite(user){
+
+    /*
+     * Se o logout estiver marcado,
+     * nunca mostramos novamente
+     * a área protegida.
+     */
+
+    if(logoutMarcado()){
+
+        mostrarLoginTela();
+
+        return;
+
+    }
 
     telaLogin.style.display =
         "none";
@@ -1935,6 +2031,14 @@ function mostrarSite(user){
 
 function mostrarInicio(){
 
+    if(logoutMarcado()){
+
+        mostrarLoginTela();
+
+        return;
+
+    }
+
     site.style.display =
         "block";
 
@@ -1950,6 +2054,14 @@ function mostrarInicio(){
 
 function mostrarConta(){
 
+    if(logoutMarcado()){
+
+        mostrarLoginTela();
+
+        return;
+
+    }
+
     site.style.display =
         "none";
 
@@ -1964,6 +2076,12 @@ function mostrarConta(){
 ================================================== */
 
 async function atualizarSaldoVisual(){
+
+    if(logoutMarcado()){
+
+        return;
+
+    }
 
     const { data: sessaoData } =
         await supabaseClient.auth.getSession();
@@ -2045,8 +2163,19 @@ function mostrarLoginTela(){
 async function sair(){
 
     /*
-     * Primeiro escondemos imediatamente
-     * as áreas protegidas.
+     * PRIMEIRO:
+     * marcamos o logout imediatamente.
+     *
+     * Isso é importante porque o navegador
+     * pode restaurar a página pelo cache.
+     */
+
+    marcarLogout();
+
+
+    /*
+     * Escondemos imediatamente as áreas
+     * protegidas.
      */
 
     site.style.display =
@@ -2058,11 +2187,11 @@ async function sair(){
     esconderMenu();
 
 
-    try{
+    /*
+     * Fazemos o logout no Supabase.
+     */
 
-        /*
-         * Encerra a sessão no Supabase.
-         */
+    try{
 
         const { error } =
             await supabaseClient.auth
@@ -2079,22 +2208,23 @@ async function sair(){
 
     }catch(error){
 
-        console.log(error);
+        console.log(
+            "Erro no logout:",
+            error
+        );
 
     }
 
 
     /*
-     * Mostra a tela de login.
+     * Mostra o login.
      */
 
     mostrarLoginTela();
 
 
     /*
-     * Remove o estado da página atual
-     * para evitar restauração visual
-     * de uma tela protegida.
+     * Limpa qualquer hash da URL.
      */
 
     try{
@@ -2182,11 +2312,45 @@ async function verificarSessao(){
 
     esconderMenu();
 
+
+    /*
+     * PRIMEIRA PROTEÇÃO:
+     * se o usuário marcou logout,
+     * não permitimos que uma página antiga
+     * seja restaurada como logada.
+     */
+
+    if(logoutMarcado()){
+
+        mostrarLoginTela();
+
+        return;
+
+    }
+
+
     try{
 
         const {data} =
             await supabaseClient.auth
             .getSession();
+
+
+        /*
+         * Verificamos novamente a marca
+         * depois da leitura da sessão,
+         * pois o navegador pode ter restaurado
+         * a página enquanto o Supabase carregava.
+         */
+
+        if(logoutMarcado()){
+
+            mostrarLoginTela();
+
+            return;
+
+        }
+
 
         if(
             data &&
@@ -2205,7 +2369,10 @@ async function verificarSessao(){
 
     }catch(error){
 
-        console.log(error);
+        console.log(
+            "Erro ao verificar sessão:",
+            error
+        );
 
         mostrarLoginTela();
 
@@ -2215,21 +2382,17 @@ async function verificarSessao(){
 
 
 /* ==================================================
-   NOVA PROTEÇÃO CONTRA BOTÃO VOLTAR
+   PROTEÇÃO CONTRA BOTÃO VOLTAR
 ================================================== */
-
-/*
- * Quando o navegador volta para esta página,
- * inclusive quando ela foi restaurada do cache,
- * verificamos novamente se existe sessão.
- *
- * Se o usuário já saiu, a tela protegida
- * não poderá continuar aparecendo.
- */
 
 window.addEventListener(
     "pageshow",
     async function(){
+
+        /*
+         * pageshow é disparado inclusive
+         * quando a página volta do bfcache.
+         */
 
         await verificarSessao();
 
@@ -2238,8 +2401,8 @@ window.addEventListener(
 
 
 /*
- * Também verificamos quando a página
- * volta a ficar visível.
+ * Quando o aplicativo/navegador volta
+ * para esta página.
  */
 
 document.addEventListener(
@@ -2259,12 +2422,42 @@ document.addEventListener(
 );
 
 
+/*
+ * Quando o usuário usa o botão Voltar
+ * ou Avançar do navegador.
+ */
+
+window.addEventListener(
+    "popstate",
+    async function(){
+
+        await verificarSessao();
+
+    }
+);
+
+
 /* ==================================================
    OBSERVAR AUTH
 ================================================== */
 
 supabaseClient.auth.onAuthStateChange(
     function(event,session){
+
+        /*
+         * Se existe marca de logout,
+         * NÃO deixamos um evento antigo
+         * restaurar a área protegida.
+         */
+
+        if(logoutMarcado()){
+
+            mostrarLoginTela();
+
+            return;
+
+        }
+
 
         if(event === "PASSWORD_RECOVERY"){
 
@@ -2288,6 +2481,7 @@ supabaseClient.auth.onAuthStateChange(
             return;
 
         }
+
 
         if(session){
 
