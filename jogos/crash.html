@@ -238,7 +238,6 @@ h1{
 
 /* =====================================================
    CAIXA PRINCIPAL
-   SEM BORDA AMARELA
 ===================================================== */
 
 .box{
@@ -354,7 +353,7 @@ h1{
 
 
 /* =====================================================
-   CENÁRIO QUE ACOMPANHA O AVIÃO
+   CENÁRIO
 ===================================================== */
 
 .cenario{
@@ -738,7 +737,7 @@ input{
 
 
 /* =====================================================
-   BOTÕES INICIAR / PARAR
+   BOTÕES
 ===================================================== */
 
 .botoes{
@@ -793,8 +792,6 @@ button:disabled{
     cursor:not-allowed;
 }
 
-
-/* BOTÃO PARAR */
 
 #pararBtn{
 
@@ -899,6 +896,19 @@ button:disabled{
 </head>
 
 <body>
+
+
+<!-- =====================================================
+     MÚSICA DE FUNDO
+     ARQUIVO: musica.mp3
+===================================================== -->
+
+<audio
+    id="musicaFundo"
+    src="musica.mp3"
+    loop
+    preload="auto">
+</audio>
 
 
 <div class="luz luz1"></div>
@@ -1110,9 +1120,9 @@ createClient(
 );
 
 
-/*
+/* =====================================================
    VANTAGEM DA CASA
-*/
+===================================================== */
 
 const CASA_VANTAGEM = 0.95;
 
@@ -1458,6 +1468,91 @@ document.getElementById(
 
 
 /* =====================================================
+   MÚSICA DE FUNDO
+===================================================== */
+
+const musicaFundo =
+document.getElementById(
+    "musicaFundo"
+);
+
+
+/*
+   VOLUME DA MÚSICA
+
+   0.07 = 7%
+
+   Bem baixinho para não
+   atrapalhar os sons do jogo.
+*/
+
+musicaFundo.volume = 0.07;
+
+
+/*
+   FUNÇÃO PARA TOCAR A MÚSICA
+*/
+
+async function iniciarMusicaFundo(){
+
+    try{
+
+        if(
+            musicaFundo.paused
+        ){
+
+            await musicaFundo.play();
+
+        }
+
+    }catch(e){
+
+        /*
+          O navegador pode bloquear
+          autoplay até o primeiro toque.
+        */
+
+        console.log(
+            "Aguardando interação para iniciar a música."
+        );
+
+    }
+
+}
+
+
+/*
+   TENTA COMEÇAR AO ABRIR
+*/
+
+iniciarMusicaFundo();
+
+
+/*
+   SE O CELULAR BLOQUEAR O AUTOPLAY,
+   COMEÇA NO PRIMEIRO TOQUE.
+*/
+
+document.addEventListener(
+    "touchstart",
+    iniciarMusicaFundo,
+    {
+        once:true,
+        passive:true
+    }
+);
+
+
+document.addEventListener(
+    "click",
+    iniciarMusicaFundo,
+    {
+        once:true
+    }
+);
+
+
+/* =====================================================
    VARIÁVEIS DO JOGO
 ===================================================== */
 
@@ -1481,7 +1576,7 @@ let motorGain = null;
 
 
 /* =====================================================
-   ÁUDIO
+   ÁUDIO DOS EFEITOS DO JOGO
 ===================================================== */
 
 function iniciarAudio(){
@@ -1507,6 +1602,7 @@ function iniciarAudio(){
 
         audioContext.resume();
     }
+
 }
 
 
@@ -1615,6 +1711,7 @@ function atualizarSomAviao(){
         agora,
         0.08
     );
+
 }
 
 
@@ -1688,11 +1785,12 @@ function somVum(){
     osc.stop(
         agora + 0.42
     );
+
 }
 
 
 /* =====================================================
-   PARAR SOM
+   PARAR SOM DO AVIÃO
 ===================================================== */
 
 function pararSomAviao(){
@@ -1732,6 +1830,7 @@ function pararSomAviao(){
 
         motorGain = null;
     }
+
 }
 
 
@@ -1774,6 +1873,7 @@ function(
     botao.classList.add(
         "ativo"
     );
+
 };
 
 
@@ -1786,6 +1886,14 @@ async function(){
 
     if(rodando)
         return;
+
+
+    /*
+      GARANTE QUE A MÚSICA
+      ESTEJA TOCANDO
+    */
+
+    iniciarMusicaFundo();
 
 
     iniciarAudio();
@@ -2023,7 +2131,7 @@ function atualizarVoo(){
 
 
     /*
-      SOM
+      SOM DO AVIÃO
     */
 
     atualizarSomAviao();
@@ -2081,7 +2189,7 @@ async function(){
 
 
     /*
-      SOM
+      SOM DO AVIÃO
     */
 
     pararSomAviao();
@@ -2089,8 +2197,6 @@ async function(){
 
     /*
       PEGA O PRÊMIO
-      COM O MESMO SISTEMA DE
-      SALDO DOS OUTROS JOGOS
     */
 
     const ganho =
@@ -2243,6 +2349,7 @@ async function finalizarCrash(){
         resetarVisual,
         1000
     );
+
 }
 
 
@@ -2370,6 +2477,7 @@ async function iniciarPagina(){
 
 
     await atualizarTela();
+
 }
 
 
@@ -2388,6 +2496,10 @@ supabase.auth.onAuthStateChange(
     }
 );
 
+
+/* =====================================================
+   INICIAR
+===================================================== */
 
 iniciarPagina();
 
