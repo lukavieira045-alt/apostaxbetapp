@@ -403,7 +403,7 @@ h1{
 
 
 /* =====================================================
-   LINHA DO GRÁFICO
+   LINHA
 ===================================================== */
 
 #linha{
@@ -443,7 +443,7 @@ h1{
 
 
 /* =====================================================
-   NÚMEROS DA LINHA
+   ESCALA
 ===================================================== */
 
 #escala{
@@ -793,6 +793,10 @@ button:disabled{
 }
 
 
+/* =====================================================
+   BOTÃO PARAR
+===================================================== */
+
 #pararBtn{
 
     background:
@@ -900,12 +904,13 @@ button:disabled{
 
 <!-- =====================================================
      MÚSICA DE FUNDO
-     ARQUIVO: musica.mp3
+     ARQUIVO: jogos/musica-jogos.mp3
+     VOLUME: 60%
 ===================================================== -->
 
 <audio
     id="musicaFundo"
-    src="musica.mp3"
+    src="./musica-jogos.mp3"
     loop
     preload="auto">
 </audio>
@@ -1118,6 +1123,93 @@ createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
+
+
+/* =====================================================
+   MÚSICA DE FUNDO
+===================================================== */
+
+const musicaFundo =
+document.getElementById(
+    "musicaFundo"
+);
+
+
+/*
+   VOLUME DA MÚSICA:
+   60%
+*/
+
+musicaFundo.volume = 0.60;
+
+
+/*
+   Inicia a música.
+   O navegador pode bloquear autoplay,
+   então também tentamos iniciar no
+   primeiro toque do usuário.
+*/
+
+let musicaIniciada = false;
+
+
+async function iniciarMusica(){
+
+    if(!musicaFundo)
+        return;
+
+
+    musicaFundo.volume = 0.60;
+
+
+    try{
+
+        await musicaFundo.play();
+
+        musicaIniciada = true;
+
+    }catch(e){
+
+        /*
+          O navegador bloqueou o autoplay.
+          O primeiro toque irá liberar.
+        */
+
+        console.log(
+            "Aguardando interação para iniciar a música."
+        );
+    }
+}
+
+
+/*
+   Primeiro toque na tela libera a música
+   nos navegadores que bloqueiam autoplay.
+*/
+
+document.addEventListener(
+    "pointerdown",
+    function(){
+
+        if(!musicaIniciada){
+
+            iniciarMusica();
+
+        }
+
+    },
+    {
+        once:false,
+        passive:true
+    }
+);
+
+
+/*
+   Também tenta iniciar ao carregar.
+*/
+
+iniciarMusica();
 
 
 /* =====================================================
@@ -1468,91 +1560,6 @@ document.getElementById(
 
 
 /* =====================================================
-   MÚSICA DE FUNDO
-===================================================== */
-
-const musicaFundo =
-document.getElementById(
-    "musicaFundo"
-);
-
-
-/*
-   VOLUME DA MÚSICA
-
-   0.07 = 7%
-
-   Bem baixinho para não
-   atrapalhar os sons do jogo.
-*/
-
-musicaFundo.volume = 0.07;
-
-
-/*
-   FUNÇÃO PARA TOCAR A MÚSICA
-*/
-
-async function iniciarMusicaFundo(){
-
-    try{
-
-        if(
-            musicaFundo.paused
-        ){
-
-            await musicaFundo.play();
-
-        }
-
-    }catch(e){
-
-        /*
-          O navegador pode bloquear
-          autoplay até o primeiro toque.
-        */
-
-        console.log(
-            "Aguardando interação para iniciar a música."
-        );
-
-    }
-
-}
-
-
-/*
-   TENTA COMEÇAR AO ABRIR
-*/
-
-iniciarMusicaFundo();
-
-
-/*
-   SE O CELULAR BLOQUEAR O AUTOPLAY,
-   COMEÇA NO PRIMEIRO TOQUE.
-*/
-
-document.addEventListener(
-    "touchstart",
-    iniciarMusicaFundo,
-    {
-        once:true,
-        passive:true
-    }
-);
-
-
-document.addEventListener(
-    "click",
-    iniciarMusicaFundo,
-    {
-        once:true
-    }
-);
-
-
-/* =====================================================
    VARIÁVEIS DO JOGO
 ===================================================== */
 
@@ -1602,7 +1609,6 @@ function iniciarAudio(){
 
         audioContext.resume();
     }
-
 }
 
 
@@ -1666,7 +1672,7 @@ function iniciarSomAviao(){
 
 
 /* =====================================================
-   AUMENTAR SOM CONFORME AVIÃO SOBE
+   AUMENTAR SOM DO AVIÃO
 ===================================================== */
 
 function atualizarSomAviao(){
@@ -1711,7 +1717,6 @@ function atualizarSomAviao(){
         agora,
         0.08
     );
-
 }
 
 
@@ -1785,7 +1790,6 @@ function somVum(){
     osc.stop(
         agora + 0.42
     );
-
 }
 
 
@@ -1830,7 +1834,6 @@ function pararSomAviao(){
 
         motorGain = null;
     }
-
 }
 
 
@@ -1843,6 +1846,14 @@ function(
     valorSelecionado,
     botao
 ){
+
+    /*
+      Garante que a música seja liberada
+      quando o usuário tocar em um botão.
+    */
+
+    iniciarMusica();
+
 
     if(rodando)
         return;
@@ -1873,7 +1884,6 @@ function(
     botao.classList.add(
         "ativo"
     );
-
 };
 
 
@@ -1884,16 +1894,15 @@ function(
 window.jogar =
 async function(){
 
-    if(rodando)
-        return;
-
-
     /*
-      GARANTE QUE A MÚSICA
-      ESTEJA TOCANDO
+      Libera a música no primeiro toque.
     */
 
-    iniciarMusicaFundo();
+    iniciarMusica();
+
+
+    if(rodando)
+        return;
 
 
     iniciarAudio();
@@ -2032,10 +2041,6 @@ function atualizarVoo(){
         return;
 
 
-    /*
-      AUMENTA
-    */
-
     valor += 0.05;
 
 
@@ -2043,10 +2048,6 @@ function atualizarVoo(){
         valor.toFixed(2) +
         "x";
 
-
-    /*
-      AVIÃO SOBE
-    */
 
     const progresso =
         Math.min(
@@ -2073,10 +2074,6 @@ function atualizarVoo(){
         esquerda + "px";
 
 
-    /*
-      LINHA ACOMPANHA
-    */
-
     const tamanhoLinha =
         Math.min(
             25 +
@@ -2093,10 +2090,6 @@ function atualizarVoo(){
         (esquerda + 12) + "px";
 
 
-    /*
-      CENÁRIO SOBE JUNTO
-    */
-
     const movimentoCenario =
         Math.min(
             (valor - 1) * 13,
@@ -2107,10 +2100,6 @@ function atualizarVoo(){
     cenario.style.transform =
         `translateY(${movimentoCenario}px)`;
 
-
-    /*
-      ENERGIA
-    */
 
     const escala =
         Math.min(
@@ -2130,16 +2119,8 @@ function atualizarVoo(){
         );
 
 
-    /*
-      SOM DO AVIÃO
-    */
-
     atualizarSomAviao();
 
-
-    /*
-      VUM QUANDO GANHA VELOCIDADE
-    */
 
     if(
         valor > 2 &&
@@ -2151,10 +2132,6 @@ function atualizarVoo(){
         somVum();
     }
 
-
-    /*
-      CRASH
-    */
 
     if(valor >= queda){
 
@@ -2172,6 +2149,9 @@ function atualizarVoo(){
 window.parar =
 async function(){
 
+    iniciarMusica();
+
+
     if(!rodando)
         return;
 
@@ -2188,16 +2168,8 @@ async function(){
         true;
 
 
-    /*
-      SOM DO AVIÃO
-    */
-
     pararSomAviao();
 
-
-    /*
-      PEGA O PRÊMIO
-    */
 
     const ganho =
         await processarVitoria(
@@ -2224,10 +2196,6 @@ async function(){
         return;
     }
 
-
-    /*
-      SOM DE VITÓRIA
-    */
 
     somVum();
 
@@ -2349,7 +2317,6 @@ async function finalizarCrash(){
         resetarVisual,
         1000
     );
-
 }
 
 
@@ -2478,6 +2445,13 @@ async function iniciarPagina(){
 
     await atualizarTela();
 
+
+    /*
+      Tenta novamente iniciar a música
+      depois que a página estiver carregada.
+    */
+
+    iniciarMusica();
 }
 
 
@@ -2496,10 +2470,6 @@ supabase.auth.onAuthStateChange(
     }
 );
 
-
-/* =====================================================
-   INICIAR
-===================================================== */
 
 iniciarPagina();
 
