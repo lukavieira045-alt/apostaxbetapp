@@ -521,6 +521,148 @@ input:focus{
     font-family:Arial,sans-serif;
 }
 
+/* =========================
+   SUPORTE
+========================= */
+
+#botaoSuporte{
+    display:none;
+    position:fixed;
+    right:18px;
+    bottom:92px;
+    z-index:150;
+    border:0;
+    border-radius:50px;
+    padding:14px 18px;
+    background:linear-gradient(135deg,#d9ed20,#a8c900);
+    color:#143c2c;
+    font-size:16px;
+    font-weight:bold;
+    box-shadow:0 6px 20px rgba(0,0,0,.45);
+    cursor:pointer;
+}
+
+#janelaSuporte{
+    display:none;
+    position:fixed;
+    right:15px;
+    bottom:155px;
+    width:calc(100% - 30px);
+    max-width:380px;
+    height:500px;
+    z-index:200;
+    background:#101010;
+    border:2px solid #d9b21f;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 10px 40px rgba(0,0,0,.7);
+}
+
+.suporte-topo{
+    height:65px;
+    padding:10px 15px;
+    background:linear-gradient(135deg,#126b4e,#073b2b);
+    border-bottom:1px solid #d9b21f;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.suporte-titulo{
+    font-weight:bold;
+    font-size:17px;
+}
+
+.suporte-status{
+    color:#00ed91;
+    font-size:12px;
+    margin-top:3px;
+}
+
+.fechar-suporte{
+    background:none;
+    border:0;
+    color:white;
+    font-size:25px;
+    cursor:pointer;
+}
+
+#suporteMensagens{
+    height:350px;
+    padding:15px;
+    overflow-y:auto;
+}
+
+.msg-suporte{
+    max-width:85%;
+    padding:11px 13px;
+    margin-bottom:10px;
+    border-radius:13px;
+    line-height:1.4;
+    font-size:14px;
+}
+
+.msg-bot{
+    background:#242424;
+    border:1px solid #333;
+    margin-right:auto;
+}
+
+.msg-usuario{
+    background:#d9ed20;
+    color:#143c2c;
+    margin-left:auto;
+}
+
+.suporte-opcoes{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    padding:8px 12px;
+    border-top:1px solid #333;
+}
+
+.suporte-opcoes button{
+    flex:1 1 30%;
+    padding:9px 5px;
+    border:1px solid #d9b21f;
+    border-radius:9px;
+    background:#181818;
+    color:white;
+    cursor:pointer;
+    font-size:12px;
+}
+
+.suporte-opcoes button:hover{
+    background:#d9b21f;
+    color:#000;
+}
+
+.suporte-escrever{
+    display:flex;
+    gap:7px;
+    padding:10px;
+    background:#080808;
+}
+
+#entradaSuporte{
+    height:43px;
+    flex:1;
+    min-width:0;
+    margin:0;
+    font-size:14px;
+}
+
+#enviarSuporte{
+    width:50px;
+    height:43px;
+    border:0;
+    border-radius:9px;
+    background:#00df8a;
+    font-size:20px;
+    cursor:pointer;
+}
+
 /* CELULAR */
 
 @media(max-width:400px){
@@ -540,6 +682,17 @@ input:focus{
     .botao{
         padding:17px 8px;
         font-size:16px;
+    }
+
+    #janelaSuporte{
+        right:10px;
+        width:calc(100% - 20px);
+        bottom:150px;
+        height:480px;
+    }
+
+    #suporteMensagens{
+        height:330px;
     }
 
 }
@@ -1050,6 +1203,140 @@ Sair
 
 </nav>
 
+
+<!-- =========================
+     SUPORTE
+========================= -->
+
+<button
+id="botaoSuporte"
+type="button"
+onclick="abrirSuporte()">
+
+💬 Suporte
+
+</button>
+
+
+<div id="janelaSuporte">
+
+<div class="suporte-topo">
+
+<div>
+
+<div class="suporte-titulo">
+🤖 Assistente ApostaXBet
+</div>
+
+<div class="suporte-status">
+● Atendimento automático
+</div>
+
+</div>
+
+<button
+class="fechar-suporte"
+type="button"
+onclick="fecharSuporte()">
+
+×
+
+</button>
+
+</div>
+
+
+<div id="suporteMensagens">
+
+<div class="msg-suporte msg-bot">
+
+👋 Olá! Sou o assistente do
+ApostaXBet.
+
+<br><br>
+
+Como posso ajudar?
+
+</div>
+
+</div>
+
+
+<div class="suporte-opcoes">
+
+<button
+type="button"
+onclick="perguntaSuporte('saldo')">
+
+💰 Saldo
+
+</button>
+
+<button
+type="button"
+onclick="perguntaSuporte('jogos')">
+
+🎮 Jogos
+
+</button>
+
+<button
+type="button"
+onclick="perguntaSuporte('deposito')">
+
+💵 Depósito
+
+</button>
+
+<button
+type="button"
+onclick="perguntaSuporte('saque')">
+
+🏦 Saque
+
+</button>
+
+<button
+type="button"
+onclick="perguntaSuporte('conta')">
+
+👤 Conta
+
+</button>
+
+<button
+type="button"
+onclick="perguntaSuporte('problema')">
+
+❓ Problema
+
+</button>
+
+</div>
+
+
+<div class="suporte-escrever">
+
+<input
+id="entradaSuporte"
+type="text"
+placeholder="Digite sua pergunta..."
+onkeydown="if(event.key==='Enter') enviarPerguntaSuporte()">
+
+<button
+id="enviarSuporte"
+type="button"
+onclick="enviarPerguntaSuporte()">
+
+➤
+
+</button>
+
+</div>
+
+</div>
+
+
 <script>
 
 /* ==================================================
@@ -1091,6 +1378,12 @@ document.getElementById("paginaConta");
 const menuPrincipal =
 document.getElementById("menuPrincipal");
 
+const botaoSuporte =
+document.getElementById("botaoSuporte");
+
+const janelaSuporte =
+document.getElementById("janelaSuporte");
+
 
 /* ==================================================
    MENU
@@ -1107,6 +1400,286 @@ function esconderMenu(){
 
     menuPrincipal.style.display =
         "none";
+
+}
+
+
+/* ==================================================
+   SUPORTE - MOSTRAR/ESCONDER
+================================================== */
+
+function mostrarBotaoSuporte(){
+
+    botaoSuporte.style.display =
+        "block";
+
+}
+
+function esconderBotaoSuporte(){
+
+    botaoSuporte.style.display =
+        "none";
+
+    janelaSuporte.style.display =
+        "none";
+
+}
+
+
+/* ==================================================
+   SUPORTE
+================================================== */
+
+function abrirSuporte(){
+
+    janelaSuporte.style.display =
+        "block";
+
+}
+
+
+function fecharSuporte(){
+
+    janelaSuporte.style.display =
+        "none";
+
+}
+
+
+function adicionarMensagemSuporte(
+    texto,
+    usuario = false
+){
+
+    const mensagens =
+        document.getElementById(
+            "suporteMensagens"
+        );
+
+    const div =
+        document.createElement("div");
+
+    div.className =
+        usuario
+        ? "msg-suporte msg-usuario"
+        : "msg-suporte msg-bot";
+
+    div.innerText =
+        texto;
+
+    mensagens.appendChild(div);
+
+    mensagens.scrollTop =
+        mensagens.scrollHeight;
+
+}
+
+
+function responderSuporte(texto){
+
+    const pergunta =
+        texto.toLowerCase().trim();
+
+
+    /* SAUDAÇÕES */
+
+    if(
+        pergunta.includes("oi") ||
+        pergunta.includes("olá") ||
+        pergunta.includes("ola") ||
+        pergunta.includes("bom dia") ||
+        pergunta.includes("boa tarde") ||
+        pergunta.includes("boa noite")
+    ){
+
+        return "👋 Olá! Seja bem-vindo ao suporte ApostaXBet. Como posso ajudar? Você pode escolher uma das opções acima.";
+
+    }
+
+
+    /* SALDO */
+
+    if(
+        pergunta.includes("saldo") ||
+        pergunta.includes("dinheiro") ||
+        pergunta.includes("quanto tenho") ||
+        pergunta.includes("quanto eu tenho")
+    ){
+
+        return "💰 Para consultar seu saldo, veja o valor que aparece no topo da página inicial, ao lado de \"Saldo\". Você também pode entrar em 👤 Conta para consultar.";
+
+    }
+
+
+    /* JOGOS */
+
+    if(
+        pergunta.includes("jogo") ||
+        pergunta.includes("jogar") ||
+        pergunta.includes("games") ||
+        pergunta.includes("jogos")
+    ){
+
+        return "🎮 Para jogar, toque em 🎮 Jogos no menu inferior. Lá você encontrará os jogos disponíveis no ApostaXBet.";
+
+    }
+
+
+    /* DEPÓSITO */
+
+    if(
+        pergunta.includes("deposit") ||
+        pergunta.includes("pix") ||
+        pergunta.includes("colocar dinheiro") ||
+        pergunta.includes("adicionar dinheiro")
+    ){
+
+        return "💵 Para fazer um depósito, toque em 💰 Depositar na página inicial e siga as instruções apresentadas.";
+
+    }
+
+
+    /* SAQUE */
+
+    if(
+        pergunta.includes("saque") ||
+        pergunta.includes("sacar") ||
+        pergunta.includes("retirar dinheiro") ||
+        pergunta.includes("retirada")
+    ){
+
+        return "🏦 Para solicitar um saque, toque em 💵 Sacar na página inicial e preencha as informações solicitadas.";
+
+    }
+
+
+    /* CONTA */
+
+    if(
+        pergunta.includes("conta") ||
+        pergunta.includes("cadastro") ||
+        pergunta.includes("login") ||
+        pergunta.includes("senha") ||
+        pergunta.includes("email") ||
+        pergunta.includes("e-mail")
+    ){
+
+        return "👤 Para acessar sua conta, use o botão 👤 Conta no menu inferior. Se você esqueceu sua senha, use a opção \"Esqueci minha senha?\" na tela de login.";
+
+    }
+
+
+    /* PROBLEMAS */
+
+    if(
+        pergunta.includes("erro") ||
+        pergunta.includes("problema") ||
+        pergunta.includes("não funciona") ||
+        pergunta.includes("nao funciona") ||
+        pergunta.includes("travou") ||
+        pergunta.includes("travando")
+    ){
+
+        return "❓ Entendi. Tente sair da conta e entrar novamente. Se o problema continuar, anote o que aconteceu para podermos cadastrar uma orientação específica para esse problema.";
+
+    }
+
+
+    /* RESPOSTA PADRÃO */
+
+    return "🤖 Ainda não tenho uma resposta cadastrada para essa pergunta. Tente perguntar sobre saldo, jogos, depósito, saque, conta ou algum problema no site.";
+
+}
+
+
+function perguntaSuporte(tipo){
+
+    const respostas = {
+
+        saldo:
+            "Como posso consultar meu saldo?",
+
+        jogos:
+            "Como faço para jogar?",
+
+        deposito:
+            "Como faço um depósito?",
+
+        saque:
+            "Como faço um saque?",
+
+        conta:
+            "Como acesso ou gerencio minha conta?",
+
+        problema:
+            "Estou com um problema no site."
+
+    };
+
+
+    const pergunta =
+        respostas[tipo];
+
+    if(!pergunta){
+
+        return;
+
+    }
+
+
+    adicionarMensagemSuporte(
+        pergunta,
+        true
+    );
+
+
+    setTimeout(function(){
+
+        adicionarMensagemSuporte(
+            responderSuporte(pergunta)
+        );
+
+    },350);
+
+}
+
+
+function enviarPerguntaSuporte(){
+
+    const campo =
+        document.getElementById(
+            "entradaSuporte"
+        );
+
+    const texto =
+        campo.value.trim();
+
+    if(!texto){
+
+        return;
+
+    }
+
+
+    adicionarMensagemSuporte(
+        texto,
+        true
+    );
+
+    campo.value =
+        "";
+
+
+    setTimeout(function(){
+
+        const resposta =
+            responderSuporte(texto);
+
+        adicionarMensagemSuporte(
+            resposta
+        );
+
+    },350);
 
 }
 
@@ -1227,6 +1800,8 @@ function mostrarRecuperacao(){
 
     esconderMenu();
 
+    esconderBotaoSuporte();
+
     if(emailLogin){
 
         document
@@ -1257,6 +1832,8 @@ function voltarLogin(){
     mostrarLogin();
 
     esconderMenu();
+
+    esconderBotaoSuporte();
 
 }
 
@@ -1654,11 +2231,6 @@ async function entrar(event){
         }
 
 
-        /*
-         * O usuário entrou novamente.
-         * Podemos liberar a área protegida.
-         */
-
         sessionStorage.removeItem(
             "apostaxbet_logout"
         );
@@ -1729,6 +2301,8 @@ function mostrarSite(user){
 
     mostrarMenu();
 
+    mostrarBotaoSuporte();
+
     let nome =
         user?.user_metadata?.nome;
 
@@ -1772,6 +2346,8 @@ function mostrarInicio(){
     paginaConta.style.display =
         "none";
 
+    mostrarBotaoSuporte();
+
 }
 
 
@@ -1786,6 +2362,8 @@ function mostrarConta(){
 
     paginaConta.style.display =
         "block";
+
+    esconderBotaoSuporte();
 
 }
 
@@ -1864,6 +2442,8 @@ function mostrarLoginTela(){
 
     esconderMenu();
 
+    esconderBotaoSuporte();
+
     mostrarLogin();
 
 }
@@ -1875,23 +2455,11 @@ function mostrarLoginTela(){
 
 async function sair(){
 
-    /*
-     * Marca que o usuário saiu.
-     *
-     * Essa marca fica somente nesta aba
-     * do navegador.
-     */
-
     sessionStorage.setItem(
         "apostaxbet_logout",
         "1"
     );
 
-
-    /*
-     * Esconde imediatamente as áreas
-     * protegidas.
-     */
 
     site.style.display =
         "none";
@@ -1900,6 +2468,8 @@ async function sair(){
         "none";
 
     esconderMenu();
+
+    esconderBotaoSuporte();
 
 
     try{
@@ -1926,10 +2496,6 @@ async function sair(){
 
     }
 
-
-    /*
-     * Mostra o login.
-     */
 
     mostrarLoginTela();
 
@@ -2004,11 +2570,8 @@ async function verificarSessao(){
 
     esconderMenu();
 
+    esconderBotaoSuporte();
 
-    /*
-     * Se o usuário acabou de sair,
-     * não restauramos a área protegida.
-     */
 
     const saiu =
         sessionStorage.getItem(
@@ -2083,15 +2646,12 @@ supabaseClient.auth.onAuthStateChange(
 
             esconderMenu();
 
+            esconderBotaoSuporte();
+
             return;
 
         }
 
-
-        /*
-         * Se o usuário marcou logout,
-         * não mostramos novamente o site.
-         */
 
         const saiu =
             sessionStorage.getItem(
