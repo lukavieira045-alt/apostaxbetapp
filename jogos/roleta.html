@@ -828,12 +828,21 @@ let girando = false;
 
 
 /* =====================================================
-   SOM — VOLUME 100%
+   SOM
 ===================================================== */
 
 let audioContext = null;
+
 let somGirando = null;
+
 let ganhoGirando = null;
+
+let intervaloCliques = null;
+
+
+/* =====================================================
+   INICIAR ÁUDIO
+===================================================== */
 
 function iniciarAudio(){
 
@@ -865,6 +874,7 @@ function iniciarAudio(){
 
 /* =====================================================
    SOM DE CLIQUE
+   MANTIDO
 ===================================================== */
 
 function tocarClique(){
@@ -896,10 +906,6 @@ function tocarClique(){
         agora + 0.08
     );
 
-    /*
-       VOLUME 100%
-    */
-
     ganho.gain.setValueAtTime(
         1.0,
         agora
@@ -930,7 +936,76 @@ function tocarClique(){
 
 
 /* =====================================================
-   SOM DA ROLETA GIRANDO
+   NOVO SOM DA ROLETA
+   SEM CHIADO
+   CLIQUES DE ROLETA
+===================================================== */
+
+function tocarCliqueRoleta(){
+
+    iniciarAudio();
+
+    if(!audioContext)
+        return;
+
+    const agora =
+        audioContext.currentTime;
+
+    const oscilador =
+        audioContext.createOscillator();
+
+    const ganho =
+        audioContext.createGain();
+
+    oscilador.type =
+        "triangle";
+
+    oscilador.frequency.setValueAtTime(
+        900,
+        agora
+    );
+
+    oscilador.frequency.exponentialRampToValueAtTime(
+        350,
+        agora + 0.045
+    );
+
+    ganho.gain.setValueAtTime(
+        0.0001,
+        agora
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+        0.22,
+        agora + 0.005
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+        0.0001,
+        agora + 0.055
+    );
+
+    oscilador.connect(
+        ganho
+    );
+
+    ganho.connect(
+        audioContext.destination
+    );
+
+    oscilador.start(
+        agora
+    );
+
+    oscilador.stop(
+        agora + 0.06
+    );
+
+}
+
+
+/* =====================================================
+   INICIAR NOVO SOM DA ROLETA
 ===================================================== */
 
 function iniciarSomRoleta(){
@@ -942,43 +1017,50 @@ function iniciarSomRoleta(){
 
     pararSomRoleta();
 
-    somGirando =
-        audioContext.createOscillator();
-
-    ganhoGirando =
-        audioContext.createGain();
-
-    somGirando.type =
-        "sawtooth";
-
-    somGirando.frequency.setValueAtTime(
-        55,
-        audioContext.currentTime
-    );
-
     /*
-       VOLUME 100%
+       Pequenos cliques rápidos,
+       como a roleta passando pelo ponteiro.
     */
 
-    ganhoGirando.gain.setValueAtTime(
-        1.0,
-        audioContext.currentTime
-    );
+    let intervalo = 95;
 
-    somGirando.connect(
-        ganhoGirando
-    );
+    intervaloCliques =
+        setInterval(
+            function(){
 
-    ganhoGirando.connect(
-        audioContext.destination
-    );
+                if(!girando){
 
-    somGirando.start();
+                    pararSomRoleta();
+
+                    return;
+
+                }
+
+                tocarCliqueRoleta();
+
+            },
+            intervalo
+        );
 
 }
 
 
+/* =====================================================
+   PARAR SOM DA ROLETA
+===================================================== */
+
 function pararSomRoleta(){
+
+    if(intervaloCliques){
+
+        clearInterval(
+            intervaloCliques
+        );
+
+        intervaloCliques =
+            null;
+
+    }
 
     if(
         somGirando &&
@@ -986,33 +1068,31 @@ function pararSomRoleta(){
         audioContext
     ){
 
-        const agora =
-            audioContext.currentTime;
-
-        ganhoGirando.gain.cancelScheduledValues(
-            agora
-        );
-
-        ganhoGirando.gain.setValueAtTime(
-            1.0,
-            agora
-        );
-
-        ganhoGirando.gain.exponentialRampToValueAtTime(
-            0.001,
-            agora + 0.15
-        );
-
         try{
 
+            const agora =
+                audioContext.currentTime;
+
+            ganhoGirando.gain.cancelScheduledValues(
+                agora
+            );
+
+            ganhoGirando.gain.setValueAtTime(
+                0.001,
+                agora
+            );
+
             somGirando.stop(
-                agora + 0.16
+                agora + 0.02
             );
 
         }catch(e){}
 
-        somGirando = null;
-        ganhoGirando = null;
+        somGirando =
+            null;
+
+        ganhoGirando =
+            null;
 
     }
 
@@ -1021,6 +1101,7 @@ function pararSomRoleta(){
 
 /* =====================================================
    SOM DE PRÊMIO
+   MANTIDO
 ===================================================== */
 
 function tocarPremio(){
@@ -1056,10 +1137,6 @@ function tocarPremio(){
                 frequencia,
                 inicio
             );
-
-            /*
-               VOLUME 100%
-            */
 
             ganho.gain.setValueAtTime(
                 1.0,
@@ -1540,11 +1617,6 @@ async function(){
     if(girando)
         return;
 
-    /*
-       O toque no botão libera o áudio
-       no celular.
-    */
-
     iniciarAudio();
 
     tocarClique();
@@ -1581,10 +1653,6 @@ async function(){
     girando = true;
 
     atualizarBotao();
-
-    /*
-       DESCONTA A APOSTA
-    */
 
     const saldoAnterior =
         saldoReal;
@@ -1629,16 +1697,13 @@ async function(){
     );
 
     /*
-       SOM COMEÇA AQUI
+       NOVO SOM DE ROLETA
+       SEM CHIADO
     */
 
     iniciarSomRoleta();
 
     iniciarEfeitoNumeros();
-
-    /*
-       SORTEIO
-    */
 
     const indice =
         Math.floor(
@@ -1695,10 +1760,6 @@ async function finalizarRodada(
     premio
 ){
 
-    /*
-       PARA O SOM DA ROLETA
-    */
-
     pararSomRoleta();
 
     pararEfeitoNumeros();
@@ -1715,10 +1776,6 @@ async function finalizarRodada(
         );
 
     }
-
-    /*
-       CREDITA O PRÊMIO
-    */
 
     const saldoAtual =
         saldoReal;
@@ -1741,10 +1798,6 @@ async function finalizarRodada(
         return;
 
     }
-
-    /*
-       SOM DE VITÓRIA
-    */
 
     tocarPremio();
 
