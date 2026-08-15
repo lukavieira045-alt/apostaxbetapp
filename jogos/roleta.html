@@ -459,7 +459,7 @@ body{
 
 .valores{
     display:grid;
-    grid-template-columns:repeat(4,1fr);
+    grid-template-columns:repeat(3,1fr);
     gap:5px;
     margin-bottom:8px;
 }
@@ -686,7 +686,7 @@ body{
                 class="ficha"
                 id="fichaDisplay">
 
-                0,50
+                1,00
 
             </div>
 
@@ -696,14 +696,6 @@ body{
 
             <button
                 class="btn-valor ativo"
-                onclick="selecionarValor(0.50,this)">
-
-                R$ 0,50
-
-            </button>
-
-            <button
-                class="btn-valor"
                 onclick="selecionarValor(1,this)">
 
                 R$ 1
@@ -745,7 +737,7 @@ body{
                 Aposta:
 
                 <strong id="apostaInfo">
-                    R$ 0,50
+                    R$ 1,00
                 </strong>
 
             </span>
@@ -795,10 +787,6 @@ from
 "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 
-/* =====================================================
-   SUPABASE
-===================================================== */
-
 const SUPABASE_URL =
 "https://jxbzjiwmajjzxgihfjgt.supabase.co";
 
@@ -812,15 +800,11 @@ createClient(
 );
 
 
-/* =====================================================
-   VARIÁVEIS
-===================================================== */
-
 let usuarioAtual = null;
 
 let saldoReal = 0;
 
-let valorAposta = 0.50;
+let valorAposta = 1.00;
 
 let rotacaoAtual = 0;
 
@@ -832,17 +816,8 @@ let girando = false;
 ===================================================== */
 
 let audioContext = null;
-
 let somGirando = null;
-
 let ganhoGirando = null;
-
-let intervaloCliques = null;
-
-
-/* =====================================================
-   INICIAR ÁUDIO
-===================================================== */
 
 function iniciarAudio(){
 
@@ -874,7 +849,6 @@ function iniciarAudio(){
 
 /* =====================================================
    SOM DE CLIQUE
-   MANTIDO
 ===================================================== */
 
 function tocarClique(){
@@ -916,96 +890,17 @@ function tocarClique(){
         agora + 0.08
     );
 
-    oscilador.connect(
-        ganho
-    );
+    oscilador.connect(ganho);
+    ganho.connect(audioContext.destination);
 
-    ganho.connect(
-        audioContext.destination
-    );
-
-    oscilador.start(
-        agora
-    );
-
-    oscilador.stop(
-        agora + 0.08
-    );
+    oscilador.start(agora);
+    oscilador.stop(agora + 0.08);
 
 }
 
 
 /* =====================================================
-   NOVO SOM DA ROLETA
-   SEM CHIADO
-   CLIQUES DE ROLETA
-===================================================== */
-
-function tocarCliqueRoleta(){
-
-    iniciarAudio();
-
-    if(!audioContext)
-        return;
-
-    const agora =
-        audioContext.currentTime;
-
-    const oscilador =
-        audioContext.createOscillator();
-
-    const ganho =
-        audioContext.createGain();
-
-    oscilador.type =
-        "triangle";
-
-    oscilador.frequency.setValueAtTime(
-        900,
-        agora
-    );
-
-    oscilador.frequency.exponentialRampToValueAtTime(
-        350,
-        agora + 0.045
-    );
-
-    ganho.gain.setValueAtTime(
-        0.0001,
-        agora
-    );
-
-    ganho.gain.exponentialRampToValueAtTime(
-        0.22,
-        agora + 0.005
-    );
-
-    ganho.gain.exponentialRampToValueAtTime(
-        0.0001,
-        agora + 0.055
-    );
-
-    oscilador.connect(
-        ganho
-    );
-
-    ganho.connect(
-        audioContext.destination
-    );
-
-    oscilador.start(
-        agora
-    );
-
-    oscilador.stop(
-        agora + 0.06
-    );
-
-}
-
-
-/* =====================================================
-   INICIAR NOVO SOM DA ROLETA
+   SOM DA ROLETA
 ===================================================== */
 
 function iniciarSomRoleta(){
@@ -1017,50 +912,39 @@ function iniciarSomRoleta(){
 
     pararSomRoleta();
 
-    /*
-       Pequenos cliques rápidos,
-       como a roleta passando pelo ponteiro.
-    */
+    somGirando =
+        audioContext.createOscillator();
 
-    let intervalo = 95;
+    ganhoGirando =
+        audioContext.createGain();
 
-    intervaloCliques =
-        setInterval(
-            function(){
+    somGirando.type =
+        "triangle";
 
-                if(!girando){
+    somGirando.frequency.setValueAtTime(
+        130,
+        audioContext.currentTime
+    );
 
-                    pararSomRoleta();
+    ganhoGirando.gain.setValueAtTime(
+        1.0,
+        audioContext.currentTime
+    );
 
-                    return;
+    somGirando.connect(
+        ganhoGirando
+    );
 
-                }
+    ganhoGirando.connect(
+        audioContext.destination
+    );
 
-                tocarCliqueRoleta();
-
-            },
-            intervalo
-        );
+    somGirando.start();
 
 }
 
 
-/* =====================================================
-   PARAR SOM DA ROLETA
-===================================================== */
-
 function pararSomRoleta(){
-
-    if(intervaloCliques){
-
-        clearInterval(
-            intervaloCliques
-        );
-
-        intervaloCliques =
-            null;
-
-    }
 
     if(
         somGirando &&
@@ -1068,31 +952,33 @@ function pararSomRoleta(){
         audioContext
     ){
 
+        const agora =
+            audioContext.currentTime;
+
+        ganhoGirando.gain.cancelScheduledValues(
+            agora
+        );
+
+        ganhoGirando.gain.setValueAtTime(
+            1.0,
+            agora
+        );
+
+        ganhoGirando.gain.exponentialRampToValueAtTime(
+            0.001,
+            agora + 0.15
+        );
+
         try{
 
-            const agora =
-                audioContext.currentTime;
-
-            ganhoGirando.gain.cancelScheduledValues(
-                agora
-            );
-
-            ganhoGirando.gain.setValueAtTime(
-                0.001,
-                agora
-            );
-
             somGirando.stop(
-                agora + 0.02
+                agora + 0.16
             );
 
         }catch(e){}
 
-        somGirando =
-            null;
-
-        ganhoGirando =
-            null;
+        somGirando = null;
+        ganhoGirando = null;
 
     }
 
@@ -1101,7 +987,6 @@ function pararSomRoleta(){
 
 /* =====================================================
    SOM DE PRÊMIO
-   MANTIDO
 ===================================================== */
 
 function tocarPremio(){
@@ -1148,21 +1033,11 @@ function tocarPremio(){
                 inicio + 0.45
             );
 
-            oscilador.connect(
-                ganho
-            );
+            oscilador.connect(ganho);
+            ganho.connect(audioContext.destination);
 
-            ganho.connect(
-                audioContext.destination
-            );
-
-            oscilador.start(
-                inicio
-            );
-
-            oscilador.stop(
-                inicio + 0.45
-            );
+            oscilador.start(inicio);
+            oscilador.stop(inicio + 0.45);
 
         }
     );
@@ -1696,11 +1571,6 @@ async function(){
         }
     );
 
-    /*
-       NOVO SOM DE ROLETA
-       SEM CHIADO
-    */
-
     iniciarSomRoleta();
 
     iniciarEfeitoNumeros();
@@ -1752,7 +1622,7 @@ async function(){
 
 
 /* =====================================================
-   FINALIZAR RODADA
+   FINALIZAR
 ===================================================== */
 
 async function finalizarRodada(
@@ -1948,10 +1818,6 @@ function(
 
 });
 
-
-/* =====================================================
-   INICIAR
-===================================================== */
 
 iniciar();
 
