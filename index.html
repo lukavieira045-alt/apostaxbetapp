@@ -899,6 +899,7 @@ do ApostaXBet.
 
 </section>
 
+
 <section id="telaRecuperacao">
 
 <div class="recuperacao-container">
@@ -957,6 +958,7 @@ onclick="voltarLogin()">
 </div>
 
 </section>
+
 
 <section id="telaNovaSenha">
 
@@ -1040,6 +1042,7 @@ class="mensagem">
 
 </section>
 
+
 <section id="site">
 
 <header class="topo">
@@ -1104,6 +1107,7 @@ Para jogar, toque em 🎮 Jogos no menu abaixo.
 
 </section>
 
+
 <section id="paginaConta">
 
 <div class="conta-container">
@@ -1157,6 +1161,7 @@ onclick="sair()">
 </div>
 
 </section>
+
 
 <nav
 class="menu"
@@ -1475,122 +1480,403 @@ function adicionarMensagemSuporte(
 }
 
 
+/* ==================================================
+   NORMALIZAR PERGUNTA
+================================================== */
+
+function normalizarPergunta(texto){
+
+    return texto
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g,"")
+        .replace(/[?!.,;:]/g," ")
+        .replace(/\s+/g," ")
+        .trim();
+
+}
+
+
+/* ==================================================
+   ASSISTENTE APOSTAXBET
+================================================== */
+
 function responderSuporte(texto){
 
     const pergunta =
-        texto.toLowerCase().trim();
+        normalizarPergunta(texto);
 
 
-    /* SAUDAÇÕES */
+    if(!pergunta){
 
-    if(
-        pergunta.includes("oi") ||
-        pergunta.includes("olá") ||
-        pergunta.includes("ola") ||
-        pergunta.includes("bom dia") ||
-        pergunta.includes("boa tarde") ||
-        pergunta.includes("boa noite")
-    ){
-
-        return "👋 Olá! Seja bem-vindo ao suporte ApostaXBet. Como posso ajudar? Você pode escolher uma das opções acima.";
+        return "🤖 Digite uma pergunta para que eu possa ajudar.";
 
     }
 
 
-    /* SALDO */
+    /* =========================
+       SAUDAÇÕES
+    ========================= */
+
+    if(
+        pergunta === "oi" ||
+        pergunta === "ola" ||
+        pergunta.includes("bom dia") ||
+        pergunta.includes("boa tarde") ||
+        pergunta.includes("boa noite") ||
+        pergunta.includes("tudo bem") ||
+        pergunta.includes("como voce esta") ||
+        pergunta.includes("como vc esta")
+    ){
+
+        return "👋 Olá! Tudo bem por aqui! Sou o assistente do ApostaXBet. Posso ajudar com saldo, jogos, depósito, Pix, saque, conta, senha e problemas no site.";
+
+    }
+
+
+    /* =========================
+       O QUE É O SITE
+    ========================= */
+
+    if(
+        pergunta.includes("o que e apostaxbet") ||
+        pergunta.includes("o que e a apostaxbet") ||
+        pergunta.includes("como funciona o site") ||
+        pergunta.includes("como funciona a apostaxbet") ||
+        pergunta.includes("que site e esse") ||
+        pergunta.includes("o que e esse site")
+    ){
+
+        return "🎰 O ApostaXBet é uma plataforma com jogos e recursos de conta, depósito e saque. Você pode acessar os jogos pelo botão 🎮 Jogos no menu inferior.";
+
+    }
+
+
+    /* =========================
+       SALDO
+    ========================= */
 
     if(
         pergunta.includes("saldo") ||
-        pergunta.includes("dinheiro") ||
+        pergunta.includes("meu dinheiro") ||
         pergunta.includes("quanto tenho") ||
-        pergunta.includes("quanto eu tenho")
+        pergunta.includes("quanto eu tenho") ||
+        pergunta.includes("quanto de dinheiro tenho") ||
+        pergunta.includes("ver saldo") ||
+        pergunta.includes("consultar saldo") ||
+        pergunta.includes("onde vejo meu saldo")
     ){
 
-        return "💰 Para consultar seu saldo, veja o valor que aparece no topo da página inicial, ao lado de \"Saldo\". Você também pode entrar em 👤 Conta para consultar.";
+        return "💰 Seu saldo aparece no topo da página inicial, ao lado de \"Saldo\". Você também pode tocar em 👤 Conta para consultar o saldo da sua conta.";
 
     }
 
 
-    /* JOGOS */
+    /* =========================
+       JOGOS
+    ========================= */
 
     if(
         pergunta.includes("jogo") ||
+        pergunta.includes("jogos") ||
         pergunta.includes("jogar") ||
-        pergunta.includes("games") ||
-        pergunta.includes("jogos")
+        pergunta.includes("onde jogo") ||
+        pergunta.includes("como jogar") ||
+        pergunta.includes("quero jogar") ||
+        pergunta.includes("games")
     ){
 
-        return "🎮 Para jogar, toque em 🎮 Jogos no menu inferior. Lá você encontrará os jogos disponíveis no ApostaXBet.";
+        return "🎮 Para jogar, toque em 🎮 Jogos no menu inferior. Lá ficam os jogos disponíveis no ApostaXBet. Escolha um jogo e siga as instruções da tela.";
 
     }
 
 
-    /* DEPÓSITO */
+    /* =========================
+       DEPÓSITO
+    ========================= */
 
     if(
-        pergunta.includes("deposit") ||
-        pergunta.includes("pix") ||
+        pergunta.includes("deposito") ||
+        pergunta.includes("depositar") ||
         pergunta.includes("colocar dinheiro") ||
-        pergunta.includes("adicionar dinheiro")
+        pergunta.includes("adicionar dinheiro") ||
+        pergunta.includes("mandar dinheiro") ||
+        pergunta.includes("colocar saldo") ||
+        pergunta.includes("como deposito") ||
+        pergunta.includes("como depositar")
     ){
 
-        return "💵 Para fazer um depósito, toque em 💰 Depositar na página inicial e siga as instruções apresentadas.";
+        return "💵 Para fazer um depósito, toque em 💰 Depositar na página inicial. Depois siga as instruções apresentadas na página de depósito.";
 
     }
 
 
-    /* SAQUE */
+    /* =========================
+       PIX
+    ========================= */
+
+    if(
+        pergunta.includes("pix") ||
+        pergunta.includes("chave pix") ||
+        pergunta.includes("pagar por pix") ||
+        pergunta.includes("deposito por pix") ||
+        pergunta.includes("depositar por pix")
+    ){
+
+        return "📲 Para utilizar o Pix, entre em 💰 Depositar e siga as instruções apresentadas na tela. Confira os dados antes de confirmar qualquer pagamento.";
+
+    }
+
+
+    /* =========================
+       SAQUE
+    ========================= */
 
     if(
         pergunta.includes("saque") ||
         pergunta.includes("sacar") ||
         pergunta.includes("retirar dinheiro") ||
-        pergunta.includes("retirada")
+        pergunta.includes("retirar meu dinheiro") ||
+        pergunta.includes("retirada") ||
+        pergunta.includes("como saco") ||
+        pergunta.includes("como sacar") ||
+        pergunta.includes("quero sacar")
     ){
 
-        return "🏦 Para solicitar um saque, toque em 💵 Sacar na página inicial e preencha as informações solicitadas.";
+        return "🏦 Para solicitar um saque, toque em 💵 Sacar na página inicial e preencha os dados solicitados. Depois acompanhe a situação da solicitação.";
 
     }
 
 
-    /* CONTA */
+    /* =========================
+       SAQUE PENDENTE
+    ========================= */
+
+    if(
+        pergunta.includes("saque pendente") ||
+        pergunta.includes("saque esta pendente") ||
+        pergunta.includes("saque ficou pendente") ||
+        pergunta.includes("quando meu saque") ||
+        pergunta.includes("meu saque nao caiu")
+    ){
+
+        return "⏳ Se o seu saque aparece como pendente, significa que a solicitação ainda está aguardando processamento. Confira a página de saque para acompanhar o status.";
+
+    }
+
+
+    /* =========================
+       CONTA
+    ========================= */
 
     if(
         pergunta.includes("conta") ||
+        pergunta.includes("minha conta") ||
         pergunta.includes("cadastro") ||
-        pergunta.includes("login") ||
-        pergunta.includes("senha") ||
-        pergunta.includes("email") ||
-        pergunta.includes("e-mail")
+        pergunta.includes("cadastrar") ||
+        pergunta.includes("criar conta") ||
+        pergunta.includes("como criar conta") ||
+        pergunta.includes("dados da conta")
     ){
 
-        return "👤 Para acessar sua conta, use o botão 👤 Conta no menu inferior. Se você esqueceu sua senha, use a opção \"Esqueci minha senha?\" na tela de login.";
+        return "👤 Para consultar sua conta, toque em 👤 Conta no menu inferior. Lá você consegue visualizar seu nome, e-mail e saldo.";
 
     }
 
 
-    /* PROBLEMAS */
+    /* =========================
+       LOGIN
+    ========================= */
+
+    if(
+        pergunta.includes("login") ||
+        pergunta.includes("entrar") ||
+        pergunta.includes("como entrar") ||
+        pergunta.includes("nao consigo entrar") ||
+        pergunta.includes("nao consigo fazer login") ||
+        pergunta.includes("acessar minha conta")
+    ){
+
+        return "🔐 Para entrar, use seu e-mail e senha cadastrados na tela de Login. Se não lembrar a senha, toque em \"Esqueci minha senha?\" para iniciar a recuperação.";
+
+    }
+
+
+    /* =========================
+       SENHA
+    ========================= */
+
+    if(
+        pergunta.includes("senha") ||
+        pergunta.includes("esqueci minha senha") ||
+        pergunta.includes("esqueci a senha") ||
+        pergunta.includes("trocar senha") ||
+        pergunta.includes("mudar senha") ||
+        pergunta.includes("recuperar senha") ||
+        pergunta.includes("nova senha")
+    ){
+
+        return "🔐 Se você esqueceu sua senha, na tela de Login toque em \"Esqueci minha senha?\". Informe seu e-mail e siga o link enviado para criar uma nova senha.";
+
+    }
+
+
+    /* =========================
+       E-MAIL
+    ========================= */
+
+    if(
+        pergunta.includes("email") ||
+        pergunta.includes("e mail") ||
+        pergunta.includes("meu email") ||
+        pergunta.includes("trocar email") ||
+        pergunta.includes("mudar email")
+    ){
+
+        return "📧 O e-mail é utilizado para acessar sua conta e para recuperação de senha. Se precisar alterar algum dado da conta e não houver essa opção disponível, entre em contato com o suporte.";
+
+    }
+
+
+    /* =========================
+       BÔNUS
+    ========================= */
+
+    if(
+        pergunta.includes("bonus") ||
+        pergunta.includes("bônus") ||
+        pergunta.includes("premio") ||
+        pergunta.includes("premiação") ||
+        pergunta.includes("presente") ||
+        pergunta.includes("bonus de boas vindas")
+    ){
+
+        return "🎁 O ApostaXBet possui uma área de boas-vindas apresentada no cadastro. As condições e regras de qualquer bônus devem ser conferidas na própria plataforma antes de utilizá-lo.";
+
+    }
+
+
+    /* =========================
+       ERRO / PROBLEMA
+    ========================= */
 
     if(
         pergunta.includes("erro") ||
         pergunta.includes("problema") ||
-        pergunta.includes("não funciona") ||
         pergunta.includes("nao funciona") ||
+        pergunta.includes("não funciona") ||
         pergunta.includes("travou") ||
-        pergunta.includes("travando")
+        pergunta.includes("travando") ||
+        pergunta.includes("bug") ||
+        pergunta.includes("quebrado") ||
+        pergunta.includes("tela branca") ||
+        pergunta.includes("nao abre") ||
+        pergunta.includes("não abre")
     ){
 
-        return "❓ Entendi. Tente sair da conta e entrar novamente. Se o problema continuar, anote o que aconteceu para podermos cadastrar uma orientação específica para esse problema.";
+        return "❓ Entendi. Primeiro tente atualizar a página e entrar novamente na sua conta. Se continuar, me diga exatamente o que aconteceu, por exemplo: \"meu saldo não aparece\", \"o jogo não abre\" ou \"o saque não funciona\".";
 
     }
 
 
-    /* RESPOSTA PADRÃO */
+    /* =========================
+       SALDO NÃO APARECE
+    ========================= */
 
-    return "🤖 Ainda não tenho uma resposta cadastrada para essa pergunta. Tente perguntar sobre saldo, jogos, depósito, saque, conta ou algum problema no site.";
+    if(
+        pergunta.includes("saldo nao aparece") ||
+        pergunta.includes("saldo não aparece") ||
+        pergunta.includes("saldo carregando") ||
+        pergunta.includes("saldo zerado") ||
+        pergunta.includes("saldo zero") ||
+        pergunta.includes("meu saldo sumiu")
+    ){
+
+        return "💰 Se o saldo não estiver aparecendo corretamente, atualize a página e confira se você está conectado à conta correta. Se continuar, informe o problema ao suporte para verificar o sistema de saldo.";
+
+    }
+
+
+    /* =========================
+       JOGO NÃO ABRE
+    ========================= */
+
+    if(
+        pergunta.includes("jogo nao abre") ||
+        pergunta.includes("jogo não abre") ||
+        pergunta.includes("jogo travou") ||
+        pergunta.includes("jogo travando") ||
+        pergunta.includes("jogo nao funciona") ||
+        pergunta.includes("jogo não funciona")
+    ){
+
+        return "🎮 Se um jogo não abrir, tente atualizar a página e abrir novamente pelo menu 🎮 Jogos. Se o problema continuar, informe o nome do jogo que está apresentando o erro.";
+
+    }
+
+
+    /* =========================
+       AGRADECIMENTO
+    ========================= */
+
+    if(
+        pergunta.includes("obrigado") ||
+        pergunta.includes("obrigada") ||
+        pergunta.includes("valeu") ||
+        pergunta.includes("muito obrigado") ||
+        pergunta.includes("muito obrigada")
+    ){
+
+        return "😊 Por nada! Estou aqui para ajudar. Se precisar de mais alguma coisa no ApostaXBet, é só perguntar.";
+
+    }
+
+
+    /* =========================
+       DESPEDIDA
+    ========================= */
+
+    if(
+        pergunta === "tchau" ||
+        pergunta.includes("ate mais") ||
+        pergunta.includes("até mais") ||
+        pergunta.includes("falou")
+    ){
+
+        return "👋 Até mais! Quando precisar de ajuda, é só abrir o 💬 Suporte novamente.";
+
+    }
+
+
+    /* =========================
+       AJUDA
+    ========================= */
+
+    if(
+        pergunta.includes("ajuda") ||
+        pergunta.includes("preciso de ajuda") ||
+        pergunta.includes("me ajuda") ||
+        pergunta.includes("como voce pode ajudar") ||
+        pergunta.includes("o que voce sabe")
+    ){
+
+        return "🤖 Posso ajudar com várias coisas do ApostaXBet: 💰 saldo, 🎮 jogos, 💵 depósito, 📲 Pix, 🏦 saque, 👤 conta, 🔐 senha, 🔑 login, 🎁 bônus e problemas no site.";
+
+    }
+
+
+    /* =========================
+       RESPOSTA PADRÃO
+    ========================= */
+
+    return "🤖 Ainda não encontrei uma resposta específica para essa pergunta. Tente perguntar de outra forma ou escolha uma das opções: 💰 Saldo, 🎮 Jogos, 💵 Depósito, 🏦 Saque, 👤 Conta ou ❓ Problema.";
 
 }
 
+
+/* ==================================================
+   BOTÕES DO SUPORTE
+================================================== */
 
 function perguntaSuporte(tipo){
 
@@ -1643,6 +1929,10 @@ function perguntaSuporte(tipo){
 
 }
 
+
+/* ==================================================
+   ENVIAR PERGUNTA
+================================================== */
 
 function enviarPerguntaSuporte(){
 
