@@ -235,9 +235,7 @@ body{
     height:100%;
 
     transform:scale(1,1);
-
     transform-origin:center;
-
     will-change:transform;
 }
 
@@ -593,6 +591,19 @@ body{
 
 <body>
 
+<!-- =====================================================
+     MÚSICA DE FUNDO
+     Arquivo: jogos/musica-roleta.mp3
+     Volume: 10%
+===================================================== -->
+
+<audio
+    id="musicaRoleta"
+    src="musica-roleta.mp3"
+    loop
+    preload="auto">
+</audio>
+
 <div id="carregando">
     🔐 VERIFICANDO CONTA...
 </div>
@@ -812,7 +823,55 @@ let girando = false;
 
 
 /* =====================================================
-   SOM
+   MÚSICA DE FUNDO
+   VOLUME = 10%
+===================================================== */
+
+const musicaRoleta =
+    document.getElementById("musicaRoleta");
+
+musicaRoleta.volume = 0.10;
+
+let musicaIniciada = false;
+
+
+function iniciarMusica(){
+
+    if(musicaIniciada)
+        return;
+
+    if(!musicaRoleta)
+        return;
+
+    musicaRoleta.volume = 0.10;
+
+    const promessa =
+        musicaRoleta.play();
+
+    if(promessa){
+
+        promessa
+        .then(function(){
+
+            musicaIniciada = true;
+
+        })
+        .catch(function(error){
+
+            console.log(
+                "Aguardando interação para iniciar música:",
+                error
+            );
+
+        });
+
+    }
+
+}
+
+
+/* =====================================================
+   ÁUDIO DOS EFEITOS
 ===================================================== */
 
 let audioContext = null;
@@ -846,6 +905,13 @@ function iniciarAudio(){
         audioContext.resume();
 
     }
+
+    /*
+       Tenta iniciar a música junto com
+       a primeira interação do jogador.
+    */
+
+    iniciarMusica();
 
 }
 
@@ -893,13 +959,17 @@ function tocarClique(){
         agora + 0.08
     );
 
-    oscilador.connect(ganho);
+    oscilador.connect(
+        ganho
+    );
 
     ganho.connect(
         audioContext.destination
     );
 
-    oscilador.start(agora);
+    oscilador.start(
+        agora
+    );
 
     oscilador.stop(
         agora + 0.08
@@ -910,7 +980,6 @@ function tocarClique(){
 
 /* =====================================================
    SOM DA ROLETA
-   TIC TIC TIC + DESACELERAÇÃO
 ===================================================== */
 
 function iniciarSomRoleta(){
@@ -945,10 +1014,6 @@ function tocarTic(){
 
     oscilador.type =
         "square";
-
-    /*
-       TIC curto
-    */
 
     oscilador.frequency.setValueAtTime(
         850,
@@ -985,10 +1050,6 @@ function tocarTic(){
     oscilador.stop(
         agora + 0.06
     );
-
-    /*
-       Vai ficando mais lento
-    */
 
     velocidadeSom += 8;
 
@@ -1072,7 +1133,9 @@ function tocarPremio(){
                 inicio + 0.45
             );
 
-            oscilador.connect(ganho);
+            oscilador.connect(
+                ganho
+            );
 
             ganho.connect(
                 audioContext.destination
@@ -1618,10 +1681,6 @@ async function(){
         }
     );
 
-    /*
-       INICIA O TIC-TIC-TIC
-    */
-
     iniciarSomRoleta();
 
     iniciarEfeitoNumeros();
@@ -1681,10 +1740,6 @@ async function finalizarRodada(
     premio
 ){
 
-    /*
-       PARA O TIC-TIC
-    */
-
     pararSomRoleta();
 
     pararEfeitoNumeros();
@@ -1723,10 +1778,6 @@ async function finalizarRodada(
         return;
 
     }
-
-    /*
-       SOM DO PRÊMIO
-    */
 
     tocarPremio();
 
@@ -1877,6 +1928,28 @@ function(
 
 });
 
+
+/* =====================================================
+   PRIMEIRA INTERAÇÃO
+   Garante que a música possa iniciar no celular.
+===================================================== */
+
+document.addEventListener(
+    "touchstart",
+    iniciarMusica,
+    { once:true }
+);
+
+document.addEventListener(
+    "click",
+    iniciarMusica,
+    { once:true }
+);
+
+
+/* =====================================================
+   COMEÇAR
+===================================================== */
 
 iniciar();
 
