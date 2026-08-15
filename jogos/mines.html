@@ -1,19 +1,13 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-
+<html lang="pt-BR">
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mines - ApostaXBet</title>
 
-<!-- SISTEMA DE SALDO REAL -->
 <script type="module" src="../script.js"></script>
 
 <style>
-
 *{
     box-sizing:border-box;
     font-family:'Segoe UI',Arial,sans-serif;
@@ -24,56 +18,47 @@
 body{
     min-height:100vh;
     color:white;
-    background:#0a0a1a;
+    background:#050713;
     display:flex;
     flex-direction:column;
     align-items:center;
-    padding-top:30px;
+    padding-top:20px;
     overflow-x:hidden;
     position:relative;
 }
 
-/* LUZES */
-
 .luz{
     position:fixed;
-    width:300px;
-    height:300px;
+    width:320px;
+    height:320px;
     border-radius:50%;
     filter:blur(120px);
-    opacity:.35;
-    z-index:-1;
+    opacity:.3;
+    z-index:-2;
     pointer-events:none;
 }
 
 .luz1{
     background:#00ff88;
-    left:-100px;
+    left:-130px;
     top:-100px;
-    animation:flutuar1 7s infinite alternate ease-in-out;
+    animation:flutuar1 8s infinite alternate ease-in-out;
 }
 
 .luz2{
-    background:#6a00ff;
-    right:-100px;
+    background:#6500ff;
+    right:-130px;
     bottom:-100px;
-    animation:flutuar2 7s infinite alternate ease-in-out;
+    animation:flutuar2 9s infinite alternate ease-in-out;
 }
 
 @keyframes flutuar1{
-    to{
-        transform:translate(150px,150px);
-    }
+    to{transform:translate(170px,150px) scale(1.2);}
 }
 
 @keyframes flutuar2{
-    to{
-        transform:translate(-150px,-150px);
-    }
+    to{transform:translate(-170px,-150px) scale(1.2);}
 }
-
-
-/* PARTÍCULAS */
 
 .particulas{
     position:fixed;
@@ -88,450 +73,415 @@ body{
     bottom:-20px;
     width:4px;
     height:4px;
-    background:rgba(255,255,255,.6);
     border-radius:50%;
+    background:white;
+    box-shadow:0 0 8px #00ffcc;
+    animation:subir linear infinite;
 }
 
-.particulas span:nth-child(1){
-    left:10%;
-    animation:subir 9s infinite linear;
-}
-
-.particulas span:nth-child(2){
-    left:30%;
-    animation:subir 11s infinite linear 1.5s;
-}
-
-.particulas span:nth-child(3){
-    left:50%;
-    animation:subir 8s infinite linear .5s;
-}
-
-.particulas span:nth-child(4){
-    left:70%;
-    animation:subir 10s infinite linear 2s;
-}
-
-.particulas span:nth-child(5){
-    left:90%;
-    animation:subir 12s infinite linear 3s;
-}
+.particulas span:nth-child(1){left:10%;animation-duration:8s;}
+.particulas span:nth-child(2){left:25%;animation-duration:11s;}
+.particulas span:nth-child(3){left:40%;animation-duration:9s;}
+.particulas span:nth-child(4){left:55%;animation-duration:12s;}
+.particulas span:nth-child(5){left:70%;animation-duration:8s;}
+.particulas span:nth-child(6){left:85%;animation-duration:10s;}
 
 @keyframes subir{
-    0%{
+    from{
         transform:translateY(0);
-        opacity:1;
+        opacity:0;
     }
-
-    100%{
-        transform:translateY(-100vh);
+    20%{opacity:1;}
+    to{
+        transform:translateY(-110vh);
         opacity:0;
     }
 }
 
-
-/* TÍTULO */
-
 h1{
-    margin-top:20px;
-    font-size:42px;
+    margin-top:10px;
+    font-size:40px;
     color:#00ff88;
     text-shadow:
-        0 0 20px rgba(0,255,136,.6);
+        0 0 10px #00ff88,
+        0 0 30px rgba(0,255,136,.5);
     letter-spacing:2px;
 }
-
-
-/* SALDO */
 
 #saldo{
     display:inline-block;
     font-size:20px;
     font-weight:bold;
+    color:#00ff88;
     background:rgba(0,255,136,.08);
-    padding:12px 30px;
+    padding:11px 28px;
     border-radius:40px;
-    border:1px solid rgba(0,255,136,.4);
-    margin:20px 0;
-    backdrop-filter:blur(5px);
-    transition:all .3s ease;
+    border:1px solid rgba(0,255,136,.45);
+    margin:15px 0;
+    box-shadow:0 0 20px rgba(0,255,136,.15);
 }
-
-
-/* PAINEL */
 
 .painel{
     width:92%;
-    max-width:380px;
-    margin:10px auto;
-    background:rgba(255,255,255,.03);
+    max-width:400px;
+    margin:5px auto;
+    padding:18px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(20,25,40,.97),
+            rgba(3,5,15,.98)
+        );
+    border:1px solid rgba(255,255,255,.1);
     border-radius:24px;
-    padding:25px 20px;
-    text-align:center;
-    border:1px solid rgba(255,255,255,.08);
-    box-shadow:0 10px 30px rgba(0,0,0,.3);
+    box-shadow:
+        0 15px 50px rgba(0,0,0,.6),
+        inset 0 0 30px rgba(0,255,136,.03);
 }
 
-
-/* CRONÔMETRO */
-
-#contador{
-    min-height:34px;
-    margin-bottom:8px;
-    font-size:25px;
+#tempo{
+    font-size:24px;
     font-weight:900;
-    color:#00ff88;
-    text-shadow:0 0 12px #00ff88;
+    color:#ffd700;
+    min-height:30px;
+    text-shadow:0 0 12px #ffd700;
+    margin-bottom:5px;
 }
 
-#contador.alerta{
+#tempo.perigo{
     color:#ff3333;
     text-shadow:
         0 0 10px #ff3333,
         0 0 25px #ff0000;
-    animation:pulsarContador .5s infinite alternate;
+    animation:pulsoTempo .45s infinite alternate;
 }
 
-@keyframes pulsarContador{
-    from{
-        transform:scale(1);
-    }
-
-    to{
-        transform:scale(1.12);
-    }
+@keyframes pulsoTempo{
+    from{transform:scale(1);}
+    to{transform:scale(1.12);}
 }
-
-
-/* PRÊMIO */
 
 #premio{
-    font-size:22px;
-    margin-bottom:20px;
+    font-size:20px;
+    margin-bottom:12px;
     min-height:28px;
     color:#ffd700;
-    text-shadow:
-        0 0 10px rgba(255,215,0,.3);
+    text-shadow:0 0 10px rgba(255,215,0,.3);
 }
 
-
-/* BOTÃO NOVO JOGO */
-
-button#btnNovoJogo{
+#jogo{
+    width:92%;
+    max-width:390px;
+    height:390px;
+    position:relative;
+    overflow:hidden;
+    border-radius:22px;
+    border:2px solid rgba(0,255,136,.25);
     background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(0,255,170,.15),
+            transparent 45%
+        ),
         linear-gradient(
-            135deg,
-            #00ff88,
-            #00cc6a
+            180deg,
+            #07141a,
+            #02050a
         );
-
-    color:#000;
-    border:none;
-    padding:16px 45px;
-    font-size:18px;
-    font-weight:800;
-    border-radius:14px;
-    cursor:pointer;
-    transition:all .2s;
     box-shadow:
-        0 0 20px rgba(0,255,136,.3);
-    text-transform:uppercase;
-    letter-spacing:1px;
+        inset 0 0 45px rgba(0,0,0,.9),
+        0 15px 50px rgba(0,0,0,.55);
 }
 
-button#btnNovoJogo:hover{
-    transform:scale(1.03);
-    box-shadow:
-        0 0 30px rgba(0,255,136,.5);
+.grade{
+    position:absolute;
+    inset:0;
+    opacity:.09;
+    background-image:
+        linear-gradient(
+            rgba(0,255,200,.5) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(0,255,200,.5) 1px,
+            transparent 1px
+        );
+    background-size:35px 35px;
 }
-
-button#btnNovoJogo:active{
-    transform:scale(.98);
-}
-
-button#btnNovoJogo:disabled{
-    background:#333;
-    color:#666;
-    cursor:not-allowed;
-    box-shadow:none;
-}
-
-
-/* GRID */
 
 #grid{
+    position:absolute;
+    inset:18px;
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    gap:14px;
-    margin:25px auto;
-    max-width:340px;
-    width:90%;
+    gap:12px;
+    z-index:5;
 }
 
 .cell{
-    aspect-ratio:1;
+    position:relative;
+    border-radius:18px;
+    border:2px solid rgba(255,255,255,.1);
     background:
         linear-gradient(
             145deg,
-            #20203a,
-            #101020
+            #18202a,
+            #080c13
         );
-
-    border-radius:16px;
-
     display:flex;
     align-items:center;
     justify-content:center;
-
-    font-size:32px;
-
+    font-size:35px;
     cursor:pointer;
-
-    border:2px solid rgba(255,255,255,.08);
-
-    transition:
-        all .2s cubic-bezier(.4,0,.2,1);
-
     user-select:none;
-    position:relative;
     overflow:hidden;
-
     box-shadow:
-        inset 0 0 15px rgba(0,0,0,.6),
-        0 5px 15px rgba(0,0,0,.25);
+        inset 0 0 20px rgba(0,0,0,.7),
+        0 5px 12px rgba(0,0,0,.4);
+    transition:.18s;
 }
 
 .cell::before{
     content:"";
     position:absolute;
-    inset:0;
-    background:
-        radial-gradient(
-            circle at 30% 20%,
-            rgba(255,255,255,.08),
-            transparent 35%
-        );
+    inset:3px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.04);
     pointer-events:none;
 }
 
-.cell:hover:not(.revealed):not(.bomb){
-    background:#252545;
-    border-color:rgba(0,255,136,.7);
-    transform:
-        translateY(-3px)
-        scale(1.02);
-
+.cell:not(.revealed):not(.bomb):not(.bloqueada):hover{
+    transform:translateY(-3px) scale(1.02);
+    border-color:#00ff88;
     box-shadow:
-        0 0 20px rgba(0,255,136,.15);
+        0 0 18px rgba(0,255,136,.3),
+        inset 0 0 20px rgba(0,255,136,.05);
+}
+
+.cell:not(.revealed):not(.bomb){
+    animation:respirar 2s infinite ease-in-out;
+}
+
+@keyframes respirar{
+    0%,100%{box-shadow:inset 0 0 20px rgba(0,0,0,.7);}
+    50%{box-shadow:inset 0 0 25px rgba(0,255,170,.08);}
 }
 
 .cell.revealed{
     background:
         radial-gradient(
             circle at 35% 30%,
-            #ffffff,
-            #55ffb0 20%,
-            #00cc6a 65%,
-            #008f4d
+            white,
+            #00ff88 25%,
+            #007f55 70%,
+            #003d2b
         );
-
-    color:#000;
+    color:white;
     border-color:#00ff88;
-
     box-shadow:
-        0 0 20px rgba(0,255,136,.5),
-        inset 0 0 15px rgba(255,255,255,.25);
+        0 0 15px #00ff88,
+        0 0 35px rgba(0,255,136,.45),
+        inset 0 0 20px rgba(255,255,255,.3);
+    animation:diamante .4s ease;
+    cursor:default;
+}
 
-    animation:
-        revelar .35s ease forwards;
+@keyframes diamante{
+    0%{
+        transform:scale(.65) rotate(-8deg);
+        opacity:.2;
+    }
+    60%{
+        transform:scale(1.12) rotate(3deg);
+    }
+    100%{
+        transform:scale(1);
+        opacity:1;
+    }
 }
 
 .cell.bomb{
     background:
         radial-gradient(
-            circle at 35% 30%,
-            #ffaaaa,
-            #ff3333 35%,
-            #7a0000 80%
+            circle,
+            #ff7777,
+            #ff2020 40%,
+            #680000 100%
         );
-
-    color:#fff;
     border-color:#ff3333;
-
     box-shadow:
-        0 0 20px rgba(255,51,51,.6),
-        0 0 40px rgba(255,0,0,.35);
+        0 0 20px #ff2222,
+        0 0 45px rgba(255,0,0,.7);
+    animation:explodir .5s ease;
+    cursor:default;
+}
 
-    animation:
-        explosao .5s ease;
+@keyframes explodir{
+    0%{
+        transform:scale(.5);
+        opacity:.3;
+    }
+    40%{
+        transform:scale(1.18) rotate(-4deg);
+    }
+    70%{
+        transform:scale(.95) rotate(4deg);
+    }
+    100%{
+        transform:scale(1);
+        opacity:1;
+    }
 }
 
 .cell.abrindo{
-    animation:
-        pulsar .6s infinite;
+    animation:abrindo .25s infinite alternate;
 }
 
-.cell.bomba-ultima{
-    animation:
-        explosaoForte .7s ease;
-}
-
-@keyframes revelar{
-    0%{
-        transform:scale(.7) rotate(-8deg);
-        opacity:0;
-    }
-
-    70%{
-        transform:scale(1.08);
-    }
-
-    100%{
-        transform:scale(1);
-        opacity:1;
-    }
-}
-
-@keyframes explosao{
-    0%{
-        transform:scale(.5);
-        opacity:.2;
-    }
-
-    45%{
-        transform:scale(1.2);
-    }
-
-    100%{
-        transform:scale(1);
-        opacity:1;
-    }
-}
-
-@keyframes explosaoForte{
-    0%{
-        transform:scale(.7);
-        filter:brightness(1);
-    }
-
-    40%{
-        transform:scale(1.2);
-        filter:brightness(2);
-    }
-
-    70%{
-        transform:translateX(-5px) scale(1.05);
-    }
-
-    100%{
-        transform:translateX(0) scale(1);
-        filter:brightness(1);
-    }
-}
-
-@keyframes pulsar{
-    0%,100%{
-        transform:scale(1);
-        opacity:1;
-    }
-
-    50%{
+@keyframes abrindo{
+    from{transform:scale(1);}
+    to{
         transform:scale(.92);
-        opacity:.7;
+        border-color:#ffd700;
+        box-shadow:0 0 20px rgba(255,215,0,.5);
     }
 }
 
+.cell.bloqueada{
+    cursor:default;
+    opacity:.8;
+}
 
-/* OVERLAY */
+#barra{
+    width:92%;
+    max-width:390px;
+    height:7px;
+    margin:12px 0 5px;
+    border-radius:20px;
+    overflow:hidden;
+    background:#151515;
+    border:1px solid #333;
+}
+
+#barraProgresso{
+    height:100%;
+    width:100%;
+    background:linear-gradient(90deg,#00ff88,#ffd700);
+    transform-origin:left;
+    transition:transform .1s linear;
+}
+
+#btnNovoJogo{
+    width:100%;
+    background:
+        linear-gradient(
+            135deg,
+            #00ff88,
+            #00cc6a
+        );
+    color:#00150b;
+    border:none;
+    padding:16px 25px;
+    font-size:17px;
+    font-weight:900;
+    border-radius:14px;
+    cursor:pointer;
+    box-shadow:
+        0 0 20px rgba(0,255,136,.3);
+    text-transform:uppercase;
+}
+
+#btnNovoJogo:active{
+    transform:scale(.97);
+}
+
+#btnNovoJogo:disabled{
+    background:#333;
+    color:#777;
+    cursor:not-allowed;
+    box-shadow:none;
+}
+
+.nota{
+    margin-top:10px;
+    color:#777;
+    font-size:11px;
+}
 
 .resultado-overlay{
     position:fixed;
     inset:0;
-
-    background:rgba(0,0,0,.85);
-
+    background:rgba(0,0,0,.86);
     display:flex;
     align-items:center;
     justify-content:center;
-
     opacity:0;
     pointer-events:none;
-
-    transition:opacity .3s;
-
+    transition:.3s;
     z-index:100;
-
-    backdrop-filter:blur(8px);
+    backdrop-filter:blur(9px);
 }
 
 .resultado-overlay.mostrar{
     opacity:1;
-    pointer-events:all;
+    pointer-events:auto;
 }
 
-
-/* RESULTADO */
-
 .resultado-box{
-    background:#16162a;
-    padding:35px;
-    border-radius:24px;
+    width:85%;
+    max-width:350px;
+    padding:30px 20px;
+    border-radius:25px;
     text-align:center;
-
+    background:
+        linear-gradient(
+            145deg,
+            #161d2a,
+            #080b12
+        );
     border:2px solid #00ff88;
-
     box-shadow:
-        0 0 40px rgba(0,255,136,.2);
-
-    max-width:85%;
-
-    animation:
-        popIn .3s
-        cubic-bezier(.175,.885,.32,1.275);
+        0 0 30px rgba(0,255,136,.3),
+        0 0 80px rgba(0,0,0,.8);
+    animation:popIn .35s cubic-bezier(.175,.885,.32,1.275);
 }
 
 @keyframes popIn{
-    0%{
-        transform:scale(.8);
+    from{
+        transform:scale(.65);
         opacity:0;
     }
-
-    100%{
+    to{
         transform:scale(1);
         opacity:1;
     }
 }
 
 .resultado-icon{
-    font-size:64px;
-    margin-bottom:15px;
+    font-size:70px;
+    margin-bottom:12px;
 }
 
 .resultado-text{
-    font-size:24px;
-    margin-bottom:25px;
+    font-size:25px;
     font-weight:bold;
+    margin-bottom:25px;
 }
 
 .btn-fechar{
     background:transparent;
     border:2px solid #00ff88;
     color:#00ff88;
-    padding:12px 35px;
+    padding:13px 30px;
     font-size:16px;
     border-radius:12px;
     cursor:pointer;
-    transition:.2s;
     font-weight:bold;
 }
 
-.btn-fechar:hover{
-    background:#00ff88;
-    color:#000;
+.btn-fechar:active{
+    transform:scale(.96);
 }
-
-
-/* CELULAR */
 
 @media(max-width:450px){
 
@@ -539,23 +489,20 @@ button#btnNovoJogo:disabled{
         font-size:34px;
     }
 
+    #jogo{
+        height:360px;
+    }
+
     #grid{
-        gap:12px;
+        inset:15px;
+        gap:10px;
     }
 
     .cell{
-        border-radius:14px;
         font-size:30px;
     }
-
-    #contador{
-        font-size:23px;
-    }
-
 }
-
 </style>
-
 </head>
 
 <body>
@@ -569,64 +516,66 @@ button#btnNovoJogo:disabled{
     <span></span>
     <span></span>
     <span></span>
+    <span></span>
 </div>
 
 <h1>💣 MINES</h1>
 
-<!-- IMPORTANTE:
-     A classe "saldo" faz o SistemaSaldo atualizar
-     este elemento também.
--->
-<div id="saldo" class="saldo">
+<div id="saldo">
     💰 Saldo: R$ 0,00
 </div>
 
 <div class="painel">
 
-    <div id="contador">
-        ⏱️ AGUARDANDO...
+    <div id="tempo">
+        ⏱️ 10s
     </div>
 
     <div id="premio">
         💎 Encontre os diamantes
     </div>
 
-    <button
-        id="btnNovoJogo"
-        disabled
-    >
-        CARREGANDO SALDO...
+    <div id="barra">
+        <div id="barraProgresso"></div>
+    </div>
+
+    <br>
+
+    <button id="btnNovoJogo">
+        💣 NOVO JOGO
     </button>
+
+    <div class="nota">
+        Escolha as casas antes do tempo acabar.
+    </div>
 
 </div>
 
-<div id="grid"></div>
+<div id="jogo">
 
+    <div class="grade"></div>
 
-<!-- RESULTADO -->
+    <div id="grid"></div>
 
-<div
-    class="resultado-overlay"
-    id="resultadoTela"
->
+</div>
+
+<div class="resultado-overlay" id="resultadoTela">
 
     <div class="resultado-box">
 
         <div
             class="resultado-icon"
-            id="resultadoIcone"
-        ></div>
+            id="resultadoIcone">
+        </div>
 
         <div
             class="resultado-text"
-            id="resultadoTexto"
-        >
+            id="resultadoTexto">
         </div>
 
         <button
             class="btn-fechar"
-            onclick="fecharResultado()"
-        >
+            onclick="fecharResultado()">
             JOGAR NOVAMENTE
         </button>
 
@@ -637,369 +586,325 @@ button#btnNovoJogo:disabled{
 
 <script>
 
-/*
-====================================================
-CONFIGURAÇÃO
-====================================================
-*/
+/* =====================================================
+   CONFIGURAÇÃO
+===================================================== */
 
 const VALOR_APOSTA = 1.00;
 
 const PREMIO_DIAMANTE = 0.50;
 
-const TEMPO_RODADA = 10;
-
 const QUANTIDADE_BOMBAS = 3;
 
-const TOTAL_CASAS = 9;
+const TEMPO_RODADA = 10;
 
 
-/*
-====================================================
-ELEMENTOS
-====================================================
-*/
+/* =====================================================
+   ELEMENTOS
+===================================================== */
 
 const grid =
-document.getElementById("grid");
+    document.getElementById("grid");
+
+const saldoDisplay =
+    document.getElementById("saldo");
 
 const premio =
-document.getElementById("premio");
+    document.getElementById("premio");
 
-const displaySaldo =
-document.getElementById("saldo");
+const tempo =
+    document.getElementById("tempo");
 
-const contador =
-document.getElementById("contador");
+const barra =
+    document.getElementById("barraProgresso");
+
+const botao =
+    document.getElementById("btnNovoJogo");
 
 const resultadoTela =
-document.getElementById("resultadoTela");
+    document.getElementById("resultadoTela");
 
 const resultadoIcone =
-document.getElementById("resultadoIcone");
+    document.getElementById("resultadoIcone");
 
 const resultadoTexto =
-document.getElementById("resultadoTexto");
-
-const btnNovoJogo =
-document.getElementById("btnNovoJogo");
+    document.getElementById("resultadoTexto");
 
 
-/*
-====================================================
-ESTADO
-====================================================
-*/
+/* =====================================================
+   ESTADO
+===================================================== */
 
 let bombas = [];
 
 let jogando = false;
 
-let tempoRestante = 0;
+let tempoRestante = TEMPO_RODADA;
 
-let intervalo = null;
+let intervaloTempo = null;
 
-let saldoAtual = 0;
+let rodadaEncerrada = false;
 
-let finalizando = false;
+let diamantesEncontrados = 0;
+
+
+/* =====================================================
+   ÁUDIO
+===================================================== */
+
+let audioContext = null;
 
 
 /*
-====================================================
-MOSTRAR SALDO
-====================================================
+   O áudio só é iniciado depois
+   de uma interação do usuário.
 */
 
-function mostrarSaldo(valor){
+function iniciarAudio(){
 
-    saldoAtual =
-        Number(valor) || 0;
+    try{
 
-    displaySaldo.textContent =
-        "💰 Saldo: R$ " +
-        saldoAtual
-        .toFixed(2)
-        .replace(".",",");
+        if(!audioContext){
+
+            audioContext =
+                new (
+                    window.AudioContext ||
+                    window.webkitAudioContext
+                )();
+
+        }
+
+        if(
+            audioContext.state === "suspended"
+        ){
+
+            audioContext.resume();
+
+        }
+
+    }catch(e){
+
+        console.warn(
+            "Áudio indisponível.",
+            e
+        );
+
+    }
 
 }
 
 
-/*
-====================================================
-ESPERAR SISTEMA DE SALDO
-====================================================
-*/
+/* =====================================================
+   SOM GENÉRICO
+===================================================== */
 
-function esperarSistemaSaldo(){
+function tocarSom(
+    frequencia,
+    duracao,
+    tipo="sine",
+    volume=.06
+){
 
-    return new Promise(
-        function(resolve){
+    if(!audioContext)
+        return;
 
-            if(window.SistemaSaldo){
+    try{
 
-                resolve(
-                    window.SistemaSaldo
-                );
+        const oscilador =
+            audioContext.createOscillator();
 
-                return;
+        const ganho =
+            audioContext.createGain();
 
-            }
+        oscilador.type =
+            tipo;
 
-            let tentativas = 0;
+        oscilador.frequency.value =
+            frequencia;
 
-            const espera =
-            setInterval(
-                function(){
+        ganho.gain.setValueAtTime(
+            volume,
+            audioContext.currentTime
+        );
 
-                    tentativas++;
+        ganho.gain.exponentialRampToValueAtTime(
+            .001,
+            audioContext.currentTime +
+            duracao
+        );
 
-                    if(window.SistemaSaldo){
+        oscilador.connect(ganho);
 
-                        clearInterval(
-                            espera
-                        );
+        ganho.connect(
+            audioContext.destination
+        );
 
-                        resolve(
-                            window.SistemaSaldo
-                        );
+        oscilador.start();
 
-                        return;
+        oscilador.stop(
+            audioContext.currentTime +
+            duracao
+        );
 
-                    }
+    }catch(e){}
 
-                    if(tentativas >= 100){
+}
 
-                        clearInterval(
-                            espera
-                        );
 
-                        resolve(null);
+/* =====================================================
+   SOM DA CONTAGEM
+===================================================== */
 
-                    }
+function somContagem(){
 
-                },
-                100
-            );
-
-        }
+    tocarSom(
+        tempoRestante <= 3
+            ? 520
+            : 360,
+        .08,
+        "square",
+        .045
     );
 
 }
 
 
-/*
-====================================================
-CARREGAR SALDO REAL
-====================================================
-*/
+/* =====================================================
+   SOM DO DIAMANTE
+===================================================== */
 
-async function carregarSaldoReal(){
+function somDiamante(){
 
-    const sistema =
-        await esperarSistemaSaldo();
+    tocarSom(
+        620,
+        .08,
+        "sine",
+        .06
+    );
 
-    if(!sistema){
-
-        btnNovoJogo.disabled =
-            true;
-
-        btnNovoJogo.textContent =
-            "ERRO NO SALDO";
-
-        premio.textContent =
-            "❌ Sistema de saldo indisponível.";
-
-        return false;
-
-    }
-
-    try{
-
-        const valorReal =
-            await sistema.get();
-
-        mostrarSaldo(
-            valorReal
-        );
-
-        await sistema.atualizarTela();
-
-        /*
-        Busca novamente depois da
-        atualização para garantir
-        que a tela use o valor real.
-        */
-
-        const valorConfirmado =
-            await sistema.get();
-
-        mostrarSaldo(
-            valorConfirmado
-        );
-
-        btnNovoJogo.disabled =
-            false;
-
-        btnNovoJogo.textContent =
-            "NOVO JOGO";
-
-        return true;
-
-    }catch(error){
-
-        console.error(
-            "Erro ao carregar saldo:",
-            error
-        );
-
-        btnNovoJogo.disabled =
-            true;
-
-        btnNovoJogo.textContent =
-            "ERRO NO SALDO";
-
-        premio.textContent =
-            "❌ Não foi possível carregar o saldo.";
-
-        return false;
-
-    }
+    setTimeout(
+        () => tocarSom(
+            900,
+            .13,
+            "sine",
+            .05
+        ),
+        70
+    );
 
 }
 
 
-/*
-====================================================
-ATUALIZAR SALDO REAL
-====================================================
-*/
+/* =====================================================
+   SOM DA BOMBA
+===================================================== */
 
-async function atualizarSaldoReal(){
+function somBomba(){
 
-    if(!window.SistemaSaldo)
-        return false;
+    tocarSom(
+        110,
+        .35,
+        "sawtooth",
+        .12
+    );
 
-    try{
-
-        const valorReal =
-            await window.SistemaSaldo.get();
-
-        mostrarSaldo(
-            valorReal
-        );
-
-        return true;
-
-    }catch(error){
-
-        console.error(error);
-
-        return false;
-
-    }
+    setTimeout(
+        () => tocarSom(
+            55,
+            .45,
+            "square",
+            .08
+        ),
+        80
+    );
 
 }
 
 
-/*
-====================================================
-DEBITAR APOSTA
-====================================================
-*/
+/* =====================================================
+   SOM DE VITÓRIA
+===================================================== */
 
-async function debitarAposta(){
+function somVitoria(){
 
-    if(!window.SistemaSaldo){
+    tocarSom(
+        523,
+        .12,
+        "sine",
+        .06
+    );
 
-        alert(
-            "❌ Sistema de saldo indisponível."
-        );
+    setTimeout(
+        () => tocarSom(
+            659,
+            .12,
+            "sine",
+            .06
+        ),
+        100
+    );
 
-        return false;
+    setTimeout(
+        () => tocarSom(
+            784,
+            .2,
+            "sine",
+            .07
+        ),
+        200
+    );
 
-    }
+}
+
+
+/* =====================================================
+   SALDO
+===================================================== */
+
+async function atualizarSaldo(){
 
     try{
 
-        /*
-        O próprio SistemaSaldo verifica
-        o saldo e salva no Supabase.
-        */
+        if(
+            window.SistemaSaldo &&
+            typeof window.SistemaSaldo.atualizarTela ===
+            "function"
+        ){
 
-        const sucesso =
-            await window.SistemaSaldo
-            .debitar(
-                VALOR_APOSTA
-            );
-
-        if(!sucesso){
-
-            await atualizarSaldoReal();
-
-            return false;
+            await window.SistemaSaldo.atualizarTela();
 
         }
 
-        await atualizarSaldoReal();
+        if(
+            window.SistemaSaldo &&
+            typeof window.SistemaSaldo.get ===
+            "function"
+        ){
 
-        return true;
+            const valor =
+                await window.SistemaSaldo.get();
 
-    }catch(error){
+            if(
+                Number.isFinite(
+                    Number(valor)
+                )
+            ){
 
-        console.error(
-            "Erro ao debitar aposta:",
-            error
-        );
+                saldoDisplay.textContent =
+                    "💰 Saldo: R$ " +
+                    Number(valor)
+                    .toFixed(2)
+                    .replace(".",",");
 
-        await atualizarSaldoReal();
+            }
 
-        return false;
+        }
 
-    }
+    }catch(e){
 
-}
-
-
-/*
-====================================================
-CRIAR TABULEIRO
-====================================================
-*/
-
-function criarTabuleiro(){
-
-    grid.innerHTML = "";
-
-    for(
-        let i=0;
-        i<TOTAL_CASAS;
-        i++
-    ){
-
-        const cell =
-            document.createElement("div");
-
-        cell.className =
-            "cell";
-
-        cell.textContent =
-            "?";
-
-        cell.dataset.index =
-            i;
-
-        cell.onclick =
-            function(){
-
-                abrirCasa(
-                    cell,
-                    i
-                );
-
-            };
-
-        grid.appendChild(
-            cell
+        console.warn(
+            "Não foi possível atualizar o saldo.",
+            e
         );
 
     }
@@ -1007,11 +912,9 @@ function criarTabuleiro(){
 }
 
 
-/*
-====================================================
-CRIAR BOMBAS
-====================================================
-*/
+/* =====================================================
+   CRIAR BOMBAS
+===================================================== */
 
 function criarBombas(){
 
@@ -1024,8 +927,7 @@ function criarBombas(){
 
         const posicao =
             Math.floor(
-                Math.random() *
-                TOTAL_CASAS
+                Math.random() * 9
             );
 
         if(
@@ -1045,163 +947,173 @@ function criarBombas(){
 }
 
 
-/*
-====================================================
-INICIAR CONTAGEM
-====================================================
-*/
+/* =====================================================
+   CRIAR TABULEIRO
+===================================================== */
+
+function criarTabuleiro(){
+
+    grid.innerHTML = "";
+
+    for(
+        let i=0;
+        i<9;
+        i++
+    ){
+
+        const cell =
+            document.createElement("div");
+
+        cell.className =
+            "cell";
+
+        cell.textContent =
+            "?";
+
+        cell.dataset.index =
+            i;
+
+        cell.addEventListener(
+            "click",
+            function(){
+
+                abrirCasa(
+                    cell,
+                    i
+                );
+
+            }
+        );
+
+        grid.appendChild(
+            cell
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   CONTAGEM
+===================================================== */
 
 function iniciarContagem(){
 
     clearInterval(
-        intervalo
+        intervaloTempo
     );
 
     tempoRestante =
         TEMPO_RODADA;
 
-    atualizarContador();
+    atualizarContagem();
 
-    intervalo =
+    intervaloTempo =
         setInterval(
-            function(){
+        function(){
 
-                if(!jogando){
+            if(!jogando)
+                return;
 
-                    clearInterval(
-                        intervalo
-                    );
+            tempoRestante--;
 
-                    return;
+            atualizarContagem();
 
-                }
+            somContagem();
 
-                tempoRestante--;
+            if(
+                tempoRestante <= 0
+            ){
 
-                atualizarContador();
+                clearInterval(
+                    intervaloTempo
+                );
 
-                /*
-                Quando chegar a zero,
-                encerra automaticamente.
-                */
+                tempoEsgotado();
 
-                if(
-                    tempoRestante <= 0
-                ){
+            }
 
-                    clearInterval(
-                        intervalo
-                    );
-
-                    tempoEsgotado();
-
-                }
-
-            },
-            1000
+        },
+        1000
         );
 
 }
 
 
-/*
-====================================================
-ATUALIZAR CONTADOR
-====================================================
-*/
+/* =====================================================
+   ATUALIZAR CONTAGEM
+===================================================== */
 
-function atualizarContador(){
+function atualizarContagem(){
+
+    tempo.textContent =
+        "⏱️ " +
+        tempoRestante +
+        "s";
+
+    const porcentagem =
+        Math.max(
+            0,
+            tempoRestante /
+            TEMPO_RODADA
+        );
+
+    barra.style.transform =
+        "scaleX(" +
+        porcentagem +
+        ")";
 
     if(
-        tempoRestante <= 3 &&
-        tempoRestante > 0
+        tempoRestante <= 3
     ){
 
-        contador.classList.add(
-            "alerta"
+        tempo.classList.add(
+            "perigo"
         );
 
     }else{
 
-        contador.classList.remove(
-            "alerta"
+        tempo.classList.remove(
+            "perigo"
         );
-
-    }
-
-    if(
-        tempoRestante > 0
-    ){
-
-        contador.textContent =
-            "⏱️ " +
-            tempoRestante +
-            "s";
-
-    }else{
-
-        contador.textContent =
-            "⏱️ TEMPO ESGOTADO";
 
     }
 
 }
 
 
-/*
-====================================================
-INICIAR JOGO
-====================================================
-*/
+/* =====================================================
+   NOVO JOGO
+===================================================== */
 
 async function iniciarJogo(){
 
+    iniciarAudio();
+
     if(jogando){
 
-        return;
-
-    }
-
-    if(finalizando){
+        premio.textContent =
+            "⚠️ Termine a rodada atual.";
 
         return;
 
     }
+
 
     /*
-    Garante que estamos usando
-    o saldo real.
+      GARANTE QUE O SISTEMA
+      DE SALDO EXISTE
     */
 
-    const saldoAntes =
-        await atualizarSaldoReal();
-
-    if(!saldoAntes){
-
-        alert(
-            "❌ Não foi possível verificar seu saldo."
-        );
-
-        return;
-
-    }
-
     if(
-        saldoAtual <
-        VALOR_APOSTA
+        !window.SistemaSaldo ||
+        typeof window.SistemaSaldo.debitar !==
+        "function"
     ){
 
         alert(
-            "❌ Saldo insuficiente!\n\n" +
-            "Aposta: R$ " +
-            VALOR_APOSTA
-            .toFixed(2)
-            .replace(".",",") +
-            "\n" +
-            "Saldo: R$ " +
-            saldoAtual
-            .toFixed(2)
-            .replace(".",",")
+            "❌ Sistema de saldo não está disponível."
         );
 
         return;
@@ -1210,25 +1122,44 @@ async function iniciarJogo(){
 
 
     /*
-    DEBITA DO SUPABASE
+      DEBITA R$ 1,00
     */
 
-    btnNovoJogo.disabled =
-        true;
+    botao.disabled = true;
 
-    btnNovoJogo.textContent =
-        "PREPARANDO...";
+    premio.textContent =
+        "💰 Verificando saldo...";
 
-    const debitou =
-        await debitarAposta();
 
-    if(!debitou){
+    let debitado = false;
 
-        btnNovoJogo.disabled =
-            false;
+    try{
 
-        btnNovoJogo.textContent =
-            "NOVO JOGO";
+        debitado =
+            await window.SistemaSaldo.debitar(
+                VALOR_APOSTA
+            );
+
+    }catch(e){
+
+        console.error(
+            "Erro ao debitar:",
+            e
+        );
+
+        debitado = false;
+
+    }
+
+
+    if(!debitado){
+
+        botao.disabled = false;
+
+        premio.textContent =
+            "💰 Saldo insuficiente.";
+
+        await atualizarSaldo();
 
         return;
 
@@ -1236,12 +1167,14 @@ async function iniciarJogo(){
 
 
     /*
-    NOVA RODADA
+      COMEÇA RODADA
     */
 
     jogando = true;
 
-    finalizando = false;
+    rodadaEncerrada = false;
+
+    diamantesEncontrados = 0;
 
     criarBombas();
 
@@ -1254,51 +1187,47 @@ async function iniciarJogo(){
     premio.textContent =
         "💎 Encontre os diamantes!";
 
-    btnNovoJogo.disabled =
-        true;
-
-    btnNovoJogo.textContent =
-        "JOGANDO...";
-
-    /*
-    COMEÇA OS 10 SEGUNDOS
-    */
+    botao.textContent =
+        "🎯 RODADA EM ANDAMENTO";
 
     iniciarContagem();
+
+    await atualizarSaldo();
 
 }
 
 
-/*
-====================================================
-ABRIR CASA
-====================================================
-*/
+/* =====================================================
+   ABRIR CASA
+===================================================== */
 
 function abrirCasa(
     cell,
     indice
 ){
 
-    if(!jogando)
-        return;
-
-    if(!cell)
-        return;
+    iniciarAudio();
 
     if(
-        cell.classList.contains(
-            "revealed"
-        )
+        !jogando ||
+        rodadaEncerrada ||
+        !cell
     ){
 
         return;
 
     }
 
+
     if(
         cell.classList.contains(
+            "revealed"
+        ) ||
+        cell.classList.contains(
             "bomb"
+        ) ||
+        cell.classList.contains(
+            "bloqueada"
         )
     ){
 
@@ -1308,7 +1237,7 @@ function abrirCasa(
 
 
     /*
-    Efeito de abertura
+      EFEITO DE ABERTURA
     */
 
     cell.classList.add(
@@ -1317,23 +1246,302 @@ function abrirCasa(
 
 
     setTimeout(
-        async function(){
+    async function(){
 
-            if(!jogando)
-                return;
+        if(
+            !jogando ||
+            rodadaEncerrada
+        ){
 
             cell.classList.remove(
                 "abrindo"
             );
 
+            return;
 
-            /*
-            BOMBA
-            */
+        }
+
+
+        cell.classList.remove(
+            "abrindo"
+        );
+
+
+        /*
+          BOMBA
+        */
+
+        if(
+            bombas.includes(
+                indice
+            )
+        ){
+
+            cell.classList.add(
+                "bomb"
+            );
+
+            cell.textContent =
+                "💣";
+
+            somBomba();
+
+            perderRodada();
+
+            return;
+
+        }
+
+
+        /*
+          DIAMANTE
+        */
+
+        cell.classList.add(
+            "revealed"
+        );
+
+        cell.textContent =
+            "💎";
+
+        diamantesEncontrados++;
+
+        somDiamante();
+
+
+        /*
+          CREDITA O PRÊMIO
+        */
+
+        try{
 
             if(
-                bombas.includes(
-                    indice
+                window.SistemaSaldo &&
+                typeof window.SistemaSaldo.creditar ===
+                "function"
+            ){
+
+                await window.SistemaSaldo.creditar(
+                    PREMIO_DIAMANTE
+                );
+
+            }
+
+        }catch(e){
+
+            console.error(
+                "Erro ao creditar prêmio:",
+                e
+            );
+
+        }
+
+
+        premio.textContent =
+            "💎 +" +
+            " R$ " +
+            PREMIO_DIAMANTE
+            .toFixed(2)
+            .replace(".",",");
+
+
+        await atualizarSaldo();
+
+
+        /*
+          SE ENCONTROU 6 DIAMANTES,
+          VITÓRIA MÁXIMA
+        */
+
+        if(
+            diamantesEncontrados >= 6
+        ){
+
+            ganharRodada();
+
+        }
+
+    },
+    180
+    );
+
+}
+
+
+/* =====================================================
+   PERDEU
+===================================================== */
+
+function perderRodada(){
+
+    if(
+        rodadaEncerrada
+    ){
+
+        return;
+
+    }
+
+    rodadaEncerrada = true;
+
+    jogando = false;
+
+    clearInterval(
+        intervaloTempo
+    );
+
+    tempo.textContent =
+        "💥 BOOM!";
+
+    tempo.classList.add(
+        "perigo"
+    );
+
+    barra.style.transform =
+        "scaleX(0)";
+
+    premio.textContent =
+        "💥 Você encontrou uma bomba!";
+
+    revelarBombas();
+
+    setTimeout(
+    function(){
+
+        resultadoIcone.textContent =
+            "💣";
+
+        resultadoTexto.textContent =
+            "Você perdeu!";
+
+        resultadoTela.classList.add(
+            "mostrar"
+        );
+
+    },
+    900
+    );
+
+    botao.disabled = false;
+
+    botao.textContent =
+        "💣 NOVO JOGO";
+
+}
+
+
+/* =====================================================
+   TEMPO ESGOTADO
+===================================================== */
+
+function tempoEsgotado(){
+
+    if(
+        rodadaEncerrada
+    ){
+
+        return;
+
+    }
+
+    rodadaEncerrada = true;
+
+    jogando = false;
+
+    tempo.textContent =
+        "⏰ TEMPO ESGOTADO";
+
+    tempo.classList.add(
+        "perigo"
+    );
+
+    barra.style.transform =
+        "scaleX(0)";
+
+    premio.textContent =
+        "⏰ O tempo acabou!";
+
+
+    /*
+      TODAS AS BOMBAS EXPLODEM
+    */
+
+    somBomba();
+
+    revelarBombas();
+
+
+    setTimeout(
+    function(){
+
+        resultadoIcone.textContent =
+            "⏰";
+
+        resultadoTexto.textContent =
+            "Tempo esgotado!";
+
+        resultadoTela.classList.add(
+            "mostrar"
+        );
+
+    },
+    900
+    );
+
+
+    botao.disabled = false;
+
+    botao.textContent =
+        "💣 NOVO JOGO";
+
+}
+
+
+/* =====================================================
+   REVELAR BOMBAS
+===================================================== */
+
+function revelarBombas(){
+
+    const cells =
+        document.querySelectorAll(
+            ".cell"
+        );
+
+    /*
+      Bloqueia todas as casas
+    */
+
+    cells.forEach(
+    function(cell){
+
+        cell.classList.add(
+            "bloqueada"
+        );
+
+    });
+
+
+    /*
+      Mostra todas as bombas
+    */
+
+    bombas.forEach(
+    function(indice, ordem){
+
+        const cell =
+            cells[indice];
+
+        if(!cell)
+            return;
+
+
+        setTimeout(
+        function(){
+
+            if(
+                !cell.classList.contains(
+                    "bomb"
                 )
             ){
 
@@ -1341,434 +1549,161 @@ function abrirCasa(
                     "bomb"
                 );
 
-                cell.classList.add(
-                    "bomba-ultima"
-                );
-
                 cell.textContent =
                     "💣";
 
-                await perderJogo(
-                    "💥 BOOM!"
+                tocarSom(
+                    100 + ordem * 30,
+                    .18,
+                    "sawtooth",
+                    .06
                 );
 
-                return;
-
-            }
-
-
-            /*
-            DIAMANTE
-            */
-
-            cell.classList.add(
-                "revealed"
-            );
-
-            cell.textContent =
-                "💎";
-
-
-            /*
-            CADA DIAMANTE PAGA
-            R$ 0,50 NO SALDO REAL
-            */
-
-            if(
-                window.SistemaSaldo
-            ){
-
-                try{
-
-                    await window.SistemaSaldo
-                    .creditar(
-                        PREMIO_DIAMANTE
-                    );
-
-                    await atualizarSaldoReal();
-
-                }catch(error){
-
-                    console.error(
-                        "Erro ao creditar prêmio:",
-                        error
-                    );
-
-                }
-
-            }
-
-
-            premio.textContent =
-                "💎 + R$ " +
-                PREMIO_DIAMANTE
-                .toFixed(2)
-                .replace(".",",");
-
-
-            /*
-            VERIFICA QUANTAS
-            CASAS SEGURAS FORAM ABERTAS
-            */
-
-            const abertas =
-                document
-                .querySelectorAll(
-                    ".cell.revealed"
-                )
-                .length;
-
-
-            /*
-            Existem 9 casas e
-            3 bombas = 6 diamantes.
-
-            Se abriu os 6,
-            venceu automaticamente.
-            */
-
-            if(
-                abertas >=
-                TOTAL_CASAS -
-                QUANTIDADE_BOMBAS
-            ){
-
-                await vencerJogo();
-
             }
 
         },
-        180
-    );
+        ordem * 220
+        );
+
+    });
 
 }
 
 
-/*
-====================================================
-TEMPO ESGOTADO
-====================================================
-*/
+/* =====================================================
+   VITÓRIA
+===================================================== */
 
-async function tempoEsgotado(){
+function ganharRodada(){
 
-    if(!jogando)
+    if(
+        rodadaEncerrada
+    ){
+
         return;
+
+    }
+
+    rodadaEncerrada = true;
 
     jogando = false;
 
-    finalizando = true;
-
     clearInterval(
-        intervalo
+        intervaloTempo
     );
 
-    contador.classList.remove(
-        "alerta"
+    tempo.classList.remove(
+        "perigo"
     );
 
-    contador.textContent =
-        "⏰ TEMPO ESGOTADO!";
-
-    premio.textContent =
-        "💥 Você demorou demais!";
-
-
-    /*
-    MOSTRA TODAS AS BOMBAS
-    */
-
-    await revelarTodasBombas();
-
-
-    setTimeout(
-        function(){
-
-            resultadoIcone.textContent =
-                "⏰";
-
-            resultadoTexto.textContent =
-                "Tempo esgotado!";
-
-            resultadoTela.classList.add(
-                "mostrar"
-            );
-
-            finalizando = false;
-
-            btnNovoJogo.disabled =
-                false;
-
-            btnNovoJogo.textContent =
-                "NOVO JOGO";
-
-        },
-        800
-    );
-
-}
-
-
-/*
-====================================================
-PERDEU
-====================================================
-*/
-
-async function perderJogo(
-    texto
-){
-
-    if(!jogando)
-        return;
-
-    jogando = false;
-
-    finalizando = true;
-
-    clearInterval(
-        intervalo
-    );
-
-    contador.classList.remove(
-        "alerta"
-    );
-
-    contador.textContent =
-        "💥 FIM DA RODADA";
-
-    premio.textContent =
-        texto;
-
-
-    /*
-    TODAS AS BOMBAS EXPLODEM
-    */
-
-    await revelarTodasBombas();
-
-
-    setTimeout(
-        function(){
-
-            resultadoIcone.textContent =
-                "💣";
-
-            resultadoTexto.textContent =
-                "Você perdeu!";
-
-            resultadoTela.classList.add(
-                "mostrar"
-            );
-
-            finalizando = false;
-
-            btnNovoJogo.disabled =
-                false;
-
-            btnNovoJogo.textContent =
-                "NOVO JOGO";
-
-        },
-        900
-    );
-
-}
-
-
-/*
-====================================================
-REVELAR TODAS AS BOMBAS
-====================================================
-*/
-
-function revelarTodasBombas(){
-
-    return new Promise(
-        function(resolve){
-
-            const cells =
-                document.querySelectorAll(
-                    ".cell"
-                );
-
-            let atrasos = 0;
-
-            bombas.forEach(
-                function(
-                    indice,
-                    ordem
-                ){
-
-                    const cell =
-                        cells[indice];
-
-                    if(!cell)
-                        return;
-
-                    atrasos++;
-
-                    setTimeout(
-                        function(){
-
-                            cell.classList.remove(
-                                "abrindo"
-                            );
-
-                            cell.classList.add(
-                                "bomb"
-                            );
-
-                            cell.classList.add(
-                                "bomba-ultima"
-                            );
-
-                            cell.textContent =
-                                "💣";
-
-                            if(
-                                ordem ===
-                                bombas.length - 1
-                            ){
-
-                                setTimeout(
-                                    resolve,
-                                    350
-                                );
-
-                            }
-
-                        },
-                        180 +
-                        ordem * 180
-                    );
-
-                }
-            );
-
-            if(
-                atrasos === 0
-            ){
-
-                resolve();
-
-            }
-
-        }
-    );
-
-}
-
-
-/*
-====================================================
-VITÓRIA MÁXIMA
-====================================================
-*/
-
-async function vencerJogo(){
-
-    if(!jogando)
-        return;
-
-    jogando = false;
-
-    finalizando = true;
-
-    clearInterval(
-        intervalo
-    );
-
-    contador.classList.remove(
-        "alerta"
-    );
-
-    contador.textContent =
+    tempo.textContent =
         "🏆 VITÓRIA!";
 
+    barra.style.transform =
+        "scaleX(1)";
+
     premio.textContent =
-        "🏆 Todos os diamantes encontrados!";
+        "🏆 Vitória máxima!";
+
+    somVitoria();
 
 
     /*
-    PEQUENA ESPERA
+      Mostra as bombas restantes
     */
 
+    revelarBombas();
+
+
     setTimeout(
-        function(){
+    function(){
 
-            resultadoIcone.textContent =
-                "🏆";
+        resultadoIcone.textContent =
+            "🏆";
 
-            resultadoTexto.textContent =
-                "Vitória máxima!";
+        resultadoTexto.textContent =
+            "Vitória máxima!";
 
-            resultadoTela.classList.add(
-                "mostrar"
-            );
+        resultadoTela.classList.add(
+            "mostrar"
+        );
 
-            finalizando = false;
-
-            btnNovoJogo.disabled =
-                false;
-
-            btnNovoJogo.textContent =
-                "NOVO JOGO";
-
-        },
-        700
+    },
+    900
     );
+
+
+    botao.disabled = false;
+
+    botao.textContent =
+        "💣 NOVO JOGO";
 
 }
 
 
-/*
-====================================================
-FECHAR RESULTADO
-====================================================
-*/
+/* =====================================================
+   FECHAR RESULTADO
+===================================================== */
 
 function fecharResultado(){
+
+    iniciarAudio();
 
     resultadoTela.classList.remove(
         "mostrar"
     );
 
     /*
-    Atualiza o saldo novamente
-    ao fechar a tela.
+      Não começa sozinho.
+      O jogador aperta NOVO JOGO.
     */
 
-    atualizarSaldoReal();
+    botao.disabled = false;
+
+    botao.textContent =
+        "💣 NOVO JOGO";
 
 }
 
 
-/*
-====================================================
- INICIALIZAÇÃO
-====================================================
-*/
+/* =====================================================
+   INICIALIZAÇÃO
+===================================================== */
 
 window.addEventListener(
     "DOMContentLoaded",
     async function(){
 
-        btnNovoJogo.disabled =
-            true;
-
-        btnNovoJogo.textContent =
-            "CARREGANDO SALDO...";
-
-        contador.textContent =
-            "⏱️ AGUARDANDO...";
-
-        premio.textContent =
-            "💎 Encontre os diamantes";
-
         criarTabuleiro();
 
-        await carregarSaldoReal();
+        tempo.textContent =
+            "⏱️ 10s";
+
+        barra.style.transform =
+            "scaleX(1)";
+
+        await atualizarSaldo();
+
+        botao.addEventListener(
+            "click",
+            iniciarJogo
+        );
+
+    }
+);
+
+
+/* =====================================================
+   SEGURANÇA AO SAIR
+===================================================== */
+
+window.addEventListener(
+    "beforeunload",
+    function(){
+
+        clearInterval(
+            intervaloTempo
+        );
 
     }
 );
