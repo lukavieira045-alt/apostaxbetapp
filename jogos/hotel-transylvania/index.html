@@ -120,11 +120,6 @@ body{
     margin-top:4px;
 }
 
-
-/* =========================
-   ÁREA DO JOGO
-========================= */
-
 .jogo{
     margin-top:15px;
 
@@ -149,11 +144,6 @@ body{
 
     overflow:hidden;
 }
-
-
-/* =========================
-   RELÂMPAGOS
-========================= */
 
 .raio{
     position:absolute;
@@ -209,11 +199,6 @@ body{
     }
 }
 
-
-/* =========================
-   MULTIPLICADOR
-========================= */
-
 .multiplicador{
     text-align:center;
 
@@ -236,11 +221,6 @@ body{
         0 0 5px #ffbf00,
         0 0 15px #a648ff;
 }
-
-
-/* =========================
-   ROLOS
-========================= */
 
 .rolos{
     display:grid;
@@ -360,11 +340,6 @@ body{
         0 0 20px #bf55ff;
 }
 
-
-/* =========================
-   LINHA
-========================= */
-
 .linha{
     height:4px;
 
@@ -388,11 +363,6 @@ body{
 
     pointer-events:none;
 }
-
-
-/* =========================
-   VALORES
-========================= */
 
 .valor-area{
     margin-top:12px;
@@ -429,11 +399,6 @@ body{
         rgba(255,215,60,.3);
 }
 
-
-/* =========================
-   BOTÃO
-========================= */
-
 .apostar{
     width:100%;
 
@@ -468,11 +433,6 @@ body{
 .apostar:disabled{
     opacity:.35;
 }
-
-
-/* =========================
-   RESULTADO
-========================= */
 
 .resultado{
     min-height:55px;
@@ -515,11 +475,6 @@ body{
     color:#ffe45b;
 }
 
-
-/* =========================
-   ANIMAÇÃO
-========================= */
-
 .jogando .rolos{
 
     box-shadow:
@@ -549,11 +504,6 @@ body{
         tremor .08s infinite;
 }
 
-
-/* =========================
-   RESPONSIVO
-========================= */
-
 @media(max-width:360px){
 
     .rolo{
@@ -572,7 +522,6 @@ body{
 </head>
 
 <body>
-
 
 <header class="topo">
 
@@ -594,9 +543,7 @@ body{
 
 </header>
 
-
 <div class="container">
-
 
     <a
         href="../index.html"
@@ -605,29 +552,22 @@ body{
         ← Voltar para Jogos
     </a>
 
-
     <div class="titulo">
         ⚡ NIGHT MONSTERS ⚡
     </div>
 
-
     <div class="subtitulo">
         SLOTS DE RELÂMPAGOS
     </div>
-
 
     <div
         class="jogo"
         id="jogo"
     >
 
-
         <div class="raio raio1"></div>
-
         <div class="raio raio2"></div>
-
         <div class="raio raio3"></div>
-
 
         <div class="multiplicador">
 
@@ -637,9 +577,7 @@ body{
 
         </div>
 
-
         <div class="rolos">
-
 
             <div class="rolo">
 
@@ -650,7 +588,6 @@ body{
 
             </div>
 
-
             <div class="rolo">
 
                 <div
@@ -659,7 +596,6 @@ body{
                 ></div>
 
             </div>
-
 
             <div class="rolo">
 
@@ -670,15 +606,11 @@ body{
 
             </div>
 
-
             <div class="linha"></div>
-
 
         </div>
 
-
         <div class="valor-area">
-
 
             <button
                 class="valor ativo"
@@ -687,14 +619,12 @@ body{
                 R$ 0,50
             </button>
 
-
             <button
                 class="valor"
                 onclick="escolherValor(1,this)"
             >
                 R$ 1
             </button>
-
 
             <button
                 class="valor"
@@ -703,7 +633,6 @@ body{
                 R$ 2
             </button>
 
-
             <button
                 class="valor"
                 onclick="escolherValor(5,this)"
@@ -711,9 +640,7 @@ body{
                 R$ 5
             </button>
 
-
         </div>
-
 
         <button
             class="apostar"
@@ -723,14 +650,12 @@ body{
             GIRAR R$ 0,50
         </button>
 
-
         <div
             class="resultado"
             id="resultado"
         >
             BOA SORTE!
         </div>
-
 
         <div class="info">
 
@@ -744,7 +669,6 @@ body{
 
             </span>
 
-
             <span>
 
                 Saldo:
@@ -757,11 +681,9 @@ body{
 
         </div>
 
-
     </div>
 
 </div>
-
 
 <script>
 
@@ -792,7 +714,6 @@ let girando = false;
 
 let saldoAtual = 0;
 
-
 const simbolos = [
 
     "🦇",
@@ -805,7 +726,6 @@ const simbolos = [
     "💎"
 
 ];
-
 
 const premios = {
 
@@ -826,6 +746,298 @@ const premios = {
     "💎":100
 
 };
+
+
+/* =========================================================
+   SOM DO HOTEL ASSUSTADOR
+   SOMENTE ÁUDIO
+========================================================= */
+
+let audioContext = null;
+
+let hotelSomAtivo = false;
+
+
+/* inicia o sistema de áudio */
+
+function iniciarSomHotel(){
+
+    if(hotelSomAtivo) return;
+
+    try{
+
+        audioContext =
+            new (
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+        if(
+            audioContext.state ===
+            "suspended"
+        ){
+
+            audioContext.resume();
+
+        }
+
+        hotelSomAtivo = true;
+
+    }catch(e){
+
+        console.log(
+            "Áudio indisponível:",
+            e
+        );
+
+    }
+
+}
+
+
+/* som grave do hotel */
+
+function somAmbiente(){
+
+    if(!audioContext)return;
+
+    const agora =
+        audioContext.currentTime;
+
+    const osc =
+        audioContext.createOscillator();
+
+    const ganho =
+        audioContext.createGain();
+
+    osc.type =
+        "sine";
+
+    osc.frequency.setValueAtTime(
+        48,
+        agora
+    );
+
+    ganho.gain.setValueAtTime(
+        0.0001,
+        agora
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+        0.035,
+        agora + 0.5
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+        0.0001,
+        agora + 3
+    );
+
+    osc.connect(ganho);
+
+    ganho.connect(
+        audioContext.destination
+    );
+
+    osc.start(agora);
+
+    osc.stop(
+        agora + 3.1
+    );
+
+}
+
+
+/* som assustador quando gira */
+
+function somMonstro(){
+
+    if(!audioContext)return;
+
+    const agora =
+        audioContext.currentTime;
+
+    const osc =
+        audioContext.createOscillator();
+
+    const ganho =
+        audioContext.createGain();
+
+    osc.type =
+        "sawtooth";
+
+    osc.frequency.setValueAtTime(
+        130,
+        agora
+    );
+
+    osc.frequency.exponentialRampToValueAtTime(
+        55,
+        agora + 0.8
+    );
+
+    ganho.gain.setValueAtTime(
+        0.0001,
+        agora
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+        0.045,
+        agora + 0.05
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+        0.0001,
+        agora + 1
+    );
+
+    osc.connect(ganho);
+
+    ganho.connect(
+        audioContext.destination
+    );
+
+    osc.start(agora);
+
+    osc.stop(
+        agora + 1.1
+    );
+
+}
+
+
+/* som de suspense antes do resultado */
+
+function somSuspense(){
+
+    if(!audioContext)return;
+
+    const agora =
+        audioContext.currentTime;
+
+    const osc =
+        audioContext.createOscillator();
+
+    const ganho =
+        audioContext.createGain();
+
+    osc.type =
+        "triangle";
+
+    osc.frequency.setValueAtTime(
+        220,
+        agora
+    );
+
+    osc.frequency.linearRampToValueAtTime(
+        440,
+        agora + 0.8
+    );
+
+    ganho.gain.setValueAtTime(
+        0.0001,
+        agora
+    );
+
+    ganho.gain.linearRampToValueAtTime(
+        0.035,
+        agora + 0.15
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+        0.0001,
+        agora + 1
+    );
+
+    osc.connect(ganho);
+
+    ganho.connect(
+        audioContext.destination
+    );
+
+    osc.start(agora);
+
+    osc.stop(
+        agora + 1.1
+    );
+
+}
+
+
+/* som de prêmio */
+
+function somPremio(){
+
+    if(!audioContext)return;
+
+    const agora =
+        audioContext.currentTime;
+
+    [523,659,784,1046].forEach(
+        function(freq,i){
+
+            const osc =
+                audioContext.createOscillator();
+
+            const ganho =
+                audioContext.createGain();
+
+            osc.type =
+                "sine";
+
+            osc.frequency.value =
+                freq;
+
+            ganho.gain.setValueAtTime(
+                0.0001,
+                agora + i * 0.12
+            );
+
+            ganho.gain.exponentialRampToValueAtTime(
+                0.07,
+                agora + i * 0.12 + 0.03
+            );
+
+            ganho.gain.exponentialRampToValueAtTime(
+                0.0001,
+                agora + i * 0.12 + 0.4
+            );
+
+            osc.connect(ganho);
+
+            ganho.connect(
+                audioContext.destination
+            );
+
+            osc.start(
+                agora + i * 0.12
+            );
+
+            osc.stop(
+                agora + i * 0.12 + 0.45
+            );
+
+        }
+    );
+
+}
+
+
+/* libera áudio no primeiro toque */
+
+document.addEventListener(
+    "click",
+    function(){
+
+        iniciarSomHotel();
+
+        somAmbiente();
+
+    },
+    {
+        once:true
+    }
+);
 
 
 /* =========================================================
@@ -853,7 +1065,6 @@ async function getUsuario(){
         .auth
         .getSession();
 
-
     if(error){
 
         console.error(
@@ -864,7 +1075,6 @@ async function getUsuario(){
         return null;
 
     }
-
 
     return data?.session?.user || null;
 
@@ -880,13 +1090,11 @@ async function getSaldo(){
     const user =
         await getUsuario();
 
-
     if(!user){
 
         return 0;
 
     }
-
 
     const { data,error } =
         await supabaseClient
@@ -894,7 +1102,6 @@ async function getSaldo(){
         .select("valor")
         .eq("user_id",user.id)
         .single();
-
 
     if(error){
 
@@ -907,10 +1114,8 @@ async function getSaldo(){
 
     }
 
-
     saldoAtual =
         Number(data?.valor || 0);
-
 
     return saldoAtual;
 
@@ -926,12 +1131,10 @@ async function atualizarSaldo(){
     const saldo =
         await getSaldo();
 
-
     document
         .getElementById("saldo")
         .innerText =
             dinheiro(saldo);
-
 
     document
         .getElementById("saldo2")
@@ -950,7 +1153,6 @@ async function alterarSaldo(novoSaldo){
     const user =
         await getUsuario();
 
-
     if(!user){
 
         return {
@@ -960,10 +1162,8 @@ async function alterarSaldo(novoSaldo){
 
     }
 
-
     novoSaldo =
         Number(novoSaldo);
-
 
     if(!Number.isFinite(novoSaldo)){
 
@@ -974,7 +1174,6 @@ async function alterarSaldo(novoSaldo){
 
     }
 
-
     novoSaldo =
         Math.max(
             0,
@@ -983,7 +1182,6 @@ async function alterarSaldo(novoSaldo){
             )
         );
 
-
     const { error } =
         await supabaseClient
         .from("saldos")
@@ -991,7 +1189,6 @@ async function alterarSaldo(novoSaldo){
             valor:novoSaldo
         })
         .eq("user_id",user.id);
-
 
     if(error){
 
@@ -1007,10 +1204,8 @@ async function alterarSaldo(novoSaldo){
 
     }
 
-
     saldoAtual =
         novoSaldo;
-
 
     return {
         sucesso:true,
@@ -1045,9 +1240,7 @@ function criarRolo(id){
     const area =
         document.getElementById(id);
 
-
     area.innerHTML = "";
-
 
     for(
         let i=0;
@@ -1058,14 +1251,11 @@ function criarRolo(id){
         const div =
             document.createElement("div");
 
-
         div.className =
             "simbolo";
 
-
         div.innerText =
             escolherSimbolo();
-
 
         area.appendChild(div);
 
@@ -1085,10 +1275,8 @@ function escolherValor(
 
     if(girando)return;
 
-
     aposta =
         Number(valor);
-
 
     document
         .querySelectorAll(".valor")
@@ -1101,16 +1289,13 @@ function escolherValor(
             }
         );
 
-
     botao.classList
         .add("ativo");
-
 
     document
         .getElementById("aposta")
         .innerText =
             dinheiro(aposta);
-
 
     document
         .getElementById("btn")
@@ -1129,14 +1314,8 @@ async function girar(){
 
     if(girando)return;
 
-
-    /*
-       Busca o saldo diretamente do Supabase.
-    */
-
     const saldo =
         await getSaldo();
-
 
     if(saldo < aposta){
 
@@ -1156,49 +1335,44 @@ async function girar(){
 
     }
 
-
     girando = true;
+
+    /* SOM */
+
+    iniciarSomHotel();
+
+    somMonstro();
+
+    somSuspense();
 
 
     const jogo =
         document.getElementById("jogo");
 
-
     const btn =
         document.getElementById("btn");
-
 
     const resultado =
         document.getElementById("resultado");
 
-
     jogo.classList
         .add("jogando");
-
 
     jogo.classList
         .add("tremendo");
 
-
     btn.disabled =
         true;
-
 
     btn.innerText =
         "GIRANDO...";
 
-
     resultado.innerText =
         "⚡ OS MONSTROS ESTÃO GIRANDO...";
-
 
     resultado.style.color =
         "#ffe45b";
 
-
-    /*
-       DESCONTA A APOSTA
-    */
 
     const saldoDepoisDaAposta =
         Number(
@@ -1208,52 +1382,38 @@ async function girar(){
             ).toFixed(2)
         );
 
-
     const debito =
         await alterarSaldo(
             saldoDepoisDaAposta
         );
 
 
-    /*
-       Se não conseguir descontar,
-       cancela a rodada.
-    */
-
     if(!debito.sucesso){
 
         girando = false;
 
-
         jogo.classList
             .remove("jogando");
-
 
         jogo.classList
             .remove("tremendo");
 
-
         btn.disabled =
             false;
-
 
         btn.innerText =
             "GIRAR " +
             dinheiro(aposta);
 
-
         resultado.innerText =
             "ERRO AO PROCESSAR A APOSTA";
-
 
         resultado.style.color =
             "#ff5555";
 
-
         alert(
             "Não foi possível atualizar o saldo."
         );
-
 
         return;
 
@@ -1263,12 +1423,7 @@ async function girar(){
     atualizarSaldo();
 
 
-    /* =====================================================
-       SORTEIO
-    ===================================================== */
-
     let resultadoFinal;
-
 
     const sorteio =
         Math.random();
@@ -1286,7 +1441,6 @@ async function girar(){
 
     }
 
-
     else if(sorteio < 0.06){
 
         resultadoFinal = [
@@ -1299,12 +1453,10 @@ async function girar(){
 
     }
 
-
     else if(sorteio < 0.15){
 
         const s =
             escolherSimbolo();
-
 
         resultadoFinal = [
 
@@ -1316,20 +1468,16 @@ async function girar(){
 
     }
 
-
     else{
 
         let a =
             escolherSimbolo();
 
-
         let b =
             escolherSimbolo();
 
-
         let c =
             escolherSimbolo();
-
 
         while(
             a === b &&
@@ -1340,7 +1488,6 @@ async function girar(){
                 escolherSimbolo();
 
         }
-
 
         resultadoFinal = [
 
@@ -1353,23 +1500,17 @@ async function girar(){
     }
 
 
-    /* =====================================================
-       ANIMAÇÃO
-    ===================================================== */
-
     prepararRolo(
         "rolo1",
         resultadoFinal[0],
         500
     );
 
-
     prepararRolo(
         "rolo2",
         resultadoFinal[1],
         1000
     );
-
 
     prepararRolo(
         "rolo3",
@@ -1405,9 +1546,7 @@ function prepararRolo(
     const area =
         document.getElementById(id);
 
-
     area.innerHTML = "";
-
 
     for(
         let i=0;
@@ -1418,55 +1557,42 @@ function prepararRolo(
         const div =
             document.createElement("div");
 
-
         div.className =
             "simbolo";
 
-
         div.innerText =
             escolherSimbolo();
-
 
         area.appendChild(div);
 
     }
 
-
     const finalDiv =
         document.createElement("div");
-
 
     finalDiv.className =
         "simbolo destaque";
 
-
     finalDiv.innerText =
         final;
 
-
     area.appendChild(finalDiv);
-
 
     area.style.transition =
         "none";
 
-
     area.style.transform =
         "translateY(0)";
 
-
     area.offsetHeight;
-
 
     area.style.transition =
         `transform ${
             tempo / 1000 + .8
         }s cubic-bezier(.08,.75,.12,1)`;
 
-
     const distancia =
         -(15 * 70) + 37;
-
 
     setTimeout(
         function(){
@@ -1492,14 +1618,11 @@ async function finalizar(
     const jogo =
         document.getElementById("jogo");
 
-
     const btn =
         document.getElementById("btn");
 
-
     const resultado =
         document.getElementById("resultado");
-
 
     jogo.classList
         .remove("tremendo");
@@ -1521,10 +1644,8 @@ async function finalizar(
         const simbolo =
             resultadoFinal[0];
 
-
         const multiplicador =
             premios[simbolo];
-
 
         const premio =
             Number(
@@ -1535,14 +1656,8 @@ async function finalizar(
             );
 
 
-        /*
-           Busca o saldo atual,
-           que já está sem a aposta.
-        */
-
         const saldoAtualizado =
             await getSaldo();
-
 
         const novoSaldo =
             Number(
@@ -1551,7 +1666,6 @@ async function finalizar(
                     premio
                 ).toFixed(2)
             );
-
 
         const credito =
             await alterarSaldo(
@@ -1564,10 +1678,8 @@ async function finalizar(
             resultado.innerText =
                 "ERRO AO CREDITAR O PRÊMIO";
 
-
             resultado.style.color =
                 "#ff5555";
-
 
             await atualizarSaldo();
 
@@ -1577,14 +1689,12 @@ async function finalizar(
 
             await atualizarSaldo();
 
-
             document
                 .getElementById(
                     "multiplicador"
                 )
                 .innerText =
                     multiplicador + "x";
-
 
             resultado.innerHTML =
 
@@ -1596,9 +1706,12 @@ async function finalizar(
 
                 "</span>";
 
-
             resultado.style.color =
                 "#ffe45b";
+
+            /* SOM DE PRÊMIO */
+
+            somPremio();
 
         }
 
@@ -1613,14 +1726,11 @@ async function finalizar(
             .innerText =
                 "TENTE NOVAMENTE";
 
-
         resultado.innerText =
             "NÃO FOI DESSA VEZ";
 
-
         resultado.style.color =
             "#999";
-
 
         await atualizarSaldo();
 
@@ -1630,10 +1740,8 @@ async function finalizar(
     girando =
         false;
 
-
     btn.disabled =
         false;
-
 
     btn.innerText =
         "GIRAR " +
@@ -1651,7 +1759,6 @@ criarRolo("rolo1");
 criarRolo("rolo2");
 
 criarRolo("rolo3");
-
 
 atualizarSaldo();
 
@@ -1698,12 +1805,10 @@ supabaseClient.auth.onAuthStateChange(
 
             saldoAtual = 0;
 
-
             document
                 .getElementById("saldo")
                 .innerText =
                     "R$ 0,00";
-
 
             document
                 .getElementById("saldo2")
