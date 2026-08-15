@@ -226,10 +226,6 @@ body{
     0 0 5px rgba(255,210,70,.12);
 }
 
-/* =====================================================
-   EFEITO DOS NÚMEROS DURANTE O GIRO
-===================================================== */
-
 .numero-conteudo{
     display:flex;
     align-items:center;
@@ -245,18 +241,10 @@ body{
     will-change:transform;
 }
 
-/*
-   Os números ficam esticados alternadamente
-   enquanto a roleta está girando.
-*/
-
 .roleta.girando .numero-conteudo{
     animation:
     esticarNumero .20s ease-in-out infinite alternate;
 }
-
-/* Alguns números recebem uma pequena diferença
-   de tempo para o efeito não ficar sincronizado */
 
 .roleta.girando .numero:nth-child(2n) .numero-conteudo{
     animation-delay:-.10s;
@@ -840,6 +828,272 @@ let girando = false;
 
 
 /* =====================================================
+   SOM — VOLUME 100%
+===================================================== */
+
+let audioContext = null;
+let somGirando = null;
+let ganhoGirando = null;
+
+function iniciarAudio(){
+
+    if(!audioContext){
+
+        const AudioCtx =
+            window.AudioContext ||
+            window.webkitAudioContext;
+
+        if(!AudioCtx)
+            return;
+
+        audioContext =
+            new AudioCtx();
+
+    }
+
+    if(
+        audioContext.state ===
+        "suspended"
+    ){
+
+        audioContext.resume();
+
+    }
+
+}
+
+
+/* =====================================================
+   SOM DE CLIQUE
+===================================================== */
+
+function tocarClique(){
+
+    iniciarAudio();
+
+    if(!audioContext)
+        return;
+
+    const agora =
+        audioContext.currentTime;
+
+    const oscilador =
+        audioContext.createOscillator();
+
+    const ganho =
+        audioContext.createGain();
+
+    oscilador.type =
+        "square";
+
+    oscilador.frequency.setValueAtTime(
+        180,
+        agora
+    );
+
+    oscilador.frequency.exponentialRampToValueAtTime(
+        80,
+        agora + 0.08
+    );
+
+    /*
+       VOLUME 100%
+    */
+
+    ganho.gain.setValueAtTime(
+        1.0,
+        agora
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+        0.001,
+        agora + 0.08
+    );
+
+    oscilador.connect(
+        ganho
+    );
+
+    ganho.connect(
+        audioContext.destination
+    );
+
+    oscilador.start(
+        agora
+    );
+
+    oscilador.stop(
+        agora + 0.08
+    );
+
+}
+
+
+/* =====================================================
+   SOM DA ROLETA GIRANDO
+===================================================== */
+
+function iniciarSomRoleta(){
+
+    iniciarAudio();
+
+    if(!audioContext)
+        return;
+
+    pararSomRoleta();
+
+    somGirando =
+        audioContext.createOscillator();
+
+    ganhoGirando =
+        audioContext.createGain();
+
+    somGirando.type =
+        "sawtooth";
+
+    somGirando.frequency.setValueAtTime(
+        55,
+        audioContext.currentTime
+    );
+
+    /*
+       VOLUME 100%
+    */
+
+    ganhoGirando.gain.setValueAtTime(
+        1.0,
+        audioContext.currentTime
+    );
+
+    somGirando.connect(
+        ganhoGirando
+    );
+
+    ganhoGirando.connect(
+        audioContext.destination
+    );
+
+    somGirando.start();
+
+}
+
+
+function pararSomRoleta(){
+
+    if(
+        somGirando &&
+        ganhoGirando &&
+        audioContext
+    ){
+
+        const agora =
+            audioContext.currentTime;
+
+        ganhoGirando.gain.cancelScheduledValues(
+            agora
+        );
+
+        ganhoGirando.gain.setValueAtTime(
+            1.0,
+            agora
+        );
+
+        ganhoGirando.gain.exponentialRampToValueAtTime(
+            0.001,
+            agora + 0.15
+        );
+
+        try{
+
+            somGirando.stop(
+                agora + 0.16
+            );
+
+        }catch(e){}
+
+        somGirando = null;
+        ganhoGirando = null;
+
+    }
+
+}
+
+
+/* =====================================================
+   SOM DE PRÊMIO
+===================================================== */
+
+function tocarPremio(){
+
+    iniciarAudio();
+
+    if(!audioContext)
+        return;
+
+    const agora =
+        audioContext.currentTime;
+
+    const notas =
+        [523.25,659.25,783.99,1046.50];
+
+    notas.forEach(
+        function(frequencia,i){
+
+            const oscilador =
+                audioContext.createOscillator();
+
+            const ganho =
+                audioContext.createGain();
+
+            const inicio =
+                agora +
+                (i * 0.12);
+
+            oscilador.type =
+                "sine";
+
+            oscilador.frequency.setValueAtTime(
+                frequencia,
+                inicio
+            );
+
+            /*
+               VOLUME 100%
+            */
+
+            ganho.gain.setValueAtTime(
+                1.0,
+                inicio
+            );
+
+            ganho.gain.exponentialRampToValueAtTime(
+                0.001,
+                inicio + 0.45
+            );
+
+            oscilador.connect(
+                ganho
+            );
+
+            ganho.connect(
+                audioContext.destination
+            );
+
+            oscilador.start(
+                inicio
+            );
+
+            oscilador.stop(
+                inicio + 0.45
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
    PRÊMIOS
 ===================================================== */
 
@@ -1109,12 +1363,6 @@ function criarNumeros(){
         numero.className =
             "numero";
 
-        /*
-           O texto fica dentro de um elemento separado.
-           Assim podemos esticar o número sem mexer
-           na posição dele na roleta.
-        */
-
         const conteudo =
             document.createElement(
                 "span"
@@ -1152,12 +1400,6 @@ function criarNumeros(){
                 Math.PI / 180
             ) * raio;
 
-        /*
-           IMPORTANTE:
-           A posição continua sendo controlada
-           pelo elemento .numero.
-        */
-
         numero.style.transform =
             `translate(${x}px,${y}px)`;
 
@@ -1185,6 +1427,8 @@ function(
 
     if(girando)
         return;
+
+    tocarClique();
 
     valorAposta =
         Number(valor);
@@ -1265,15 +1509,10 @@ function atualizarBotao(){
 
 
 /* =====================================================
-   COMEÇAR / PARAR EFEITO DOS NÚMEROS
+   EFEITO DOS NÚMEROS
 ===================================================== */
 
 function iniciarEfeitoNumeros(){
-
-    /*
-       A classe é colocada na própria roleta.
-       O CSS anima somente o conteúdo dos números.
-    */
 
     roleta.classList.add(
         "girando"
@@ -1300,6 +1539,15 @@ async function(){
 
     if(girando)
         return;
+
+    /*
+       O toque no botão libera o áudio
+       no celular.
+    */
+
+    iniciarAudio();
+
+    tocarClique();
 
     if(
         !usuarioAtual
@@ -1380,13 +1628,13 @@ async function(){
         }
     );
 
-
     /*
-       COMEÇA O EFEITO DOS NÚMEROS
+       SOM COMEÇA AQUI
     */
 
-    iniciarEfeitoNumeros();
+    iniciarSomRoleta();
 
+    iniciarEfeitoNumeros();
 
     /*
        SORTEIO
@@ -1417,18 +1665,11 @@ async function(){
         voltas +
         (360 - anguloPremio);
 
-
-    /*
-       AQUI A ROLETA CONTINUA GIRANDO
-       NORMALMENTE.
-    */
-
     roleta.style.transform =
         `rotate(${novaRotacao}deg)`;
 
     rotacaoAtual =
         novaRotacao;
-
 
     setTimeout(
         function(){
@@ -1455,17 +1696,17 @@ async function finalizarRodada(
 ){
 
     /*
-       PARA O EFEITO DE ESTICAR OS NÚMEROS
+       PARA O SOM DA ROLETA
     */
 
-    pararEfeitoNumeros();
+    pararSomRoleta();
 
+    pararEfeitoNumeros();
 
     const numero =
         document.querySelector(
             `.numero[data-index="${indice}"]`
         );
-
 
     if(numero){
 
@@ -1474,7 +1715,6 @@ async function finalizarRodada(
         );
 
     }
-
 
     /*
        CREDITA O PRÊMIO
@@ -1502,6 +1742,11 @@ async function finalizarRodada(
 
     }
 
+    /*
+       SOM DE VITÓRIA
+    */
+
+    tocarPremio();
 
     resultado.innerHTML =
         "⚡ PRÊMIO<br>" +
@@ -1511,7 +1756,6 @@ async function finalizarRodada(
 
     resultado.style.color =
         "#ffe36a";
-
 
     setTimeout(
         function(){
@@ -1537,6 +1781,10 @@ function(){
     if(girando)
         return;
 
+    iniciarAudio();
+
+    tocarClique();
+
     girarRoleta();
 
 };
@@ -1548,6 +1796,10 @@ function(){
 
 window.abrirMenu =
 function(){
+
+    iniciarAudio();
+
+    tocarClique();
 
     alert(
         "⚡ APOSTAXBET\n\n" +
