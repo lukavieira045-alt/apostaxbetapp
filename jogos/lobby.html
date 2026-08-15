@@ -34,10 +34,8 @@ body{
     width:100%;
     max-width:650px;
     min-height:100vh;
-
     background:
     radial-gradient(circle at 50% 22%,#245da9 0,#102d68 28%,#070d29 55%,#02030b 100%);
-
     color:white;
     position:relative;
     overflow:hidden;
@@ -45,12 +43,11 @@ body{
 
 
 /* =====================================================
-   EFEITO DE TROVÃO
+   VIBRAÇÃO DA MÁQUINA
 ===================================================== */
 
 .game.tremendo{
-    animation:
-    tremorJogo .10s infinite;
+    animation:tremorJogo .09s infinite;
 }
 
 @keyframes tremorJogo{
@@ -59,25 +56,32 @@ body{
         transform:translate(0,0);
     }
 
-    25%{
-        transform:translate(-3px,2px);
+    20%{
+        transform:translate(-4px,2px);
     }
 
-    50%{
-        transform:translate(3px,-2px);
+    40%{
+        transform:translate(3px,-3px);
     }
 
-    75%{
-        transform:translate(-2px,-3px);
+    60%{
+        transform:translate(-3px,-2px);
+    }
+
+    80%{
+        transform:translate(4px,3px);
     }
 
     100%{
-        transform:translate(2px,3px);
+        transform:translate(0,0);
     }
+
 }
 
 
-/* CLARÃO */
+/* =====================================================
+   CLARÃO
+===================================================== */
 
 .raio{
     position:fixed;
@@ -88,10 +92,11 @@ body{
         circle at 50% 30%,
         rgba(255,255,255,.95),
         rgba(80,220,255,.55) 15%,
-        transparent 55%
+        transparent 60%
     );
 
     opacity:0;
+
     pointer-events:none;
 
     z-index:999;
@@ -100,8 +105,7 @@ body{
 }
 
 .raio.ativo{
-    animation:
-    clarãoRaio .18s ease-out;
+    animation:clarãoRaio .75s ease-out;
 }
 
 @keyframes clarãoRaio{
@@ -110,38 +114,50 @@ body{
         opacity:0;
     }
 
-    20%{
-        opacity:.95;
+    12%{
+        opacity:.9;
     }
 
-    45%{
+    25%{
+        opacity:.25;
+    }
+
+    42%{
+        opacity:.75;
+    }
+
+    58%{
         opacity:.15;
     }
 
-    65%{
-        opacity:.75;
+    72%{
+        opacity:.5;
     }
 
     100%{
         opacity:0;
     }
+
 }
 
 
-/* DESCARGA */
+/* =====================================================
+   DESCARGAS
+===================================================== */
 
 .descarga{
+
     position:absolute;
 
-    width:3px;
-    height:120px;
+    width:4px;
+    height:150px;
 
     background:#ffffff;
 
     box-shadow:
-    0 0 6px #00ffff,
-    0 0 15px #00ffff,
-    0 0 30px #ffffff;
+    0 0 7px #00ffff,
+    0 0 18px #00ffff,
+    0 0 35px #ffffff;
 
     opacity:0;
 
@@ -149,12 +165,12 @@ body{
 
     z-index:500;
 
-    transform:rotate(var(--angulo));
+    transform:
+    rotate(var(--angulo));
 }
 
 .descarga.ativa{
-    animation:
-    descargaAnim .22s ease-out;
+    animation:descargaAnim 1s ease-out;
 }
 
 @keyframes descargaAnim{
@@ -163,15 +179,23 @@ body{
         opacity:0;
         transform:
         rotate(var(--angulo))
-        scaleY(.2);
+        scaleY(.1);
     }
 
-    20%{
+    15%{
         opacity:1;
     }
 
-    50%{
-        opacity:.9;
+    30%{
+        opacity:.4;
+    }
+
+    45%{
+        opacity:1;
+    }
+
+    65%{
+        opacity:.7;
     }
 
     100%{
@@ -180,6 +204,7 @@ body{
         rotate(var(--angulo))
         scaleY(1);
     }
+
 }
 
 
@@ -267,7 +292,6 @@ body{
 
 .machine{
     margin:0 5px;
-
     padding:7px;
 
     background:
@@ -323,6 +347,7 @@ body{
 
 .strip{
     transform:translateY(0);
+    will-change:transform;
 }
 
 
@@ -352,8 +377,6 @@ body{
 }
 
 
-/* 5 */
-
 .five{
 
     font-family:Georgia,serif;
@@ -369,8 +392,6 @@ body{
     -2px -2px #9c6a2f;
 }
 
-
-/* NOVOS SÍMBOLOS */
 
 .gema{
 
@@ -388,8 +409,7 @@ body{
     drop-shadow(0 0 8px #00ffff)
     drop-shadow(0 0 15px #0088ff);
 
-    animation:
-    brilhoGema 1.8s infinite alternate;
+    animation:brilhoGema 1.8s infinite alternate;
 }
 
 @keyframes brilhoGema{
@@ -401,6 +421,7 @@ body{
     to{
         transform:scale(1.06);
     }
+
 }
 
 
@@ -435,9 +456,6 @@ body{
     box-shadow:
     0 0 10px #ffd700,
     0 0 25px #ff9800;
-
-    text-shadow:
-    1px 2px #fff4a0;
 }
 
 
@@ -462,6 +480,7 @@ body{
     to{
         transform:translateY(-3px) rotate(3deg);
     }
+
 }
 
 
@@ -554,16 +573,6 @@ body{
     font-size:20px;
 
     font-weight:bold;
-
-    transition:
-    transform .25s ease;
-}
-
-#balance.atualizando{
-
-    transform:scale(1.12);
-
-    color:#fff36b !important;
 }
 
 
@@ -639,9 +648,6 @@ body{
     inset 0 0 22px #00eaff66;
 
     cursor:pointer;
-
-    transition:
-    transform .12s ease;
 }
 
 .btn:active,
@@ -654,12 +660,8 @@ body{
 .spin:disabled{
 
     opacity:.45;
-
     cursor:not-allowed;
 }
-
-
-/* BOTÃO DE SOM ATIVO */
 
 .btn.somAtivo{
 
@@ -668,7 +670,6 @@ body{
     0 4px 8px #0008;
 
     border-color:#00ffff;
-
 }
 
 
@@ -687,10 +688,6 @@ body{
     padding:4px 5px 20px;
 }
 
-
-/* =====================================================
-   RESPONSIVO
-===================================================== */
 
 @media(max-width:380px){
 
@@ -733,7 +730,6 @@ body{
 
 <div class="game" id="game">
 
-    <!-- CLARÃO DOS TROVÕES -->
     <div class="raio" id="raio"></div>
 
     <div class="top">
@@ -760,11 +756,9 @@ body{
 
 
     <div class="banner">
-
         <span>
             » Aposta Real Ativada! «
         </span>
-
     </div>
 
 
@@ -852,7 +846,6 @@ body{
                 🔊
             </button>
 
-
             <button
                 class="btn"
                 type="button"
@@ -860,7 +853,6 @@ body{
             >
                 −
             </button>
-
 
             <button
                 class="spin"
@@ -871,7 +863,6 @@ body{
                 ★
             </button>
 
-
             <button
                 class="btn"
                 type="button"
@@ -879,7 +870,6 @@ body{
             >
                 +
             </button>
-
 
             <button
                 class="btn"
@@ -930,7 +920,6 @@ try{
         );
 
         sistemaOnline = true;
-
     }
 
 }catch(e){
@@ -951,60 +940,48 @@ window.SistemaSaldo = {
 
     saldoLocal:0,
 
-
     async get(){
 
         if(!sistemaOnline){
-
             return this.saldoLocal;
-
         }
-
 
         try{
 
             const {data} =
-            await supabaseClient.auth.getSession();
-
+            await supabaseClient
+            .auth
+            .getSession();
 
             if(!data?.session){
-
                 throw new Error(
-                    'Sem sessão'
+                    "Sem sessão"
                 );
-
             }
-
 
             const {
                 data:saldoData,
                 error
             } =
             await supabaseClient
-            .from('saldos')
-            .select('valor')
+            .from("saldos")
+            .select("valor")
             .eq(
-                'user_id',
+                "user_id",
                 data.session.user.id
             )
             .single();
 
-
             if(error){
-
                 throw error;
-
             }
-
 
             this.saldoLocal =
             Number(
                 saldoData?.valor || 0
             );
 
-
             return this.saldoLocal;
-
 
         }catch(e){
 
@@ -1014,9 +991,7 @@ window.SistemaSaldo = {
             );
 
             return this.saldoLocal;
-
         }
-
     },
 
 
@@ -1024,29 +999,23 @@ window.SistemaSaldo = {
 
         this.saldoLocal -= valor;
 
-
         if(!sistemaOnline){
-
             return;
-
         }
-
 
         try{
 
             const {data} =
-            await supabaseClient.auth.getSession();
-
+            await supabaseClient
+            .auth
+            .getSession();
 
             if(!data?.session){
-
                 return;
-
             }
 
-
             await supabaseClient.rpc(
-                'debitar_saldo',
+                "debitar_saldo",
                 {
                     p_user_id:
                     data.session.user.id,
@@ -1055,7 +1024,6 @@ window.SistemaSaldo = {
                     valor
                 }
             );
-
 
         }catch(e){
 
@@ -1063,9 +1031,7 @@ window.SistemaSaldo = {
                 "Erro ao sincronizar débito:",
                 e
             );
-
         }
-
     },
 
 
@@ -1073,29 +1039,23 @@ window.SistemaSaldo = {
 
         this.saldoLocal += valor;
 
-
         if(!sistemaOnline){
-
             return;
-
         }
-
 
         try{
 
             const {data} =
-            await supabaseClient.auth.getSession();
-
+            await supabaseClient
+            .auth
+            .getSession();
 
             if(!data?.session){
-
                 return;
-
             }
 
-
             await supabaseClient.rpc(
-                'creditar_saldo',
+                "creditar_saldo",
                 {
                     p_user_id:
                     data.session.user.id,
@@ -1105,16 +1065,13 @@ window.SistemaSaldo = {
                 }
             );
 
-
         }catch(e){
 
             console.warn(
                 "Erro ao sincronizar crédito:",
                 e
             );
-
         }
-
     },
 
 
@@ -1123,12 +1080,10 @@ window.SistemaSaldo = {
         const saldo =
         await this.get();
 
-
         const el =
         document.getElementById(
-            'balance'
+            "balance"
         );
-
 
         if(el){
 
@@ -1136,13 +1091,10 @@ window.SistemaSaldo = {
             dinheiro(saldo);
 
             el.style.color =
-            '#aaff5d';
-
+            "#aaff5d";
         }
 
-
         return saldo;
-
     }
 
 };
@@ -1153,55 +1105,29 @@ window.SistemaSaldo = {
 ===================================================== */
 
 const game =
-document.getElementById(
-    "game"
-);
+document.getElementById("game");
 
 const raio =
-document.getElementById(
-    "raio"
-);
+document.getElementById("raio");
 
 const reels = [
 
-    document.getElementById(
-        "reel1"
-    ),
+    document.getElementById("reel1"),
 
-    document.getElementById(
-        "reel2"
-    ),
+    document.getElementById("reel2"),
 
-    document.getElementById(
-        "reel3"
-    )
+    document.getElementById("reel3")
 
 ];
 
 const messageEl =
-document.getElementById(
-    "message"
-);
-
-const balanceEl =
-document.getElementById(
-    "balance"
-);
-
-const betEl =
-document.getElementById(
-    "bet"
-);
+document.getElementById("message");
 
 const spinBtn =
-document.getElementById(
-    "spinButton"
-);
+document.getElementById("spinButton");
 
 const soundButton =
-document.getElementById(
-    "soundButton"
-);
+document.getElementById("soundButton");
 
 
 /* =====================================================
@@ -1210,50 +1136,50 @@ document.getElementById(
 
 const symbols = [
 
-    `
-    <div class="symbol">
-        <div class="gema">💎</div>
-    </div>
-    `,
+`
+<div class="symbol">
+    <div class="gema">💎</div>
+</div>
+`,
 
-    `
-    <div class="symbol">
-        <div class="moeda">★</div>
-        <div class="x2">×2</div>
-    </div>
-    `,
+`
+<div class="symbol">
+    <div class="moeda">★</div>
+    <div class="x2">×2</div>
+</div>
+`,
 
-    `
-    <div class="symbol">
-        <div class="trofeu">🏆</div>
-    </div>
-    `,
+`
+<div class="symbol">
+    <div class="trofeu">🏆</div>
+</div>
+`,
 
-    `
-    <div class="symbol">
-        <div class="five">5</div>
-    </div>
-    `,
+`
+<div class="symbol">
+    <div class="five">5</div>
+</div>
+`,
 
-    `
-    <div class="symbol">
-        <div class="gema">💠</div>
-    </div>
-    `,
+`
+<div class="symbol">
+    <div class="gema">💠</div>
+</div>
+`,
 
-    `
-    <div class="symbol">
-        <div class="moeda">★</div>
-    </div>
-    `
+`
+<div class="symbol">
+    <div class="moeda">★</div>
+</div>
+`
 
 ];
 
 
-const betMin =
+let bet =
 0.50;
 
-let bet =
+const betMin =
 0.50;
 
 let spinning =
@@ -1276,7 +1202,7 @@ function iniciarAudio(){
     if(!audioContext){
 
         audioContext =
-        new (
+        new(
             window.AudioContext ||
             window.webkitAudioContext
         )();
@@ -1289,17 +1215,15 @@ function iniciarAudio(){
     ){
 
         audioContext.resume();
-
     }
 
 }
 
 
-/* SOM DO CLIQUE */
-
 function somClique(){
 
-    if(!somLigado) return;
+    if(!somLigado)
+    return;
 
     iniciarAudio();
 
@@ -1309,13 +1233,11 @@ function somClique(){
     const gain =
     audioContext.createGain();
 
-
     osc.frequency.value =
     650;
 
     osc.type =
     "square";
-
 
     gain.gain.setValueAtTime(
         0.045,
@@ -1324,50 +1246,97 @@ function somClique(){
 
     gain.gain.exponentialRampToValueAtTime(
         0.001,
-        audioContext.currentTime + 0.08
+        audioContext.currentTime + .08
     );
 
-
     osc.connect(gain);
-
     gain.connect(
         audioContext.destination
     );
 
-
     osc.start();
 
     osc.stop(
-        audioContext.currentTime + 0.08
+        audioContext.currentTime + .08
     );
 
 }
 
 
-/* SOM DO TROVÃO */
+/* SOM DO GIRO */
 
-function somTrovao(){
+function somGiro(){
 
-    if(!somLigado) return;
+    if(!somLigado)
+    return;
 
     iniciarAudio();
 
+    const osc =
+    audioContext.createOscillator();
+
+    const gain =
+    audioContext.createGain();
+
+    osc.type =
+    "sawtooth";
+
+    osc.frequency.setValueAtTime(
+        90,
+        audioContext.currentTime
+    );
+
+    osc.frequency.exponentialRampToValueAtTime(
+        220,
+        audioContext.currentTime + 2
+    );
+
+    gain.gain.setValueAtTime(
+        0.018,
+        audioContext.currentTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        audioContext.currentTime + 2
+    );
+
+    osc.connect(gain);
+    gain.connect(
+        audioContext.destination
+    );
+
+    osc.start();
+
+    osc.stop(
+        audioContext.currentTime + 2
+    );
+
+}
+
+
+/* SOM TROVÃO */
+
+function somTrovao(){
+
+    if(!somLigado)
+    return;
+
+    iniciarAudio();
 
     const duracao =
-    0.5;
-
+    1.1;
 
     const buffer =
     audioContext.createBuffer(
         1,
-        audioContext.sampleRate * duracao,
+        audioContext.sampleRate *
+        duracao,
         audioContext.sampleRate
     );
 
-
     const data =
     buffer.getChannelData(0);
-
 
     for(
         let i=0;
@@ -1384,9 +1353,7 @@ function somTrovao(){
         ) *
         queda *
         queda;
-
     }
-
 
     const noise =
     audioContext.createBufferSource();
@@ -1394,10 +1361,8 @@ function somTrovao(){
     noise.buffer =
     buffer;
 
-
     const gain =
     audioContext.createGain();
-
 
     gain.gain.setValueAtTime(
         0.001,
@@ -1405,8 +1370,8 @@ function somTrovao(){
     );
 
     gain.gain.exponentialRampToValueAtTime(
-        0.35,
-        audioContext.currentTime + 0.025
+        0.28,
+        audioContext.currentTime + .04
     );
 
     gain.gain.exponentialRampToValueAtTime(
@@ -1414,26 +1379,24 @@ function somTrovao(){
         audioContext.currentTime + duracao
     );
 
-
     noise.connect(gain);
 
     gain.connect(
         audioContext.destination
     );
 
-
     noise.start();
-
 }
 
 
-/* BOTÃO DE SOM */
+/* =====================================================
+   BOTÃO SOM
+===================================================== */
 
 function sound(){
 
     somLigado =
     !somLigado;
-
 
     if(somLigado){
 
@@ -1446,7 +1409,6 @@ function sound(){
 
         messageEl.textContent =
         "🔊 Som ativado";
-
 
         somClique();
 
@@ -1468,7 +1430,7 @@ function sound(){
 
 
 /* =====================================================
-   TROVÕES VISUAIS
+   RAIOS MAIS LENTOS
 ===================================================== */
 
 function criarDescarga(){
@@ -1481,31 +1443,26 @@ function criarDescarga(){
     d.className =
     "descarga";
 
-
     d.style.left =
     (
         Math.random() * 100
     ) + "%";
 
-
     d.style.top =
     (
-        15 +
-        Math.random() * 55
+        10 +
+        Math.random() * 65
     ) + "%";
-
 
     d.style.setProperty(
         "--angulo",
         (
-            -35 +
-            Math.random() * 70
+            -40 +
+            Math.random() * 80
         ) + "deg"
     );
 
-
     game.appendChild(d);
-
 
     requestAnimationFrame(
         () => {
@@ -1517,54 +1474,100 @@ function criarDescarga(){
         }
     );
 
-
     setTimeout(
         () => d.remove(),
-        300
+        1200
     );
 
 }
 
 
-/* EFEITO PRINCIPAL */
+/* =====================================================
+   EFEITO DE TROVÃO
+===================================================== */
 
 function efeitoTrovao(){
+
+    /*
+    VIBRAÇÃO DA MÁQUINA
+    */
 
     game.classList.add(
         "tremendo"
     );
 
 
+    /*
+    VIBRAÇÃO DO CELULAR
+    */
+
+    if(
+        navigator.vibrate
+    ){
+
+        navigator.vibrate([
+            120,
+            70,
+            180,
+            80,
+            220
+        ]);
+
+    }
+
+
+    /*
+    CLARÃO
+    */
+
     raio.classList.remove(
         "ativo"
     );
 
-
     void raio.offsetWidth;
-
 
     raio.classList.add(
         "ativo"
     );
 
 
+    /*
+    SOM
+    */
+
     somTrovao();
 
 
+    /*
+    RAIOS COM INTERVALO
+    */
+
     criarDescarga();
 
+    setTimeout(
+        criarDescarga,
+        350
+    );
 
     setTimeout(
         criarDescarga,
-        100
+        700
     );
-
 
     setTimeout(
         criarDescarga,
-        190
+        1050
     );
 
+    setTimeout(
+        criarDescarga,
+        1400
+    );
+
+
+    /*
+    PARA A TREMEDEIRA
+    */
 
     setTimeout(
         () => {
@@ -1574,7 +1577,7 @@ function efeitoTrovao(){
             );
 
         },
-        650
+        1700
     );
 
 }
@@ -1606,12 +1609,18 @@ function buildReels(){
     reels.forEach(
         (reel,col) => {
 
-            let html = "";
+            let html =
+            "";
 
+            /*
+            MAIS SÍMBOLOS
+            PARA O ROLO TER
+            MUITO MAIS CAMINHO
+            */
 
             for(
                 let i=0;
-                i<45;
+                i<80;
                 i++
             ){
 
@@ -1626,7 +1635,6 @@ function buildReels(){
                 ];
 
             }
-
 
             reel.innerHTML =
             html;
@@ -1643,11 +1651,13 @@ function buildReels(){
 
 function atualizarAposta(){
 
-    betEl.textContent =
-    dinheiro(bet);
+    const el =
+    document.getElementById(
+        "bet"
+    );
 
-    betEl.style.color =
-    "#aaff5d";
+    el.textContent =
+    dinheiro(bet);
 
 }
 
@@ -1657,9 +1667,7 @@ function plus(){
     if(spinning)
     return;
 
-
     somClique();
-
 
     bet =
     Math.min(
@@ -1667,11 +1675,10 @@ function plus(){
         Number(
             (
                 bet +
-                0.50
+                .50
             ).toFixed(2)
         )
     );
-
 
     atualizarAposta();
 
@@ -1683,9 +1690,7 @@ function minus(){
     if(spinning)
     return;
 
-
     somClique();
-
 
     bet =
     Math.max(
@@ -1693,11 +1698,10 @@ function minus(){
         Number(
             (
                 bet -
-                0.50
+                .50
             ).toFixed(2)
         )
     );
-
 
     atualizarAposta();
 
@@ -1711,7 +1715,6 @@ function minus(){
 let segundos =
 0;
 
-
 function updateClock(){
 
     setInterval(
@@ -1719,12 +1722,10 @@ function updateClock(){
 
             segundos++;
 
-
             const h =
             Math.floor(
                 segundos / 3600
             ) % 24;
-
 
             const m =
             Math.floor(
@@ -1733,10 +1734,8 @@ function updateClock(){
                 ) / 60
             );
 
-
             const s =
             segundos % 60;
-
 
             document
             .getElementById(
@@ -1767,20 +1766,16 @@ async function init(){
 
     buildReels();
 
-    updateClock();
-
     atualizarAposta();
+
+    updateClock();
 
     await window
     .SistemaSaldo
     .atualizarTela();
 
-
     messageEl.textContent =
     "Pronto para jogar";
-
-    messageEl.style.color =
-    "#a8ff67";
 
 }
 
@@ -1797,7 +1792,6 @@ async function spin(){
 
     iniciarAudio();
 
-
     somClique();
 
 
@@ -1807,7 +1801,9 @@ async function spin(){
     .get();
 
 
-    if(saldoAtual < bet){
+    if(
+        saldoAtual < bet
+    ){
 
         messageEl.textContent =
         "❌ Saldo insuficiente";
@@ -1816,12 +1812,11 @@ async function spin(){
         "#ff4d4d";
 
         return;
-
     }
 
 
     /*
-    TROVÃO NO MOMENTO DO CLIQUE
+    EFEITO TROVÃO
     */
 
     efeitoTrovao();
@@ -1830,7 +1825,6 @@ async function spin(){
     spinning =
     true;
 
-
     spinBtn.disabled =
     true;
 
@@ -1838,9 +1832,15 @@ async function spin(){
     messageEl.textContent =
     "⚡ Girando...";
 
-
     messageEl.style.color =
     "#61fff4";
+
+
+    /*
+    SOM CONTÍNUO DO GIRO
+    */
+
+    somGiro();
 
 
     /*
@@ -1853,18 +1853,23 @@ async function spin(){
         bet
     );
 
-
     await window
     .SistemaSaldo
     .atualizarTela();
 
 
     /*
-    GIRO DOS ROLOS
+    =================================================
+    GIRO LONGO DOS ROLOS
+    =================================================
     */
 
     reels.forEach(
         (reel,index) => {
+
+            /*
+            RESET
+            */
 
             reel.style.transition =
             "none";
@@ -1872,14 +1877,17 @@ async function spin(){
             reel.style.transform =
             "translateY(0)";
 
-
             void reel.offsetHeight;
 
 
+            /*
+            MUITAS CASAS
+            */
+
             const casas =
-            16 +
+            45 +
             Math.floor(
-                Math.random() * 5
+                Math.random() * 15
             );
 
 
@@ -1887,49 +1895,60 @@ async function spin(){
             157;
 
 
-            const distance =
+            const distancia =
             -(
                 (
                     casas +
-                    index * 2
-                ) *
+                    index * 3
+                )
+                *
                 altura
             );
 
 
             /*
-            GIRO MAIS LEVE
+            CADA ROLO FICA
+            MAIS TEMPO
             */
 
             const duracao =
-            0.75 +
+            2.7 +
             (
                 index *
-                0.16
+                0.55
             );
 
 
+            /*
+            GIRO MAIS NATURAL
+            */
+
             reel.style.transition =
-            `transform ${duracao}s cubic-bezier(.16,.82,.18,1)`;
+            `transform ${duracao}s cubic-bezier(.08,.72,.16,1)`;
 
 
             reel.style.transform =
-            `translateY(${distance}px)`;
+            `translateY(${distancia}px)`;
 
         }
     );
 
 
     /*
+    =================================================
     RESULTADO
+    =================================================
     */
+
+    const tempoFinal =
+    3900;
+
 
     setTimeout(
         async () => {
 
             const ganhou =
-            Math.random() > 0.6;
-
+            Math.random() > .6;
 
             let ganhoValor =
             0;
@@ -1954,8 +1973,7 @@ async function spin(){
 
 
                 messageEl.textContent =
-                `⚡ ✅ Ganhou ${dinheiro(ganhoValor)}!`;
-
+                `⚡ 🎉 Ganhou ${dinheiro(ganhoValor)}!`;
 
                 messageEl.style.color =
                 "#aaff5d";
@@ -1965,7 +1983,6 @@ async function spin(){
 
                 messageEl.textContent =
                 "⚡ Não foi desta vez.";
-
 
                 messageEl.style.color =
                 "#ff7b7b";
@@ -1981,21 +1998,16 @@ async function spin(){
             spinning =
             false;
 
-
             spinBtn.disabled =
             false;
 
 
         },
-        1250
+        tempoFinal
     );
 
 }
 
-
-/* =====================================================
-   INICIAR JOGO
-===================================================== */
 
 init();
 
