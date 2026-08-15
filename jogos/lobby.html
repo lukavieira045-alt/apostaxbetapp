@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
 <title>Lobby Mania - Real</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -35,7 +34,13 @@ body{
     max-width:650px;
     min-height:100vh;
     background:
-    radial-gradient(circle at 50% 22%,#245da9 0,#102d68 28%,#070d29 55%,#02030b 100%);
+    radial-gradient(
+        circle at 50% 22%,
+        #245da9 0,
+        #102d68 28%,
+        #070d29 55%,
+        #02030b 100%
+    );
     color:white;
     position:relative;
     overflow:hidden
@@ -75,7 +80,12 @@ body{
     justify-content:center;
     text-align:center;
     background:
-    radial-gradient(circle,#352083 0,#171747 45%,#08091f 100%);
+    radial-gradient(
+        circle,
+        #352083 0,
+        #171747 45%,
+        #08091f 100%
+    );
     box-shadow:
     0 0 16px #00dff077,
     inset 0 0 25px #6d38cc88
@@ -125,7 +135,7 @@ body{
 }
 
 .strip{
-    transition:transform .55s cubic-bezier(.15,.72,.2,1)
+    will-change:transform;
 }
 
 .symbol{
@@ -135,7 +145,11 @@ body{
     align-items:center;
     justify-content:center;
     background:
-    linear-gradient(#e8f2d8,#b5d69b 70%,#86ad74);
+    linear-gradient(
+        #e8f2d8,
+        #b5d69b 70%,
+        #86ad74
+    );
     border-bottom:4px solid #566a5b
 }
 
@@ -201,7 +215,8 @@ body{
     display:grid;
     grid-template-columns:1fr 1fr 1fr;
     align-items:center;
-    background:linear-gradient(#101c3b,#091328);
+    background:
+    linear-gradient(#101c3b,#091328);
     border:1px solid #2d4270;
     border-radius:17px;
     box-shadow:inset 0 0 15px #000
@@ -244,7 +259,8 @@ body{
     height:56px;
     border-radius:50%;
     border:1px solid #445477;
-    background:linear-gradient(#314064,#111a32);
+    background:
+    linear-gradient(#314064,#111a32);
     color:white;
     font-size:27px;
     box-shadow:0 4px 8px #0008;
@@ -258,7 +274,11 @@ body{
     border-radius:50%;
     border:7px solid #25eaf1;
     background:
-    radial-gradient(circle,#173d47,#07121d 70%);
+    radial-gradient(
+        circle,
+        #173d47,
+        #07121d 70%
+    );
     color:#62fff6;
     font-size:43px;
     box-shadow:
@@ -296,7 +316,8 @@ body{
     }
 
     .controls{
-        grid-template-columns:48px 48px 1fr 48px 48px
+        grid-template-columns:
+        48px 48px 1fr 48px 48px
     }
 
     .btn{
@@ -324,9 +345,7 @@ body{
         <div
             class="home"
             onclick="window.location.href='index.html'"
-        >
-            🏠
-        </div>
+        ></div>
 
         <div class="name">
             Lobby Mania
@@ -343,11 +362,9 @@ body{
 
 
     <div class="banner">
-
         <span>
             » Aposta Real Ativada! «
         </span>
-
     </div>
 
 
@@ -426,12 +443,12 @@ body{
 
         <div class="controls">
 
-            <!-- BOTÃO DE SOM -->
+            <!-- BOTÃO SOM -->
             <button
                 class="btn"
-                id="soundButton"
                 type="button"
-                onclick="toggleSound()"
+                id="soundButton"
+                onclick="sound()"
             >
                 🔊
             </button>
@@ -488,7 +505,7 @@ body{
 <script>
 
 /* =====================================================
-   SUPABASE — MANTIDO
+   SUPABASE
 ===================================================== */
 
 const SUPABASE_URL =
@@ -496,6 +513,7 @@ const SUPABASE_URL =
 
 const SUPABASE_ANON_KEY =
 'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ';
+
 
 let supabaseClient = null;
 
@@ -527,50 +545,68 @@ try{
 
 
 /* =====================================================
-   SISTEMA DE SALDO — MANTIDO
+   SISTEMA DE SALDO
 ===================================================== */
 
 window.SistemaSaldo = {
 
     saldoLocal:0,
 
+
     async get(){
 
-        if(!sistemaOnline)
+        if(!sistemaOnline){
+
             return this.saldoLocal;
+
+        }
+
 
         try{
 
             const {data} =
             await supabaseClient.auth.getSession();
 
-            if(!data?.session)
+
+            if(!data?.session){
+
                 throw new Error(
                     'Sem sessão'
                 );
 
-            const {
-                data:saldoData,
-                error
-            } =
-            await supabaseClient
-            .from('saldos')
-            .select('valor')
-            .eq(
-                'user_id',
-                data.session.user.id
-            )
-            .single();
+            }
 
-            if(error)
+
+            const {data:saldoData,error} =
+            await supabaseClient
+
+                .from('saldos')
+
+                .select('valor')
+
+                .eq(
+                    'user_id',
+                    data.session.user.id
+                )
+
+                .single();
+
+
+            if(error){
+
                 throw error;
+
+            }
+
 
             this.saldoLocal =
             Number(
                 saldoData?.valor || 0
             );
 
+
             return this.saldoLocal;
+
 
         }catch(e){
 
@@ -578,6 +614,7 @@ window.SistemaSaldo = {
                 "Falha ao buscar saldo real:",
                 e
             );
+
 
             return this.saldoLocal;
 
@@ -590,16 +627,26 @@ window.SistemaSaldo = {
 
         this.saldoLocal -= valor;
 
-        if(!sistemaOnline)
+
+        if(!sistemaOnline){
+
             return;
+
+        }
+
 
         try{
 
             const {data} =
             await supabaseClient.auth.getSession();
 
-            if(!data?.session)
+
+            if(!data?.session){
+
                 return;
+
+            }
+
 
             await supabaseClient.rpc(
                 'debitar_saldo',
@@ -611,6 +658,7 @@ window.SistemaSaldo = {
                     valor
                 }
             );
+
 
         }catch(e){
 
@@ -628,16 +676,26 @@ window.SistemaSaldo = {
 
         this.saldoLocal += valor;
 
-        if(!sistemaOnline)
+
+        if(!sistemaOnline){
+
             return;
+
+        }
+
 
         try{
 
             const {data} =
             await supabaseClient.auth.getSession();
 
-            if(!data?.session)
+
+            if(!data?.session){
+
                 return;
+
+            }
+
 
             await supabaseClient.rpc(
                 'creditar_saldo',
@@ -649,6 +707,7 @@ window.SistemaSaldo = {
                     valor
                 }
             );
+
 
         }catch(e){
 
@@ -667,16 +726,20 @@ window.SistemaSaldo = {
         const saldo =
         await this.get();
 
+
         const el =
         document.getElementById(
             'balance'
         );
 
+
         el.textContent =
         dinheiro(saldo);
 
+
         el.style.color =
         '#aaff5d';
+
 
         return saldo;
 
@@ -686,47 +749,53 @@ window.SistemaSaldo = {
 
 
 /* =====================================================
-   SÍMBOLOS
+   SÍMBOLOS ORIGINAIS
 ===================================================== */
 
 const symbols = [
 
     `<div class="symbol">
-        <div class="five">7</div>
-     </div>`,
+        <div class="five">5</div>
+    </div>`,
 
     `<div class="symbol">
-        <div class="face">💎</div>
+        <div class="face">🙂</div>
         <div class="x2">×2</div>
-     </div>`,
+    </div>`,
 
     `<div class="symbol">
-        <div class="coin">⭐</div>
-     </div>`,
+        <div class="coin">0,05</div>
+    </div>`,
 
     `<div class="symbol">
-        <div class="five">777</div>
-     </div>`,
+        <div class="five">5</div>
+    </div>`,
 
     `<div class="symbol">
-        <div class="face">💰</div>
+        <div class="face">😄</div>
         <div class="x2">×2</div>
-     </div>`,
+    </div>`,
 
     `<div class="symbol">
-        <div class="coin">🔥</div>
-     </div>`
+        <div class="coin">0,05</div>
+    </div>`
 
 ];
 
 
 const reels = [
 
-    document.getElementById("reel1"),
+    document.getElementById(
+        "reel1"
+    ),
 
-    document.getElementById("reel2"),
+    document.getElementById(
+        "reel2"
+    ),
 
-    document.getElementById("reel3")
+    document.getElementById(
+        "reel3"
+    )
 
 ];
 
@@ -736,20 +805,24 @@ document.getElementById(
     "message"
 );
 
+
 const balanceEl =
 document.getElementById(
     "balance"
 );
+
 
 const betEl =
 document.getElementById(
     "bet"
 );
 
+
 const spinBtn =
 document.getElementById(
     "spinButton"
 );
+
 
 const soundButton =
 document.getElementById(
@@ -757,41 +830,23 @@ document.getElementById(
 );
 
 
-/* =====================================================
-   CONFIGURAÇÕES
-===================================================== */
-
 let bet = 0.50;
 
 let spinning = false;
 
-let soundEnabled = true;
+
+/* =====================================================
+   SOM
+===================================================== */
+
+let somLigado = true;
 
 let audioContext = null;
 
+let somInterval = null;
 
-/* =====================================================
-   DINHEIRO
-===================================================== */
-
-function dinheiro(v){
-
-    return "R$" +
-    Number(v)
-    .toFixed(2)
-    .replace(".",",");
-
-}
-
-
-/* =====================================================
-   SISTEMA DE SOM
-===================================================== */
 
 function iniciarAudio(){
-
-    if(!soundEnabled)
-        return;
 
     if(!audioContext){
 
@@ -802,6 +857,7 @@ function iniciarAudio(){
         )();
 
     }
+
 
     if(
         audioContext.state ===
@@ -815,38 +871,43 @@ function iniciarAudio(){
 }
 
 
-/* SOM CURTO */
-
 function tocarSom(
     frequencia,
-    duracao,
-    tipo="sine",
-    volume=.04
+    duracao=0.06,
+    volume=0.035
 ){
 
-    if(!soundEnabled)
+    if(!somLigado){
+
         return;
+
+    }
+
 
     iniciarAudio();
 
-    if(!audioContext)
-        return;
 
     const osc =
     audioContext.createOscillator();
 
+
     const gain =
     audioContext.createGain();
 
-    osc.type = tipo;
+
+    osc.type =
+    "square";
+
 
     osc.frequency.value =
     frequencia;
+
 
     gain.gain.setValueAtTime(
         volume,
         audioContext.currentTime
     );
+
 
     gain.gain.exponentialRampToValueAtTime(
         0.001,
@@ -854,11 +915,13 @@ function tocarSom(
         duracao
     );
 
+
     osc.connect(gain);
 
     gain.connect(
         audioContext.destination
     );
+
 
     osc.start();
 
@@ -870,80 +933,108 @@ function tocarSom(
 }
 
 
-/* SOM DO GIRO */
+function somGiro(){
 
-let intervaloSom = null;
+    if(!somLigado){
 
-function iniciarSomGiro(){
-
-    if(!soundEnabled)
         return;
 
-    iniciarAudio();
+    }
 
-    clearInterval(
-        intervaloSom
-    );
 
-    intervaloSom =
-    setInterval(() => {
+    if(somInterval){
 
-        if(!spinning){
-
-            clearInterval(
-                intervaloSom
-            );
-
-            return;
-
-        }
-
-        tocarSom(
-            100 + Math.random()*120,
-            .045,
-            "square",
-            .025
+        clearInterval(
+            somInterval
         );
 
-    },85);
+    }
+
+
+    let contador = 0;
+
+
+    somInterval =
+    setInterval(
+        () => {
+
+            if(
+                !spinning ||
+                !somLigado
+            ){
+
+                clearInterval(
+                    somInterval
+                );
+
+                somInterval = null;
+
+                return;
+
+            }
+
+
+            tocarSom(
+                contador % 2 === 0
+                ? 700
+                : 520,
+                0.045,
+                0.025
+            );
+
+
+            contador++;
+
+        },
+        105
+    );
 
 }
 
-
-/* PARAR SOM DO GIRO */
 
 function pararSomGiro(){
 
-    clearInterval(
-        intervaloSom
-    );
+    if(somInterval){
 
-    intervaloSom = null;
+        clearInterval(
+            somInterval
+        );
+
+        somInterval = null;
+
+    }
 
 }
 
 
-/* BOTÃO SOM */
+function som(){
 
-function toggleSound(){
+    somLigado =
+    !somLigado;
 
-    soundEnabled =
-    !soundEnabled;
 
-    if(soundEnabled){
+    if(somLigado){
 
         soundButton.textContent =
         "🔊";
 
         messageEl.textContent =
-        "🔊 Som ligado";
+        spinning
+        ? "🔊 Som ligado"
+        : "🔊 Som ligado";
 
         tocarSom(
-            700,
-            .10,
-            "sine",
-            .04
+            850,
+            0.08,
+            0.04
         );
+
+
+        if(spinning){
+
+            somGiro();
+
+        }
 
     }else{
 
@@ -961,6 +1052,23 @@ function toggleSound(){
 
 
 /* =====================================================
+   FORMATAÇÃO
+===================================================== */
+
+function dinheiro(v){
+
+    return "R$" +
+    Number(v)
+    .toFixed(2)
+    .replace(
+        ".",
+        ","
+    );
+
+}
+
+
+/* =====================================================
    REELS
 ===================================================== */
 
@@ -971,19 +1079,26 @@ function buildReels(){
 
             let html = "";
 
+
+            /*
+            Muitas repetições para permitir
+            um giro contínuo e suave.
+            */
+
             for(
                 let i=0;
-                i<50;
+                i<70;
                 i++
             ){
 
                 html +=
                 symbols[
-                    (i + col*2) %
+                    (i + col * 2) %
                     symbols.length
                 ];
 
             }
+
 
             reel.innerHTML =
             html;
@@ -1003,6 +1118,7 @@ function atualizarAposta(){
     betEl.textContent =
     dinheiro(bet);
 
+
     betEl.style.color =
     '#aaff5d';
 
@@ -1011,23 +1127,30 @@ function atualizarAposta(){
 
 function plus(){
 
-    if(spinning)
+    if(spinning){
+
         return;
+
+    }
+
 
     bet =
     Math.min(
         5,
         Number(
-            (bet + .50)
-            .toFixed(2)
+            (
+                bet + 0.50
+            ).toFixed(2)
         )
     );
+
 
     atualizarAposta();
 
     tocarSom(
-        600,
-        .08
+        760,
+        0.06,
+        0.035
     );
 
 }
@@ -1035,23 +1158,30 @@ function plus(){
 
 function minus(){
 
-    if(spinning)
+    if(spinning){
+
         return;
+
+    }
+
 
     bet =
     Math.max(
-        .50,
+        0.50,
         Number(
-            (bet - .50)
-            .toFixed(2)
+            (
+                bet - 0.50
+            ).toFixed(2)
         )
     );
+
 
     atualizarAposta();
 
     tocarSom(
-        400,
-        .08
+        520,
+        0.06,
+        0.035
     );
 
 }
@@ -1063,49 +1193,66 @@ function minus(){
 
 let segundos = 0;
 
+
 function updateClock(){
 
-    setInterval(() => {
+    setInterval(
+        () => {
 
-        segundos++;
+            segundos++;
 
-        const h =
-        Math.floor(
-            segundos / 3600
-        ) % 24;
 
-        const m =
-        Math.floor(
-            (segundos % 3600) / 60
-        );
+            const h =
+            Math.floor(
+                segundos / 3600
+            ) % 24;
 
-        const s =
-        segundos % 60;
 
-        document.getElementById(
-            "clock"
-        ).textContent =
+            const m =
+            Math.floor(
+                (segundos % 3600) /
+                60
+            );
 
-        [h,m,s]
-        .map(
-            n =>
-            String(n)
-            .padStart(2,"0")
-        )
-        .join(":");
 
-    },1000);
+            const s =
+            segundos % 60;
+
+
+            document
+            .getElementById(
+                "clock"
+            )
+            .textContent =
+
+            [
+                h,
+                m,
+                s
+            ]
+            .map(
+                n =>
+                String(n)
+                .padStart(2,"0")
+            )
+            .join(":");
+
+        },
+        1000
+    );
 
 }
 
 
 /* =====================================================
-   INICIAR
+   INICIALIZAÇÃO
 ===================================================== */
 
 async function init(){
 
     buildReels();
+
+    atualizarAposta();
 
     updateClock();
 
@@ -1113,8 +1260,10 @@ async function init(){
     window.SistemaSaldo
     .atualizarTela();
 
+
     messageEl.textContent =
     "Pronto para jogar";
+
 
     messageEl.style.color =
     "#a8ff67";
@@ -1123,19 +1272,24 @@ async function init(){
 
 
 /* =====================================================
-   GIRO RÁPIDO
+   GIRO
 ===================================================== */
 
 async function spin(){
 
-    if(spinning)
+    if(spinning){
+
         return;
+
+    }
+
+
+    iniciarAudio();
 
 
     const saldoAtual =
-    await window
-    .SistemaSaldo
-    .get();
+    await
+    window.SistemaSaldo.get();
 
 
     if(saldoAtual < bet){
@@ -1143,70 +1297,73 @@ async function spin(){
         messageEl.textContent =
         "❌ Saldo insuficiente";
 
+
         messageEl.style.color =
         "#ff4d4d";
 
+
         tocarSom(
             180,
-            .20,
-            "sawtooth",
-            .05
+            0.18,
+            0.05
         );
+
 
         return;
 
     }
 
 
-    /* ATIVA SOM */
-
-    iniciarAudio();
-
-    tocarSom(
-        520,
-        .08,
-        "square",
-        .05
-    );
-
-
     spinning = true;
 
-    spinBtn.disabled =
-    true;
+    spinBtn.disabled = true;
 
 
     messageEl.textContent =
     "🎰 Girando...";
 
+
     messageEl.style.color =
     "#61fff4";
 
 
-    /* DEBITA */
+    /*
+    SOM DO GIRO
+    */
+
+    somGiro();
+
+
+    /*
+    DEBITA
+    */
 
     await
     window.SistemaSaldo
     .debitar(bet);
+
 
     await
     window.SistemaSaldo
     .atualizarTela();
 
 
-    /* SOM DO GIRO */
-
-    iniciarSomGiro();
-
-
     /*
-    =========================================
-    GIRO MAIS RÁPIDO
-    =========================================
+    =================================================
+    GIRO NOVO
+    MAIS RÁPIDO E MAIS LEVE
+    =================================================
     */
+
+    const resultados = [];
+
 
     reels.forEach(
         (reel,index) => {
+
+            /*
+            Remove animação anterior.
+            */
 
             reel.style.transition =
             "none";
@@ -1214,57 +1371,77 @@ async function spin(){
             reel.style.transform =
             "translateY(0)";
 
+
             void reel.offsetHeight;
 
 
             /*
-            Menos casas =
-            giro mais rápido
+            Quantidade de voltas.
             */
 
-            const casas =
-            12 +
+            const voltas =
+            9 +
             Math.floor(
-                Math.random()*6
-            );
-
-
-            const symbolHeight =
-            157;
-
-
-            const distance =
-            -(
-                (casas + index)
-                *
-                symbolHeight
+                Math.random() * 4
             );
 
 
             /*
-            Velocidade maior
+            Cada rolo para em
+            uma posição diferente.
+            */
+
+            const extra =
+            index * 2;
+
+
+            const casas =
+            voltas *
+            symbols.length +
+            extra;
+
+
+            const distancia =
+            -(
+                casas * 157
+            );
+
+
+            /*
+            Giro leve.
             */
 
             const duracao =
-            0.65 +
-            (index * 0.12);
+            0.95 +
+            index * 0.16;
 
+
+            /*
+            Efeito de caça-níqueis:
+            rápido no início,
+            desaceleração suave.
+            */
 
             reel.style.transition =
-            `transform ${duracao}s cubic-bezier(.10,.70,.20,1)`;
+            `transform ${duracao}s cubic-bezier(.15,.72,.25,1)`;
 
 
             reel.style.transform =
-            `translateY(${distance}px)`;
+            `translate3d(0,${distancia}px,0)`;
+
+
+            resultados.push({
+                duracao:duracao
+            });
 
         }
     );
 
 
     /*
-    =========================================
+    =================================================
     RESULTADO
-    =========================================
+    =================================================
     */
 
     const tempoFinal =
@@ -1278,14 +1455,13 @@ async function spin(){
 
 
             /*
-            SOM DA PARADA
+            Som de parada
             */
 
             tocarSom(
-                320,
-                .07,
-                "square",
-                .045
+                900,
+                0.07,
+                0.045
             );
 
 
@@ -1293,10 +1469,9 @@ async function spin(){
                 () => {
 
                     tocarSom(
-                        520,
-                        .08,
-                        "sine",
-                        .045
+                        1100,
+                        0.10,
+                        0.045
                     );
 
                 },
@@ -1309,7 +1484,7 @@ async function spin(){
             */
 
             const ganhou =
-            Math.random() > .6;
+            Math.random() > 0.6;
 
 
             let ganhoValor = 0;
@@ -1321,7 +1496,7 @@ async function spin(){
                 bet *
                 (
                     Math.floor(
-                        Math.random()*5
+                        Math.random() * 5
                     ) + 2
                 );
 
@@ -1334,35 +1509,19 @@ async function spin(){
 
 
                 messageEl.textContent =
-                `✅ Ganhou ${dinheiro(ganhoValor)}!`;
+                `✅ Ganhou ${dinheiro(
+                    ganhoValor
+                )}!`;
+
 
                 messageEl.style.color =
                 "#aaff5d";
 
 
-                /*
-                SOM DE VITÓRIA
-                */
-
                 tocarSom(
-                    650,
-                    .10,
-                    "sine",
-                    .05
-                );
-
-                setTimeout(
-                    () => {
-
-                        tocarSom(
-                            850,
-                            .13,
-                            "sine",
-                            .05
-                        );
-
-                    },
-                    100
+                    950,
+                    0.08,
+                    0.045
                 );
 
 
@@ -1371,15 +1530,15 @@ async function spin(){
                 messageEl.textContent =
                 "Não foi desta vez.";
 
+
                 messageEl.style.color =
                 "#ff7b7b";
 
 
                 tocarSom(
-                    180,
-                    .15,
-                    "sawtooth",
-                    .035
+                    300,
+                    0.12,
+                    0.04
                 );
 
             }
@@ -1404,7 +1563,7 @@ async function spin(){
 
 
 /* =====================================================
-   INÍCIO
+   INICIA
 ===================================================== */
 
 init();
