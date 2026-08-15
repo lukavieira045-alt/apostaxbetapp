@@ -29,7 +29,6 @@ body{
 #telaLogin{
     min-height:100vh;
     padding:15px;
-
     background:
         radial-gradient(circle at 20% 20%,#126b4e 0%,transparent 35%),
         radial-gradient(circle at 80% 30%,#0d6047 0%,transparent 40%),
@@ -226,7 +225,6 @@ input:focus{
     display:none;
     min-height:100vh;
     padding:15px;
-
     background:
         radial-gradient(circle at 20% 20%,#126b4e 0%,transparent 35%),
         radial-gradient(circle at 80% 30%,#0d6047 0%,transparent 40%),
@@ -280,7 +278,6 @@ input:focus{
     display:none;
     min-height:100vh;
     padding:15px;
-
     background:
         radial-gradient(circle at 20% 20%,#126b4e 0%,transparent 35%),
         radial-gradient(circle at 80% 30%,#0d6047 0%,transparent 40%),
@@ -397,7 +394,6 @@ input:focus{
     display:none;
     min-height:100vh;
     padding:25px 15px 110px;
-
     background:
         radial-gradient(circle at 50% 0%,#173b30 0%,transparent 45%),
         #000;
@@ -579,12 +575,32 @@ input:focus{
     margin-top:3px;
 }
 
+/* BOTÃO X CORRIGIDO */
+
 .fechar-suporte{
-    background:none;
-    border:0;
+    width:42px;
+    height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,.25);
+    border:1px solid rgba(255,255,255,.25);
+    border-radius:50%;
     color:white;
-    font-size:25px;
+    font-size:27px;
+    font-weight:bold;
+    line-height:1;
     cursor:pointer;
+    flex-shrink:0;
+}
+
+.fechar-suporte:hover{
+    background:#d92828;
+    border-color:#ff5555;
+}
+
+.fechar-suporte:active{
+    transform:scale(.92);
 }
 
 #suporteMensagens{
@@ -612,19 +628,6 @@ input:focus{
     background:#d9ed20;
     color:#143c2c;
     margin-left:auto;
-}
-
-/* INDICADOR DE DIGITAÇÃO */
-
-#indicadorDigitando{
-    color:#ddd;
-    font-style:italic;
-}
-
-.pontosDigitando{
-    display:inline-block;
-    min-width:20px;
-    text-align:left;
 }
 
 .suporte-opcoes{
@@ -706,6 +709,12 @@ input:focus{
 
     #suporteMensagens{
         height:330px;
+    }
+
+    .fechar-suporte{
+        width:40px;
+        height:40px;
+        font-size:25px;
     }
 
 }
@@ -1216,7 +1225,6 @@ Sair
 
 </nav>
 
-
 <!-- =========================
      SUPORTE
 ========================= -->
@@ -1229,7 +1237,6 @@ onclick="abrirSuporte()">
 💬 Suporte
 
 </button>
-
 
 <div id="janelaSuporte">
 
@@ -1250,14 +1257,14 @@ onclick="abrirSuporte()">
 <button
 class="fechar-suporte"
 type="button"
+aria-label="Fechar suporte"
 onclick="fecharSuporte()">
 
-×
+✕
 
 </button>
 
 </div>
-
 
 <div id="suporteMensagens">
 
@@ -1273,7 +1280,6 @@ Como posso ajudar?
 </div>
 
 </div>
-
 
 <div class="suporte-opcoes">
 
@@ -1327,14 +1333,12 @@ onclick="perguntaSuporte('problema')">
 
 </div>
 
-
 <div class="suporte-escrever">
 
 <input
 id="entradaSuporte"
 type="text"
 placeholder="Digite sua pergunta..."
-autocomplete="off"
 onkeydown="if(event.key==='Enter') enviarPerguntaSuporte()">
 
 <button
@@ -1349,7 +1353,6 @@ onclick="enviarPerguntaSuporte()">
 </div>
 
 </div>
-
 
 <script>
 
@@ -1368,7 +1371,6 @@ window.supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
 );
-
 
 /* ==================================================
    ELEMENTOS
@@ -1398,7 +1400,6 @@ document.getElementById("botaoSuporte");
 const janelaSuporte =
 document.getElementById("janelaSuporte");
 
-
 /* ==================================================
    MENU
 ================================================== */
@@ -1416,7 +1417,6 @@ function esconderMenu(){
         "none";
 
 }
-
 
 /* ==================================================
    SUPORTE - MOSTRAR/ESCONDER
@@ -1439,7 +1439,6 @@ function esconderBotaoSuporte(){
 
 }
 
-
 /* ==================================================
    SUPORTE
 ================================================== */
@@ -1449,23 +1448,7 @@ function abrirSuporte(){
     janelaSuporte.style.display =
         "block";
 
-    setTimeout(function(){
-
-        const campo =
-            document.getElementById(
-                "entradaSuporte"
-            );
-
-        if(campo){
-
-            campo.focus();
-
-        }
-
-    },100);
-
 }
-
 
 function fecharSuporte(){
 
@@ -1473,7 +1456,6 @@ function fecharSuporte(){
         "none";
 
 }
-
 
 function adicionarMensagemSuporte(
     texto,
@@ -1503,138 +1485,10 @@ function adicionarMensagemSuporte(
 
 }
 
-
-/* ==================================================
-   INDICADOR "ASSISTENTE ESTÁ DIGITANDO"
-================================================== */
-
-function mostrarDigitando(){
-
-    const mensagens =
-        document.getElementById(
-            "suporteMensagens"
-        );
-
-
-    if(
-        document.getElementById(
-            "indicadorDigitando"
-        )
-    ){
-
-        return;
-
-    }
-
-
-    const div =
-        document.createElement("div");
-
-    div.id =
-        "indicadorDigitando";
-
-    div.className =
-        "msg-suporte msg-bot";
-
-    div.innerHTML =
-        "✍️ Assistente está digitando<span class='pontosDigitando'>...</span>";
-
-
-    mensagens.appendChild(div);
-
-    mensagens.scrollTop =
-        mensagens.scrollHeight;
-
-
-    let quantidade = 0;
-
-
-    const intervalo =
-        setInterval(function(){
-
-            const pontos =
-                div.querySelector(
-                    ".pontosDigitando"
-                );
-
-
-            if(!pontos){
-
-                clearInterval(intervalo);
-
-                return;
-
-            }
-
-
-            quantidade++;
-
-
-            if(quantidade > 3){
-
-                quantidade = 1;
-
-            }
-
-
-            pontos.innerText =
-                ".".repeat(quantidade);
-
-        },400);
-
-
-    div.dataset.intervalo =
-        intervalo;
-
-}
-
-
-/* ==================================================
-   ESCONDER INDICADOR
-================================================== */
-
-function esconderDigitando(){
-
-    const div =
-        document.getElementById(
-            "indicadorDigitando"
-        );
-
-
-    if(!div){
-
-        return;
-
-    }
-
-
-    if(div.dataset.intervalo){
-
-        clearInterval(
-            Number(
-                div.dataset.intervalo
-            )
-        );
-
-    }
-
-
-    div.remove();
-
-}
-
-
-/* ==================================================
-   RESPOSTAS DO ASSISTENTE
-================================================== */
-
 function responderSuporte(texto){
 
     const pergunta =
-        texto
-        .toLowerCase()
-        .trim();
-
+        texto.toLowerCase().trim();
 
     /* SAUDAÇÕES */
 
@@ -1647,10 +1501,9 @@ function responderSuporte(texto){
         pergunta.includes("boa noite")
     ){
 
-        return "👋 Olá! Seja bem-vindo ao suporte ApostaXBet. Como posso ajudar? Você pode escolher uma das opções abaixo ou escrever sua pergunta.";
+        return "👋 Olá! Seja bem-vindo ao suporte ApostaXBet. Como posso ajudar? Você pode escolher uma das opções acima.";
 
     }
-
 
     /* SALDO */
 
@@ -1658,14 +1511,12 @@ function responderSuporte(texto){
         pergunta.includes("saldo") ||
         pergunta.includes("dinheiro") ||
         pergunta.includes("quanto tenho") ||
-        pergunta.includes("quanto eu tenho") ||
-        pergunta.includes("meu saldo")
+        pergunta.includes("quanto eu tenho")
     ){
 
         return "💰 Para consultar seu saldo, veja o valor que aparece no topo da página inicial, ao lado de \"Saldo\". Você também pode entrar em 👤 Conta para consultar.";
 
     }
-
 
     /* JOGOS */
 
@@ -1680,21 +1531,18 @@ function responderSuporte(texto){
 
     }
 
-
     /* DEPÓSITO */
 
     if(
         pergunta.includes("deposit") ||
         pergunta.includes("pix") ||
         pergunta.includes("colocar dinheiro") ||
-        pergunta.includes("adicionar dinheiro") ||
-        pergunta.includes("depositar")
+        pergunta.includes("adicionar dinheiro")
     ){
 
         return "💵 Para fazer um depósito, toque em 💰 Depositar na página inicial e siga as instruções apresentadas.";
 
     }
-
 
     /* SAQUE */
 
@@ -1708,7 +1556,6 @@ function responderSuporte(texto){
         return "🏦 Para solicitar um saque, toque em 💵 Sacar na página inicial e preencha as informações solicitadas.";
 
     }
-
 
     /* CONTA */
 
@@ -1725,21 +1572,6 @@ function responderSuporte(texto){
 
     }
 
-
-    /* SENHA ESQUECIDA */
-
-    if(
-        pergunta.includes("esqueci a senha") ||
-        pergunta.includes("esqueci minha senha") ||
-        pergunta.includes("recuperar senha") ||
-        pergunta.includes("senha esquecida")
-    ){
-
-        return "🔐 Se você esqueceu sua senha, volte para a tela de login e toque em \"Esqueci minha senha?\". Depois informe seu e-mail para receber o link de recuperação.";
-
-    }
-
-
     /* PROBLEMAS */
 
     if(
@@ -1748,97 +1580,18 @@ function responderSuporte(texto){
         pergunta.includes("não funciona") ||
         pergunta.includes("nao funciona") ||
         pergunta.includes("travou") ||
-        pergunta.includes("travando") ||
-        pergunta.includes("bug") ||
-        pergunta.includes("falha")
+        pergunta.includes("travando")
     ){
 
-        return "❓ Entendi. Me explique um pouco melhor o que aconteceu. Você pode escrever sua dúvida aqui no campo de mensagem e enviar para o assistente.";
+        return "❓ Entendi. Tente sair da conta e entrar novamente. Se o problema continuar, anote o que aconteceu para podermos cadastrar uma orientação específica para esse problema.";
 
     }
-
-
-    /* JOGOS ESPECÍFICOS */
-
-    if(
-        pergunta.includes("roleta") ||
-        pergunta.includes("crash") ||
-        pergunta.includes("dice") ||
-        pergunta.includes("dados") ||
-        pergunta.includes("mines") ||
-        pergunta.includes("plinko")
-    ){
-
-        return "🎮 Você está falando de um dos jogos do ApostaXBet. Entre em 🎮 Jogos no menu inferior e escolha o jogo que deseja jogar. Se estiver acontecendo algum erro, escreva exatamente o que está acontecendo para eu orientar você.";
-
-    }
-
-
-    /* PIX */
-
-    if(
-        pergunta.includes("chave pix") ||
-        pergunta.includes("cpf")
-    ){
-
-        return "💠 Sobre pagamentos via PIX, acesse a área 💰 Depositar ou 💵 Sacar e confira as informações solicitadas pelo sistema.";
-
-    }
-
 
     /* RESPOSTA PADRÃO */
 
-    return "🤖 Ainda estou aprendendo. Não encontrei uma resposta específica para essa pergunta. Tente explicar o problema com um pouco mais de detalhes ou escolha uma das opções de suporte abaixo.";
+    return "🤖 Ainda não tenho uma resposta cadastrada para essa pergunta. Tente perguntar sobre saldo, jogos, depósito, saque, conta ou algum problema no site.";
 
 }
-
-
-/* ==================================================
-   RESPONDER COM EFEITO DE DIGITAÇÃO
-================================================== */
-
-function responderComDigitacao(
-    pergunta
-){
-
-    mostrarDigitando();
-
-
-    /*
-       Resposta aparece depois de
-       aproximadamente 1 a 2 segundos.
-    */
-
-    const tempo =
-        1000 +
-        Math.floor(
-            Math.random() * 1000
-        );
-
-
-    setTimeout(function(){
-
-        esconderDigitando();
-
-
-        const resposta =
-            responderSuporte(
-                pergunta
-            );
-
-
-        adicionarMensagemSuporte(
-            resposta
-        );
-
-    },tempo);
-
-}
-
-
-/* ==================================================
-   PERGUNTAS RÁPIDAS
-================================================== */
 
 function perguntaSuporte(tipo){
 
@@ -1864,10 +1617,8 @@ function perguntaSuporte(tipo){
 
     };
 
-
     const pergunta =
         respostas[tipo];
-
 
     if(!pergunta){
 
@@ -1875,23 +1626,20 @@ function perguntaSuporte(tipo){
 
     }
 
-
     adicionarMensagemSuporte(
         pergunta,
         true
     );
 
+    setTimeout(function(){
 
-    responderComDigitacao(
-        pergunta
-    );
+        adicionarMensagemSuporte(
+            responderSuporte(pergunta)
+        );
+
+    },350);
 
 }
-
-
-/* ==================================================
-   ENVIAR PERGUNTA ESCRITA
-================================================== */
 
 function enviarPerguntaSuporte(){
 
@@ -1900,10 +1648,8 @@ function enviarPerguntaSuporte(){
             "entradaSuporte"
         );
 
-
     const texto =
         campo.value.trim();
-
 
     if(!texto){
 
@@ -1911,47 +1657,26 @@ function enviarPerguntaSuporte(){
 
     }
 
-
-    /*
-       Mostra a pergunta do usuário.
-    */
-
     adicionarMensagemSuporte(
         texto,
         true
     );
 
-
-    /*
-       Limpa o campo.
-    */
-
     campo.value =
         "";
 
-
-    /*
-       Mostra o assistente digitando.
-    */
-
-    responderComDigitacao(
-        texto
-    );
-
-
-    /*
-       Mantém o campo pronto
-       para outra pergunta.
-    */
-
     setTimeout(function(){
 
-        campo.focus();
+        const resposta =
+            responderSuporte(texto);
 
-    },100);
+        adicionarMensagemSuporte(
+            resposta
+        );
+
+    },350);
 
 }
-
 
 /* ==================================================
    ABAS
@@ -1977,7 +1702,6 @@ function mostrarCadastro(){
 
 }
 
-
 function mostrarLogin(){
 
     document
@@ -1998,7 +1722,6 @@ function mostrarLogin(){
 
 }
 
-
 /* ==================================================
    SENHA
 ================================================== */
@@ -2014,7 +1737,6 @@ function mostrarSenha(id){
         : "password";
 
 }
-
 
 /* ==================================================
    MENSAGEM
@@ -2040,7 +1762,6 @@ function mensagem(
 
 }
 
-
 /* ==================================================
    TELA RECUPERAÇÃO
 ================================================== */
@@ -2052,7 +1773,6 @@ function mostrarRecuperacao(){
         .getElementById("emailLogin")
         .value
         .trim();
-
 
     telaLogin.style.display =
         "none";
@@ -2073,7 +1793,6 @@ function mostrarRecuperacao(){
 
     esconderBotaoSuporte();
 
-
     if(emailLogin){
 
         document
@@ -2084,7 +1803,6 @@ function mostrarRecuperacao(){
     }
 
 }
-
 
 /* ==================================================
    VOLTAR LOGIN
@@ -2109,7 +1827,6 @@ function voltarLogin(){
 
 }
 
-
 /* ==================================================
    ENVIAR RECUPERAÇÃO
 ================================================== */
@@ -2118,25 +1835,21 @@ async function enviarRecuperacao(event){
 
     event.preventDefault();
 
-
     const email =
         document
         .getElementById("emailRecuperacao")
         .value
         .trim();
 
-
     const botao =
         document
         .getElementById("btnRecuperacao");
-
 
     botao.disabled =
         true;
 
     botao.innerText =
         "ENVIANDO...";
-
 
     try{
 
@@ -2151,37 +1864,29 @@ async function enviarRecuperacao(event){
                 }
             );
 
-
         if(error){
 
             throw error;
 
         }
 
-
         mensagem(
             "mensagemRecuperacao",
-
             "Se esse e-mail estiver cadastrado, enviamos o link de recuperação. Verifique sua caixa de entrada e também o spam.",
-
             "sucesso"
         );
-
 
     }catch(error){
 
         mensagem(
             "mensagemRecuperacao",
-
             traduzirErro(
                 error.message
             ),
-
             "erro"
         );
 
     }
-
 
     botao.disabled =
         false;
@@ -2191,7 +1896,6 @@ async function enviarRecuperacao(event){
 
 }
 
-
 /* ==================================================
    NOVA SENHA
 ================================================== */
@@ -2200,60 +1904,49 @@ async function salvarNovaSenha(event){
 
     event.preventDefault();
 
-
     const senha =
         document
         .getElementById("novaSenha")
         .value;
-
 
     const confirmar =
         document
         .getElementById("confirmarNovaSenha")
         .value;
 
-
     const botao =
         document
         .getElementById("btnNovaSenha");
-
 
     if(senha.length < 6){
 
         mensagem(
             "mensagemNovaSenha",
-
             "A senha precisa ter pelo menos 6 caracteres.",
-
             "erro"
         );
 
         return;
 
     }
-
 
     if(senha !== confirmar){
 
         mensagem(
             "mensagemNovaSenha",
-
             "As senhas não são iguais.",
-
             "erro"
         );
 
         return;
 
     }
-
 
     botao.disabled =
         true;
 
     botao.innerText =
         "SALVANDO...";
-
 
     try{
 
@@ -2263,29 +1956,23 @@ async function salvarNovaSenha(event){
                 password:senha
             });
 
-
         if(error){
 
             throw error;
 
         }
 
-
         mensagem(
             "mensagemNovaSenha",
-
             "Senha alterada com sucesso! Você já pode entrar com a nova senha.",
-
             "sucesso"
         );
-
 
         setTimeout(
             async function(){
 
                 await supabaseClient.auth
                 .signOut();
-
 
                 telaNovaSenha.style.display =
                     "none";
@@ -2299,21 +1986,17 @@ async function salvarNovaSenha(event){
             1800
         );
 
-
     }catch(error){
 
         mensagem(
             "mensagemNovaSenha",
-
             traduzirErro(
                 error.message
             ),
-
             "erro"
         );
 
     }
-
 
     botao.disabled =
         false;
@@ -2323,7 +2006,6 @@ async function salvarNovaSenha(event){
 
 }
 
-
 /* ==================================================
    CADASTRO
 ================================================== */
@@ -2332,13 +2014,11 @@ async function cadastrar(event){
 
     event.preventDefault();
 
-
     const nome =
         document
         .getElementById("nomeCadastro")
         .value
         .trim();
-
 
     const email =
         document
@@ -2346,60 +2026,49 @@ async function cadastrar(event){
         .value
         .trim();
 
-
     const senha =
         document
         .getElementById("senhaCadastro")
         .value;
-
 
     const confirmar =
         document
         .getElementById("confirmarSenha")
         .value;
 
-
     const botao =
         document
         .getElementById("btnCadastro");
-
 
     if(senha !== confirmar){
 
         mensagem(
             "mensagemCadastro",
-
             "As senhas não são iguais.",
-
             "erro"
         );
 
         return;
 
     }
-
 
     if(senha.length < 6){
 
         mensagem(
             "mensagemCadastro",
-
             "A senha precisa ter pelo menos 6 caracteres.",
-
             "erro"
         );
 
         return;
 
     }
-
 
     botao.disabled =
         true;
 
     botao.innerText =
         "CRIANDO CONTA...";
-
 
     try{
 
@@ -2419,13 +2088,11 @@ async function cadastrar(event){
 
             });
 
-
         if(error){
 
             throw error;
 
         }
-
 
         if(data.session){
 
@@ -2433,15 +2100,11 @@ async function cadastrar(event){
                 "apostaxbet_logout"
             );
 
-
             mensagem(
                 "mensagemCadastro",
-
                 "Conta criada com sucesso!",
-
                 "sucesso"
             );
-
 
             setTimeout(
                 function(){
@@ -2454,34 +2117,27 @@ async function cadastrar(event){
                 800
             );
 
-
         }else{
 
             mensagem(
                 "mensagemCadastro",
-
                 "Conta criada! Verifique seu e-mail para confirmar a conta.",
-
                 "sucesso"
             );
 
         }
 
-
     }catch(error){
 
         mensagem(
             "mensagemCadastro",
-
             traduzirErro(
                 error.message
             ),
-
             "erro"
         );
 
     }
-
 
     botao.disabled =
         false;
@@ -2491,7 +2147,6 @@ async function cadastrar(event){
 
 }
 
-
 /* ==================================================
    LOGIN
 ================================================== */
@@ -2500,31 +2155,26 @@ async function entrar(event){
 
     event.preventDefault();
 
-
     const email =
         document
         .getElementById("emailLogin")
         .value
         .trim();
 
-
     const senha =
         document
         .getElementById("senhaLogin")
         .value;
 
-
     const botao =
         document
         .getElementById("btnLogin");
-
 
     botao.disabled =
         true;
 
     botao.innerText =
         "ENTRANDO...";
-
 
     try{
 
@@ -2538,27 +2188,21 @@ async function entrar(event){
 
             });
 
-
         if(error){
 
             throw error;
 
         }
 
-
         sessionStorage.removeItem(
             "apostaxbet_logout"
         );
 
-
         mensagem(
             "mensagemLogin",
-
             "Login realizado! Entrando...",
-
             "sucesso"
         );
-
 
         setTimeout(
             function(){
@@ -2571,21 +2215,17 @@ async function entrar(event){
             700
         );
 
-
     }catch(error){
 
         mensagem(
             "mensagemLogin",
-
             traduzirErro(
                 error.message
             ),
-
             "erro"
         );
 
     }
-
 
     botao.disabled =
         false;
@@ -2594,7 +2234,6 @@ async function entrar(event){
         "ENTRAR";
 
 }
-
 
 /* ==================================================
    MOSTRAR SITE
@@ -2617,15 +2256,12 @@ function mostrarSite(user){
     site.style.display =
         "block";
 
-
     mostrarMenu();
 
     mostrarBotaoSuporte();
 
-
     let nome =
         user?.user_metadata?.nome;
-
 
     if(!nome){
 
@@ -2635,29 +2271,24 @@ function mostrarSite(user){
 
     }
 
-
     document
     .getElementById("usuarioNome")
     .innerText =
         "👤 " + nome;
-
 
     document
     .getElementById("contaNome")
     .innerText =
         nome;
 
-
     document
     .getElementById("contaEmail")
     .innerText =
         user?.email || "";
 
-
     atualizarSaldoVisual();
 
 }
-
 
 /* ==================================================
    INÍCIO
@@ -2675,7 +2306,6 @@ function mostrarInicio(){
 
 }
 
-
 /* ==================================================
    CONTA
 ================================================== */
@@ -2692,7 +2322,6 @@ function mostrarConta(){
 
 }
 
-
 /* ==================================================
    SALDO
 ================================================== */
@@ -2700,16 +2329,12 @@ function mostrarConta(){
 async function atualizarSaldoVisual(){
 
     const { data: sessaoData } =
-        await supabaseClient.auth
-        .getSession();
-
+        await supabaseClient.auth.getSession();
 
     const user =
         sessaoData?.session?.user;
 
-
     if(!user) return;
-
 
     const { data, error } =
         await supabaseClient
@@ -2717,7 +2342,6 @@ async function atualizarSaldoVisual(){
         .select("valor")
         .eq("user_id", user.id)
         .single();
-
 
     if(error){
 
@@ -2730,22 +2354,16 @@ async function atualizarSaldoVisual(){
 
     }
 
-
     const saldo =
         Number(data?.valor || 0);
 
-
     const valor =
-        saldo
-        .toFixed(2)
-        .replace(".", ",");
-
+        saldo.toFixed(2).replace(".", ",");
 
     document
     .getElementById("saldoValor")
     .innerText =
         valor;
-
 
     document
     .getElementById("contaSaldo")
@@ -2753,7 +2371,6 @@ async function atualizarSaldoVisual(){
         valor;
 
 }
-
 
 /* ==================================================
    MOSTRAR LOGIN
@@ -2776,7 +2393,6 @@ function mostrarLoginTela(){
     paginaConta.style.display =
         "none";
 
-
     esconderMenu();
 
     esconderBotaoSuporte();
@@ -2784,7 +2400,6 @@ function mostrarLoginTela(){
     mostrarLogin();
 
 }
-
 
 /* ==================================================
    SAIR
@@ -2797,25 +2412,21 @@ async function sair(){
         "1"
     );
 
-
     site.style.display =
         "none";
 
     paginaConta.style.display =
         "none";
 
-
     esconderMenu();
 
     esconderBotaoSuporte();
-
 
     try{
 
         const { error } =
             await supabaseClient.auth
             .signOut();
-
 
         if(error){
 
@@ -2826,7 +2437,6 @@ async function sair(){
 
         }
 
-
     }catch(error){
 
         console.log(
@@ -2836,11 +2446,9 @@ async function sair(){
 
     }
 
-
     mostrarLoginTela();
 
 }
-
 
 /* ==================================================
    TRADUZIR ERROS
@@ -2854,10 +2462,8 @@ function traduzirErro(erro){
 
     }
 
-
     const texto =
         erro.toLowerCase();
-
 
     if(
         texto.includes(
@@ -2869,7 +2475,6 @@ function traduzirErro(erro){
 
     }
 
-
     if(
         texto.includes(
             "user already registered"
@@ -2879,7 +2484,6 @@ function traduzirErro(erro){
         return "Esse e-mail já está cadastrado.";
 
     }
-
 
     if(
         texto.includes("password")
@@ -2891,7 +2495,6 @@ function traduzirErro(erro){
 
     }
 
-
     if(
         texto.includes("email")
         &&
@@ -2902,11 +2505,9 @@ function traduzirErro(erro){
 
     }
 
-
     return erro;
 
 }
-
 
 /* ==================================================
    VERIFICAR SESSÃO
@@ -2918,12 +2519,10 @@ async function verificarSessao(){
 
     esconderBotaoSuporte();
 
-
     const saiu =
         sessionStorage.getItem(
             "apostaxbet_logout"
         );
-
 
     if(saiu === "1"){
 
@@ -2933,13 +2532,11 @@ async function verificarSessao(){
 
     }
 
-
     try{
 
         const {data} =
             await supabaseClient.auth
             .getSession();
-
 
         if(
             data &&
@@ -2956,7 +2553,6 @@ async function verificarSessao(){
 
         }
 
-
     }catch(error){
 
         console.log(error);
@@ -2966,7 +2562,6 @@ async function verificarSessao(){
     }
 
 }
-
 
 /* ==================================================
    OBSERVAR AUTH
@@ -2992,7 +2587,6 @@ supabaseClient.auth.onAuthStateChange(
             paginaConta.style.display =
                 "none";
 
-
             esconderMenu();
 
             esconderBotaoSuporte();
@@ -3001,12 +2595,10 @@ supabaseClient.auth.onAuthStateChange(
 
         }
 
-
         const saiu =
             sessionStorage.getItem(
                 "apostaxbet_logout"
             );
-
 
         if(saiu === "1"){
 
@@ -3019,7 +2611,6 @@ supabaseClient.auth.onAuthStateChange(
             return;
 
         }
-
 
         if(session){
 
@@ -3035,7 +2626,6 @@ supabaseClient.auth.onAuthStateChange(
 
     }
 );
-
 
 /* ==================================================
    INICIAR
