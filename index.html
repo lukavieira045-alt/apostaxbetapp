@@ -29,6 +29,7 @@ body{
 #telaLogin{
     min-height:100vh;
     padding:15px;
+
     background:
         radial-gradient(circle at 20% 20%,#126b4e 0%,transparent 35%),
         radial-gradient(circle at 80% 30%,#0d6047 0%,transparent 40%),
@@ -225,6 +226,7 @@ input:focus{
     display:none;
     min-height:100vh;
     padding:15px;
+
     background:
         radial-gradient(circle at 20% 20%,#126b4e 0%,transparent 35%),
         radial-gradient(circle at 80% 30%,#0d6047 0%,transparent 40%),
@@ -278,6 +280,7 @@ input:focus{
     display:none;
     min-height:100vh;
     padding:15px;
+
     background:
         radial-gradient(circle at 20% 20%,#126b4e 0%,transparent 35%),
         radial-gradient(circle at 80% 30%,#0d6047 0%,transparent 40%),
@@ -394,6 +397,7 @@ input:focus{
     display:none;
     min-height:100vh;
     padding:25px 15px 110px;
+
     background:
         radial-gradient(circle at 50% 0%,#173b30 0%,transparent 45%),
         #000;
@@ -575,36 +579,24 @@ input:focus{
     margin-top:3px;
 }
 
-/* BOTÃO X CORRIGIDO */
-
 .fechar-suporte{
-    width:42px;
-    height:42px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:rgba(0,0,0,.25);
-    border:1px solid rgba(255,255,255,.25);
+    width:40px;
+    height:40px;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.2);
     border-radius:50%;
     color:white;
     font-size:27px;
-    font-weight:bold;
-    line-height:1;
+    line-height:35px;
     cursor:pointer;
-    flex-shrink:0;
 }
 
 .fechar-suporte:hover{
     background:#d92828;
-    border-color:#ff5555;
-}
-
-.fechar-suporte:active{
-    transform:scale(.92);
 }
 
 #suporteMensagens{
-    height:350px;
+    height:300px;
     padding:15px;
     overflow-y:auto;
 }
@@ -630,6 +622,52 @@ input:focus{
     margin-left:auto;
 }
 
+/* =========================
+   DIGITANDO
+========================= */
+
+.msg-digitando{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    width:max-content;
+    min-width:65px;
+}
+
+.msg-digitando span{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#aaa;
+    animation:digitando 1.2s infinite;
+}
+
+.msg-digitando span:nth-child(2){
+    animation-delay:.2s;
+}
+
+.msg-digitando span:nth-child(3){
+    animation-delay:.4s;
+}
+
+@keyframes digitando{
+
+    0%,60%,100%{
+        opacity:.3;
+        transform:translateY(0);
+    }
+
+    30%{
+        opacity:1;
+        transform:translateY(-4px);
+    }
+
+}
+
+/* =========================
+   OPÇÕES DO SUPORTE
+========================= */
+
 .suporte-opcoes{
     display:flex;
     flex-wrap:wrap;
@@ -654,11 +692,16 @@ input:focus{
     color:#000;
 }
 
+/* =========================
+   ESCREVER NO SUPORTE
+========================= */
+
 .suporte-escrever{
     display:flex;
     gap:7px;
     padding:10px;
     background:#080808;
+    border-top:1px solid #333;
 }
 
 #entradaSuporte{
@@ -677,6 +720,10 @@ input:focus{
     background:#00df8a;
     font-size:20px;
     cursor:pointer;
+}
+
+#enviarSuporte:hover{
+    background:#00f59a;
 }
 
 /* CELULAR */
@@ -704,17 +751,11 @@ input:focus{
         right:10px;
         width:calc(100% - 20px);
         bottom:150px;
-        height:480px;
+        height:500px;
     }
 
     #suporteMensagens{
-        height:330px;
-    }
-
-    .fechar-suporte{
-        width:40px;
-        height:40px;
-        font-size:25px;
+        height:300px;
     }
 
 }
@@ -1225,6 +1266,7 @@ Sair
 
 </nav>
 
+
 <!-- =========================
      SUPORTE
 ========================= -->
@@ -1237,6 +1279,7 @@ onclick="abrirSuporte()">
 💬 Suporte
 
 </button>
+
 
 <div id="janelaSuporte">
 
@@ -1254,17 +1297,19 @@ onclick="abrirSuporte()">
 
 </div>
 
+<!-- X PARA FECHAR -->
 <button
 class="fechar-suporte"
 type="button"
-aria-label="Fechar suporte"
-onclick="fecharSuporte()">
+onclick="fecharSuporte()"
+aria-label="Fechar suporte">
 
-✕
+×
 
 </button>
 
 </div>
+
 
 <div id="suporteMensagens">
 
@@ -1280,6 +1325,7 @@ Como posso ajudar?
 </div>
 
 </div>
+
 
 <div class="suporte-opcoes">
 
@@ -1333,18 +1379,23 @@ onclick="perguntaSuporte('problema')">
 
 </div>
 
+
+<!-- CAMPO PARA A PESSOA ESCREVER -->
+
 <div class="suporte-escrever">
 
 <input
 id="entradaSuporte"
 type="text"
 placeholder="Digite sua pergunta..."
+autocomplete="off"
 onkeydown="if(event.key==='Enter') enviarPerguntaSuporte()">
 
 <button
 id="enviarSuporte"
 type="button"
-onclick="enviarPerguntaSuporte()">
+onclick="enviarPerguntaSuporte()"
+aria-label="Enviar pergunta">
 
 ➤
 
@@ -1353,6 +1404,7 @@ onclick="enviarPerguntaSuporte()">
 </div>
 
 </div>
+
 
 <script>
 
@@ -1371,6 +1423,7 @@ window.supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
 );
+
 
 /* ==================================================
    ELEMENTOS
@@ -1400,6 +1453,7 @@ document.getElementById("botaoSuporte");
 const janelaSuporte =
 document.getElementById("janelaSuporte");
 
+
 /* ==================================================
    MENU
 ================================================== */
@@ -1417,6 +1471,7 @@ function esconderMenu(){
         "none";
 
 }
+
 
 /* ==================================================
    SUPORTE - MOSTRAR/ESCONDER
@@ -1439,8 +1494,9 @@ function esconderBotaoSuporte(){
 
 }
 
+
 /* ==================================================
-   SUPORTE
+   ABRIR SUPORTE
 ================================================== */
 
 function abrirSuporte(){
@@ -1448,7 +1504,27 @@ function abrirSuporte(){
     janelaSuporte.style.display =
         "block";
 
+    setTimeout(function(){
+
+        const campo =
+            document.getElementById(
+                "entradaSuporte"
+            );
+
+        if(campo){
+
+            campo.focus();
+
+        }
+
+    },100);
+
 }
+
+
+/* ==================================================
+   FECHAR SUPORTE
+================================================== */
 
 function fecharSuporte(){
 
@@ -1456,6 +1532,11 @@ function fecharSuporte(){
         "none";
 
 }
+
+
+/* ==================================================
+   ADICIONAR MENSAGEM
+================================================== */
 
 function adicionarMensagemSuporte(
     texto,
@@ -1485,10 +1566,65 @@ function adicionarMensagemSuporte(
 
 }
 
+
+/* ==================================================
+   INDICADOR "ASSISTENTE ESTÁ DIGITANDO"
+================================================== */
+
+function mostrarDigitando(){
+
+    const mensagens =
+        document.getElementById(
+            "suporteMensagens"
+        );
+
+    const div =
+        document.createElement("div");
+
+    div.id =
+        "mensagemDigitando";
+
+    div.className =
+        "msg-suporte msg-bot msg-digitando";
+
+    div.innerHTML =
+        "<span></span><span></span><span></span>";
+
+    mensagens.appendChild(div);
+
+    mensagens.scrollTop =
+        mensagens.scrollHeight;
+
+}
+
+
+function removerDigitando(){
+
+    const digitando =
+        document.getElementById(
+            "mensagemDigitando"
+        );
+
+    if(digitando){
+
+        digitando.remove();
+
+    }
+
+}
+
+
+/* ==================================================
+   RESPONDER SUPORTE
+================================================== */
+
 function responderSuporte(texto){
 
     const pergunta =
-        texto.toLowerCase().trim();
+        texto
+        .toLowerCase()
+        .trim();
+
 
     /* SAUDAÇÕES */
 
@@ -1501,9 +1637,10 @@ function responderSuporte(texto){
         pergunta.includes("boa noite")
     ){
 
-        return "👋 Olá! Seja bem-vindo ao suporte ApostaXBet. Como posso ajudar? Você pode escolher uma das opções acima.";
+        return "👋 Olá! Seja bem-vindo ao suporte ApostaXBet. Como posso ajudar? Você pode escolher uma das opções acima ou escrever sua pergunta aqui embaixo.";
 
     }
+
 
     /* SALDO */
 
@@ -1511,12 +1648,14 @@ function responderSuporte(texto){
         pergunta.includes("saldo") ||
         pergunta.includes("dinheiro") ||
         pergunta.includes("quanto tenho") ||
-        pergunta.includes("quanto eu tenho")
+        pergunta.includes("quanto eu tenho") ||
+        pergunta.includes("meu saldo")
     ){
 
         return "💰 Para consultar seu saldo, veja o valor que aparece no topo da página inicial, ao lado de \"Saldo\". Você também pode entrar em 👤 Conta para consultar.";
 
     }
+
 
     /* JOGOS */
 
@@ -1531,18 +1670,21 @@ function responderSuporte(texto){
 
     }
 
+
     /* DEPÓSITO */
 
     if(
         pergunta.includes("deposit") ||
         pergunta.includes("pix") ||
         pergunta.includes("colocar dinheiro") ||
-        pergunta.includes("adicionar dinheiro")
+        pergunta.includes("adicionar dinheiro") ||
+        pergunta.includes("depositar")
     ){
 
         return "💵 Para fazer um depósito, toque em 💰 Depositar na página inicial e siga as instruções apresentadas.";
 
     }
+
 
     /* SAQUE */
 
@@ -1550,12 +1692,14 @@ function responderSuporte(texto){
         pergunta.includes("saque") ||
         pergunta.includes("sacar") ||
         pergunta.includes("retirar dinheiro") ||
-        pergunta.includes("retirada")
+        pergunta.includes("retirada") ||
+        pergunta.includes("sacar dinheiro")
     ){
 
         return "🏦 Para solicitar um saque, toque em 💵 Sacar na página inicial e preencha as informações solicitadas.";
 
     }
+
 
     /* CONTA */
 
@@ -1565,12 +1709,14 @@ function responderSuporte(texto){
         pergunta.includes("login") ||
         pergunta.includes("senha") ||
         pergunta.includes("email") ||
-        pergunta.includes("e-mail")
+        pergunta.includes("e-mail") ||
+        pergunta.includes("cadastrar")
     ){
 
         return "👤 Para acessar sua conta, use o botão 👤 Conta no menu inferior. Se você esqueceu sua senha, use a opção \"Esqueci minha senha?\" na tela de login.";
 
     }
+
 
     /* PROBLEMAS */
 
@@ -1580,18 +1726,54 @@ function responderSuporte(texto){
         pergunta.includes("não funciona") ||
         pergunta.includes("nao funciona") ||
         pergunta.includes("travou") ||
-        pergunta.includes("travando")
+        pergunta.includes("travando") ||
+        pergunta.includes("bug") ||
+        pergunta.includes("falha")
     ){
 
-        return "❓ Entendi. Tente sair da conta e entrar novamente. Se o problema continuar, anote o que aconteceu para podermos cadastrar uma orientação específica para esse problema.";
+        return "❓ Entendi. Tente sair da conta e entrar novamente. Se o problema continuar, anote o que aconteceu e descreva aqui no campo de mensagem para receber uma orientação.";
 
     }
 
+
     /* RESPOSTA PADRÃO */
 
-    return "🤖 Ainda não tenho uma resposta cadastrada para essa pergunta. Tente perguntar sobre saldo, jogos, depósito, saque, conta ou algum problema no site.";
+    return "🤖 Ainda não tenho uma resposta cadastrada para essa pergunta. Tente explicar um pouco mais o que aconteceu ou pergunte sobre saldo, jogos, depósito, saque, conta ou algum problema no site.";
 
 }
+
+
+/* ==================================================
+   RESPONDER COM EFEITO DE DIGITAÇÃO
+================================================== */
+
+function responderComDigitacao(
+    pergunta
+){
+
+    mostrarDigitando();
+
+    setTimeout(function(){
+
+        removerDigitando();
+
+        const resposta =
+            responderSuporte(
+                pergunta
+            );
+
+        adicionarMensagemSuporte(
+            resposta
+        );
+
+    },1100);
+
+}
+
+
+/* ==================================================
+   OPÇÕES PRONTAS
+================================================== */
 
 function perguntaSuporte(tipo){
 
@@ -1617,6 +1799,7 @@ function perguntaSuporte(tipo){
 
     };
 
+
     const pergunta =
         respostas[tipo];
 
@@ -1626,20 +1809,23 @@ function perguntaSuporte(tipo){
 
     }
 
+
     adicionarMensagemSuporte(
         pergunta,
         true
     );
 
-    setTimeout(function(){
 
-        adicionarMensagemSuporte(
-            responderSuporte(pergunta)
-        );
-
-    },350);
+    responderComDigitacao(
+        pergunta
+    );
 
 }
+
+
+/* ==================================================
+   ENVIAR PERGUNTA DIGITADA
+================================================== */
 
 function enviarPerguntaSuporte(){
 
@@ -1648,8 +1834,16 @@ function enviarPerguntaSuporte(){
             "entradaSuporte"
         );
 
+    if(!campo){
+
+        return;
+
+    }
+
+
     const texto =
         campo.value.trim();
+
 
     if(!texto){
 
@@ -1657,26 +1851,23 @@ function enviarPerguntaSuporte(){
 
     }
 
+
     adicionarMensagemSuporte(
         texto,
         true
     );
 
+
     campo.value =
         "";
 
-    setTimeout(function(){
 
-        const resposta =
-            responderSuporte(texto);
-
-        adicionarMensagemSuporte(
-            resposta
-        );
-
-    },350);
+    responderComDigitacao(
+        texto
+    );
 
 }
+
 
 /* ==================================================
    ABAS
@@ -1722,6 +1913,7 @@ function mostrarLogin(){
 
 }
 
+
 /* ==================================================
    SENHA
 ================================================== */
@@ -1737,6 +1929,7 @@ function mostrarSenha(id){
         : "password";
 
 }
+
 
 /* ==================================================
    MENSAGEM
@@ -1761,6 +1954,7 @@ function mensagem(
         texto;
 
 }
+
 
 /* ==================================================
    TELA RECUPERAÇÃO
@@ -1804,6 +1998,7 @@ function mostrarRecuperacao(){
 
 }
 
+
 /* ==================================================
    VOLTAR LOGIN
 ================================================== */
@@ -1826,6 +2021,7 @@ function voltarLogin(){
     esconderBotaoSuporte();
 
 }
+
 
 /* ==================================================
    ENVIAR RECUPERAÇÃO
@@ -1872,7 +2068,9 @@ async function enviarRecuperacao(event){
 
         mensagem(
             "mensagemRecuperacao",
+
             "Se esse e-mail estiver cadastrado, enviamos o link de recuperação. Verifique sua caixa de entrada e também o spam.",
+
             "sucesso"
         );
 
@@ -1880,9 +2078,11 @@ async function enviarRecuperacao(event){
 
         mensagem(
             "mensagemRecuperacao",
+
             traduzirErro(
                 error.message
             ),
+
             "erro"
         );
 
@@ -1895,6 +2095,7 @@ async function enviarRecuperacao(event){
         "ENVIAR LINK";
 
 }
+
 
 /* ==================================================
    NOVA SENHA
@@ -1922,7 +2123,9 @@ async function salvarNovaSenha(event){
 
         mensagem(
             "mensagemNovaSenha",
+
             "A senha precisa ter pelo menos 6 caracteres.",
+
             "erro"
         );
 
@@ -1934,7 +2137,9 @@ async function salvarNovaSenha(event){
 
         mensagem(
             "mensagemNovaSenha",
+
             "As senhas não são iguais.",
+
             "erro"
         );
 
@@ -1964,7 +2169,9 @@ async function salvarNovaSenha(event){
 
         mensagem(
             "mensagemNovaSenha",
+
             "Senha alterada com sucesso! Você já pode entrar com a nova senha.",
+
             "sucesso"
         );
 
@@ -1990,9 +2197,11 @@ async function salvarNovaSenha(event){
 
         mensagem(
             "mensagemNovaSenha",
+
             traduzirErro(
                 error.message
             ),
+
             "erro"
         );
 
@@ -2005,6 +2214,7 @@ async function salvarNovaSenha(event){
         "SALVAR NOVA SENHA";
 
 }
+
 
 /* ==================================================
    CADASTRO
@@ -2044,7 +2254,9 @@ async function cadastrar(event){
 
         mensagem(
             "mensagemCadastro",
+
             "As senhas não são iguais.",
+
             "erro"
         );
 
@@ -2056,7 +2268,9 @@ async function cadastrar(event){
 
         mensagem(
             "mensagemCadastro",
+
             "A senha precisa ter pelo menos 6 caracteres.",
+
             "erro"
         );
 
@@ -2102,7 +2316,9 @@ async function cadastrar(event){
 
             mensagem(
                 "mensagemCadastro",
+
                 "Conta criada com sucesso!",
+
                 "sucesso"
             );
 
@@ -2121,7 +2337,9 @@ async function cadastrar(event){
 
             mensagem(
                 "mensagemCadastro",
+
                 "Conta criada! Verifique seu e-mail para confirmar a conta.",
+
                 "sucesso"
             );
 
@@ -2131,9 +2349,11 @@ async function cadastrar(event){
 
         mensagem(
             "mensagemCadastro",
+
             traduzirErro(
                 error.message
             ),
+
             "erro"
         );
 
@@ -2146,6 +2366,7 @@ async function cadastrar(event){
         "CRIAR CONTA";
 
 }
+
 
 /* ==================================================
    LOGIN
@@ -2194,13 +2415,17 @@ async function entrar(event){
 
         }
 
+
         sessionStorage.removeItem(
             "apostaxbet_logout"
         );
 
+
         mensagem(
             "mensagemLogin",
+
             "Login realizado! Entrando...",
+
             "sucesso"
         );
 
@@ -2219,9 +2444,11 @@ async function entrar(event){
 
         mensagem(
             "mensagemLogin",
+
             traduzirErro(
                 error.message
             ),
+
             "erro"
         );
 
@@ -2234,6 +2461,7 @@ async function entrar(event){
         "ENTRAR";
 
 }
+
 
 /* ==================================================
    MOSTRAR SITE
@@ -2290,6 +2518,7 @@ function mostrarSite(user){
 
 }
 
+
 /* ==================================================
    INÍCIO
 ================================================== */
@@ -2306,6 +2535,7 @@ function mostrarInicio(){
 
 }
 
+
 /* ==================================================
    CONTA
 ================================================== */
@@ -2321,6 +2551,7 @@ function mostrarConta(){
     esconderBotaoSuporte();
 
 }
+
 
 /* ==================================================
    SALDO
@@ -2372,6 +2603,7 @@ async function atualizarSaldoVisual(){
 
 }
 
+
 /* ==================================================
    MOSTRAR LOGIN
 ================================================== */
@@ -2401,6 +2633,7 @@ function mostrarLoginTela(){
 
 }
 
+
 /* ==================================================
    SAIR
 ================================================== */
@@ -2412,6 +2645,7 @@ async function sair(){
         "1"
     );
 
+
     site.style.display =
         "none";
 
@@ -2421,6 +2655,7 @@ async function sair(){
     esconderMenu();
 
     esconderBotaoSuporte();
+
 
     try{
 
@@ -2446,9 +2681,11 @@ async function sair(){
 
     }
 
+
     mostrarLoginTela();
 
 }
+
 
 /* ==================================================
    TRADUZIR ERROS
@@ -2509,6 +2746,7 @@ function traduzirErro(erro){
 
 }
 
+
 /* ==================================================
    VERIFICAR SESSÃO
 ================================================== */
@@ -2519,10 +2757,12 @@ async function verificarSessao(){
 
     esconderBotaoSuporte();
 
+
     const saiu =
         sessionStorage.getItem(
             "apostaxbet_logout"
         );
+
 
     if(saiu === "1"){
 
@@ -2531,6 +2771,7 @@ async function verificarSessao(){
         return;
 
     }
+
 
     try{
 
@@ -2562,6 +2803,7 @@ async function verificarSessao(){
     }
 
 }
+
 
 /* ==================================================
    OBSERVAR AUTH
@@ -2595,10 +2837,12 @@ supabaseClient.auth.onAuthStateChange(
 
         }
 
+
         const saiu =
             sessionStorage.getItem(
                 "apostaxbet_logout"
             );
+
 
         if(saiu === "1"){
 
@@ -2611,6 +2855,7 @@ supabaseClient.auth.onAuthStateChange(
             return;
 
         }
+
 
         if(session){
 
@@ -2626,6 +2871,7 @@ supabaseClient.auth.onAuthStateChange(
 
     }
 );
+
 
 /* ==================================================
    INICIAR
