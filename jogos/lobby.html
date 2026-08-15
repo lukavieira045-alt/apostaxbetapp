@@ -3,311 +3,1499 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Lobby Mania - Real</title>
+<title>Lobby Mania - ApostaXBet</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-/* [CSS ORIGINAL MANTIDO INTACTO COM CORREÇÃO DE CORES] */
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{width:100%;min-height:100%;background:#02030b;font-family:Arial,sans-serif}
-body{display:flex;justify-content:center;overflow-x:hidden}
-.game{width:100%;max-width:650px;min-height:100vh;background:radial-gradient(circle at 50% 22%,#245da9 0,#102d68 28%,#070d29 55%,#02030b 100%);color:white;position:relative;overflow:hidden}
-.top{height:62px;display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:linear-gradient(#101d49,#071127);border-bottom:2px solid #345a9e}
-.top .home{font-size:29px}.top .name{font-size:18px;font-weight:bold;color:#eee}.clock{font:18px monospace}
-.banner{height:105px;margin:18px 7px 9px;border-radius:8px;border:3px solid #17173c;display:flex;align-items:center;justify-content:center;text-align:center;background:radial-gradient(circle,#352083 0,#171747 45%,#08091f 100%);box-shadow:0 0 16px #00dff077,inset 0 0 25px #6d38cc88}
-.banner span{font-size:25px;font-weight:900;color:#61fff4;text-shadow:0 0 6px #00ffff,0 0 15px #00ffff}
-.machine{margin:0 5px;padding:7px;background:linear-gradient(90deg,#101736,#4c2076 25%,#20266b 50%,#4c2076 75%,#101736);border-radius:12px 12px 4px 4px;box-shadow:0 0 25px #3927a855}
-.reels{height:475px;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;overflow:hidden;background:#0b1026;border:4px solid #080b1c;border-radius:7px;box-shadow:inset 0 0 20px #000}
-.reel{overflow:hidden;background:#b9d59f;border-right:3px solid #35435a}
-.strip{transition:transform 1.2s cubic-bezier(.12,.78,.18,1)}
-.symbol{height:157px;position:relative;display:flex;align-items:center;justify-content:center;background:linear-gradient(#e8f2d8,#b5d69b 70%,#86ad74);border-bottom:4px solid #566a5b}
-.five{font-family:Georgia,serif;font-size:72px;font-weight:bold;color:#fff2d0;text-shadow:4px 4px #69343a,-2px -2px #9c6a2f}
-.face{width:105px;height:105px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#f0d29c;border:7px solid #f8e8bd;box-shadow:0 7px #557b49;font-size:56px}
-.coin{width:116px;height:82px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#7fa86e;border:5px solid #e4edc8;color:#edf5d4;font-family:Georgia,serif;font-size:37px;text-shadow:3px 3px #48663d}
-.x2{position:absolute;bottom:4px;font-size:40px;font-weight:bold;color:#dce8c3;text-shadow:3px 3px #3b4a30}
-.message{height:30px;display:flex;align-items:center;justify-content:center;color:#a8ff67;font-size:14px;font-weight:bold}
-.info{height:70px;display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;background:linear-gradient(#101c3b,#091328);border:1px solid #2d4270;border-radius:17px;box-shadow:inset 0 0 15px #000}
-.infoItem{text-align:center}.infoSmall{display:block;color:#8796b4;font-size:9px;margin-bottom:5px}
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    -webkit-tap-highlight-color:transparent;
+}
 
-/* FORÇA COR VERDE SEMPRE */
-.value{color:#aaff5d !important; font-size:20px; font-weight:bold; transition: transform .25s ease;}
-.value.error, .value.insufficient { color:#aaff5d !important; }
-#balance.atualizando{transform:scale(1.12);color:#fff36b !important;}
+html,body{
+    width:100%;
+    min-height:100%;
+    background:#02030b;
+    font-family:Arial,sans-serif;
+}
 
-.controls{min-height:150px;display:grid;grid-template-columns:58px 58px 1fr 58px 58px;gap:6px;align-items:center;padding:10px 3px 18px}
-.btn{width:56px;height:56px;border-radius:50%;border:1px solid #445477;background:linear-gradient(#314064,#111a32);color:white;font-size:27px;box-shadow:0 4px 8px #0008;cursor:pointer}
-.spin{width:112px;height:112px;justify-self:center;border-radius:50%;border:7px solid #25eaf1;background:radial-gradient(circle,#173d47,#07121d 70%);color:#62fff6;font-size:43px;box-shadow:0 0 20px #00eaff,inset 0 0 22px #00eaff66;cursor:pointer}
-.btn:active,.spin:active{transform:scale(.92)}.btn:disabled,.spin:disabled{opacity:.45;cursor:not-allowed}
-.notice{text-align:center;color:#667799;font-size:10px;padding:4px 5px 20px}
-@media(max-width:380px){.reels{height:390px}.symbol{height:130px}.controls{grid-template-columns:48px 48px 1fr 48px 48px}.btn{width:48px;height:48px;font-size:23px}.spin{width:92px;height:92px;font-size:36px}}
+body{
+    display:flex;
+    justify-content:center;
+    overflow-x:hidden;
+}
+
+.game{
+    width:100%;
+    max-width:650px;
+    min-height:100vh;
+    background:
+        radial-gradient(circle at 50% 22%,#245da9 0,#102d68 28%,#070d29 55%,#02030b 100%);
+    color:white;
+    position:relative;
+    overflow:hidden;
+}
+
+.top{
+    height:62px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:8px 14px;
+    background:linear-gradient(#101d49,#071127);
+    border-bottom:2px solid #345a9e;
+}
+
+.top .home{
+    font-size:29px;
+    cursor:pointer;
+}
+
+.top .name{
+    font-size:18px;
+    font-weight:bold;
+    color:#eee;
+}
+
+.clock{
+    font:18px monospace;
+}
+
+.banner{
+    height:105px;
+    margin:18px 7px 9px;
+    border-radius:8px;
+    border:3px solid #17173c;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    background:
+        radial-gradient(circle,#352083 0,#171747 45%,#08091f 100%);
+    box-shadow:
+        0 0 16px #00dff077,
+        inset 0 0 25px #6d38cc88;
+}
+
+.banner span{
+    font-size:25px;
+    font-weight:900;
+    color:#61fff4;
+    text-shadow:
+        0 0 6px #00ffff,
+        0 0 15px #00ffff;
+    animation:bannerPulse 1.5s infinite alternate;
+}
+
+@keyframes bannerPulse{
+    from{transform:scale(1)}
+    to{transform:scale(1.04)}
+}
+
+.machine{
+    margin:0 5px;
+    padding:7px;
+    background:
+        linear-gradient(
+            90deg,
+            #101736,
+            #4c2076 25%,
+            #20266b 50%,
+            #4c2076 75%,
+            #101736
+        );
+    border-radius:12px 12px 4px 4px;
+    box-shadow:0 0 25px #3927a855;
+}
+
+.reels{
+    height:475px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:4px;
+    overflow:hidden;
+    background:#0b1026;
+    border:4px solid #080b1c;
+    border-radius:7px;
+    box-shadow:
+        inset 0 0 20px #000,
+        0 0 20px #000;
+}
+
+.reel{
+    overflow:hidden;
+    background:#111b35;
+    border-right:3px solid #35435a;
+    position:relative;
+}
+
+.reel::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(0,0,0,.45),
+            transparent 18%,
+            transparent 82%,
+            rgba(0,0,0,.5)
+        );
+}
+
+.strip{
+    transition:transform 1.2s cubic-bezier(.12,.78,.18,1);
+}
+
+.symbol{
+    height:157px;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            #344e86,
+            #172650 48%,
+            #091127 100%
+        );
+    border-bottom:4px solid #35486d;
+    overflow:hidden;
+}
+
+.symbol::before{
+    content:"";
+    position:absolute;
+    width:80px;
+    height:80px;
+    border-radius:50%;
+    background:#00eaff;
+    opacity:.08;
+    filter:blur(20px);
+}
+
+.icone{
+    font-size:70px;
+    position:relative;
+    z-index:2;
+    filter:
+        drop-shadow(0 0 7px rgba(255,255,255,.8))
+        drop-shadow(0 0 18px rgba(0,238,255,.65));
+    animation:iconeFlutuar 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes iconeFlutuar{
+    from{
+        transform:translateY(-3px) scale(1);
+    }
+    to{
+        transform:translateY(3px) scale(1.06);
+    }
+}
+
+.valor{
+    position:absolute;
+    bottom:5px;
+    font-size:19px;
+    font-weight:900;
+    color:#ffe66b;
+    text-shadow:
+        0 0 5px #ff9d00,
+        0 0 12px #ff6600;
+}
+
+.symbol.diamante .icone{
+    filter:
+        drop-shadow(0 0 8px #00ffff)
+        drop-shadow(0 0 25px #00ffff);
+}
+
+.symbol.coroa .icone{
+    filter:
+        drop-shadow(0 0 8px #ffd700)
+        drop-shadow(0 0 25px #ff9d00);
+}
+
+.symbol.fogo .icone{
+    filter:
+        drop-shadow(0 0 8px #ff4400)
+        drop-shadow(0 0 25px #ff0000);
+}
+
+.symbol.energia .icone{
+    filter:
+        drop-shadow(0 0 8px #00ff88)
+        drop-shadow(0 0 25px #00ff88);
+}
+
+.symbol.foguete .icone{
+    filter:
+        drop-shadow(0 0 8px #ff55ff)
+        drop-shadow(0 0 25px #ff00ff);
+}
+
+.message{
+    height:30px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#a8ff67;
+    font-size:14px;
+    font-weight:bold;
+}
+
+.info{
+    height:70px;
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    align-items:center;
+    background:linear-gradient(#101c3b,#091328);
+    border:1px solid #2d4270;
+    border-radius:17px;
+    box-shadow:inset 0 0 15px #000;
+}
+
+.infoItem{
+    text-align:center;
+}
+
+.infoSmall{
+    display:block;
+    color:#8796b4;
+    font-size:9px;
+    margin-bottom:5px;
+}
+
+.value{
+    color:#aaff5d !important;
+    font-size:20px;
+    font-weight:bold;
+    transition:transform .25s ease;
+}
+
+#balance.atualizando{
+    transform:scale(1.12);
+    color:#fff36b !important;
+}
+
+.controls{
+    min-height:150px;
+    display:grid;
+    grid-template-columns:58px 58px 1fr 58px 58px;
+    gap:6px;
+    align-items:center;
+    padding:10px 3px 18px;
+}
+
+.btn{
+    width:56px;
+    height:56px;
+    border-radius:50%;
+    border:1px solid #445477;
+    background:linear-gradient(#314064,#111a32);
+    color:white;
+    font-size:27px;
+    box-shadow:0 4px 8px #0008;
+    cursor:pointer;
+}
+
+.spin{
+    width:112px;
+    height:112px;
+    justify-self:center;
+    border-radius:50%;
+    border:7px solid #25eaf1;
+    background:
+        radial-gradient(circle,#173d47,#07121d 70%);
+    color:#62fff6;
+    font-size:43px;
+    box-shadow:
+        0 0 20px #00eaff,
+        inset 0 0 22px #00eaff66;
+    cursor:pointer;
+    transition:.15s;
+}
+
+.spin.girando{
+    animation:botaoGirando .7s infinite alternate;
+}
+
+@keyframes botaoGirando{
+    from{
+        box-shadow:
+            0 0 15px #00eaff,
+            inset 0 0 18px #00eaff66;
+    }
+    to{
+        box-shadow:
+            0 0 35px #00ffff,
+            0 0 60px #0077ff,
+            inset 0 0 25px #00eaff;
+    }
+}
+
+.btn:active,
+.spin:active{
+    transform:scale(.92);
+}
+
+.btn:disabled,
+.spin:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+.notice{
+    text-align:center;
+    color:#667799;
+    font-size:10px;
+    padding:4px 5px 20px;
+}
+
+@media(max-width:380px){
+
+    .reels{
+        height:390px;
+    }
+
+    .symbol{
+        height:130px;
+    }
+
+    .icone{
+        font-size:58px;
+    }
+
+    .controls{
+        grid-template-columns:48px 48px 1fr 48px 48px;
+    }
+
+    .btn{
+        width:48px;
+        height:48px;
+        font-size:23px;
+    }
+
+    .spin{
+        width:92px;
+        height:92px;
+        font-size:36px;
+    }
+}
 </style>
 </head>
+
 <body>
+
 <div class="game">
-  <div class="top">
-    <div class="home" onclick="window.location.href='index.html'"></div>
-    <div class="name">Lobby Mania</div>
-    <div class="clock" id="clock">00:00:00</div>
-  </div>
-  
-  <div class="banner"><span>» Aposta Real Ativada! «</span></div>
-  
-  <div class="machine">
-    <div class="reels">
-      <div class="reel"><div class="strip" id="reel1"></div></div>
-      <div class="reel"><div class="strip" id="reel2"></div></div>
-      <div class="reel"><div class="strip" id="reel3"></div></div>
+
+    <div class="top">
+        <div class="home" onclick="window.location.href='index.html'">⌂</div>
+        <div class="name">Lobby Mania</div>
+        <div class="clock" id="clock">00:00:00</div>
     </div>
-    
-    <div class="message" id="message">Iniciando...</div>
-    
-    <div class="info">
-      <div class="infoItem"></div>
-      <div class="infoItem">
-        <span class="infoSmall">SALDO</span>
-        <span class="value" id="balance">R$0,00</span>
-      </div>
-      <div class="infoItem">
-        <span class="infoSmall">APOSTA</span>
-        <span class="value" id="bet">R$0,50</span>
-      </div>
+
+    <div class="banner">
+        <span>» Aposta Real Ativada! «</span>
     </div>
-    
-    <div class="controls">
-      <button class="btn" type="button" onclick="sound()">🔇</button>
-      <button class="btn" type="button" onclick="minus()">−</button>
-      <button class="spin" id="spinButton" type="button" onclick="spin()">★</button>
-      <button class="btn" type="button" onclick="plus()">+</button>
-      <button class="btn" type="button" onclick="spin()">▶</button>
+
+    <div class="machine">
+
+        <div class="reels">
+
+            <div class="reel">
+                <div class="strip" id="reel1"></div>
+            </div>
+
+            <div class="reel">
+                <div class="strip" id="reel2"></div>
+            </div>
+
+            <div class="reel">
+                <div class="strip" id="reel3"></div>
+            </div>
+
+        </div>
+
+        <div class="message" id="message">
+            Iniciando...
+        </div>
+
+        <div class="info">
+
+            <div class="infoItem"></div>
+
+            <div class="infoItem">
+
+                <span class="infoSmall">
+                    SALDO
+                </span>
+
+                <span class="value" id="balance">
+                    R$0,00
+                </span>
+
+            </div>
+
+            <div class="infoItem">
+
+                <span class="infoSmall">
+                    APOSTA
+                </span>
+
+                <span class="value" id="bet">
+                    R$0,50
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="controls">
+
+            <button
+                class="btn"
+                type="button"
+                onclick="sound()"
+            >
+                🔊
+            </button>
+
+            <button
+                class="btn"
+                type="button"
+                onclick="minus()"
+            >
+                −
+            </button>
+
+            <button
+                class="spin"
+                id="spinButton"
+                type="button"
+                onclick="spin()"
+            >
+                ★
+            </button>
+
+            <button
+                class="btn"
+                type="button"
+                onclick="plus()"
+            >
+                +
+            </button>
+
+            <button
+                class="btn"
+                type="button"
+                onclick="spin()"
+            >
+                ▶
+            </button>
+
+        </div>
+
     </div>
-  </div>
-  
-  <div class="notice">Jogo integrado ao sistema financeiro real.</div>
+
+    <div class="notice">
+        Jogo integrado ao sistema financeiro real.
+    </div>
+
 </div>
 
+
 <script>
+
 /* =====================================================
-   CONFIGURAÇÃO SUPABASE E SISTEMA DE SALDO HÍBRIDO
+   SUPABASE — MANTIDO COMO ESTAVA
 ===================================================== */
-const SUPABASE_URL = 'https://jxbzjiwmajjzxgihfjgt.supabase.co'; 
-const SUPABASE_ANON_KEY = 'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ'; 
+
+const SUPABASE_URL =
+    'https://jxbzjiwmajjzxgihfjgt.supabase.co';
+
+const SUPABASE_ANON_KEY =
+    'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ';
 
 let supabaseClient = null;
 let sistemaOnline = false;
 
 try {
-    if (window.supabase) {
-        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    if(window.supabase){
+
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_ANON_KEY
+            );
+
         sistemaOnline = true;
     }
-} catch (e) { console.error("Erro Supabase:", e); }
 
-// Sistema de Saldo com Fallback Local Garantido
-window.SistemaSaldo = {
-    saldoLocal: 0, 
-    
-    async get() {
-        if (!sistemaOnline) return this.saldoLocal;
-        
-        try {
-            const { data } = await supabaseClient.auth.getSession();
-            if (!data?.session) throw new Error('Sem sessão');
-            
-            const { data: saldoData, error } = await supabaseClient
-                .from('saldos')
-                .select('valor')
-                .eq('user_id', data.session.user.id)
-                .single();
-                
-            if (error) throw error;
-            this.saldoLocal = Number(saldoData?.valor || 0);
-            return this.saldoLocal;
-        } catch (e) {
-            console.warn("Falha ao buscar saldo real, usando local:", e);
-            return this.saldoLocal;
-        }
-    },
-    
-    async debitar(valor) {
-        // DEBITA LOCALMENTE PRIMEIRO PARA GARANTIR FEEDBACK VISUAL
-        this.saldoLocal -= valor;
-        
-        if (!sistemaOnline) return;
-        
-        try {
-            const { data } = await supabaseClient.auth.getSession();
-            if (!data?.session) return;
-            
-            // Tenta sincronizar com o banco em segundo plano
-            await supabaseClient.rpc('debitar_saldo', { 
-                p_user_id: data.session.user.id, 
-                p_valor: valor 
-            });
-        } catch (e) {
-            console.warn("Débito local realizado, sync falhou:", e);
-        }
-    },
-    
-    async creditar(valor) {
-        // CREDITA LOCALMENTE PRIMEIRO
-        this.saldoLocal += valor;
-        
-        if (!sistemaOnline) return;
-        
-        try {
-            const { data } = await supabaseClient.auth.getSession();
-            if (!data?.session) return;
-            
-            // Sincroniza ganho com o banco
-            await supabaseClient.rpc('creditar_saldo', { 
-                p_user_id: data.session.user.id, 
-                p_valor: valor 
-            });
-        } catch (e) {
-            console.warn("Crédito local realizado, sync falhou:", e);
-        }
-    },
-    
-    async atualizarTela() {
-        const saldo = await this.get();
-        const el = document.getElementById('balance');
-        el.textContent = dinheiro(saldo);
-        el.style.color = '#aaff5d'; // Garante verde
-        return saldo;
-    }
-};
+}catch(e){
+
+    console.error(
+        "Erro Supabase:",
+        e
+    );
+
+}
+
 
 /* =====================================================
-   LÓGICA DO JOGO
+   SISTEMA DE SALDO — NÃO ALTERADO
 ===================================================== */
+
+window.SistemaSaldo = {
+
+    saldoLocal:0,
+
+    async get(){
+
+        if(!sistemaOnline)
+            return this.saldoLocal;
+
+        try{
+
+            const {data} =
+                await supabaseClient
+                .auth
+                .getSession();
+
+            if(!data?.session)
+                throw new Error(
+                    'Sem sessão'
+                );
+
+            const {
+                data:saldoData,
+                error
+            } =
+                await supabaseClient
+                .from('saldos')
+                .select('valor')
+                .eq(
+                    'user_id',
+                    data.session.user.id
+                )
+                .single();
+
+            if(error)
+                throw error;
+
+            this.saldoLocal =
+                Number(
+                    saldoData?.valor || 0
+                );
+
+            return this.saldoLocal;
+
+        }catch(e){
+
+            console.warn(
+                "Falha ao buscar saldo real:",
+                e
+            );
+
+            return this.saldoLocal;
+        }
+    },
+
+    async debitar(valor){
+
+        this.saldoLocal -= valor;
+
+        if(!sistemaOnline)
+            return;
+
+        try{
+
+            const {data} =
+                await supabaseClient
+                .auth
+                .getSession();
+
+            if(!data?.session)
+                return;
+
+            await supabaseClient
+            .rpc(
+                'debitar_saldo',
+                {
+                    p_user_id:
+                        data.session.user.id,
+
+                    p_valor:
+                        valor
+                }
+            );
+
+        }catch(e){
+
+            console.warn(
+                "Débito local realizado:",
+                e
+            );
+        }
+    },
+
+    async creditar(valor){
+
+        this.saldoLocal += valor;
+
+        if(!sistemaOnline)
+            return;
+
+        try{
+
+            const {data} =
+                await supabaseClient
+                .auth
+                .getSession();
+
+            if(!data?.session)
+                return;
+
+            await supabaseClient
+            .rpc(
+                'creditar_saldo',
+                {
+                    p_user_id:
+                        data.session.user.id,
+
+                    p_valor:
+                        valor
+                }
+            );
+
+        }catch(e){
+
+            console.warn(
+                "Crédito local realizado:",
+                e
+            );
+        }
+    },
+
+    async atualizarTela(){
+
+        const saldo =
+            await this.get();
+
+        const el =
+            document.getElementById(
+                'balance'
+            );
+
+        el.textContent =
+            dinheiro(saldo);
+
+        el.style.color =
+            '#aaff5d';
+
+        return saldo;
+    }
+
+};
+
+
+/* =====================================================
+   SONS
+   Não precisa baixar nenhum arquivo.
+===================================================== */
+
+let audioContext = null;
+
+function iniciarAudio(){
+
+    if(!audioContext){
+
+        audioContext =
+            new (
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+    }
+
+    if(
+        audioContext.state ===
+        "suspended"
+    ){
+
+        audioContext.resume();
+    }
+}
+
+
+/* Som curto de botão */
+
+function somBotao(){
+
+    iniciarAudio();
+
+    const agora =
+        audioContext.currentTime;
+
+    const osc =
+        audioContext.createOscillator();
+
+    const ganho =
+        audioContext.createGain();
+
+    osc.type = "square";
+
+    osc.frequency.setValueAtTime(
+        520,
+        agora
+    );
+
+    osc.frequency.exponentialRampToValueAtTime(
+        760,
+        agora + .07
+    );
+
+    ganho.gain.setValueAtTime(
+        .08,
+        agora
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+        .001,
+        agora + .09
+    );
+
+    osc.connect(ganho);
+    ganho.connect(
+        audioContext.destination
+    );
+
+    osc.start(agora);
+    osc.stop(agora + .1);
+}
+
+
+/* Som de cada parada */
+
+function somParada(){
+
+    iniciarAudio();
+
+    const agora =
+        audioContext.currentTime;
+
+    const osc =
+        audioContext.createOscillator();
+
+    const ganho =
+        audioContext.createGain();
+
+    osc.type = "triangle";
+
+    osc.frequency.setValueAtTime(
+        180,
+        agora
+    );
+
+    osc.frequency.exponentialRampToValueAtTime(
+        90,
+        agora + .12
+    );
+
+    ganho.gain.setValueAtTime(
+        .15,
+        agora
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+        .001,
+        agora + .14
+    );
+
+    osc.connect(ganho);
+    ganho.connect(
+        audioContext.destination
+    );
+
+    osc.start(agora);
+    osc.stop(agora + .15);
+}
+
+
+/* Som do giro */
+
+let somGiroTimer = null;
+
+function iniciarSomGiro(){
+
+    iniciarAudio();
+
+    pararSomGiro();
+
+    somGiroTimer =
+        setInterval(
+            () => {
+
+                if(!spinning)
+                    return;
+
+                const agora =
+                    audioContext.currentTime;
+
+                const osc =
+                    audioContext.createOscillator();
+
+                const ganho =
+                    audioContext.createGain();
+
+                osc.type = "square";
+
+                osc.frequency.value =
+                    110;
+
+                ganho.gain.setValueAtTime(
+                    .025,
+                    agora
+                );
+
+                ganho.gain.exponentialRampToValueAtTime(
+                    .001,
+                    agora + .055
+                );
+
+                osc.connect(ganho);
+
+                ganho.connect(
+                    audioContext.destination
+                );
+
+                osc.start(agora);
+
+                osc.stop(
+                    agora + .06
+                );
+
+            },
+            115
+        );
+}
+
+function pararSomGiro(){
+
+    if(somGiroTimer){
+
+        clearInterval(
+            somGiroTimer
+        );
+
+        somGiroTimer = null;
+    }
+}
+
+
+/* Som de vitória */
+
+function somVitoria(){
+
+    iniciarAudio();
+
+    const notas =
+        [523,659,784,1046];
+
+    notas.forEach(
+        (frequencia,index) => {
+
+            setTimeout(
+                () => {
+
+                    const agora =
+                        audioContext.currentTime;
+
+                    const osc =
+                        audioContext.createOscillator();
+
+                    const ganho =
+                        audioContext.createGain();
+
+                    osc.type =
+                        "sine";
+
+                    osc.frequency.value =
+                        frequencia;
+
+                    ganho.gain.setValueAtTime(
+                        .11,
+                        agora
+                    );
+
+                    ganho.gain.exponentialRampToValueAtTime(
+                        .001,
+                        agora + .3
+                    );
+
+                    osc.connect(ganho);
+
+                    ganho.connect(
+                        audioContext.destination
+                    );
+
+                    osc.start(agora);
+
+                    osc.stop(
+                        agora + .32
+                    );
+
+                },
+                index * 110
+            );
+
+        }
+    );
+}
+
+
+/* Som de derrota */
+
+function somDerrota(){
+
+    iniciarAudio();
+
+    const agora =
+        audioContext.currentTime;
+
+    const osc =
+        audioContext.createOscillator();
+
+    const ganho =
+        audioContext.createGain();
+
+    osc.type =
+        "sawtooth";
+
+    osc.frequency.setValueAtTime(
+        220,
+        agora
+    );
+
+    osc.frequency.exponentialRampToValueAtTime(
+        75,
+        agora + .45
+    );
+
+    ganho.gain.setValueAtTime(
+        .08,
+        agora
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+        .001,
+        agora + .5
+    );
+
+    osc.connect(ganho);
+
+    ganho.connect(
+        audioContext.destination
+    );
+
+    osc.start(agora);
+
+    osc.stop(
+        agora + .52
+    );
+}
+
+
+/* =====================================================
+   SÍMBOLOS NOVOS
+===================================================== */
+
 const symbols = [
-  `<div class="symbol"><div class="five">5</div></div>`,
-  `<div class="symbol"><div class="face">🙂</div><div class="x2">×2</div></div>`,
-  `<div class="symbol"><div class="coin">0,05</div></div>`,
-  `<div class="symbol"><div class="five">5</div></div>`,
-  `<div class="symbol"><div class="face">😄</div><div class="x2">×2</div></div>`,
-  `<div class="symbol"><div class="coin">0,05</div></div>`
+
+    `
+    <div class="symbol diamante">
+        <div class="icone">💎</div>
+        <div class="valor">×5</div>
+    </div>
+    `,
+
+    `
+    <div class="symbol coroa">
+        <div class="icone">👑</div>
+        <div class="valor">×10</div>
+    </div>
+    `,
+
+    `
+    <div class="symbol fogo">
+        <div class="icone">🔥</div>
+        <div class="valor">×3</div>
+    </div>
+    `,
+
+    `
+    <div class="symbol energia">
+        <div class="icone">⚡</div>
+        <div class="valor">×4</div>
+    </div>
+    `,
+
+    `
+    <div class="symbol">
+        <div class="icone">💰</div>
+        <div class="valor">×6</div>
+    </div>
+    `,
+
+    `
+    <div class="symbol foguete">
+        <div class="icone">🚀</div>
+        <div class="valor">×8</div>
+    </div>
+    `
+
 ];
 
-const reels = [document.getElementById("reel1"), document.getElementById("reel2"), document.getElementById("reel3")];
-const messageEl = document.getElementById("message");
-const balanceEl = document.getElementById("balance");
-const betEl = document.getElementById("bet");
-const spinBtn = document.getElementById("spinButton");
+
+const reels = [
+
+    document.getElementById("reel1"),
+
+    document.getElementById("reel2"),
+
+    document.getElementById("reel3")
+
+];
+
+const messageEl =
+    document.getElementById(
+        "message"
+    );
+
+const balanceEl =
+    document.getElementById(
+        "balance"
+    );
+
+const betEl =
+    document.getElementById(
+        "bet"
+    );
+
+const spinBtn =
+    document.getElementById(
+        "spinButton"
+    );
+
 
 let bet = 0.50;
+
 let spinning = false;
 
-function dinheiro(v) { return "R$" + Number(v).toFixed(2).replace(".", ","); }
 
-function buildReels() {
-    reels.forEach((reel, col) => {
-        let html = "";
-        for (let i = 0; i < 40; i++) {
-            html += symbols[(i + col * 2) % symbols.length];
+/* =====================================================
+   FUNÇÕES
+===================================================== */
+
+function dinheiro(v){
+
+    return "R$" +
+        Number(v)
+        .toFixed(2)
+        .replace(
+            ".",
+            ","
+        );
+}
+
+
+function buildReels(){
+
+    reels.forEach(
+        (reel,col) => {
+
+            let html = "";
+
+            for(
+                let i=0;
+                i<45;
+                i++
+            ){
+
+                const indice =
+                    (
+                        i +
+                        col * 2
+                    ) %
+                    symbols.length;
+
+                html +=
+                    symbols[indice];
+            }
+
+            reel.innerHTML =
+                html;
+
         }
-        reel.innerHTML = html;
-    });
+    );
 }
 
-function atualizarAposta() { 
-    betEl.textContent = dinheiro(bet); 
-    betEl.style.color = '#aaff5d'; 
+
+function atualizarAposta(){
+
+    betEl.textContent =
+        dinheiro(bet);
+
+    betEl.style.color =
+        '#aaff5d';
 }
 
-function sound() { 
-    if(spinning) return; 
-    messageEl.textContent = "🔊 Som alternado"; 
-    messageEl.style.color = "#61fff4"; 
+
+function sound(){
+
+    if(spinning)
+        return;
+
+    somBotao();
+
+    messageEl.textContent =
+        "🔊 Som ativado";
+
+    messageEl.style.color =
+        "#61fff4";
 }
 
-function plus() {
-    if(spinning) return;
-    bet = Math.min(5, Number((bet + 0.50).toFixed(2)));
+
+function plus(){
+
+    if(spinning)
+        return;
+
+    somBotao();
+
+    bet =
+        Math.min(
+            5,
+            Number(
+                (
+                    bet + .50
+                ).toFixed(2)
+            )
+        );
+
     atualizarAposta();
 }
 
-function minus() {
-    if(spinning) return;
-    bet = Math.max(0.50, Number((bet - 0.50).toFixed(2)));
+
+function minus(){
+
+    if(spinning)
+        return;
+
+    somBotao();
+
+    bet =
+        Math.max(
+            .50,
+            Number(
+                (
+                    bet - .50
+                ).toFixed(2)
+            )
+        );
+
     atualizarAposta();
 }
+
+
+/* =====================================================
+   RELÓGIO
+===================================================== */
 
 let segundos = 0;
-function updateClock() {
-    setInterval(() => {
-        segundos++;
-        const h = Math.floor(segundos / 3600) % 24;
-        const m = Math.floor((segundos % 3600) / 60);
-        const s = segundos % 60;
-        document.getElementById("clock").textContent = 
-            [h,m,s].map(n => String(n).padStart(2,"0")).join(":");
-    }, 1000);
+
+function updateClock(){
+
+    setInterval(
+        () => {
+
+            segundos++;
+
+            const h =
+                Math.floor(
+                    segundos / 3600
+                ) % 24;
+
+            const m =
+                Math.floor(
+                    (
+                        segundos % 3600
+                    ) / 60
+                );
+
+            const s =
+                segundos % 60;
+
+            document.getElementById(
+                "clock"
+            ).textContent =
+
+                [
+                    h,
+                    m,
+                    s
+                ]
+                .map(
+                    n =>
+                        String(n)
+                        .padStart(
+                            2,
+                            "0"
+                        )
+                )
+                .join(":");
+
+        },
+        1000
+    );
 }
 
-async function init() {
+
+/* =====================================================
+   INICIALIZAÇÃO
+===================================================== */
+
+async function init(){
+
     buildReels();
+
     updateClock();
-    await window.SistemaSaldo.atualizarTela();
-    messageEl.textContent = "Pronto para jogar";
-    messageEl.style.color = "#a8ff67";
+
+    await window.SistemaSaldo
+        .atualizarTela();
+
+    messageEl.textContent =
+        "🎰 Pronto para jogar";
+
+    messageEl.style.color =
+        "#a8ff67";
 }
 
-async function spin() {
-    if (spinning) return;
 
-    const saldoAtual = await window.SistemaSaldo.get();
-    if (saldoAtual < bet) {
-        messageEl.textContent = `❌ Saldo insuficiente`;
-        messageEl.style.color = "#ff4d4d";
+/* =====================================================
+   GIRAR
+===================================================== */
+
+async function spin(){
+
+    if(spinning)
+        return;
+
+    iniciarAudio();
+
+    somBotao();
+
+    const saldoAtual =
+        await window.SistemaSaldo
+        .get();
+
+    if(
+        saldoAtual < bet
+    ){
+
+        messageEl.textContent =
+            "❌ Saldo insuficiente";
+
+        messageEl.style.color =
+            "#ff4d4d";
+
+        somDerrota();
+
         return;
     }
 
+
     spinning = true;
+
     spinBtn.disabled = true;
-    messageEl.textContent = "Girando...";
-    messageEl.style.color = "#61fff4";
 
-    // 1. DEBITA IMEDIATAMENTE (Local + Sync Banco)
-    await window.SistemaSaldo.debitar(bet);
-    await window.SistemaSaldo.atualizarTela();
+    spinBtn.classList.add(
+        "girando"
+    );
 
-    // 2. ANIMAÇÃO DOS ROLOS
-    reels.forEach((reel, index) => {
-        reel.style.transition = "none";
-        reel.style.transform = "translateY(0)";
-        void reel.offsetHeight;
-        const casas = 18 + Math.floor(Math.random() * 8);
-        const distance = -((casas + index * 2) * 157);
-        const duracao = 1.15 + (index * 0.25);
-        reel.style.transition = `transform ${duracao}s cubic-bezier(.12,.78,.18,1)`;
-        reel.style.transform = `translateY(${distance}px)`;
-    });
 
-    // 3. RESULTADO E CRÉDITO (Sempre ocorre)
-    setTimeout(async () => {
-        const ganhou = Math.random() > 0.6; 
-        let ganhoValor = 0;
-        
-        if (ganhou) {
-            ganhoValor = bet * (Math.floor(Math.random() * 5) + 2);
-            // CREDITA IMEDIATAMENTE (Local + Sync Banco)
-            await window.SistemaSaldo.creditar(ganhoValor);
-            messageEl.textContent = `✅ Ganhou ${dinheiro(ganhoValor)}!`;
-            messageEl.style.color = "#aaff5d";
-        } else {
-            messageEl.textContent = "Não foi desta vez.";
-            messageEl.style.color = "#ff7b7b";
+    messageEl.textContent =
+        "🎰 Girando...";
+
+    messageEl.style.color =
+        "#61fff4";
+
+
+    /* DEBITA */
+
+    await window.SistemaSaldo
+        .debitar(
+            bet
+        );
+
+    await window.SistemaSaldo
+        .atualizarTela();
+
+
+    /* SOM */
+
+    iniciarSomGiro();
+
+
+    /* =================================================
+       ANIMAÇÃO DOS ROLOS
+    ================================================= */
+
+    reels.forEach(
+        (reel,index) => {
+
+            reel.style.transition =
+                "none";
+
+            reel.style.transform =
+                "translateY(0)";
+
+            void reel.offsetHeight;
+
+
+            const casas =
+                20 +
+                Math.floor(
+                    Math.random() * 8
+                );
+
+
+            const distance =
+                -(
+                    (
+                        casas +
+                        index * 2
+                    ) * 157
+                );
+
+
+            const duracao =
+                1.35 +
+                index * .35;
+
+
+            reel.style.transition =
+                `transform ${duracao}s cubic-bezier(.12,.78,.18,1)`;
+
+
+            reel.style.transform =
+                `translateY(${distance}px)`;
+
+
+            setTimeout(
+                () => {
+
+                    somParada();
+
+                },
+                duracao * 1000
+            );
+
         }
+    );
 
-        // Atualiza tela final
-        await window.SistemaSaldo.atualizarTela();
-        
-        spinning = false;
-        spinBtn.disabled = false;
-    }, 1900);
+
+    /* =================================================
+       RESULTADO
+    ================================================= */
+
+    setTimeout(
+        async () => {
+
+            pararSomGiro();
+
+
+            const ganhou =
+                Math.random() > .60;
+
+
+            let ganhoValor = 0;
+
+
+            if(ganhou){
+
+                ganhoValor =
+                    bet *
+                    (
+                        Math.floor(
+                            Math.random() * 5
+                        ) + 2
+                    );
+
+
+                await window.SistemaSaldo
+                    .creditar(
+                        ganhoValor
+                    );
+
+
+                messageEl.textContent =
+                    `🎉 GANHOU ${dinheiro(ganhoValor)}!`;
+
+                messageEl.style.color =
+                    "#aaff5d";
+
+
+                somVitoria();
+
+
+            }else{
+
+                messageEl.textContent =
+                    "💥 Não foi desta vez...";
+
+                messageEl.style.color =
+                    "#ff7b7b";
+
+
+                somDerrota();
+
+            }
+
+
+            await window.SistemaSaldo
+                .atualizarTela();
+
+
+            spinning = false;
+
+            spinBtn.disabled = false;
+
+            spinBtn.classList.remove(
+                "girando"
+            );
+
+
+        },
+        2450
+    );
+
 }
 
+
+/* =====================================================
+   INICIAR
+===================================================== */
+
 init();
+
 </script>
+
 </body>
 </html>
