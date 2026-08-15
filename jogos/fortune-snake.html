@@ -1,5 +1,3 @@
-Fortune Snake — versão ampliada com efeitos
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -10,6 +8,7 @@ Fortune Snake — versão ampliada com efeitos
 <style>
 * {
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 html, body {
@@ -21,7 +20,7 @@ html, body {
 body {
     min-height: 100vh;
     overflow-x: hidden;
-    background: #09030f;
+    background: #08000f;
     color: white;
     font-family: Arial, sans-serif;
     display: flex;
@@ -31,7 +30,7 @@ body {
 }
 
 /* =====================================================
-   FUNDO
+   FUNDO ANIMADO — SEM QUADRADO LARANJA
 ===================================================== */
 
 body::before {
@@ -42,13 +41,23 @@ body::before {
     z-index: -3;
 
     background:
-        radial-gradient(circle at 15% 25%, rgba(255,0,204,.35), transparent 25%),
-        radial-gradient(circle at 85% 20%, rgba(0,150,255,.28), transparent 25%),
-        radial-gradient(circle at 80% 80%, rgba(255,190,0,.25), transparent 28%),
-        radial-gradient(circle at 20% 85%, rgba(130,0,255,.35), transparent 28%);
+        radial-gradient(circle at 15% 25%,
+            rgba(255, 0, 204, .28),
+            transparent 28%),
+        radial-gradient(circle at 85% 25%,
+            rgba(0, 120, 255, .25),
+            transparent 28%),
+        radial-gradient(circle at 75% 80%,
+            rgba(130, 0, 255, .28),
+            transparent 30%),
+        radial-gradient(circle at 20% 80%,
+            rgba(0, 255, 200, .16),
+            transparent 28%);
 
-    filter: blur(20px);
-    animation: fundo 10s ease-in-out infinite alternate;
+    filter: blur(28px);
+
+    animation:
+        fundoMovimento 12s ease-in-out infinite alternate;
 }
 
 body::after {
@@ -59,25 +68,30 @@ body::after {
     z-index: -2;
 
     background-image:
-        radial-gradient(circle, rgba(255,255,255,.8) 1px, transparent 2px);
+        radial-gradient(
+            circle,
+            rgba(255,255,255,.75) 1px,
+            transparent 2px
+        );
 
     background-size: 55px 55px;
-    opacity: .28;
+    opacity: .25;
 
-    animation: estrelas 12s linear infinite;
+    animation:
+        estrelas 15s linear infinite;
 }
 
-@keyframes fundo {
+@keyframes fundoMovimento {
     0% {
         transform: translate(-3%, -2%) scale(1);
     }
 
     50% {
-        transform: translate(4%, 3%) scale(1.08);
+        transform: translate(3%, 2%) scale(1.08);
     }
 
     100% {
-        transform: translate(-2%, 4%) scale(1.04);
+        transform: translate(-2%, 3%) scale(1.04);
     }
 }
 
@@ -87,52 +101,7 @@ body::after {
     }
 
     to {
-        transform: translateY(-100px);
-    }
-}
-
-/* =====================================================
-   EFEITO DE RAIO
-===================================================== */
-
-.raio {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 50;
-    opacity: 0;
-    background:
-        radial-gradient(
-            ellipse at center,
-            rgba(255,255,255,.35),
-            rgba(120,180,255,.15),
-            transparent 65%
-        );
-}
-
-.raio.ativo {
-    animation: clarãoRaio 1.15s ease-out;
-}
-
-@keyframes clarãoRaio {
-    0% {
-        opacity: 0;
-    }
-
-    18% {
-        opacity: .9;
-    }
-
-    30% {
-        opacity: .15;
-    }
-
-    48% {
-        opacity: .65;
-    }
-
-    100% {
-        opacity: 0;
+        transform: translateY(-120px);
     }
 }
 
@@ -149,13 +118,15 @@ body::after {
     background:
         radial-gradient(
             circle,
-            rgba(255,215,0,.18),
-            rgba(155,0,255,.12),
+            rgba(255,0,204,.12),
+            rgba(100,0,255,.08),
             transparent 70%
         );
 
-    filter: blur(15px);
-    animation: glow 5s ease-in-out infinite alternate;
+    filter: blur(20px);
+
+    animation:
+        glow 6s ease-in-out infinite alternate;
 
     pointer-events: none;
     z-index: -1;
@@ -164,24 +135,72 @@ body::after {
 @keyframes glow {
     from {
         transform: scale(.9);
-        opacity: .55;
+        opacity: .45;
     }
 
     to {
-        transform: scale(1.15);
-        opacity: .9;
+        transform: scale(1.12);
+        opacity: .8;
     }
 }
 
 /* =====================================================
-   JOGO — MAIOR
+   EFEITO DE RAIO LENTO
+===================================================== */
+
+.lightning {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+    opacity: 0;
+    background:
+        radial-gradient(
+            circle at 50% 40%,
+            rgba(255,255,255,.18),
+            transparent 45%
+        );
+}
+
+.lightning.active {
+    animation: raioLento 1.8s ease-out;
+}
+
+@keyframes raioLento {
+    0% {
+        opacity: 0;
+    }
+
+    15% {
+        opacity: .65;
+    }
+
+    28% {
+        opacity: .08;
+    }
+
+    42% {
+        opacity: .5;
+    }
+
+    60% {
+        opacity: .04;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+/* =====================================================
+   JOGO — MAIOR E MAIS PRÓXIMO DA TELA
 ===================================================== */
 
 .game-container {
-    width: 440px;
+    width: 430px;
     max-width: 96vw;
 
-    padding: 25px;
+    padding: 22px;
 
     text-align: center;
 
@@ -196,27 +215,47 @@ body::after {
         );
 
     box-shadow:
-        0 0 25px rgba(255,215,0,.28),
-        0 0 70px rgba(145,0,255,.22);
+        0 0 20px rgba(255,215,0,.22),
+        0 0 60px rgba(145,0,255,.18);
 
     backdrop-filter: blur(8px);
 
     position: relative;
 
+    transform-origin: center;
     transition: transform .12s ease;
 }
 
-.game-container.tremendo {
-    animation: tremor .22s linear 3;
+/* vibração visual da máquina */
+
+.game-container.shake {
+    animation: shakeGame .55s ease-in-out;
 }
 
-@keyframes tremor {
-    0%   { transform: translate(0,0); }
-    20%  { transform: translate(-3px,2px); }
-    40%  { transform: translate(3px,-2px); }
-    60%  { transform: translate(-2px,-3px); }
-    80%  { transform: translate(3px,2px); }
-    100% { transform: translate(0,0); }
+@keyframes shakeGame {
+    0%,100% {
+        transform: translate(0,0);
+    }
+
+    15% {
+        transform: translate(-4px,2px);
+    }
+
+    30% {
+        transform: translate(4px,-2px);
+    }
+
+    45% {
+        transform: translate(-3px,-2px);
+    }
+
+    60% {
+        transform: translate(3px,2px);
+    }
+
+    75% {
+        transform: translate(-2px,0);
+    }
 }
 
 /* =====================================================
@@ -225,11 +264,14 @@ body::after {
 
 h2 {
     margin: 0 0 5px;
+
     color: #ffd700;
 
+    font-size: 27px;
+
     text-shadow:
-        0 0 8px #ffd700,
-        0 0 20px #ff00cc;
+        0 0 8px rgba(255,215,0,.5),
+        0 0 20px rgba(255,0,204,.3);
 }
 
 .subtitle {
@@ -243,11 +285,9 @@ h2 {
 
 .message-area {
     min-height: 32px;
-    margin: 14px 0;
+    margin: 13px 0;
 
     font-weight: bold;
-    font-size: 15px;
-
     color: #00ed91;
 
     text-shadow:
@@ -260,9 +300,9 @@ h2 {
 
 .slot-machine {
     display: flex;
-    gap: 9px;
+    gap: 8px;
 
-    padding: 15px;
+    padding: 14px;
 
     background:
         linear-gradient(
@@ -277,14 +317,14 @@ h2 {
     overflow: hidden;
 
     box-shadow:
-        inset 0 0 30px #000,
+        inset 0 0 25px #000,
         0 0 20px rgba(115,0,255,.18);
 }
 
 .reel {
     flex: 1;
 
-    height: 115px;
+    height: 108px;
 
     overflow: hidden;
 
@@ -298,12 +338,10 @@ h2 {
         );
 
     border: 2px solid #51306d;
-    border-radius: 12px;
+    border-radius: 11px;
 
     box-shadow:
-        inset 0 0 18px #000;
-
-    transition: box-shadow .25s ease;
+        inset 0 0 15px #000;
 }
 
 .reel-strip {
@@ -314,13 +352,13 @@ h2 {
 }
 
 .symbol {
-    height: 115px;
+    height: 108px;
 
     display: flex;
     justify-content: center;
     align-items: center;
 
-    font-size: 56px;
+    font-size: 52px;
 
     text-shadow:
         0 0 12px rgba(255,255,255,.2);
@@ -328,14 +366,16 @@ h2 {
 
 .reel.stopping {
     box-shadow:
-        0 0 25px rgba(255,215,0,.65),
-        inset 0 0 18px #000;
+        0 0 24px rgba(255,215,0,.65),
+        inset 0 0 15px #000;
 }
 
 .win {
     animation: pulse .5s infinite;
+
     text-shadow:
-        0 0 15px #ffd700;
+        0 0 15px #ffd700,
+        0 0 30px #ff00cc;
 }
 
 @keyframes pulse {
@@ -344,7 +384,7 @@ h2 {
     }
 
     50% {
-        transform: scale(1.1);
+        transform: scale(1.08);
     }
 }
 
@@ -353,12 +393,12 @@ h2 {
 ===================================================== */
 
 .result {
-    margin-top: 15px;
+    margin-top: 13px;
 
-    min-height: 35px;
+    min-height: 34px;
 
     font-weight: bold;
-    font-size: 20px;
+    font-size: 19px;
 }
 
 /* =====================================================
@@ -371,20 +411,22 @@ h2 {
     justify-content: space-between;
     align-items: center;
 
-    gap: 10px;
+    gap: 12px;
 
-    margin-top: 20px;
+    margin-top: 19px;
 }
 
 .bet {
     background: #0b0610;
 
     border: 1px solid #4a2c7a;
+
     border-radius: 22px;
 
-    padding: 12px 15px;
+    padding: 11px 15px;
 
     color: #ffd700;
+
     font-weight: bold;
 
     white-space: nowrap;
@@ -400,7 +442,7 @@ button {
 
     padding: 14px 28px;
 
-    border-radius: 28px;
+    border-radius: 26px;
 
     background:
         linear-gradient(
@@ -410,13 +452,13 @@ button {
         );
 
     box-shadow:
-        0 5px 20px rgba(255,0,204,.35);
+        0 5px 18px rgba(255,0,204,.35);
 
     cursor: pointer;
 
     transition:
-        transform .15s,
-        box-shadow .2s;
+        transform .12s ease,
+        box-shadow .2s ease;
 }
 
 button:active {
@@ -425,99 +467,63 @@ button:active {
 
 button:hover {
     box-shadow:
-        0 0 28px rgba(255,0,204,.65);
+        0 0 25px rgba(255,0,204,.65);
 }
 
 button:disabled {
     opacity: .5;
     filter: grayscale(1);
-    cursor: not-allowed;
 }
 
 /* =====================================================
-   BOTÃO DE SOM
+   RESPONSIVO
 ===================================================== */
 
-.sound-button {
-    position: absolute;
-
-    top: 15px;
-    right: 15px;
-
-    width: 42px;
-    height: 42px;
-
-    padding: 0;
-
-    border-radius: 50%;
-
-    font-size: 20px;
-
-    background:
-        linear-gradient(
-            145deg,
-            #29153c,
-            #12081d
-        );
-
-    border: 1px solid #7046a1;
-
-    box-shadow:
-        0 0 10px rgba(140,0,255,.3);
-}
-
-/* =====================================================
-   CELULAR
-===================================================== */
-
-@media(max-width:480px) {
+@media (max-width: 420px) {
 
     .game-container {
         width: 96vw;
-        padding: 20px;
+        padding: 18px;
     }
 
     .reel {
-        height: 105px;
+        height: 100px;
     }
 
     .symbol {
-        height: 105px;
-        font-size: 50px;
+        height: 100px;
+        font-size: 46px;
     }
 
     .slot-machine {
-        padding: 12px;
-        gap: 7px;
+        padding: 10px;
+        gap: 6px;
     }
 }
 
-@media(max-width:380px) {
+@media (max-width: 360px) {
 
     .game-container {
-        padding: 17px;
+        padding: 15px;
     }
 
     .reel {
-        height: 90px;
+        height: 88px;
     }
 
     .symbol {
-        height: 90px;
-        font-size: 43px;
-    }
-
-    .controls {
-        gap: 7px;
+        height: 88px;
+        font-size: 40px;
     }
 
     .bet {
-        padding: 10px;
         font-size: 13px;
+        padding: 9px 10px;
     }
 
     button {
         padding: 12px 20px;
+        font-size: 16px;
     }
 }
 </style>
@@ -526,16 +532,9 @@ button:disabled {
 <body>
 
 <div class="background-glow"></div>
-<div class="raio" id="raio"></div>
+<div class="lightning" id="lightning"></div>
 
 <div class="game-container" id="gameContainer">
-
-    <button
-        class="sound-button"
-        id="soundButton"
-        type="button"
-        onclick="alternarSom()"
-    >🔊</button>
 
     <h2>🐍 Fortune Snake</h2>
 
@@ -573,7 +572,7 @@ button:disabled {
             Aposta: R$ 1,00
         </div>
 
-        <button id="btnSpin" type="button">
+        <button id="btnSpin">
             GIRAR
         </button>
 
@@ -586,12 +585,12 @@ button:disabled {
 <script>
 
 /* =====================================================
-   SISTEMA DE SOM
+   SOM DA ROLETA / CAÇA-NÍQUEIS
 ===================================================== */
 
 let audioCtx = null;
-let somLigado = true;
-let somGiroInterval = null;
+let somAtivo = true;
+let somIntervalo = null;
 
 function iniciarAudio() {
 
@@ -613,10 +612,10 @@ function tocarTom(
     frequencia,
     duracao,
     tipo = "sine",
-    volume = 0.04
+    volume = 0.035
 ) {
 
-    if (!somLigado) return;
+    if (!somAtivo) return;
 
     iniciarAudio();
 
@@ -653,47 +652,64 @@ function tocarTom(
     );
 }
 
-/* =====================================================
-   SOM DE GIRO — TIPO ROLETA
-===================================================== */
+/* Som característico de ponteiro de roleta */
 
 function iniciarSomRoleta() {
 
-    if (!somLigado) return;
+    if (!somAtivo) return;
+
+    iniciarAudio();
 
     pararSomRoleta();
 
     let passo = 0;
+    let intervalo = 95;
 
-    somGiroInterval = setInterval(() => {
+    function tick() {
+
+        if (!somAtivo) return;
 
         const frequencias = [
-            220,
-            250,
-            280,
+            260,
             310,
-            340
+            370,
+            440,
+            520
         ];
 
         tocarTom(
             frequencias[passo % frequencias.length],
-            0.055,
+            .045,
             "square",
-            0.025
+            .018
         );
 
         passo++;
 
-    }, 115);
+        /* Vai ficando mais espaçado lentamente */
+        intervalo = Math.min(
+            170,
+            intervalo + 3
+        );
+
+        somIntervalo = setTimeout(
+            tick,
+            intervalo
+        );
+    }
+
+    tick();
 }
 
 function pararSomRoleta() {
 
-    if (somGiroInterval) {
+    if (somIntervalo) {
 
-        clearInterval(somGiroInterval);
+        clearTimeout(
+            somIntervalo
+        );
 
-        somGiroInterval = null;
+        somIntervalo = null;
     }
 }
 
@@ -703,21 +719,49 @@ function pararSomRoleta() {
 
 function somVitoria() {
 
-    if (!somLigado) return;
+    if (!somAtivo) return;
 
-    tocarTom(523, .15, "sine", .07);
+    iniciarAudio();
+
+    tocarTom(
+        523,
+        .14,
+        "sine",
+        .055
+    );
 
     setTimeout(() => {
-        tocarTom(659, .15, "sine", .07);
+
+        tocarTom(
+            659,
+            .14,
+            "sine",
+            .055
+        );
+
     }, 130);
 
     setTimeout(() => {
-        tocarTom(784, .20, "sine", .08);
+
+        tocarTom(
+            784,
+            .18,
+            "sine",
+            .06
+        );
+
     }, 260);
 
     setTimeout(() => {
-        tocarTom(1046, .30, "sine", .06);
-    }, 420);
+
+        tocarTom(
+            1046,
+            .30,
+            "sine",
+            .055
+        );
+
+    }, 410);
 }
 
 /* =====================================================
@@ -726,13 +770,15 @@ function somVitoria() {
 
 function somDerrota() {
 
-    if (!somLigado) return;
+    if (!somAtivo) return;
+
+    iniciarAudio();
 
     tocarTom(
         190,
         .18,
         "sawtooth",
-        .045
+        .035
     );
 
     setTimeout(() => {
@@ -741,128 +787,45 @@ function somDerrota() {
             140,
             .25,
             "sawtooth",
-            .04
+            .03
         );
 
     }, 180);
 }
 
 /* =====================================================
-   SOM DE TROVÃO
+   RAIO + TROVÃO LENTO
 ===================================================== */
 
-function somTrovao() {
-
-    if (!somLigado) return;
-
-    iniciarAudio();
-
-    const duracao = 1.0;
-
-    const ruido =
-        audioCtx.createBufferSource();
-
-    const buffer =
-        audioCtx.createBuffer(
-            1,
-            audioCtx.sampleRate * duracao,
-            audioCtx.sampleRate
-        );
-
-    const dados =
-        buffer.getChannelData(0);
-
-    for (
-        let i = 0;
-        i < dados.length;
-        i++
-    ) {
-
-        const envelope =
-            Math.pow(
-                1 - i / dados.length,
-                2
-            );
-
-        dados[i] =
-            (Math.random() * 2 - 1)
-            * envelope;
-    }
-
-    ruido.buffer = buffer;
-
-    const ganho =
-        audioCtx.createGain();
-
-    ganho.gain.setValueAtTime(
-        .0001,
-        audioCtx.currentTime
-    );
-
-    ganho.gain.linearRampToValueAtTime(
-        .12,
-        audioCtx.currentTime + .08
-    );
-
-    ganho.gain.exponentialRampToValueAtTime(
-        .001,
-        audioCtx.currentTime + duracao
-    );
-
-    ruido.connect(ganho);
-    ganho.connect(audioCtx.destination);
-
-    ruido.start();
-}
-
-/* =====================================================
-   LIGA / DESLIGA SOM
-===================================================== */
-
-function alternarSom() {
-
-    somLigado = !somLigado;
-
-    const botao =
-        document.getElementById("soundButton");
-
-    if (somLigado) {
-
-        botao.textContent = "🔊";
-
-        iniciarAudio();
-
-    } else {
-
-        botao.textContent = "🔇";
-
-        pararSomRoleta();
-    }
-}
-
-/* =====================================================
-   EFEITOS DE GIRO
-===================================================== */
-
-function efeitosGiro() {
+function efeitoRaio() {
 
     const raio =
-        document.getElementById("raio");
+        document.getElementById(
+            "lightning"
+        );
 
-    const container =
-        document.getElementById("gameContainer");
+    const jogo =
+        document.getElementById(
+            "gameContainer"
+        );
 
-    raio.classList.remove("ativo");
+    /* Reinicia animação */
+
+    raio.classList.remove("active");
 
     void raio.offsetWidth;
 
-    raio.classList.add("ativo");
+    raio.classList.add("active");
 
-    container.classList.remove("tremendo");
+    /* Vibração visual */
 
-    void container.offsetWidth;
+    jogo.classList.remove("shake");
 
-    container.classList.add("tremendo");
+    void jogo.offsetWidth;
+
+    jogo.classList.add("shake");
+
+    /* Vibração física do celular */
 
     if (
         navigator.vibrate
@@ -870,24 +833,47 @@ function efeitosGiro() {
 
         navigator.vibrate([
             80,
-            60,
-            100,
-            70,
-            120
+            90,
+            120,
+            110,
+            70
         ]);
     }
 
-    /* trovão mais lento */
+    /*
+       Pequeno trovão grave.
+       Mais lento e discreto para
+       não ficar agressivo.
+    */
 
-    setTimeout(() => {
+    if (somAtivo) {
 
-        somTrovao();
+        setTimeout(() => {
 
-    }, 380);
+            tocarTom(
+                75,
+                .42,
+                "sawtooth",
+                .045
+            );
+
+        }, 260);
+
+        setTimeout(() => {
+
+            tocarTom(
+                48,
+                .65,
+                "sawtooth",
+                .025
+            );
+
+        }, 500);
+    }
 }
 
 /* =====================================================
-   CONFIGURAÇÃO DO JOGO
+   DADOS DO JOGO
 ===================================================== */
 
 const APOSTA = 1.00;
@@ -904,34 +890,66 @@ const SIMBOLOS = [
 const PAGAMENTOS = {
 
     "🍒": 1.20,
-    "🍋": 1.50,
-    "💰": 2.00,
-    "💎": 3.00,
-    "🏆": 4.00,
-    "🐍": 7.00
 
+    "🍋": 1.50,
+
+    "💰": 2.00,
+
+    "💎": 3.00,
+
+    "🏆": 4.00,
+
+    "🐍": 7.00
 };
 
 const msg =
-    document.getElementById("msgArea");
+    document.getElementById(
+        "msgArea"
+    );
 
 const result =
-    document.getElementById("result");
+    document.getElementById(
+        "result"
+    );
 
 const button =
-    document.getElementById("btnSpin");
+    document.getElementById(
+        "btnSpin"
+    );
 
 const reels = [
-    document.getElementById("reel0"),
-    document.getElementById("reel1"),
-    document.getElementById("reel2")
+
+    document.getElementById(
+        "reel0"
+    ),
+
+    document.getElementById(
+        "reel1"
+    ),
+
+    document.getElementById(
+        "reel2"
+    )
 ];
 
 const strips = [
-    document.getElementById("strip0"),
-    document.getElementById("strip1"),
-    document.getElementById("strip2")
+
+    document.getElementById(
+        "strip0"
+    ),
+
+    document.getElementById(
+        "strip1"
+    ),
+
+    document.getElementById(
+        "strip2"
+    )
 ];
+
+/* =====================================================
+   MENSAGEM
+===================================================== */
 
 function mensagem(
     texto,
@@ -952,7 +970,7 @@ function criarRolo(strip) {
 
     for (
         let volta = 0;
-        volta < 10;
+        volta < 12;
         volta++
     ) {
 
@@ -961,18 +979,24 @@ function criarRolo(strip) {
         ) {
 
             const div =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
-            div.className = "symbol";
+            div.className =
+                "symbol";
 
-            div.textContent = simbolo;
+            div.textContent =
+                simbolo;
 
             strip.appendChild(div);
         }
     }
 }
 
-strips.forEach(criarRolo);
+strips.forEach(
+    criarRolo
+);
 
 /* =====================================================
    SÍMBOLO ALEATÓRIO
@@ -994,7 +1018,8 @@ function simboloAleatorio() {
 
 function prepararRolo(strip) {
 
-    strip.style.transition = "none";
+    strip.style.transition =
+        "none";
 
     strip.style.transform =
         "translateY(0px)";
@@ -1012,74 +1037,77 @@ function girarRolo(
     duracao
 ) {
 
-    return new Promise(resolve => {
+    return new Promise(
+        resolve => {
 
-        const strip =
-            strips[index];
+            const strip =
+                strips[index];
 
-        const reel =
-            reels[index];
+            const reel =
+                reels[index];
 
-        const altura = 115;
+            const altura = 108;
 
-        const simbolosPorVolta =
-            SIMBOLOS.length;
+            const simbolosPorVolta =
+                SIMBOLOS.length;
 
-        const simboloFinal =
-            resultado[index];
+            const simboloFinal =
+                resultado[index];
 
-        const posFinal =
-            SIMBOLOS.indexOf(
-                simboloFinal
+            const posFinal =
+                SIMBOLOS.indexOf(
+                    simboloFinal
+                );
+
+            /*
+               Mais voltas para dar
+               sensação real de caça-níquel.
+            */
+
+            const voltas =
+                8 + Math.floor(
+                    Math.random() * 3
+                );
+
+            const deslocamento =
+                -(
+                    (
+                        voltas *
+                        simbolosPorVolta
+                    ) +
+                    posFinal
+                ) * altura;
+
+            prepararRolo(
+                strip
             );
 
-        /*
-         * Mais voltas para dar
-         * sensação de caça-níquel.
-         */
-
-        const voltas =
-            7 +
-            Math.floor(
-                Math.random() * 3
+            reel.classList.remove(
+                "stopping"
             );
-
-        const deslocamento =
-            -(
-                (
-                    voltas *
-                    simbolosPorVolta
-                ) +
-                posFinal
-            ) * altura;
-
-        prepararRolo(strip);
-
-        reel.classList.remove(
-            "stopping"
-        );
-
-        setTimeout(() => {
-
-            strip.style.transition =
-                `transform ${duracao}ms cubic-bezier(.10,.72,.16,1)`;
-
-            strip.style.transform =
-                `translateY(${deslocamento}px)`;
 
             setTimeout(() => {
 
-                reel.classList.add(
-                    "stopping"
-                );
+                strip.style.transition =
+                    `transform ${duracao}ms cubic-bezier(.10,.72,.16,1)`;
 
-                resolve();
+                strip.style.transform =
+                    `translateY(${deslocamento}px)`;
 
-            }, duracao);
+                setTimeout(() => {
 
-        }, index * 140);
+                    reel.classList.add(
+                        "stopping"
+                    );
 
-    });
+                    resolve();
+
+                }, duracao);
+
+            }, index * 160);
+
+        }
+    );
 }
 
 /* =====================================================
@@ -1095,19 +1123,19 @@ async function executarGiro(
         girarRolo(
             0,
             resultado,
-            2400
+            2200
         ),
 
         girarRolo(
             1,
             resultado,
-            2800
+            2600
         ),
 
         girarRolo(
             2,
             resultado,
-            3200
+            3000
         )
 
     ]);
@@ -1122,8 +1150,10 @@ function calcularPremio(
 ) {
 
     if (
-        resultado[0] === resultado[1] &&
-        resultado[1] === resultado[2]
+        resultado[0] ===
+        resultado[1] &&
+        resultado[1] ===
+        resultado[2]
     ) {
 
         return PAGAMENTOS[
@@ -1142,7 +1172,9 @@ button.addEventListener(
     "click",
     async function() {
 
-        if (!window.SistemaSaldo) {
+        if (
+            !window.SistemaSaldo
+        ) {
 
             mensagem(
                 "⚠️ Sistema de saldo não encontrado!",
@@ -1171,25 +1203,28 @@ button.addEventListener(
                     "#ff4d4d"
                 );
 
-                button.disabled = false;
+                button.disabled =
+                    false;
 
                 return;
             }
+
+            /* Raio lento + vibração */
+
+            efeitoRaio();
+
+            /* Som de roleta */
+
+            iniciarSomRoleta();
+
+            /* Debita */
 
             await window.SistemaSaldo.debitar(
                 APOSTA
             );
 
-            /* efeitos visuais */
-
-            efeitosGiro();
-
-            /* som de roleta */
-
-            iniciarSomRoleta();
-
             mensagem(
-                "🎰 Os rolos estão girando..."
+                "🎰 A máquina está girando..."
             );
 
             result.textContent = "";
@@ -1197,7 +1232,9 @@ button.addEventListener(
             const resultado = [
 
                 simboloAleatorio(),
+
                 simboloAleatorio(),
+
                 simboloAleatorio()
 
             ];
@@ -1206,7 +1243,7 @@ button.addEventListener(
                 resultado
             );
 
-            /* parar som */
+            /* Para o som */
 
             pararSomRoleta();
 
@@ -1218,7 +1255,9 @@ button.addEventListener(
                     resultado
                 );
 
-            if (premio > 0) {
+            if (
+                premio > 0
+            ) {
 
                 reels.forEach(
                     reel => {
@@ -1226,7 +1265,6 @@ button.addEventListener(
                         reel.classList.add(
                             "win"
                         );
-
                     }
                 );
 
@@ -1237,11 +1275,11 @@ button.addEventListener(
                 ) {
 
                     navigator.vibrate([
-                        100,
-                        70,
-                        150,
-                        70,
-                        220
+                        80,
+                        60,
+                        120,
+                        60,
+                        180
                     ]);
                 }
 
@@ -1269,16 +1307,21 @@ button.addEventListener(
             }
 
             if (
-                window.SistemaSaldo.atualizarTela
+                window.SistemaSaldo
+                    .atualizarTela
             ) {
 
                 await window.SistemaSaldo
                     .atualizarTela();
             }
 
-        } catch (erro) {
+        } catch (
+            erro
+        ) {
 
-            console.error(erro);
+            console.error(
+                erro
+            );
 
             pararSomRoleta();
 
@@ -1302,9 +1345,10 @@ button.addEventListener(
                     }
                 );
 
-                button.disabled = false;
+                button.disabled =
+                    false;
 
-            }, 600);
+            }, 700);
         }
     }
 );
