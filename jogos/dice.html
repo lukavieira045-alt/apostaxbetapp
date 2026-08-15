@@ -33,24 +33,13 @@ radial-gradient(circle at 50% 100%,#ff0066 0,transparent 30%),
 linear-gradient(135deg,#02020c,#09001c,#00132c);
 
 background-size:180% 180%;
-
 animation:fundo 12s ease-in-out infinite alternate;
 }
 
 @keyframes fundo{
-
-0%{
-background-position:0% 0%
-}
-
-50%{
-background-position:100% 50%
-}
-
-100%{
-background-position:0% 100%
-}
-
+0%{background-position:0% 0%}
+50%{background-position:100% 50%}
+100%{background-position:0% 100%}
 }
 
 
@@ -89,21 +78,15 @@ animation:mov3 7s infinite alternate;
 }
 
 @keyframes mov1{
-to{
-transform:translate(180px,100px) scale(1.3)
-}
+to{transform:translate(180px,100px) scale(1.3)}
 }
 
 @keyframes mov2{
-to{
-transform:translate(-150px,-80px) scale(1.4)
-}
+to{transform:translate(-150px,-80px) scale(1.4)}
 }
 
 @keyframes mov3{
-to{
-transform:translate(80px,-100px) scale(1.3)
-}
+to{transform:translate(80px,-100px) scale(1.3)}
 }
 
 
@@ -123,7 +106,6 @@ bottom:-20px;
 width:4px;
 height:4px;
 border-radius:50%;
-
 background:white;
 
 box-shadow:
@@ -133,58 +115,18 @@ box-shadow:
 animation:subir linear infinite;
 }
 
-.particulas i:nth-child(1){
-left:5%;
-animation-duration:7s
-}
-
-.particulas i:nth-child(2){
-left:15%;
-animation-duration:11s
-}
-
-.particulas i:nth-child(3){
-left:25%;
-animation-duration:8s
-}
-
-.particulas i:nth-child(4){
-left:35%;
-animation-duration:13s
-}
-
-.particulas i:nth-child(5){
-left:45%;
-animation-duration:9s
-}
-
-.particulas i:nth-child(6){
-left:55%;
-animation-duration:12s
-}
-
-.particulas i:nth-child(7){
-left:65%;
-animation-duration:8s
-}
-
-.particulas i:nth-child(8){
-left:75%;
-animation-duration:10s
-}
-
-.particulas i:nth-child(9){
-left:85%;
-animation-duration:7s
-}
-
-.particulas i:nth-child(10){
-left:95%;
-animation-duration:12s
-}
+.particulas i:nth-child(1){left:5%;animation-duration:7s}
+.particulas i:nth-child(2){left:15%;animation-duration:11s}
+.particulas i:nth-child(3){left:25%;animation-duration:8s}
+.particulas i:nth-child(4){left:35%;animation-duration:13s}
+.particulas i:nth-child(5){left:45%;animation-duration:9s}
+.particulas i:nth-child(6){left:55%;animation-duration:12s}
+.particulas i:nth-child(7){left:65%;animation-duration:8s}
+.particulas i:nth-child(8){left:75%;animation-duration:10s}
+.particulas i:nth-child(9){left:85%;animation-duration:7s}
+.particulas i:nth-child(10){left:95%;animation-duration:12s}
 
 @keyframes subir{
-
 0%{
 transform:translateY(0);
 opacity:0;
@@ -198,18 +140,14 @@ opacity:1;
 transform:translateY(-110vh);
 opacity:0;
 }
-
 }
 
 
 /* TÍTULO */
 
 .titulo{
-
 margin-top:20px;
-
 font-size:44px;
-
 font-weight:900;
 
 color:#ffd21c;
@@ -218,11 +156,10 @@ text-shadow:
 0 0 8px #fff,
 0 0 18px #ffd21c,
 0 0 35px #ff8c00;
-
 }
 
 
-/* SALDO */
+/* SALDO REAL */
 
 #saldo{
 
@@ -243,7 +180,6 @@ color:#00ff91;
 font-size:21px;
 
 font-weight:bold;
-
 }
 
 
@@ -252,7 +188,6 @@ font-weight:bold;
 .caixa{
 
 width:92%;
-
 max-width:440px;
 
 margin:auto;
@@ -273,25 +208,27 @@ box-shadow:
 0 0 70px rgba(0,100,255,.18);
 
 backdrop-filter:blur(12px);
-
 }
 
 
 /* =====================================================
-   ÁREA REAL DOS DADOS
+   ÁREA DOS DADOS
+   SEM TELA PRETA
 ===================================================== */
 
 .area-dados{
 
-position:relative;
-
-width:100%;
-
 height:250px;
 
-margin:0 auto;
+display:flex;
 
-overflow:hidden;
+align-items:center;
+
+justify-content:center;
+
+gap:34px;
+
+position:relative;
 
 background:transparent;
 
@@ -299,49 +236,363 @@ border:0;
 
 box-shadow:none;
 
-border-radius:20px;
+perspective:900px;
 
+overflow:visible;
 }
 
 
-/*
-   O Dice Box coloca o canvas
-   automaticamente aqui.
-*/
+/* CHÃO/SOMBRA */
 
-#dice-box{
+.sombra{
 
 position:absolute;
 
-inset:0;
+bottom:35px;
 
-width:100%;
+width:150px;
 
-height:100%;
+height:22px;
 
-background:transparent !important;
+border-radius:50%;
 
-}
+background:rgba(0,0,0,.38);
 
-
-/*
-   CANVAS DO DADO
-*/
-
-#dice-box canvas{
-
-width:100% !important;
-
-height:100% !important;
-
-display:block;
-
-background:transparent !important;
+filter:blur(14px);
 
 }
 
 
-/* RESULTADO */
+/* =====================================================
+   DADO
+===================================================== */
+
+.dado-container{
+
+width:76px;
+
+height:76px;
+
+position:relative;
+
+z-index:3;
+
+perspective:700px;
+
+}
+
+
+.dado{
+
+width:64px;
+
+height:64px;
+
+position:absolute;
+
+left:6px;
+
+top:6px;
+
+transform-style:preserve-3d;
+
+transition:
+transform .65s cubic-bezier(.15,.75,.2,1);
+
+}
+
+
+/* =====================================================
+   FACES
+===================================================== */
+
+.face{
+
+position:absolute;
+
+width:64px;
+
+height:64px;
+
+border-radius:13px;
+
+background:
+linear-gradient(
+145deg,
+#ffffff,
+#dcdcdc
+);
+
+border:2px solid #bcbcbc;
+
+box-shadow:
+inset 0 0 7px rgba(0,0,0,.22),
+0 7px 12px rgba(0,0,0,.45);
+
+display:grid;
+
+grid-template-columns:repeat(3,1fr);
+
+grid-template-rows:repeat(3,1fr);
+
+padding:8px;
+
+backface-visibility:hidden;
+}
+
+
+/* PONTOS */
+
+.ponto{
+
+width:10px;
+
+height:10px;
+
+border-radius:50%;
+
+background:#151515;
+
+box-shadow:
+inset 1px 1px 2px rgba(255,255,255,.3),
+0 1px 2px rgba(0,0,0,.4);
+
+align-self:center;
+
+justify-self:center;
+
+}
+
+
+/* POSIÇÕES */
+
+.centro{
+grid-column:2;
+grid-row:2;
+}
+
+.sup-esq{
+grid-column:1;
+grid-row:1;
+}
+
+.sup-dir{
+grid-column:3;
+grid-row:1;
+}
+
+.inf-esq{
+grid-column:1;
+grid-row:3;
+}
+
+.inf-dir{
+grid-column:3;
+grid-row:3;
+}
+
+.meio-esq{
+grid-column:1;
+grid-row:2;
+}
+
+.meio-dir{
+grid-column:3;
+grid-row:2;
+}
+
+
+/* FACES DO CUBO */
+
+.face1{
+transform:translateZ(32px);
+}
+
+.face6{
+transform:rotateY(180deg) translateZ(32px);
+}
+
+.face2{
+transform:rotateY(90deg) translateZ(32px);
+}
+
+.face5{
+transform:rotateY(-90deg) translateZ(32px);
+}
+
+.face3{
+transform:rotateX(90deg) translateZ(32px);
+}
+
+.face4{
+transform:rotateX(-90deg) translateZ(32px);
+}
+
+
+/* =====================================================
+   ANIMAÇÃO DE ROLAGEM
+===================================================== */
+
+.dado.rolando1{
+
+animation:
+rolar1
+1.45s
+cubic-bezier(.15,.55,.18,1)
+both;
+}
+
+.dado.rolando2{
+
+animation:
+rolar2
+1.45s
+cubic-bezier(.15,.55,.18,1)
+both;
+}
+
+
+@keyframes rolar1{
+
+0%{
+transform:
+translate(-25px,45px)
+rotateX(0deg)
+rotateY(0deg)
+rotateZ(0deg);
+}
+
+15%{
+transform:
+translate(-45px,-45px)
+rotateX(190deg)
+rotateY(240deg)
+rotateZ(110deg);
+}
+
+30%{
+transform:
+translate(20px,-65px)
+rotateX(390deg)
+rotateY(480deg)
+rotateZ(240deg);
+}
+
+45%{
+transform:
+translate(48px,-15px)
+rotateX(590deg)
+rotateY(710deg)
+rotateZ(370deg);
+}
+
+60%{
+transform:
+translate(-25px,-55px)
+rotateX(790deg)
+rotateY(950deg)
+rotateZ(500deg);
+}
+
+75%{
+transform:
+translate(28px,-18px)
+rotateX(960deg)
+rotateY(1150deg)
+rotateZ(620deg);
+}
+
+88%{
+transform:
+translate(-8px,-5px)
+rotateX(1090deg)
+rotateY(1280deg)
+rotateZ(710deg);
+}
+
+100%{
+transform:
+translate(0,0)
+rotateX(1180deg)
+rotateY(1380deg)
+rotateZ(780deg);
+}
+
+}
+
+
+@keyframes rolar2{
+
+0%{
+transform:
+translate(25px,45px)
+rotateX(0deg)
+rotateY(0deg)
+rotateZ(0deg);
+}
+
+15%{
+transform:
+translate(45px,-48px)
+rotateX(-180deg)
+rotateY(-260deg)
+rotateZ(-120deg);
+}
+
+30%{
+transform:
+translate(-20px,-68px)
+rotateX(-390deg)
+rotateY(-500deg)
+rotateZ(-260deg);
+}
+
+45%{
+transform:
+translate(-48px,-18px)
+rotateX(-590deg)
+rotateY(-720deg)
+rotateZ(-390deg);
+}
+
+60%{
+transform:
+translate(25px,-58px)
+rotateX(-790deg)
+rotateY(-970deg)
+rotateZ(-520deg);
+}
+
+75%{
+transform:
+translate(-28px,-18px)
+rotateX(-960deg)
+rotateY(-1160deg)
+rotateZ(-650deg);
+}
+
+88%{
+transform:
+translate(8px,-5px)
+rotateX(-1090deg)
+rotateY(-1290deg)
+rotateZ(-730deg);
+}
+
+100%{
+transform:
+translate(0,0)
+rotateX(-1200deg)
+rotateY(-1390deg)
+rotateZ(-800deg);
+}
+
+}
+
+
+/* =====================================================
+   RESULTADO
+===================================================== */
 
 #resultadoDados{
 
@@ -357,11 +608,8 @@ color:#ffd21c;
 
 text-shadow:
 0 0 12px #ffd21c;
-
 }
 
-
-/* MENSAGEM */
 
 #resultado{
 
@@ -377,8 +625,8 @@ color:#ffd21c;
 
 text-shadow:
 0 0 12px #ffd21c;
-
 }
+
 
 .vitoria{
 
@@ -387,8 +635,8 @@ color:#00ff91 !important;
 text-shadow:
 0 0 10px #00ff91,
 0 0 30px #00ff91 !important;
-
 }
+
 
 .derrota{
 
@@ -397,16 +645,15 @@ color:#ff416d !important;
 text-shadow:
 0 0 10px #ff416d,
 0 0 25px #ff416d !important;
-
 }
 
 
-/* ESCOLHA */
+/* =====================================================
+   NÚMEROS
+===================================================== */
 
 .selecao{
-
 margin:10px auto 18px;
-
 }
 
 .selecao-titulo{
@@ -416,7 +663,6 @@ font-size:14px;
 color:#aaa;
 
 margin-bottom:10px;
-
 }
 
 .numeros{
@@ -426,7 +672,6 @@ display:flex;
 justify-content:center;
 
 gap:7px;
-
 }
 
 .numero{
@@ -459,7 +704,6 @@ font-weight:bold;
 cursor:pointer;
 
 box-shadow:none;
-
 }
 
 .numero.ativo{
@@ -477,16 +721,15 @@ border-color:#ffe78a;
 
 box-shadow:
 0 0 14px rgba(255,210,28,.55);
-
 }
 
 
-/* APOSTA */
+/* =====================================================
+   APOSTA
+===================================================== */
 
 .aposta-area{
-
 margin:10px auto;
-
 }
 
 label{
@@ -498,7 +741,6 @@ color:#aaa;
 font-size:14px;
 
 margin-bottom:6px;
-
 }
 
 input{
@@ -522,19 +764,20 @@ font-weight:bold;
 text-align:center;
 
 outline:none;
-
 }
 
 input:focus{
 
 border-color:#ffd21c;
 
-box-shadow:0 0 10px #ffd21c;
-
+box-shadow:
+0 0 10px #ffd21c;
 }
 
 
-/* BOTÃO */
+/* =====================================================
+   BOTÃO
+===================================================== */
 
 button#botao{
 
@@ -568,19 +811,14 @@ cursor:pointer;
 box-shadow:
 0 0 12px #ffd21c,
 0 0 35px rgba(255,170,0,.45);
-
 }
 
 button#botao:active{
-
 transform:scale(.95);
-
 }
 
 button#botao:disabled{
-
 opacity:.55;
-
 }
 
 
@@ -597,19 +835,14 @@ border-top:1px solid rgba(255,255,255,.12);
 font-size:14px;
 
 line-height:1.7;
-
 }
 
 .ganha{
-
 color:#00ff91;
-
 }
 
 .perde{
-
 color:#ff416d;
-
 }
 
 
@@ -618,23 +851,64 @@ color:#ff416d;
 @media(max-width:450px){
 
 .titulo{
-
 font-size:38px;
-
 }
 
 .area-dados{
-
 height:225px;
+gap:20px;
+}
 
+.dado-container{
+width:68px;
+height:68px;
+}
+
+.dado{
+width:58px;
+height:58px;
+left:5px;
+top:5px;
+}
+
+.face{
+width:58px;
+height:58px;
+padding:7px;
+}
+
+.face1{
+transform:translateZ(29px);
+}
+
+.face6{
+transform:rotateY(180deg) translateZ(29px);
+}
+
+.face2{
+transform:rotateY(90deg) translateZ(29px);
+}
+
+.face5{
+transform:rotateY(-90deg) translateZ(29px);
+}
+
+.face3{
+transform:rotateX(90deg) translateZ(29px);
+}
+
+.face4{
+transform:rotateX(-90deg) translateZ(29px);
+}
+
+.ponto{
+width:8px;
+height:8px;
 }
 
 .numero{
-
 width:42px;
-
 height:42px;
-
 }
 
 }
@@ -681,13 +955,143 @@ height:42px;
 <div class="caixa">
 
 
-<!-- =====================================================
-     DOIS DADOS FÍSICOS REAIS
-===================================================== -->
-
 <div class="area-dados">
 
-<div id="dice-box"></div>
+<div class="sombra"></div>
+
+
+<!-- DADO 1 -->
+
+<div class="dado-container">
+
+<div id="dado1" class="dado">
+
+<!-- FACE 1 -->
+
+<div class="face face1">
+<span class="ponto centro"></span>
+</div>
+
+
+<!-- FACE 2 -->
+
+<div class="face face2">
+<span class="ponto sup-esq"></span>
+<span class="ponto inf-dir"></span>
+</div>
+
+
+<!-- FACE 3 -->
+
+<div class="face face3">
+<span class="ponto sup-esq"></span>
+<span class="ponto centro"></span>
+<span class="ponto inf-dir"></span>
+</div>
+
+
+<!-- FACE 4 -->
+
+<div class="face face4">
+<span class="ponto sup-esq"></span>
+<span class="ponto sup-dir"></span>
+<span class="ponto inf-esq"></span>
+<span class="ponto inf-dir"></span>
+</div>
+
+
+<!-- FACE 5 -->
+
+<div class="face face5">
+<span class="ponto sup-esq"></span>
+<span class="ponto sup-dir"></span>
+<span class="ponto centro"></span>
+<span class="ponto inf-esq"></span>
+<span class="ponto inf-dir"></span>
+</div>
+
+
+<!-- FACE 6 -->
+
+<div class="face face6">
+<span class="ponto sup-esq"></span>
+<span class="ponto sup-dir"></span>
+<span class="ponto meio-esq"></span>
+<span class="ponto meio-dir"></span>
+<span class="ponto inf-esq"></span>
+<span class="ponto inf-dir"></span>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- DADO 2 -->
+
+<div class="dado-container">
+
+<div id="dado2" class="dado">
+
+<!-- FACE 1 -->
+
+<div class="face face1">
+<span class="ponto centro"></span>
+</div>
+
+
+<!-- FACE 2 -->
+
+<div class="face face2">
+<span class="ponto sup-esq"></span>
+<span class="ponto inf-dir"></span>
+</div>
+
+
+<!-- FACE 3 -->
+
+<div class="face face3">
+<span class="ponto sup-esq"></span>
+<span class="ponto centro"></span>
+<span class="ponto inf-dir"></span>
+</div>
+
+
+<!-- FACE 4 -->
+
+<div class="face face4">
+<span class="ponto sup-esq"></span>
+<span class="ponto sup-dir"></span>
+<span class="ponto inf-esq"></span>
+<span class="ponto inf-dir"></span>
+</div>
+
+
+<!-- FACE 5 -->
+
+<div class="face face5">
+<span class="ponto sup-esq"></span>
+<span class="ponto sup-dir"></span>
+<span class="ponto centro"></span>
+<span class="ponto inf-esq"></span>
+<span class="ponto inf-dir"></span>
+</div>
+
+
+<!-- FACE 6 -->
+
+<div class="face face6">
+<span class="ponto sup-esq"></span>
+<span class="ponto sup-dir"></span>
+<span class="ponto meio-esq"></span>
+<span class="ponto meio-dir"></span>
+<span class="ponto inf-esq"></span>
+<span class="ponto inf-dir"></span>
+</div>
+
+</div>
+
+</div>
 
 </div>
 
@@ -702,8 +1106,6 @@ Escolha sua sorte
 </div>
 
 
-<!-- ESCOLHA DO NÚMERO -->
-
 <div class="selecao">
 
 <div class="selecao-titulo">
@@ -713,36 +1115,17 @@ ESCOLHA O NÚMERO
 
 <div class="numeros">
 
-<button class="numero ativo" data-numero="1">
-1
-</button>
-
-<button class="numero" data-numero="2">
-2
-</button>
-
-<button class="numero" data-numero="3">
-3
-</button>
-
-<button class="numero" data-numero="4">
-4
-</button>
-
-<button class="numero" data-numero="5">
-5
-</button>
-
-<button class="numero" data-numero="6">
-6
-</button>
+<button class="numero ativo" data-numero="1">1</button>
+<button class="numero" data-numero="2">2</button>
+<button class="numero" data-numero="3">3</button>
+<button class="numero" data-numero="4">4</button>
+<button class="numero" data-numero="5">5</button>
+<button class="numero" data-numero="6">6</button>
 
 </div>
 
 </div>
 
-
-<!-- APOSTA -->
 
 <div class="aposta-area">
 
@@ -782,73 +1165,25 @@ step="0.10"
 </div>
 
 
-<!-- =====================================================
-     SALDO REAL
-===================================================== -->
+<!-- SISTEMA DE SALDO REAL -->
 
 <script type="module" src="../saldo.js"></script>
 
 
-<!-- =====================================================
-     DICE BOX
-     
-     A documentação oficial permite carregar
-     o módulo diretamente pelo UNPKG.
-===================================================== -->
-
-<script type="module">
-
-import DiceBox from
-"https://unpkg.com/@3d-dice/[email protected]/dist/dice-box.es.min.js";
-
-
-/*
-=========================================================
-CRIAR O DADO REAL
-=========================================================
-*/
-
-window.DiceBoxAposta =
-new DiceBox({
-
-assetPath:
-"assets/",
-
-origin:
-"https://unpkg.com/@3d-dice/[email protected]/dist/",
-
-id:
-"dice-canvas",
-
-container:
-"#dice-box",
-
-scale:
-6,
-
-theme:
-"default",
-
-});
-
-// inicializa
-
-window.DiceBoxPronto =
-window.DiceBoxAposta.init();
-
-</script>
-
-
 <script>
 
-/*
-=========================================================
-ELEMENTOS
-=========================================================
-*/
+/* =====================================================
+   ELEMENTOS
+===================================================== */
 
 const saldoEl =
 document.getElementById("saldo");
+
+const dado1 =
+document.getElementById("dado1");
+
+const dado2 =
+document.getElementById("dado2");
 
 const resultadoDados =
 document.getElementById("resultadoDados");
@@ -871,11 +1206,9 @@ let numeroEscolhido = 1;
 let jogando = false;
 
 
-/*
-=========================================================
-SALDO REAL
-=========================================================
-*/
+/* =====================================================
+   ATUALIZA SALDO REAL
+===================================================== */
 
 async function atualizarSaldo(){
 
@@ -917,11 +1250,9 @@ erro
 }
 
 
-/*
-=========================================================
-ESCOLHER NÚMERO
-=========================================================
-*/
+/* =====================================================
+   ESCOLHA DO NÚMERO
+===================================================== */
 
 botoesNumero.forEach(
 botaoNumero=>{
@@ -961,11 +1292,9 @@ numeroEscolhido;
 });
 
 
-/*
-=========================================================
-SOM DE DADO
-=========================================================
-*/
+/* =====================================================
+   SOM DE DADO
+===================================================== */
 
 let audioCtx = null;
 
@@ -999,13 +1328,14 @@ audioCtx.currentTime;
 
 
 /*
-   Pequenos impactos
-   enquanto os dados rolam.
+   Vários pequenos impactos.
+   O som fica parecido com
+   um dado batendo no chão.
 */
 
 for(
 let i=0;
-i<10;
+i<11;
 i++
 ){
 
@@ -1016,18 +1346,17 @@ const ganho =
 audioCtx.createGain();
 
 
-osc.type =
-"triangle";
+osc.type="triangle";
 
 
 osc.frequency.value =
-70 +
-Math.random()*120;
+65 +
+Math.random()*150;
 
 
 const inicio =
 agora +
-i*0.17;
+i*0.13;
 
 
 ganho.gain.setValueAtTime(
@@ -1037,14 +1366,14 @@ inicio
 
 
 ganho.gain.exponentialRampToValueAtTime(
-0.07,
-inicio+0.01
+0.055,
+inicio+0.008
 );
 
 
 ganho.gain.exponentialRampToValueAtTime(
 0.0001,
-inicio+0.08
+inicio+0.07
 );
 
 
@@ -1058,7 +1387,7 @@ audioCtx.destination
 osc.start(inicio);
 
 osc.stop(
-inicio+0.09
+inicio+0.08
 );
 
 }
@@ -1066,7 +1395,7 @@ inicio+0.09
 }catch(e){
 
 console.log(
-"Som indisponível"
+"Áudio indisponível"
 );
 
 }
@@ -1074,11 +1403,73 @@ console.log(
 }
 
 
-/*
-=========================================================
-JOGAR
-=========================================================
+/* =====================================================
+   TRANSFORMAÇÃO FINAL DAS FACES
+=====================================================
+
+   Cada transformação coloca uma face
+   específica olhando para frente.
+
+   1 = frente
+   6 = trás
+   2 = lado direito
+   5 = lado esquerdo
+   3 = cima
+   4 = baixo
 */
+
+const faces = {
+
+1:
+"rotateX(0deg) rotateY(0deg) rotateZ(0deg)",
+
+2:
+"rotateY(-90deg) rotateX(0deg) rotateZ(0deg)",
+
+3:
+"rotateX(-90deg) rotateY(0deg) rotateZ(0deg)",
+
+4:
+"rotateX(90deg) rotateY(0deg) rotateZ(0deg)",
+
+5:
+"rotateY(90deg) rotateX(0deg) rotateZ(0deg)",
+
+6:
+"rotateY(180deg) rotateX(0deg) rotateZ(0deg)"
+
+};
+
+
+/* =====================================================
+   POSICIONA O DADO NA FACE FINAL
+===================================================== */
+
+function mostrarFace(dado, numero, giroExtra){
+
+dado.classList.remove(
+"rolando1",
+"rolando2"
+);
+
+
+/*
+   Pequena rotação adicional
+   para não parecer uma troca instantânea.
+*/
+
+dado.style.transform =
+faces[numero] +
+" rotateZ(" +
+giroExtra +
+"deg)";
+
+}
+
+
+/* =====================================================
+   JOGAR
+===================================================== */
 
 botao.addEventListener(
 "click",
@@ -1090,7 +1481,7 @@ return;
 
 
 /*
-   VERIFICA SISTEMA
+   VERIFICA SISTEMA DE SALDO
 */
 
 if(!window.SistemaSaldo){
@@ -1125,7 +1516,7 @@ resultado.className =
 "derrota";
 
 resultado.textContent =
-"⚠️ Aposta mínima: R$ 0,10.";
+"⚠️ A aposta mínima é R$ 0,10.";
 
 return;
 
@@ -1146,7 +1537,9 @@ Number(
 await window.SistemaSaldo.get()
 );
 
-}catch(e){
+}catch(erro){
+
+console.error(erro);
 
 resultado.className =
 "derrota";
@@ -1187,7 +1580,7 @@ botao.disabled = true;
 
 
 /*
-   DEBITA SALDO REAL
+   DEBITA APOSTA REAL
 */
 
 try{
@@ -1196,9 +1589,9 @@ await window.SistemaSaldo.debitar(
 aposta
 );
 
-}catch(e){
+}catch(erro){
 
-console.error(e);
+console.error(erro);
 
 resultado.className =
 "derrota";
@@ -1227,116 +1620,118 @@ await atualizarSaldo();
 resultado.className="";
 
 resultado.textContent =
-"🎲 ROLANDO OS DADOS...";
-
+"🎲 ROLANDO...";
 
 resultadoDados.textContent =
 "🎲 + 🎲";
 
 
 /*
-=========================================================
-SOM
-=========================================================
+=====================================================
+SORTEIO DOS DOIS DADOS
+=====================================================
+
+Cada dado recebe um número independente.
+
+Exemplos possíveis:
+
+1 + 6
+2 + 2
+3 + 5
+4 + 1
+6 + 3
+
+Nunca fica preso no 1.
+*/
+
+const numero1 =
+Math.floor(
+Math.random()*6
+)+1;
+
+const numero2 =
+Math.floor(
+Math.random()*6
+)+1;
+
+
+/*
+   REINICIA TRANSFORMAÇÕES
+*/
+
+dado1.style.transform="";
+dado2.style.transform="";
+
+
+dado1.classList.remove(
+"rolando1"
+);
+
+dado2.classList.remove(
+"rolando2"
+);
+
+
+/*
+   FORÇA REINÍCIO DA ANIMAÇÃO
+*/
+
+void dado1.offsetWidth;
+void dado2.offsetWidth;
+
+
+/*
+   COMEÇA A ROLAGEM
+*/
+
+dado1.classList.add(
+"rolando1"
+);
+
+dado2.classList.add(
+"rolando2"
+);
+
+
+/*
+   SOM
 */
 
 somDado();
 
 
 /*
-=========================================================
-AGUARDA DICE BOX
-=========================================================
+   APÓS 1,45s OS DADOS PARAM
 */
 
-try{
-
-await window.DiceBoxPronto;
+setTimeout(
+async()=>{
 
 
 /*
-=========================================================
-ROLA DOIS DADOS DE VERDADE
-=========================================================
-
-2d6 = dois dados de seis lados.
-
-O resultado NÃO é inventado pela animação.
-
-O próprio Dice Box devolve os resultados
-dos dois dados depois que eles param.
+   FACE FINAL REAL DO DADO 1
 */
 
-const rolagem =
-await window.DiceBoxAposta.roll(
-"2d6"
+mostrarFace(
+dado1,
+numero1,
+0
 );
 
 
 /*
-=========================================================
-EXTRAI OS RESULTADOS
-=========================================================
+   FACE FINAL REAL DO DADO 2
 */
 
-let resultados = [];
-
-
-/*
-   O Dice Box retorna objetos de resultado.
-   Procuramos os valores dos dados.
-*/
-
-if(
-Array.isArray(rolagem)
-){
-
-resultados =
-rolagem
-.map(
-item =>
-Number(
-item.value ??
-item.result ??
-item
-)
-)
-.filter(
-n =>
-Number.isInteger(n) &&
-n >= 1 &&
-n <= 6
+mostrarFace(
+dado2,
+numero2,
+0
 );
 
-}
-
 
 /*
-   GARANTE DOIS RESULTADOS
-*/
-
-if(
-resultados.length < 2
-){
-
-throw new Error(
-"Não foi possível obter os dois resultados dos dados."
-);
-
-}
-
-
-const numero1 =
-resultados[0];
-
-const numero2 =
-resultados[1];
-
-
-/*
-=========================================================
-MOSTRA RESULTADO REAL
-=========================================================
+   MOSTRA OS RESULTADOS
 */
 
 resultadoDados.textContent =
@@ -1350,17 +1745,18 @@ numero2 +
 
 
 /*
-=========================================================
-LÓGICA CORRETA
-=========================================================
+=====================================================
+LÓGICA DA APOSTA
+=====================================================
 
-Escolheu 2:
+Se escolheu 2:
 
 2 + 6 = GANHA
 
-Escolheu 2:
+Se escolheu 2:
 
 4 + 6 = PERDE
+
 */
 
 const acertou =
@@ -1369,9 +1765,9 @@ numero2 === numeroEscolhido;
 
 
 /*
-=========================================================
+=====================================================
 GANHOU
-=========================================================
+=====================================================
 */
 
 if(acertou){
@@ -1381,11 +1777,6 @@ aposta * 2;
 
 
 try{
-
-/*
-   Mantém o sistema de saldo
-   já usado no jogo.
-*/
 
 await window.SistemaSaldo.ganhar(
 aposta,
@@ -1403,9 +1794,9 @@ premio
 .replace(".",",");
 
 
-}catch(e){
+}catch(erro){
 
-console.error(e);
+console.error(erro);
 
 resultado.className =
 "derrota";
@@ -1419,9 +1810,9 @@ resultado.textContent =
 
 
 /*
-=========================================================
+=====================================================
 PERDEU
-=========================================================
+=====================================================
 */
 
 else{
@@ -1438,67 +1829,35 @@ numeroEscolhido +
 
 
 /*
-=========================================================
-ATUALIZA SALDO REAL
-=========================================================
+   SALDO REAL FINAL
 */
 
 await atualizarSaldo();
 
 
-}catch(erro){
-
-console.error(
-"Erro na rolagem:",
-erro
-);
-
-
 /*
-   IMPORTANTE:
-   Se o motor dos dados falhar,
-   não damos vitória falsa.
-*/
-
-resultado.className =
-"derrota";
-
-resultado.textContent =
-"⚠️ Não foi possível concluir a rolagem.";
-
-
-/*
-   Deixa o saldo atualizado.
-*/
-
-await atualizarSaldo();
-
-}
-
-
-/*
-=========================================================
-LIBERA
-=========================================================
+   LIBERA BOTÃO
 */
 
 jogando = false;
 
 botao.disabled = false;
 
+
+},
+1450
+);
+
 });
 
 
-/*
-=========================================================
-SALDO AO ABRIR
-=========================================================
-*/
+/* =====================================================
+   SALDO AO ABRIR
+===================================================== */
 
 atualizarSaldo();
 
 </script>
-
 
 </body>
 
