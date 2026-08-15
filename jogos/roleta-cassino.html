@@ -110,7 +110,6 @@ body{
       #111 214.06deg 223.79deg,
       #b51e24 223.79deg 233.52deg,
       #111 233.52deg 243.25deg,
-      #b51e24 243.25deg 252.98deg,
       #111 252.98deg 262.71deg,
       #b51e24 262.71deg 272.44deg,
       #111 272.44deg 282.17deg,
@@ -563,358 +562,6 @@ window.supabase.createClient(
 
 
 /* ==================================================
-   SISTEMA DE SOM
-   VOLUME: 100%
-================================================== */
-
-let audioContext = null;
-
-let somLiberado = false;
-
-const VOLUME_SOM = 1.0;
-
-
-/*
-   O navegador do celular pode bloquear
-   áudio automático. O primeiro toque do
-   jogador libera o sistema de som.
-*/
-
-function iniciarAudio(){
-
-  try{
-
-    if(!audioContext){
-
-      audioContext =
-        new (
-          window.AudioContext ||
-          window.webkitAudioContext
-        )();
-
-    }
-
-    if(
-      audioContext.state ===
-      "suspended"
-    ){
-
-      audioContext.resume();
-
-    }
-
-    somLiberado = true;
-
-  }catch(error){
-
-    console.log(
-      "Áudio não disponível:",
-      error
-    );
-
-  }
-
-}
-
-
-document.addEventListener(
-  "pointerdown",
-  iniciarAudio,
-  {
-    once:false,
-    passive:true
-  }
-);
-
-
-/*
-   Toca um tom simples usando
-   o próprio navegador.
-
-   Não depende de arquivo MP3 externo.
-*/
-
-function tocarSom(
-  frequencia,
-  duracao,
-  tipo="sine",
-  volume=1
-){
-
-  if(!somLiberado)
-    return;
-
-  try{
-
-    if(!audioContext)
-      return;
-
-    if(
-      audioContext.state ===
-      "suspended"
-    ){
-
-      audioContext.resume();
-
-    }
-
-    const agora =
-      audioContext.currentTime;
-
-    const oscilador =
-      audioContext.createOscillator();
-
-    const ganho =
-      audioContext.createGain();
-
-    oscilador.type =
-      tipo;
-
-    oscilador.frequency.setValueAtTime(
-      frequencia,
-      agora
-    );
-
-    ganho.gain.setValueAtTime(
-      0,
-      agora
-    );
-
-    ganho.gain.linearRampToValueAtTime(
-      VOLUME_SOM * volume,
-      agora + 0.01
-    );
-
-    ganho.gain.exponentialRampToValueAtTime(
-      0.001,
-      agora + duracao
-    );
-
-    oscilador.connect(
-      ganho
-    );
-
-    ganho.connect(
-      audioContext.destination
-    );
-
-    oscilador.start(
-      agora
-    );
-
-    oscilador.stop(
-      agora + duracao + 0.03
-    );
-
-  }catch(error){
-
-    console.log(
-      "Erro no som:",
-      error
-    );
-
-  }
-
-}
-
-
-/* ==================================================
-   SOM DA FICHA
-================================================== */
-
-function somFicha(){
-
-  tocarSom(
-    620,
-    0.08,
-    "square",
-    1
-  );
-
-}
-
-
-/* ==================================================
-   SOM DA APOSTA
-================================================== */
-
-function somAposta(){
-
-  tocarSom(
-    760,
-    0.09,
-    "sine",
-    1
-  );
-
-  setTimeout(
-    function(){
-
-      tocarSom(
-        980,
-        0.10,
-        "sine",
-        1
-      );
-
-    },
-    70
-  );
-
-}
-
-
-/* ==================================================
-   SOM DE LIMPAR
-================================================== */
-
-function somLimpar(){
-
-  tocarSom(
-    260,
-    0.12,
-    "triangle",
-    1
-  );
-
-}
-
-
-/* ==================================================
-   SOM DE CONTAGEM
-================================================== */
-
-function somContagem(){
-
-  tocarSom(
-    850,
-    0.10,
-    "square",
-    1
-  );
-
-}
-
-
-/* ==================================================
-   SOM DE GIRO
-================================================== */
-
-let intervaloSomRoleta = null;
-
-function iniciarSomRoleta(){
-
-  if(!somLiberado)
-    return;
-
-  pararSomRoleta();
-
-  /*
-     Pequenos cliques rápidos imitam
-     a roleta passando pelo ponteiro.
-  */
-
-  intervaloSomRoleta =
-    setInterval(
-      function(){
-
-        tocarSom(
-          105 + Math.random() * 100,
-          0.045,
-          "square",
-          0.85
-        );
-
-      },
-      95
-    );
-
-}
-
-
-function pararSomRoleta(){
-
-  if(intervaloSomRoleta){
-
-    clearInterval(
-      intervaloSomRoleta
-    );
-
-    intervaloSomRoleta =
-      null;
-
-  }
-
-}
-
-
-/* ==================================================
-   SOM DE RESULTADO
-================================================== */
-
-function somResultado(){
-
-  tocarSom(
-    520,
-    0.13,
-    "triangle",
-    1
-  );
-
-  setTimeout(
-    function(){
-
-      tocarSom(
-        700,
-        0.16,
-        "triangle",
-        1
-      );
-
-    },
-    120
-  );
-
-}
-
-
-/* ==================================================
-   SOM DE PRÊMIO
-================================================== */
-
-function somPremio(){
-
-  const notas = [
-    523,
-    659,
-    784,
-    1047
-  ];
-
-  notas.forEach(
-    function(nota,index){
-
-      setTimeout(
-        function(){
-
-          tocarSom(
-            nota,
-            0.22,
-            "sine",
-            1
-          );
-
-        },
-        index * 130
-      );
-
-    }
-  );
-
-}
-
-
-/* ==================================================
    ELEMENTOS
 ================================================== */
 
@@ -985,6 +632,179 @@ let rotacao = 0;
 
 
 /* ==================================================
+   SOM DA ROLETA — TIC TIC TIC
+================================================== */
+
+let audioContext = null;
+
+let somRoletaAtivo = false;
+
+let intervaloSom = null;
+
+
+/* ==================================================
+   INICIAR ÁUDIO
+================================================== */
+
+function iniciarAudio(){
+
+  if(!audioContext){
+
+    audioContext =
+      new (
+        window.AudioContext ||
+        window.webkitAudioContext
+      )();
+
+  }
+
+  if(
+    audioContext.state === "suspended"
+  ){
+
+    audioContext.resume();
+
+  }
+
+}
+
+
+/* ==================================================
+   TIC DA PALETA
+================================================== */
+
+function tocarTic(){
+
+  if(!audioContext)
+    return;
+
+  const agora =
+    audioContext.currentTime;
+
+  const oscilador =
+    audioContext.createOscillator();
+
+  const ganho =
+    audioContext.createGain();
+
+  oscilador.type =
+    "square";
+
+  /*
+     Som curto e seco,
+     parecido com a palheta
+     batendo nos dentes da roleta.
+  */
+
+  oscilador.frequency.setValueAtTime(
+    900,
+    agora
+  );
+
+  oscilador.frequency.exponentialRampToValueAtTime(
+    450,
+    agora + 0.035
+  );
+
+  ganho.gain.setValueAtTime(
+    0.9,
+    agora
+  );
+
+  ganho.gain.exponentialRampToValueAtTime(
+    0.001,
+    agora + 0.045
+  );
+
+  oscilador.connect(
+    ganho
+  );
+
+  ganho.connect(
+    audioContext.destination
+  );
+
+  oscilador.start(
+    agora
+  );
+
+  oscilador.stop(
+    agora + 0.05
+  );
+
+}
+
+
+/* ==================================================
+   INICIAR TIC TIC
+================================================== */
+
+function iniciarSomRoleta(){
+
+  iniciarAudio();
+
+  if(somRoletaAtivo)
+    return;
+
+  somRoletaAtivo = true;
+
+  let velocidade = 55;
+
+  function tic(){
+
+    if(!somRoletaAtivo)
+      return;
+
+    tocarTic();
+
+    intervaloSom =
+      setTimeout(
+        tic,
+        velocidade
+      );
+
+    /*
+       A palheta começa rápida
+       e vai ficando mais lenta.
+    */
+
+    if(
+      velocidade < 180
+    ){
+
+      velocidade += 5;
+
+    }
+
+  }
+
+  tic();
+
+}
+
+
+/* ==================================================
+   PARAR TIC TIC
+================================================== */
+
+function pararSomRoleta(){
+
+  somRoletaAtivo = false;
+
+  if(intervaloSom){
+
+    clearTimeout(
+      intervaloSom
+    );
+
+    intervaloSom = null;
+
+  }
+
+}
+
+
+/* ==================================================
    FORMATAÇÃO
 ================================================== */
 
@@ -1010,7 +830,10 @@ async function carregarSaldo(){
     await supabaseClient
     .from("saldos")
     .select("valor")
-    .eq("user_id",usuarioAtual.id)
+    .eq(
+      "user_id",
+      usuarioAtual.id
+    )
     .single();
 
   if(error){
@@ -1028,7 +851,9 @@ async function carregarSaldo(){
   }
 
   dinheiro =
-    Number(data?.valor || 0);
+    Number(
+      data?.valor || 0
+    );
 
   atualizar();
 
@@ -1096,7 +921,9 @@ ordemRoleta.forEach(
 function(numero,index){
 
   const el =
-    document.createElement("div");
+    document.createElement(
+      "div"
+    );
 
   el.className =
     "numero-roleta";
@@ -1134,7 +961,9 @@ function(numero,index){
 
   }
 
-  numerosRoleta.appendChild(el);
+  numerosRoleta.appendChild(
+    el
+  );
 
 });
 
@@ -1150,7 +979,9 @@ for(
 ){
 
   const numero =
-    document.createElement("div");
+    document.createElement(
+      "div"
+    );
 
   numero.className =
     "numero " +
@@ -1173,7 +1004,9 @@ for(
 
   };
 
-  grade.appendChild(numero);
+  grade.appendChild(
+    numero
+  );
 
 }
 
@@ -1232,10 +1065,6 @@ function(botao){
     if(!apostasAbertas)
       return;
 
-    iniciarAudio();
-
-    somFicha();
-
     document
     .querySelectorAll(".ficha")
     .forEach(
@@ -1273,8 +1102,6 @@ function fazerAposta(
   elemento
 ){
 
-  iniciarAudio();
-
   if(!apostasAbertas){
 
     mensagem.textContent =
@@ -1291,13 +1118,6 @@ function fazerAposta(
 
     mensagem.textContent =
       "Saldo virtual insuficiente.";
-
-    tocarSom(
-      180,
-      0.18,
-      "sawtooth",
-      1
-    );
 
     return;
 
@@ -1318,8 +1138,6 @@ function fazerAposta(
 
   mensagem.textContent =
     "Aposta virtual adicionada.";
-
-  somAposta();
 
 }
 
@@ -1407,8 +1225,6 @@ document
 .onclick =
 function(){
 
-  iniciarAudio();
-
   if(!apostasAbertas)
     return;
 
@@ -1438,8 +1254,6 @@ function(){
   mensagem.textContent =
     "Apostas limpas.";
 
-  somLimpar();
-
 };
 
 
@@ -1449,7 +1263,9 @@ function(){
 
 function iniciarRodada(){
 
-  clearInterval(contador);
+  clearInterval(
+    contador
+  );
 
   tempoAposta = 10;
 
@@ -1467,6 +1283,41 @@ function iniciarRodada(){
 
   mensagem.textContent =
     "Faça suas apostas.";
+
+  contador =
+    setInterval(
+    function(){
+
+      tempoAposta--;
+
+      if(
+        tempoAposta > 0
+      ){
+
+        aviso.innerHTML =
+          "⏱️ APOSTAS: <b>" +
+          tempoAposta +
+          "s</b>";
+
+      }
+
+      if(
+        tempoAposta <= 0
+      ){
+
+        clearInterval(
+          contador
+        );
+
+        contador = null;
+
+        fecharApostas();
+
+      }
+
+    },
+    1000
+    );
 
 }
 
@@ -1505,61 +1356,6 @@ function fecharApostas(){
 
 
 /* ==================================================
-   CONTADOR
-================================================== */
-
-function iniciarContador(){
-
-  clearInterval(contador);
-
-  tempoAposta = 10;
-
-  aviso.innerHTML =
-    "⏱️ APOSTAS: <b>10s</b>";
-
-  contador =
-    setInterval(
-    function(){
-
-      tempoAposta--;
-
-      if(tempoAposta > 0){
-
-        aviso.innerHTML =
-          "⏱️ APOSTAS: <b>" +
-          tempoAposta +
-          "s</b>";
-
-        /*
-           Som nos últimos segundos.
-        */
-
-        if(
-          tempoAposta <= 5
-        ){
-
-          somContagem();
-
-        }
-
-      }
-
-      if(tempoAposta <= 0){
-
-        clearInterval(contador);
-
-        fecharApostas();
-
-      }
-
-    },
-    1000
-    );
-
-}
-
-
-/* ==================================================
    GIRAR
 ================================================== */
 
@@ -1568,9 +1364,13 @@ function girarAutomaticamente(){
   if(girando)
     return;
 
-  iniciarAudio();
-
   girando = true;
+
+  /*
+     COMEÇA O TIC TIC DA PALETA
+  */
+
+  iniciarSomRoleta();
 
   btnGirar.disabled = true;
 
@@ -1613,16 +1413,8 @@ function girarAutomaticamente(){
     rotacao +
     "deg)";
 
-  /*
-     SOM DA ROLETA
-  */
-
-  iniciarSomRoleta();
-
   setTimeout(
   function(){
-
-    pararSomRoleta();
 
     finalizarRodada(
       resultado
@@ -1643,9 +1435,11 @@ async function finalizarRodada(
   resultado
 ){
 
-  pararSomRoleta();
+  /*
+     PARA O SOM DA PALETA
+  */
 
-  somResultado();
+  pararSomRoleta();
 
   let premio = 0;
 
@@ -1707,8 +1501,6 @@ async function finalizarRodada(
 
   if(premio > 0){
 
-    somPremio();
-
     mensagem.textContent =
       "🏆 Resultado: " +
       resultado +
@@ -1752,8 +1544,25 @@ async function finalizarRodada(
 
   girando = false;
 
+  /*
+     ==================================================
+     NOVA RODADA AUTOMÁTICA
+     ==================================================
+
+     Depois de 3 segundos o contador volta
+     automaticamente para 10 segundos.
+  */
+
   setTimeout(
-    iniciarRodada,
+    function(){
+
+      apostas = [];
+
+      tempoAposta = 10;
+
+      iniciarRodada();
+
+    },
     3000
   );
 
@@ -1805,13 +1614,7 @@ async function iniciar(){
       "none";
 
     setTimeout(
-      function(){
-
-        iniciarRodada();
-
-        iniciarContador();
-
-      },
+      iniciarRodada,
       500
     );
 
