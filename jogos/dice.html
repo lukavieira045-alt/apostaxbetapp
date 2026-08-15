@@ -2,14 +2,10 @@
 <html lang="pt-BR">
 
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Dice ApostaXBet</title>
-
 <style>
-
 *{
 box-sizing:border-box;
 font-family:Arial,sans-serif;
@@ -29,21 +25,16 @@ radial-gradient(circle at 50% 100%,#ff0066 0,transparent 30%),
 linear-gradient(135deg,#02020c,#09001c,#00132c);
 
 background-size:180% 180%;
-
 animation:fundo 12s ease-in-out infinite alternate;
 }
 
 @keyframes fundo{
-
 0%{background-position:0% 0%}
 50%{background-position:100% 50%}
 100%{background-position:0% 100%}
-
 }
 
-
 /* LUZES */
-
 .luz{
 position:fixed;
 width:280px;
@@ -88,9 +79,7 @@ to{transform:translate(-150px,-80px) scale(1.4)}
 to{transform:translate(80px,-100px) scale(1.3)}
 }
 
-
 /* PARTÍCULAS */
-
 .particulas{
 position:fixed;
 inset:0;
@@ -124,82 +113,38 @@ animation:subir linear infinite;
 .particulas i:nth-child(10){left:95%;animation-duration:12s}
 
 @keyframes subir{
-
 0%{
 transform:translateY(0);
 opacity:0;
 }
-
-20%{
-opacity:1;
-}
-
+20%{opacity:1}
 100%{
 transform:translateY(-110vh);
 opacity:0;
 }
-
 }
-
-
-/* TÍTULO */
-
-.titulo{
-
-margin-top:25px;
-
-font-size:44px;
-
-font-weight:900;
-
-color:#ffd21c;
-
-text-shadow:
-0 0 8px #fff,
-0 0 18px #ffd21c,
-0 0 35px #ff8c00;
-
-}
-
 
 /* SALDO */
-
 #saldo{
-
 display:inline-block;
-
-margin:10px auto 20px;
-
+margin:25px auto 20px;
 padding:12px 25px;
-
 border-radius:30px;
-
 background:rgba(0,0,0,.6);
-
 border:1px solid #00ff91;
-
 color:#00ff91;
-
 font-size:21px;
-
 font-weight:bold;
-
+box-shadow:0 0 15px rgba(0,255,145,.18);
 }
 
-
 /* CAIXA */
-
 .caixa{
-
 width:92%;
 max-width:440px;
-
 margin:auto;
-
 padding:25px 18px 30px;
-
-border:1px solid #ffd21c;
-
+border:1px solid rgba(255,210,28,.35);
 border-radius:28px;
 
 background:
@@ -210,295 +155,310 @@ rgba(3,4,15,.96)
 );
 
 box-shadow:
-0 0 25px rgba(255,215,0,.25),
+0 0 25px rgba(255,215,0,.18),
 0 0 70px rgba(0,100,255,.18);
 
 backdrop-filter:blur(12px);
-
 }
-
 
 /* ÁREA DO DADO */
-
 .area-dado{
-
 height:300px;
-
 display:flex;
-
-flex-direction:column;
-
 align-items:center;
-
 justify-content:center;
-
 position:relative;
-
+perspective:900px;
 }
-
 
 /* SOMBRA */
-
 .sombra{
-
 position:absolute;
-
-bottom:45px;
-
+bottom:48px;
 width:150px;
-
 height:30px;
-
 border-radius:50%;
-
 background:#000;
-
 filter:blur(15px);
-
 opacity:.7;
-
+transition:.2s;
 }
 
-
-/* EMOJI */
-
-#dado{
-
+/* DADO 3D */
+.dado-3d{
 position:relative;
-
-z-index:2;
-
-font-family:
-"Noto Color Emoji",
-"Apple Color Emoji",
-"Segoe UI Emoji",
-sans-serif;
-
-font-size:145px;
-
-line-height:1;
-
-display:block;
-
-user-select:none;
-
-filter:
-drop-shadow(0 20px 12px rgba(0,0,0,.8))
-drop-shadow(0 0 20px rgba(255,215,0,.3));
-
+width:125px;
+height:125px;
+transform-style:preserve-3d;
+transform:rotateX(-18deg) rotateY(25deg);
+transition:transform .15s;
 }
 
+.face{
+position:absolute;
+width:125px;
+height:125px;
+background:
+linear-gradient(
+145deg,
+#ffffff,
+#d9d9d9
+);
+border:4px solid #aaa;
+border-radius:18px;
 
-/* GIRO */
+display:flex;
+align-items:center;
+justify-content:center;
 
-#dado.girando{
+box-shadow:
+inset 0 0 20px rgba(0,0,0,.18),
+0 18px 25px rgba(0,0,0,.5);
 
-animation:girar .95s linear infinite;
-
+backface-visibility:hidden;
 }
 
-@keyframes girar{
+/* PONTOS */
+.face::before,
+.face::after{
+content:"";
+position:absolute;
+width:19px;
+height:19px;
+border-radius:50%;
+background:#171717;
+box-shadow:
+inset 0 2px 4px rgba(255,255,255,.25);
+}
+
+.ponto{
+position:absolute;
+width:19px;
+height:19px;
+border-radius:50%;
+background:#171717;
+box-shadow:inset 0 2px 4px rgba(255,255,255,.25);
+}
+
+/* FACES */
+.frente{
+transform:translateZ(62.5px);
+}
+
+.tras{
+transform:rotateY(180deg) translateZ(62.5px);
+}
+
+.direita{
+transform:rotateY(90deg) translateZ(62.5px);
+}
+
+.esquerda{
+transform:rotateY(-90deg) translateZ(62.5px);
+}
+
+.cima{
+transform:rotateX(90deg) translateZ(62.5px);
+}
+
+.baixo{
+transform:rotateX(-90deg) translateZ(62.5px);
+}
+
+/* PONTOS DE CADA FACE */
+.p1{
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+}
+
+.p2a{top:20%;left:20%}
+.p2b{bottom:20%;right:20%}
+
+.p3a{top:20%;left:20%}
+.p3b{top:50%;left:50%;transform:translate(-50%,-50%)}
+.p3c{bottom:20%;right:20%}
+
+.p4a{top:20%;left:20%}
+.p4b{top:20%;right:20%}
+.p4c{bottom:20%;left:20%}
+.p4d{bottom:20%;right:20%}
+
+.p5a{top:20%;left:20%}
+.p5b{top:20%;right:20%}
+.p5c{top:50%;left:50%;transform:translate(-50%,-50%)}
+.p5d{bottom:20%;left:20%}
+.p5e{bottom:20%;right:20%}
+
+.p6a{top:17%;left:20%}
+.p6b{top:17%;right:20%}
+.p6c{top:50%;left:20%;transform:translateY(-50%)}
+.p6d{top:50%;right:20%;transform:translateY(-50%)}
+.p6e{bottom:17%;left:20%}
+.p6f{bottom:17%;right:20%}
+
+/* GIRO REALISTA */
+.dado-3d.rolando{
+animation:
+rolarDado 1.35s cubic-bezier(.18,.75,.25,1) forwards;
+}
+
+@keyframes rolarDado{
 
 0%{
-transform:rotate(0deg) translateY(0);
+transform:
+translateY(0)
+rotateX(-15deg)
+rotateY(20deg)
+rotateZ(0);
 }
 
-25%{
-transform:rotate(90deg) translateY(-20px);
+18%{
+transform:
+translateY(-80px)
+rotateX(120deg)
+rotateY(180deg)
+rotateZ(35deg);
 }
 
-50%{
-transform:rotate(180deg) translateY(0);
+38%{
+transform:
+translateY(-35px)
+rotateX(260deg)
+rotateY(390deg)
+rotateZ(-40deg);
 }
 
-75%{
-transform:rotate(270deg) translateY(-20px);
+58%{
+transform:
+translateY(-65px)
+rotateX(430deg)
+rotateY(610deg)
+rotateZ(35deg);
+}
+
+76%{
+transform:
+translateY(-15px)
+rotateX(560deg)
+rotateY(820deg)
+rotateZ(-18deg);
+}
+
+90%{
+transform:
+translateY(5px)
+rotateX(690deg)
+rotateY(1010deg)
+rotateZ(8deg);
 }
 
 100%{
-transform:rotate(360deg) translateY(0);
+transform:
+translateY(0)
+rotateX(720deg)
+rotateY(1080deg)
+rotateZ(0);
+}
 }
 
-}
-
-
-/* RESULTADO DO DADO */
-
+/* RESULTADO */
 #faceResultado{
-
 position:relative;
-
 z-index:3;
-
 margin-top:-5px;
-
 min-width:70px;
-
 height:70px;
-
 display:flex;
-
 align-items:center;
-
 justify-content:center;
-
 font-size:52px;
-
 font-weight:900;
-
 color:white;
-
 text-shadow:
 0 0 8px #fff,
 0 0 20px #00ccff;
-
 opacity:0;
-
 transform:scale(.5);
-
 transition:.25s;
-
 }
-
-
-/* MOSTRA RESULTADO */
 
 #faceResultado.mostrar{
-
 opacity:1;
-
 transform:scale(1);
-
 }
-
-
-/* RESULTADO TEXTO */
 
 #resultado{
-
 min-height:40px;
-
 margin:5px 0 20px;
-
 font-size:24px;
-
 font-weight:bold;
-
 color:#ffd21c;
-
 text-shadow:0 0 12px #ffd21c;
-
 }
 
-
-/* GANHOU */
-
 .vitoria{
-
 color:#00ff91 !important;
-
 text-shadow:
 0 0 10px #00ff91,
 0 0 30px #00ff91 !important;
-
 }
 
-
-/* PERDEU */
-
 .derrota{
-
 color:#ff416d !important;
-
 text-shadow:
 0 0 10px #ff416d,
 0 0 25px #ff416d !important;
-
 }
 
-
 /* INPUT */
-
 label{
-
 display:block;
-
 color:#aaa;
-
 font-size:14px;
-
 margin-bottom:6px;
-
 }
 
 input{
-
 width:170px;
-
 padding:14px;
-
 border-radius:13px;
-
 border:2px solid #444;
-
 background:#050505;
-
 color:white;
-
 font-size:21px;
-
 font-weight:bold;
-
 text-align:center;
-
 outline:none;
-
 }
 
 input:focus{
-
 border-color:#ffd21c;
-
 box-shadow:0 0 10px #ffd21c;
-
 }
 
-
 /* BOTÃO */
-
 button{
-
 width:90%;
-
 max-width:320px;
-
 margin-top:15px;
-
 padding:17px;
-
 border:2px solid #ffe78a;
-
 border-radius:16px;
-
 background:
 linear-gradient(
 180deg,
 #ffe66b,
 #ffb000
 );
-
 color:#211600;
-
 font-size:22px;
-
 font-weight:900;
-
 cursor:pointer;
 
 box-shadow:
 0 0 12px #ffd21c,
 0 0 35px rgba(255,170,0,.45);
-
 }
 
 button:active{
@@ -509,110 +469,109 @@ button:disabled{
 opacity:.55;
 }
 
-
 /* INFO */
-
 .info{
-
 margin-top:25px;
-
 padding-top:18px;
-
 border-top:1px solid rgba(255,255,255,.12);
-
 font-size:14px;
-
 line-height:1.7;
-
 }
 
-.ganha{
-color:#00ff91;
-}
-
-.perde{
-color:#ff416d;
-}
-
-
-/* CELULAR */
+.ganha{color:#00ff91}
+.perde{color:#ff416d}
 
 @media(max-width:450px){
-
-.titulo{
-font-size:38px;
-}
 
 .area-dado{
 height:270px;
 }
 
-#dado{
-font-size:125px;
+.dado-3d,
+.face{
+width:115px;
+height:115px;
+}
+
+.face{
+border-radius:16px;
 }
 
 }
-
 </style>
-
 </head>
 
-
 <body>
-
 
 <div class="luz luz1"></div>
 <div class="luz luz2"></div>
 <div class="luz luz3"></div>
 
-
 <div class="particulas">
-
-<i></i>
-<i></i>
-<i></i>
-<i></i>
-<i></i>
-<i></i>
-<i></i>
-<i></i>
-<i></i>
-<i></i>
-
+<i></i><i></i><i></i><i></i><i></i>
+<i></i><i></i><i></i><i></i><i></i>
 </div>
 
-
-<h1 class="titulo">
-🎲 DICE
-</h1>
-
-
-<div id="saldo"></div>
-
+<div id="saldo">💰 Saldo: R$ 0,00</div>
 
 <div class="caixa">
-
 
 <div class="area-dado">
 
 <div class="sombra"></div>
 
-<div id="dado">🎲</div>
+<div id="dado" class="dado-3d">
+
+<div class="face frente">
+<span class="ponto p1"></span>
+</div>
+
+<div class="face tras">
+<span class="ponto p4a"></span>
+<span class="ponto p4b"></span>
+<span class="ponto p4c"></span>
+<span class="ponto p4d"></span>
+</div>
+
+<div class="face direita">
+<span class="ponto p3a"></span>
+<span class="ponto p3b"></span>
+<span class="ponto p3c"></span>
+</div>
+
+<div class="face esquerda">
+<span class="ponto p5a"></span>
+<span class="ponto p5b"></span>
+<span class="ponto p5c"></span>
+<span class="ponto p5d"></span>
+<span class="ponto p5e"></span>
+</div>
+
+<div class="face cima">
+<span class="ponto p6a"></span>
+<span class="ponto p6b"></span>
+<span class="ponto p6c"></span>
+<span class="ponto p6d"></span>
+<span class="ponto p6e"></span>
+<span class="ponto p6f"></span>
+</div>
+
+<div class="face baixo">
+<span class="ponto p2a"></span>
+<span class="ponto p2b"></span>
+</div>
+
+</div>
 
 <div id="faceResultado"></div>
 
 </div>
 
-
 <div id="resultado">
 Escolha sua sorte
 </div>
 
-
-<label>
-VALOR DA APOSTA
-</label>
-
+<label>VALOR DA APOSTA</label>
 
 <input
 id="aposta"
@@ -622,14 +581,11 @@ min="0.10"
 step="0.10"
 >
 
-
 <br>
-
 
 <button id="botao">
 🎲 JOGAR
 </button>
-
 
 <div class="info">
 
@@ -643,45 +599,155 @@ step="0.10"
 
 </div>
 
-
 </div>
 
+<script type="module" src="../saldo.js"></script>
 
 <script>
+/* =====================================================
+   SISTEMA DE SOM DE DADO
+===================================================== */
 
+let audioCtx = null;
 
-/*
-=====================================
-SALDO
-=====================================
-*/
+function iniciarAudio(){
 
-let saldo =
-Number(localStorage.getItem("saldo") || 1000);
+if(!audioCtx){
 
-
-function atualizar(){
-
-document.getElementById("saldo").textContent =
-"💰 Saldo: R$ " +
-saldo.toFixed(2);
-
-localStorage.setItem(
-"saldo",
-saldo
-);
+audioCtx = new (
+window.AudioContext ||
+window.webkitAudioContext
+)();
 
 }
 
+if(audioCtx.state === "suspended"){
+audioCtx.resume();
+}
 
-atualizar();
+}
 
+/* pequeno impacto do dado */
+function impactoDado(){
 
-/*
-=====================================
-ELEMENTOS
-=====================================
-*/
+iniciarAudio();
+
+const agora = audioCtx.currentTime;
+
+const buffer =
+audioCtx.createBuffer(
+1,
+audioCtx.sampleRate * 0.06,
+audioCtx.sampleRate
+);
+
+const dados =
+buffer.getChannelData(0);
+
+for(let i=0;i<dados.length;i++){
+
+dados[i] =
+(Math.random()*2-1) *
+Math.exp(-i/(audioCtx.sampleRate*.012));
+
+}
+
+const fonte =
+audioCtx.createBufferSource();
+
+const ganho =
+audioCtx.createGain();
+
+const filtro =
+audioCtx.createBiquadFilter();
+
+filtro.type = "lowpass";
+filtro.frequency.value = 2400;
+
+ganho.gain.setValueAtTime(.22,agora);
+ganho.gain.exponentialRampToValueAtTime(
+.001,
+agora+.06
+);
+
+fonte.buffer = buffer;
+
+fonte.connect(filtro);
+filtro.connect(ganho);
+ganho.connect(audioCtx.destination);
+
+fonte.start();
+}
+
+/* som do dado batendo algumas vezes */
+function somDado(){
+
+iniciarAudio();
+
+impactoDado();
+
+setTimeout(impactoDado,150);
+setTimeout(impactoDado,290);
+setTimeout(impactoDado,430);
+setTimeout(impactoDado,570);
+setTimeout(impactoDado,710);
+setTimeout(impactoDado,850);
+setTimeout(impactoDado,1000);
+}
+
+/* som final de resultado */
+function somResultado(numero){
+
+iniciarAudio();
+
+const frequencias = {
+1:180,
+2:220,
+3:260,
+4:330,
+5:390,
+6:480
+};
+
+const oscilador =
+audioCtx.createOscillator();
+
+const ganho =
+audioCtx.createGain();
+
+oscilador.type = "triangle";
+
+oscilador.frequency.value =
+frequencias[numero] || 300;
+
+ganho.gain.setValueAtTime(
+.001,
+audioCtx.currentTime
+);
+
+ganho.gain.linearRampToValueAtTime(
+.08,
+audioCtx.currentTime+.02
+);
+
+ganho.gain.exponentialRampToValueAtTime(
+.001,
+audioCtx.currentTime+.22
+);
+
+oscilador.connect(ganho);
+ganho.connect(audioCtx.destination);
+
+oscilador.start();
+
+oscilador.stop(
+audioCtx.currentTime+.24
+);
+}
+
+/* =====================================================
+   ELEMENTOS
+===================================================== */
 
 const dado =
 document.getElementById("dado");
@@ -695,166 +761,144 @@ document.getElementById("resultado");
 const faceResultado =
 document.getElementById("faceResultado");
 
+/* =====================================================
+   VIBRAÇÃO
+===================================================== */
 
-/*
-=====================================
-CLIQUE
-=====================================
-*/
+function vibrar(){
 
-botao.addEventListener("click", function(){
+if("vibrate" in navigator){
 
+navigator.vibrate([
+35,45,
+45,55,
+55,70,
+70
+]);
+
+}
+
+}
+
+/* =====================================================
+   GIRO
+===================================================== */
+
+botao.addEventListener(
+"click",
+async function(){
+
+if(!window.SistemaSaldo){
+
+resultado.textContent =
+"⚠️ Sistema de saldo não encontrado.";
+
+return;
+
+}
 
 const aposta =
 Number(
 document.getElementById("aposta").value
 );
 
-
-/*
-VALIDAÇÃO
-*/
-
 if(!Number.isFinite(aposta)){
 
 alert("Digite um valor válido.");
-
 return;
 
 }
-
 
 if(aposta < 0.10){
 
-alert(
-"A aposta mínima é R$ 0,10."
-);
-
+alert("A aposta mínima é R$ 0,10.");
 return;
 
 }
 
+/* busca saldo REAL */
+const saldoAtual =
+await window.SistemaSaldo.get();
 
-if(aposta > saldo){
+if(
+typeof saldoAtual !== "number" ||
+saldoAtual < aposta
+){
 
-alert(
-"Saldo insuficiente."
-);
-
-return;
-
-}
-
-
-/*
-BLOQUEIA
-*/
-
-botao.disabled = true;
-
-
-/*
-DESCONTA
-*/
-
-saldo -= aposta;
-
-atualizar();
-
-
-/*
-ESCONDE RESULTADO ANTIGO
-*/
-
-faceResultado.classList.remove("mostrar");
-
-faceResultado.textContent = "";
-
-
-/*
-MENSAGEM
-*/
-
-resultado.className = "";
+resultado.className =
+"derrota";
 
 resultado.textContent =
-"🎲 ROLANDO...";
+"❌ Saldo insuficiente";
 
+return;
 
-/*
-=====================================
-SORTEIO
-=====================================
+}
 
-IMPORTANTE:
+/* bloqueia */
+botao.disabled = true;
 
-O número é sorteado ANTES
-da animação.
+/* começa som e vibração imediatamente */
+iniciarAudio();
+somDado();
+vibrar();
 
-Possibilidades:
+/* desconta no sistema real */
+await window.SistemaSaldo.debitar(aposta);
 
-1
-2
-3
-4
-5
-6
-*/
+/* atualiza saldo imediatamente */
+if(window.SistemaSaldo.atualizarTela){
 
+await window.SistemaSaldo.atualizarTela();
+
+}
+
+faceResultado.classList.remove("mostrar");
+faceResultado.textContent = "";
+
+resultado.className = "";
+resultado.textContent =
+"🎲 JOGANDO...";
+
+/* número sorteado */
 const numero =
-Math.floor(Math.random() * 6) + 1;
+Math.floor(Math.random()*6)+1;
 
-
-/*
-COMEÇA O GIRO
-*/
-
-dado.classList.remove("girando");
-
+/* inicia animação imediatamente */
+dado.classList.remove("rolando");
 void dado.offsetWidth;
+dado.classList.add("rolando");
 
-dado.classList.add("girando");
+/* pequenos impactos durante a queda */
+setTimeout(vibrar,420);
+setTimeout(vibrar,720);
+setTimeout(vibrar,1010);
 
+/* resultado */
+setTimeout(async function(){
 
-/*
-=====================================
-PARA DEPOIS DE 950ms
-=====================================
-*/
-
-setTimeout(function(){
-
-
-dado.classList.remove("girando");
-
-
-/*
-MOSTRA O NÚMERO REAL
-*/
+dado.classList.remove("rolando");
 
 faceResultado.textContent =
 numero;
 
-
-/*
-MOSTRA COM ANIMAÇÃO
-*/
-
 faceResultado.classList.add("mostrar");
 
-
-/*
-=====================================
-RESULTADO
-=====================================
-*/
+somResultado(numero);
 
 if(numero >= 4){
 
 const premio =
 aposta * 2;
 
-saldo += premio;
+/*
+   O saldo já foi debitado.
+   Aqui entra somente o prêmio.
+*/
+await window.SistemaSaldo.ganhar(
+aposta,
+premio / aposta
+);
 
 resultado.className =
 "vitoria";
@@ -863,6 +907,7 @@ resultado.textContent =
 "🎉 GANHOU R$ " +
 premio.toFixed(2);
 
+vibrar();
 
 }else{
 
@@ -874,25 +919,18 @@ resultado.textContent =
 
 }
 
+if(window.SistemaSaldo.atualizarTela){
 
-atualizar();
+await window.SistemaSaldo.atualizarTela();
 
-
-/*
-LIBERA BOTÃO
-*/
+}
 
 botao.disabled = false;
 
-
-},950);
-
+},1350);
 
 });
-
 </script>
 
-
 </body>
-
 </html>
