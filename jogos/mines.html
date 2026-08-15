@@ -1,15 +1,16 @@
-Mines ApostaXBet — versão realista
-
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-<title>Mines - ApostaXBet</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script type="module" src="../script.js"></script>
+<title>Mines Realista - ApostaXBet</title>
+
+<script src="../saldo.js"></script>
 
 <style>
+
 *{
     box-sizing:border-box;
     margin:0;
@@ -20,18 +21,16 @@ Mines ApostaXBet — versão realista
 body{
     min-height:100vh;
     color:white;
+    text-align:center;
     background:
-        radial-gradient(circle at 15% 15%,#00ff88,transparent 25%),
-        radial-gradient(circle at 85% 20%,#6500ff,transparent 27%),
-        radial-gradient(circle at 50% 100%,#ff0055,transparent 30%),
-        linear-gradient(135deg,#02030a,#070014,#00151d);
+        radial-gradient(circle at 15% 15%,#003cff,transparent 28%),
+        radial-gradient(circle at 85% 25%,#b000ff,transparent 28%),
+        radial-gradient(circle at 50% 100%,#ff004c,transparent 30%),
+        linear-gradient(135deg,#02030b,#090018,#001526);
     background-size:180% 180%;
     animation:fundo 12s ease-in-out infinite alternate;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    padding:20px 0 40px;
     overflow-x:hidden;
+    padding:20px 0 40px;
 }
 
 @keyframes fundo{
@@ -40,42 +39,38 @@ body{
     100%{background-position:0% 100%}
 }
 
-/* LUZES */
-
 .luz{
     position:fixed;
     width:300px;
     height:300px;
     border-radius:50%;
-    filter:blur(110px);
-    opacity:.32;
+    filter:blur(120px);
+    opacity:.3;
+    z-index:-1;
     pointer-events:none;
-    z-index:-2;
 }
 
 .luz1{
     background:#00ff88;
-    left:-130px;
+    left:-100px;
     top:-100px;
-    animation:luz1 7s infinite alternate ease-in-out;
+    animation:flutuar1 7s infinite alternate ease-in-out;
 }
 
 .luz2{
-    background:#7200ff;
-    right:-130px;
+    background:#6a00ff;
+    right:-100px;
     bottom:-100px;
-    animation:luz2 8s infinite alternate ease-in-out;
+    animation:flutuar2 7s infinite alternate ease-in-out;
 }
 
-@keyframes luz1{
-    to{transform:translate(180px,150px) scale(1.3)}
+@keyframes flutuar1{
+    to{transform:translate(150px,150px)}
 }
 
-@keyframes luz2{
-    to{transform:translate(-180px,-150px) scale(1.3)}
+@keyframes flutuar2{
+    to{transform:translate(-150px,-150px)}
 }
-
-/* PARTÍCULAS */
 
 .particulas{
     position:fixed;
@@ -90,112 +85,141 @@ body{
     bottom:-20px;
     width:4px;
     height:4px;
-    border-radius:50%;
     background:white;
+    border-radius:50%;
     box-shadow:
         0 0 8px #00ffff,
         0 0 15px #00ff88;
     animation:subir linear infinite;
 }
 
-.particulas span:nth-child(1){left:8%;animation-duration:8s}
-.particulas span:nth-child(2){left:22%;animation-duration:11s}
-.particulas span:nth-child(3){left:38%;animation-duration:7s}
-.particulas span:nth-child(4){left:55%;animation-duration:10s}
-.particulas span:nth-child(5){left:72%;animation-duration:8s}
-.particulas span:nth-child(6){left:88%;animation-duration:12s}
+.particulas span:nth-child(1){left:10%;animation-duration:9s}
+.particulas span:nth-child(2){left:30%;animation-duration:11s}
+.particulas span:nth-child(3){left:50%;animation-duration:8s}
+.particulas span:nth-child(4){left:70%;animation-duration:10s}
+.particulas span:nth-child(5){left:90%;animation-duration:12s}
 
 @keyframes subir{
-    0%{transform:translateY(0);opacity:0}
+    0%{
+        transform:translateY(0);
+        opacity:0;
+    }
     20%{opacity:1}
-    100%{transform:translateY(-110vh);opacity:0}
+    100%{
+        transform:translateY(-100vh);
+        opacity:0;
+    }
 }
-
-/* TÍTULO */
 
 h1{
     margin-top:10px;
-    font-size:42px;
+    font-size:40px;
     color:#00ff88;
-    letter-spacing:3px;
     text-shadow:
-        0 0 8px #00ff88,
-        0 0 25px #00ff88,
-        0 0 50px rgba(0,255,136,.7);
-    animation:pulsoTitulo 2s infinite alternate;
+        0 0 10px #00ff88,
+        0 0 30px rgba(0,255,136,.6);
 }
-
-@keyframes pulsoTitulo{
-    from{filter:brightness(1)}
-    to{filter:brightness(1.25)}
-}
-
-/* SALDO */
 
 #saldo{
-    margin:15px 0 12px;
-    padding:11px 25px;
-    border-radius:40px;
-    color:#00ff88;
-    font-size:20px;
+    display:inline-block;
+    font-size:21px;
     font-weight:bold;
-    background:rgba(0,0,0,.55);
+    color:#00ff88;
+    background:rgba(0,0,0,.45);
+    padding:12px 28px;
+    border-radius:40px;
     border:1px solid rgba(0,255,136,.5);
+    margin:15px 0;
     box-shadow:
-        0 0 15px rgba(0,255,136,.18),
-        inset 0 0 15px rgba(0,255,136,.05);
+        0 0 20px rgba(0,255,136,.15);
 }
-
-/* PAINEL */
 
 .painel{
     width:92%;
-    max-width:400px;
+    max-width:410px;
+    margin:10px auto 15px;
     padding:18px;
-    border-radius:25px;
-    text-align:center;
     background:
         linear-gradient(
             145deg,
             rgba(20,25,40,.96),
             rgba(3,5,15,.97)
         );
-    border:1px solid rgba(255,255,255,.1);
+    border-radius:24px;
+    border:1px solid rgba(0,255,136,.2);
     box-shadow:
-        0 20px 60px rgba(0,0,0,.65),
-        inset 0 0 30px rgba(0,255,136,.03);
+        0 15px 45px rgba(0,0,0,.6);
 }
 
 #premio{
     min-height:30px;
-    margin-bottom:15px;
-    color:#ffd700;
     font-size:21px;
+    color:#ffd700;
     font-weight:bold;
-    text-shadow:0 0 12px rgba(255,215,0,.5);
+    margin-bottom:10px;
 }
 
-/* JOGO */
+#timer{
+    margin:8px auto 14px;
+    width:150px;
+    padding:9px;
+    border-radius:20px;
+    font-size:18px;
+    font-weight:bold;
+    color:#00ff88;
+    background:rgba(0,255,136,.08);
+    border:1px solid rgba(0,255,136,.35);
+}
+
+#timer.perigo{
+    color:#ff3333;
+    border-color:#ff3333;
+    background:rgba(255,0,0,.12);
+    animation:timerPerigo .45s infinite alternate;
+}
+
+@keyframes timerPerigo{
+    from{transform:scale(1)}
+    to{
+        transform:scale(1.08);
+        box-shadow:0 0 20px rgba(255,0,0,.5);
+    }
+}
+
+#jogo{
+    width:92%;
+    max-width:410px;
+    height:440px;
+    margin:auto;
+    position:relative;
+    overflow:hidden;
+    border-radius:25px;
+    padding:18px;
+    background:
+        radial-gradient(
+            circle at 50% 20%,
+            rgba(0,255,136,.08),
+            transparent 45%
+        ),
+        linear-gradient(
+            145deg,
+            #090d18,
+            #020309
+        );
+    border:2px solid rgba(0,255,136,.3);
+    box-shadow:
+        inset 0 0 50px rgba(0,0,0,.9),
+        0 20px 60px rgba(0,0,0,.7);
+}
 
 #grid{
-    width:92%;
-    max-width:380px;
-    margin:18px auto;
+    width:100%;
+    height:100%;
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    gap:12px;
-    padding:12px;
-    border-radius:25px;
-    background:
-        radial-gradient(circle at center,rgba(0,255,136,.08),transparent 65%),
-        rgba(0,0,0,.4);
-    border:1px solid rgba(0,255,136,.16);
-    box-shadow:
-        inset 0 0 35px rgba(0,0,0,.9),
-        0 15px 45px rgba(0,0,0,.55);
+    gap:13px;
+    align-content:center;
 }
-
-/* CASAS */
 
 .cell{
     aspect-ratio:1;
@@ -203,182 +227,163 @@ h1{
     display:flex;
     align-items:center;
     justify-content:center;
-    overflow:hidden;
+    font-size:35px;
     cursor:pointer;
     user-select:none;
 
-    border-radius:18px;
-
     background:
-        radial-gradient(
-            circle at 35% 25%,
-            #292945,
-            #111126 60%,
-            #080810
+        linear-gradient(
+            145deg,
+            #20263a,
+            #0c101c
         );
 
-    border:2px solid rgba(255,255,255,.08);
-
-    color:#777;
-    font-size:34px;
-    font-weight:bold;
+    border-radius:18px;
+    border:2px solid rgba(255,255,255,.1);
 
     box-shadow:
-        inset 0 0 20px rgba(0,0,0,.7),
-        0 7px 15px rgba(0,0,0,.4);
+        inset 0 2px 5px rgba(255,255,255,.05),
+        0 8px 15px rgba(0,0,0,.5);
 
     transition:
-        transform .18s ease,
-        border-color .18s ease,
-        box-shadow .18s ease,
-        background .18s ease;
+        transform .2s,
+        background .2s,
+        box-shadow .2s;
 }
 
 .cell::before{
     content:"";
     position:absolute;
-    width:70%;
-    height:70%;
-    border-radius:50%;
-    background:rgba(255,255,255,.025);
-    filter:blur(10px);
+    inset:4px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.04);
+    pointer-events:none;
 }
 
-.cell:hover:not(.revealed):not(.bomb){
-    transform:translateY(-4px) scale(1.02);
-    border-color:rgba(0,255,136,.6);
-    box-shadow:
-        0 0 15px rgba(0,255,136,.2),
-        inset 0 0 20px rgba(0,255,136,.08);
-}
-
-.cell:active:not(.revealed):not(.bomb){
-    transform:scale(.94);
-}
-
-/* ABRINDO */
-
-.cell.abrindo{
-    animation:abrindo .55s infinite;
-}
-
-@keyframes abrindo{
-    0%,100%{
-        transform:scale(1);
-        box-shadow:0 0 10px rgba(0,255,136,.15);
-    }
-    50%{
-        transform:scale(.93);
-        box-shadow:
-            0 0 30px rgba(0,255,136,.5),
-            inset 0 0 20px rgba(0,255,136,.15);
-    }
-}
-
-/* DIAMANTE */
-
-.cell.revealed{
-    cursor:default;
-    color:#06150d;
-    background:
-        radial-gradient(circle at 35% 25%,#ffffff,#9affd0 22%,#00ff88 60%,#00a85a);
+.cell:hover:not(.revealed):not(.bomb):not(.bloqueada){
+    transform:translateY(-4px);
     border-color:#00ff88;
     box-shadow:
-        0 0 12px #00ff88,
-        0 0 30px rgba(0,255,136,.65),
-        inset 0 0 18px rgba(255,255,255,.35);
-    animation:diamante .45s cubic-bezier(.17,.89,.32,1.3);
+        0 0 15px rgba(0,255,136,.25),
+        inset 0 0 20px rgba(0,255,136,.06);
+}
+
+.cell.abrindo{
+    animation:abrir .45s ease;
+}
+
+@keyframes abrir{
+    0%{transform:scale(.9) rotateY(0)}
+    50%{transform:scale(1.06) rotateY(90deg)}
+    100%{transform:scale(1) rotateY(0)}
+}
+
+.cell.revealed{
+    background:
+        radial-gradient(
+            circle at 35% 30%,
+            #fff,
+            #00ff88 30%,
+            #009955 75%,
+            #004c2c
+        );
+    color:#001b10;
+    border-color:#00ff88;
+    box-shadow:
+        0 0 15px #00ff88,
+        0 0 35px rgba(0,255,136,.5);
+    animation:diamante .5s ease;
 }
 
 @keyframes diamante{
     0%{
-        transform:scale(.35) rotate(-20deg);
-        opacity:.2;
+        transform:scale(.6) rotate(-15deg);
+        opacity:0;
     }
-    70%{
-        transform:scale(1.12) rotate(4deg);
+    60%{
+        transform:scale(1.15) rotate(8deg);
     }
     100%{
-        transform:scale(1);
+        transform:scale(1) rotate(0);
         opacity:1;
     }
 }
 
-/* BOMBA */
-
 .cell.bomb{
-    cursor:default;
     background:
-        radial-gradient(circle at 35% 25%,#ffb0b0,#ff3333 35%,#850000 75%,#250000);
-    border-color:#ff3333;
-    color:white;
+        radial-gradient(
+            circle,
+            #ff7777,
+            #ff2222 45%,
+            #580000
+        );
+    border-color:#ff2222;
     box-shadow:
-        0 0 15px #ff3333,
-        0 0 40px rgba(255,0,0,.65),
-        inset 0 0 20px rgba(0,0,0,.5);
-    animation:explodir .6s;
+        0 0 20px #ff2222,
+        0 0 50px rgba(255,0,0,.65);
+    animation:explodir .6s ease;
 }
 
 @keyframes explodir{
-    0%{transform:scale(.5);filter:brightness(2)}
-    35%{transform:scale(1.2) rotate(-5deg)}
-    55%{transform:scale(.9) rotate(5deg)}
-    75%{transform:scale(1.08) rotate(-3deg)}
-    100%{transform:scale(1)}
+    0%{
+        transform:scale(.7);
+        filter:brightness(2);
+    }
+    35%{
+        transform:scale(1.25) rotate(-8deg);
+    }
+    55%{
+        transform:scale(.9) rotate(8deg);
+    }
+    100%{
+        transform:scale(1);
+    }
 }
 
-/* BOTÃO */
+.cell.bloqueada{
+    cursor:not-allowed;
+    opacity:.75;
+}
 
-button#btnNovoJogo{
-    width:100%;
+#btnNovoJogo{
     background:
-        linear-gradient(135deg,#00ff88,#00cc6a);
-    color:#00150c;
-    border:0;
-    padding:16px 30px;
-    font-size:18px;
+        linear-gradient(
+            135deg,
+            #00ff88,
+            #00bb66
+        );
+    color:#001a0d;
+    border:none;
+    padding:15px 40px;
+    font-size:17px;
     font-weight:900;
     border-radius:14px;
     cursor:pointer;
-    letter-spacing:1px;
     box-shadow:
-        0 0 15px rgba(0,255,136,.35),
-        0 7px 20px rgba(0,0,0,.35);
-    transition:.2s;
+        0 0 20px rgba(0,255,136,.35);
 }
 
-button#btnNovoJogo:hover{
-    transform:translateY(-2px);
-    box-shadow:
-        0 0 30px rgba(0,255,136,.55),
-        0 8px 25px rgba(0,0,0,.45);
-}
-
-button#btnNovoJogo:active{
-    transform:scale(.96);
-}
-
-button#btnNovoJogo:disabled{
-    background:#292929;
-    color:#666;
-    box-shadow:none;
+#btnNovoJogo:disabled{
+    opacity:.45;
     cursor:not-allowed;
 }
 
-/* RESULTADO */
+#btnNovoJogo:active{
+    transform:scale(.96);
+}
 
 .resultado-overlay{
     position:fixed;
     inset:0;
-    z-index:100;
     display:flex;
     align-items:center;
     justify-content:center;
-    background:rgba(0,0,0,.86);
-    backdrop-filter:blur(10px);
+    background:rgba(0,0,0,.88);
+    backdrop-filter:blur(9px);
     opacity:0;
     pointer-events:none;
-    transition:.25s;
+    transition:.3s;
+    z-index:100;
 }
 
 .resultado-overlay.mostrar{
@@ -387,28 +392,30 @@ button#btnNovoJogo:disabled{
 }
 
 .resultado-box{
-    width:86%;
+    width:85%;
     max-width:350px;
-    padding:32px 22px;
-    text-align:center;
+    padding:35px 25px;
     border-radius:25px;
+    text-align:center;
     background:
-        radial-gradient(circle at 50% 0%,rgba(0,255,136,.15),transparent 45%),
-        linear-gradient(145deg,#17172b,#070711);
+        linear-gradient(
+            145deg,
+            #151b2d,
+            #060811
+        );
     border:2px solid #00ff88;
     box-shadow:
-        0 0 25px rgba(0,255,136,.4),
-        0 0 80px rgba(0,255,136,.15);
-    animation:popIn .45s cubic-bezier(.175,.885,.32,1.275);
+        0 0 30px rgba(0,255,136,.35);
+    animation:pop .4s ease;
 }
 
-@keyframes popIn{
+@keyframes pop{
     0%{
-        transform:scale(.55) rotate(-5deg);
+        transform:scale(.6);
         opacity:0;
     }
     70%{
-        transform:scale(1.06) rotate(1deg);
+        transform:scale(1.08);
     }
     100%{
         transform:scale(1);
@@ -417,88 +424,41 @@ button#btnNovoJogo:disabled{
 }
 
 .resultado-icon{
-    font-size:72px;
-    margin-bottom:12px;
-    filter:drop-shadow(0 0 15px #00ff88);
-    animation:iconeResultado 1s infinite alternate;
-}
-
-@keyframes iconeResultado{
-    from{transform:scale(1)}
-    to{transform:scale(1.08)}
+    font-size:70px;
+    margin-bottom:15px;
 }
 
 .resultado-text{
     font-size:25px;
-    font-weight:900;
+    font-weight:bold;
     margin-bottom:25px;
 }
 
 .btn-fechar{
-    background:transparent;
-    border:2px solid #00ff88;
-    color:#00ff88;
-    padding:13px 35px;
-    font-size:16px;
+    padding:13px 30px;
     border-radius:12px;
-    cursor:pointer;
+    border:2px solid #00ff88;
+    background:transparent;
+    color:#00ff88;
+    font-size:16px;
     font-weight:bold;
-    transition:.2s;
 }
-
-.btn-fechar:hover{
-    background:#00ff88;
-    color:#000;
-    box-shadow:0 0 20px #00ff88;
-}
-
-/* FLASH DE EXPLOSÃO */
-
-.flash-bomba{
-    position:fixed;
-    inset:0;
-    z-index:90;
-    pointer-events:none;
-    background:rgba(255,0,0,.55);
-    opacity:0;
-}
-
-.flash-bomba.ativo{
-    animation:flashBomba .35s;
-}
-
-@keyframes flashBomba{
-    0%{opacity:0}
-    25%{opacity:.8}
-    100%{opacity:0}
-}
-
-/* RESPONSIVO */
 
 @media(max-width:450px){
 
-    body{
-        padding-top:12px;
-    }
-
     h1{
-        font-size:35px;
+        font-size:34px;
     }
 
-    #grid{
-        gap:9px;
-        padding:9px;
+    #jogo{
+        height:420px;
     }
 
     .cell{
-        border-radius:15px;
         font-size:30px;
     }
-
-    .painel{
-        padding:16px;
-    }
 }
+
 </style>
 </head>
 
@@ -513,10 +473,7 @@ button#btnNovoJogo:disabled{
     <span></span>
     <span></span>
     <span></span>
-    <span></span>
 </div>
-
-<div class="flash-bomba" id="flashBomba"></div>
 
 <h1>💣 MINES</h1>
 
@@ -530,13 +487,19 @@ button#btnNovoJogo:disabled{
         💎 Encontre os diamantes
     </div>
 
+    <div id="timer">
+        ⏱️ AGUARDANDO
+    </div>
+
     <button id="btnNovoJogo">
-        💣 NOVO JOGO
+        NOVO JOGO
     </button>
 
 </div>
 
-<div id="grid"></div>
+<div id="jogo">
+    <div id="grid"></div>
+</div>
 
 <div class="resultado-overlay" id="resultadoTela">
 
@@ -568,13 +531,10 @@ button#btnNovoJogo:disabled{
    CONFIGURAÇÃO
 ========================================= */
 
-let bombas = [];
-let jogando = false;
-
 const VALOR_APOSTA = 1.00;
 const PREMIO_DIAMANTE = 0.50;
-
-let saldoAtual = 2.00;
+const QUANTIDADE_BOMBAS = 3;
+const TEMPO_RODADA = 10;
 
 
 /* =========================================
@@ -587,8 +547,14 @@ document.getElementById("grid");
 const premio =
 document.getElementById("premio");
 
-const displaySaldoLocal =
+const displaySaldo =
 document.getElementById("saldo");
+
+const timer =
+document.getElementById("timer");
+
+const btnNovoJogo =
+document.getElementById("btnNovoJogo");
 
 const resultadoTela =
 document.getElementById("resultadoTela");
@@ -599,20 +565,24 @@ document.getElementById("resultadoIcone");
 const resultadoTexto =
 document.getElementById("resultadoTexto");
 
-const btnNovoJogo =
-document.getElementById("btnNovoJogo");
 
-const flashBomba =
-document.getElementById("flashBomba");
+/* =========================================
+   ESTADO
+========================================= */
+
+let bombas = [];
+let jogando = false;
+let tempoRestante = 0;
+let contador = null;
 
 
 /* =========================================
-   ÁUDIO
+   SOM
 ========================================= */
 
 let audioContext = null;
 
-function iniciarAudio(){
+function obterAudio(){
 
     if(!audioContext){
 
@@ -627,167 +597,97 @@ function iniciarAudio(){
     if(audioContext.state === "suspended"){
         audioContext.resume();
     }
+
+    return audioContext;
 }
 
 
-/* Som genérico */
-
-function tocarSom(
+function som(
     frequencia,
     duracao,
     tipo="sine",
     volume=.08
 ){
 
-    iniciarAudio();
+    try{
 
-    const oscilador =
-    audioContext.createOscillator();
+        const ctx =
+        obterAudio();
 
-    const ganho =
-    audioContext.createGain();
+        const osc =
+        ctx.createOscillator();
 
-    oscilador.type = tipo;
-    oscilador.frequency.value =
-    frequencia;
+        const ganho =
+        ctx.createGain();
 
-    ganho.gain.setValueAtTime(
-        volume,
-        audioContext.currentTime
-    );
+        osc.type = tipo;
 
-    ganho.gain.exponentialRampToValueAtTime(
-        .001,
-        audioContext.currentTime + duracao
-    );
+        osc.frequency.value =
+        frequencia;
 
-    oscilador.connect(ganho);
-    ganho.connect(audioContext.destination);
+        ganho.gain.setValueAtTime(
+            volume,
+            ctx.currentTime
+        );
 
-    oscilador.start();
+        ganho.gain.exponentialRampToValueAtTime(
+            .001,
+            ctx.currentTime + duracao
+        );
 
-    oscilador.stop(
-        audioContext.currentTime + duracao
-    );
+        osc.connect(ganho);
+        ganho.connect(ctx.destination);
+
+        osc.start();
+
+        osc.stop(
+            ctx.currentTime + duracao
+        );
+
+    }catch(e){
+
+        console.warn(
+            "Áudio indisponível."
+        );
+
+    }
+
 }
 
 
-/* Clique */
+/* =========================================
+   SONS ESPECIAIS
+========================================= */
 
 function somClique(){
-
-    tocarSom(
-        420,
-        .07,
-        "square",
-        .045
-    );
-
+    som(520,.07,"square",.06);
 }
-
-
-/* Diamante */
 
 function somDiamante(){
 
-    tocarSom(
-        620,
-        .08,
-        "sine",
-        .08
-    );
+    som(700,.10,"sine",.10);
 
     setTimeout(
-        () => tocarSom(
-            880,
-            .12,
-            "sine",
-            .07
-        ),
+        () => som(1000,.16,"sine",.10),
         70
     );
 
-    setTimeout(
-        () => tocarSom(
-            1180,
-            .16,
-            "sine",
-            .06
-        ),
-        150
-    );
-
 }
-
-
-/* Bomba */
 
 function somBomba(){
 
-    iniciarAudio();
+    som(90,.45,"sawtooth",.18);
 
-    const agora =
-    audioContext.currentTime;
-
-    const oscilador =
-    audioContext.createOscillator();
-
-    const ganho =
-    audioContext.createGain();
-
-    oscilador.type = "sawtooth";
-
-    oscilador.frequency.setValueAtTime(
-        150,
-        agora
-    );
-
-    oscilador.frequency.exponentialRampToValueAtTime(
-        35,
-        agora + .55
-    );
-
-    ganho.gain.setValueAtTime(
-        .18,
-        agora
-    );
-
-    ganho.gain.exponentialRampToValueAtTime(
-        .001,
-        agora + .65
-    );
-
-    oscilador.connect(ganho);
-    ganho.connect(audioContext.destination);
-
-    oscilador.start();
-
-    oscilador.stop(
-        agora + .65
+    setTimeout(
+        () => som(55,.55,"square",.12),
+        100
     );
 
 }
 
+function somContagem(){
 
-/* Vitória */
-
-function somVitoria(){
-
-    [523,659,784,1046].forEach(
-        (freq,index)=>{
-
-            setTimeout(
-                () => tocarSom(
-                    freq,
-                    .18,
-                    "sine",
-                    .07
-                ),
-                index * 90
-            );
-
-        }
-    );
+    som(500,.06,"square",.045);
 
 }
 
@@ -796,121 +696,174 @@ function somVitoria(){
    SALDO
 ========================================= */
 
-function atualizarDisplaySaldo(){
+async function obterSaldo(){
 
-    displaySaldoLocal.textContent =
-        `💰 Saldo: R$ ${saldoAtual.toFixed(2)}`;
+    try{
 
-    localStorage.setItem(
-        "saldo",
-        saldoAtual
-    );
+        if(
+            window.SistemaSaldo &&
+            typeof window.SistemaSaldo.get === "function"
+        ){
+
+            const valorSaldo =
+            await window.SistemaSaldo.get();
+
+            if(
+                typeof valorSaldo === "number" &&
+                Number.isFinite(valorSaldo)
+            ){
+
+                return valorSaldo;
+
+            }
+
+        }
+
+    }catch(e){
+
+        console.warn(
+            "Não foi possível obter saldo:",
+            e
+        );
+
+    }
+
+    return 0;
 
 }
 
-atualizarDisplaySaldo();
+
+async function atualizarSaldo(){
+
+    try{
+
+        if(
+            window.SistemaSaldo &&
+            typeof window.SistemaSaldo.atualizarTela === "function"
+        ){
+
+            await window.SistemaSaldo.atualizarTela();
+
+        }
+
+    }catch(e){
+
+        console.warn(
+            "Erro ao atualizar saldo:",
+            e
+        );
+
+    }
+
+    const valorSaldo =
+    await obterSaldo();
+
+    displaySaldo.textContent =
+    "💰 Saldo: R$ " +
+    Number(valorSaldo || 0)
+    .toFixed(2);
+
+}
 
 
 /* =========================================
-   INICIAR JOGO
+   DEBITAR
 ========================================= */
 
-async function iniciarJogo(){
+async function debitarAposta(){
 
-    iniciarAudio();
-
-    somClique();
-
-    if(jogando){
-
-        alert(
-            "⚠️ Termine o jogo atual primeiro!"
-        );
-
-        return;
-    }
-
-
-    if(saldoAtual < VALOR_APOSTA){
+    if(
+        !window.SistemaSaldo ||
+        typeof window.SistemaSaldo.debitar !== "function"
+    ){
 
         alert(
-            `❌ Saldo insuficiente! Precisa de R$ ${VALOR_APOSTA.toFixed(2)} e tem R$ ${saldoAtual.toFixed(2)}`
+            "Sistema de saldo não encontrado."
         );
 
-        return;
+        return false;
+
     }
 
+    try{
 
-    /* DEBITA */
+        const resultado =
+        await window.SistemaSaldo.debitar(
+            VALOR_APOSTA
+        );
 
-    saldoAtual -=
-    VALOR_APOSTA;
-
-    atualizarDisplaySaldo();
-
-
-    /* SISTEMA EXTERNO */
-
-    if(window.SistemaSaldo){
-
-        try{
-
-            await window.SistemaSaldo.debitar(
-                VALOR_APOSTA
-            );
-
-            window.SistemaSaldo.atualizarTela();
-
-        }catch(e){
-
-            console.warn(
-                "Sistema externo indisponível."
-            );
-
+        if(resultado === false){
+            return false;
         }
 
+        await atualizarSaldo();
+
+        return true;
+
+    }catch(e){
+
+        console.error(e);
+
+        alert(
+            "Não foi possível debitar a aposta."
+        );
+
+        return false;
+
     }
 
+}
 
-    jogando = true;
 
-    bombas = [];
+/* =========================================
+   PAGAR
+========================================= */
+
+async function pagarPremio(valor){
+
+    if(
+        !window.SistemaSaldo ||
+        typeof window.SistemaSaldo.ganhar !== "function"
+    ){
+
+        console.warn(
+            "Sistema de pagamento não encontrado."
+        );
+
+        return;
+
+    }
+
+    try{
+
+        await window.SistemaSaldo.ganhar(
+            valor,
+            1
+        );
+
+        await atualizarSaldo();
+
+    }catch(e){
+
+        console.error(
+            "Erro ao pagar prêmio:",
+            e
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   CRIAR TABULEIRO
+========================================= */
+
+function criarTabuleiro(){
 
     grid.innerHTML = "";
 
-    resultadoTela.classList.remove(
-        "mostrar"
-    );
-
-    premio.textContent =
-        "💎 Encontre os diamantes";
-
-
-    /* ESCOLHE 3 BOMBAS */
-
-    while(
-        bombas.length < 3
-    ){
-
-        const p =
-        Math.floor(
-            Math.random() * 9
-        );
-
-        if(!bombas.includes(p)){
-            bombas.push(p);
-        }
-
-    }
-
-
-    /* CRIA CASAS */
-
-    for(
-        let i=0;
-        i<9;
-        i++
-    ){
+    for(let i=0;i<9;i++){
 
         const cell =
         document.createElement("div");
@@ -919,26 +872,189 @@ async function iniciarJogo(){
         "cell";
 
         cell.innerHTML =
-        "✦";
+        "💠";
 
         cell.dataset.index =
         i;
 
         cell.onclick =
-        () => abrirCasa(
-            cell,
-            i
-        );
+        () => abrirCasa(cell,i);
 
         grid.appendChild(cell);
 
     }
 
+}
 
-    btnNovoJogo.textContent =
-        "🎯 JOGO EM ANDAMENTO";
+
+/* =========================================
+   CRIAR BOMBAS
+========================================= */
+
+function criarBombas(){
+
+    bombas = [];
+
+    while(
+        bombas.length <
+        QUANTIDADE_BOMBAS
+    ){
+
+        const numero =
+        Math.floor(
+            Math.random()*9
+        );
+
+        if(
+            !bombas.includes(numero)
+        ){
+
+            bombas.push(numero);
+
+        }
+
+    }
+
+}
+
+
+/* =========================================
+   TIMER
+========================================= */
+
+function iniciarTimer(){
+
+    clearInterval(contador);
+
+    tempoRestante =
+    TEMPO_RODADA;
+
+    atualizarTimer();
+
+    contador =
+    setInterval(
+    function(){
+
+        tempoRestante--;
+
+        atualizarTimer();
+
+        if(
+            tempoRestante <= 0
+        ){
+
+            clearInterval(
+                contador
+            );
+
+            tempoEsgotado();
+
+        }
+
+    },
+    1000
+    );
+
+}
+
+
+function atualizarTimer(){
+
+    if(!jogando){
+
+        timer.textContent =
+        "⏱️ AGUARDANDO";
+
+        timer.classList.remove(
+            "perigo"
+        );
+
+        return;
+
+    }
+
+    timer.textContent =
+    "⏱️ " +
+    tempoRestante +
+    "s";
+
+    if(
+        tempoRestante <= 3
+    ){
+
+        timer.classList.add(
+            "perigo"
+        );
+
+        somContagem();
+
+    }
+    else{
+
+        timer.classList.remove(
+            "perigo"
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   NOVO JOGO
+========================================= */
+
+async function iniciarJogo(){
+
+    if(jogando){
+
+        return;
+
+    }
+
+    const saldoAtual =
+    await obterSaldo();
+
+    if(
+        saldoAtual <
+        VALOR_APOSTA
+    ){
+
+        alert(
+            "❌ Saldo insuficiente para jogar."
+        );
+
+        return;
+
+    }
+
+    somClique();
+
+    const debitado =
+    await debitarAposta();
+
+    if(!debitado){
+
+        return;
+
+    }
+
+    jogando = true;
 
     btnNovoJogo.disabled = true;
+
+    resultadoTela.classList.remove(
+        "mostrar"
+    );
+
+    premio.textContent =
+    "💎 Escolha uma casa!";
+
+    criarBombas();
+
+    criarTabuleiro();
+
+    iniciarTimer();
 
 }
 
@@ -947,7 +1063,7 @@ async function iniciarJogo(){
    ABRIR CASA
 ========================================= */
 
-async function abrirCasa(
+function abrirCasa(
     cell,
     indice
 ){
@@ -956,14 +1072,13 @@ async function abrirCasa(
         !jogando ||
         !cell ||
         cell.classList.contains("revealed") ||
-        cell.classList.contains("bomb")
+        cell.classList.contains("bomb") ||
+        cell.classList.contains("bloqueada")
     ){
 
         return;
+
     }
-
-
-    iniciarAudio();
 
     somClique();
 
@@ -971,9 +1086,18 @@ async function abrirCasa(
         "abrindo"
     );
 
-
     setTimeout(
     async function(){
+
+        if(!jogando){
+
+            return;
+
+        }
+
+        cell.classList.remove(
+            "abrindo"
+        );
 
         /* BOMBA */
 
@@ -981,165 +1105,190 @@ async function abrirCasa(
             bombas.includes(indice)
         ){
 
-            cell.classList.remove(
-                "abrindo"
-            );
+            somBomba();
 
             cell.classList.add(
                 "bomb"
             );
 
             cell.innerHTML =
-                "💣";
-
-            somBomba();
-
-            flashBomba.classList.remove(
-                "ativo"
-            );
-
-            void flashBomba.offsetWidth;
-
-            flashBomba.classList.add(
-                "ativo"
-            );
-
-            revelarBombas();
+            "💣";
 
             jogando = false;
 
+            clearInterval(
+                contador
+            );
+
+            timer.textContent =
+            "💥 EXPLODIU!";
+
+            timer.classList.remove(
+                "perigo"
+            );
+
             premio.textContent =
-                "💥 BOOM! Você encontrou uma bomba.";
+            "💥 BOOM! Você encontrou uma bomba.";
 
-            btnNovoJogo.disabled = false;
+            revelarBombas();
 
-            btnNovoJogo.textContent =
-                "💣 NOVO JOGO";
-
+            bloquearTabuleiro();
 
             setTimeout(
             function(){
 
                 resultadoIcone.textContent =
-                    "💣";
+                "💣";
 
                 resultadoTexto.textContent =
-                    "Você perdeu!";
+                "Você perdeu!";
 
                 resultadoTela.classList.add(
                     "mostrar"
                 );
 
+                btnNovoJogo.disabled =
+                false;
+
             },
-            800
+            900
             );
 
             return;
-        }
 
+        }
 
         /* DIAMANTE */
 
-        cell.classList.remove(
-            "abrindo"
-        );
+        somDiamante();
 
         cell.classList.add(
             "revealed"
         );
 
         cell.innerHTML =
-            "💎";
+        "💎";
 
-        somDiamante();
+        await pagarPremio(
+            PREMIO_DIAMANTE
+        );
 
-
-        /* PREMIAÇÃO */
-
-        saldoAtual +=
-            PREMIO_DIAMANTE;
-
-        atualizarDisplaySaldo();
-
-
-        if(window.SistemaSaldo){
-
-            try{
-
-                await window.SistemaSaldo.ganhar(
-                    PREMIO_DIAMANTE,
-                    1
-                );
-
-                window.SistemaSaldo.atualizarTela();
-
-            }catch(e){
-
-                console.warn(
-                    "Sistema externo indisponível."
-                );
-
-            }
-
-        }
-
+        premio.textContent =
+        "💎 + R$ " +
+        PREMIO_DIAMANTE.toFixed(2);
 
         const abertas =
         document.querySelectorAll(
-            ".revealed"
+            ".cell.revealed"
         ).length;
 
+        /*
+        TODAS AS CASAS SEGURAS
+        */
 
-        premio.textContent =
-            `💎 Diamante encontrado! + R$ ${PREMIO_DIAMANTE.toFixed(2)} — ${abertas}/6`;
+        if(
+            abertas >=
+            9 - QUANTIDADE_BOMBAS
+        ){
 
-
-        /* 6 DIAMANTES */
-
-        if(abertas >= 6){
+            clearInterval(
+                contador
+            );
 
             jogando = false;
 
-            somVitoria();
+            revelarBombas();
+
+            bloquearTabuleiro();
+
+            timer.textContent =
+            "🏆 VITÓRIA!";
 
             premio.textContent =
-                "🏆 VITÓRIA MÁXIMA!";
-
-            btnNovoJogo.disabled =
-                false;
-
-            btnNovoJogo.textContent =
-                "💣 NOVO JOGO";
-
+            "🏆 Você encontrou todos os diamantes!";
 
             setTimeout(
             function(){
 
                 resultadoIcone.textContent =
-                    "🏆";
+                "🏆";
 
                 resultadoTexto.textContent =
-                    "Vitória máxima!";
+                "Vitória máxima!";
 
                 resultadoTela.classList.add(
                     "mostrar"
                 );
 
+                btnNovoJogo.disabled =
+                false;
+
             },
-            700
+            900
             );
 
         }
 
     },
-    220
+    180
     );
 
 }
 
 
 /* =========================================
-   REVELAR BOMBAS
+   TEMPO ACABOU
+========================================= */
+
+function tempoEsgotado(){
+
+    if(!jogando){
+        return;
+    }
+
+    jogando = false;
+
+    timer.textContent =
+    "⏰ TEMPO ESGOTADO!";
+
+    timer.classList.remove(
+        "perigo"
+    );
+
+    premio.textContent =
+    "💥 Tempo esgotado! As bombas explodiram!";
+
+    somBomba();
+
+    revelarBombas();
+
+    bloquearTabuleiro();
+
+    setTimeout(
+    function(){
+
+        resultadoIcone.textContent =
+        "💣";
+
+        resultadoTexto.textContent =
+        "Tempo esgotado!";
+
+        resultadoTela.classList.add(
+            "mostrar"
+        );
+
+        btnNovoJogo.disabled =
+        false;
+
+    },
+    1000
+    );
+
+}
+
+
+/* =========================================
+   REVELAR TODAS AS BOMBAS
 ========================================= */
 
 function revelarBombas(){
@@ -1150,31 +1299,54 @@ function revelarBombas(){
     );
 
     bombas.forEach(
-    function(idx){
+    function(indice,posicao){
 
-        if(!cells[idx])
+        if(!cells[indice]){
             return;
+        }
 
         setTimeout(
         function(){
 
             if(
-                !cells[idx].classList.contains(
+                !cells[indice].classList.contains(
                     "bomb"
                 )
             ){
 
-                cells[idx].classList.add(
+                cells[indice].classList.add(
                     "bomb"
                 );
 
-                cells[idx].innerHTML =
-                    "💣";
+                cells[indice].innerHTML =
+                "💣";
+
+                somBomba();
 
             }
 
         },
-        180 + idx * 100
+        posicao * 180
+        );
+
+    });
+
+}
+
+
+/* =========================================
+   BLOQUEAR
+========================================= */
+
+function bloquearTabuleiro(){
+
+    document
+    .querySelectorAll(".cell")
+    .forEach(
+    function(cell){
+
+        cell.classList.add(
+            "bloqueada"
         );
 
     });
@@ -1192,39 +1364,27 @@ function fecharResultado(){
         "mostrar"
     );
 
+    atualizarSaldo();
+
 }
 
 
 /* =========================================
-   BOTÃO
-========================================= */
-
-btnNovoJogo.onclick =
-iniciarJogo;
-
-
-/* =========================================
-   SOM AO TOCAR NO BOTÃO
-========================================= */
-
-btnNovoJogo.addEventListener(
-    "pointerdown",
-    iniciarAudio
-);
-
-
-/* =========================================
-   CARREGAMENTO
+   INICIALIZAÇÃO
 ========================================= */
 
 window.addEventListener(
-    "DOMContentLoaded",
-    function(){
+"DOMContentLoaded",
+async function(){
 
-        atualizarDisplaySaldo();
+    await atualizarSaldo();
 
-    }
-);
+    btnNovoJogo.onclick =
+    iniciarJogo;
+
+    criarTabuleiro();
+
+});
 
 </script>
 
