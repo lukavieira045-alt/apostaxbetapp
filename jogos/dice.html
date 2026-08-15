@@ -20,7 +20,6 @@ min-height:100%;
 }
 
 body{
-margin:0;
 min-height:100vh;
 color:white;
 text-align:center;
@@ -41,6 +40,7 @@ animation:fundo 12s ease-in-out infinite alternate;
 50%{background-position:100% 50%}
 100%{background-position:0% 100%}
 }
+
 
 /* LUZES */
 
@@ -88,6 +88,7 @@ to{transform:translate(-150px,-80px) scale(1.4)}
 to{transform:translate(80px,-100px) scale(1.3)}
 }
 
+
 /* PARTÍCULAS */
 
 .particulas{
@@ -105,9 +106,11 @@ width:4px;
 height:4px;
 border-radius:50%;
 background:white;
+
 box-shadow:
 0 0 10px #00ccff,
 0 0 20px #ff00aa;
+
 animation:subir linear infinite;
 }
 
@@ -123,7 +126,6 @@ animation:subir linear infinite;
 .particulas i:nth-child(10){left:95%;animation-duration:12s}
 
 @keyframes subir{
-
 0%{
 transform:translateY(0);
 opacity:0;
@@ -137,13 +139,12 @@ opacity:1;
 transform:translateY(-110vh);
 opacity:0;
 }
-
 }
 
-/* SALDO */
+
+/* SALDO REAL */
 
 #saldo{
-
 display:inline-block;
 
 margin:15px auto 5px;
@@ -161,13 +162,12 @@ color:#00ff91;
 font-size:21px;
 
 font-weight:bold;
-
 }
+
 
 /* TÍTULO */
 
 .titulo{
-
 margin-top:8px;
 
 font-size:44px;
@@ -180,13 +180,12 @@ text-shadow:
 0 0 8px #fff,
 0 0 18px #ffd21c,
 0 0 35px #ff8c00;
-
 }
+
 
 /* CAIXA */
 
 .caixa{
-
 width:92%;
 max-width:440px;
 
@@ -208,14 +207,13 @@ box-shadow:
 0 0 70px rgba(0,100,255,.18);
 
 backdrop-filter:blur(12px);
-
 }
 
-/* ÁREA DOS DOIS DADOS */
+
+/* ÁREA DOS DADOS */
 
 .area-dados{
-
-height:240px;
+height:250px;
 
 display:flex;
 
@@ -223,38 +221,41 @@ align-items:center;
 
 justify-content:center;
 
-gap:24px;
+gap:25px;
 
 position:relative;
 
+background:transparent;
+border:0;
+box-shadow:none;
+
+perspective:500px;
 }
 
-/* SOMBRAS */
+
+/* SOMBRA */
 
 .sombra{
-
 position:absolute;
 
-bottom:48px;
+bottom:42px;
 
-width:170px;
-
-height:28px;
+width:150px;
+height:20px;
 
 border-radius:50%;
 
-background:#000;
+background:rgba(0,0,0,.65);
 
-filter:blur(15px);
+filter:blur(14px);
 
 opacity:.65;
-
 }
 
-/* OS DOIS DADOS SÃO O MESMO 🎲 */
+
+/* DADOS 🎲 */
 
 .dado{
-
 position:relative;
 
 z-index:2;
@@ -265,7 +266,7 @@ font-family:
 "Segoe UI Emoji",
 sans-serif;
 
-font-size:72px;
+font-size:68px;
 
 line-height:1;
 
@@ -277,86 +278,212 @@ will-change:transform;
 
 filter:
 drop-shadow(0 15px 10px rgba(0,0,0,.75))
-drop-shadow(0 0 14px rgba(255,215,0,.3));
-
+drop-shadow(0 0 14px rgba(255,215,0,.25));
 }
 
-/* ROLAGEM */
+
+/* =====================================================
+   ROLAGEM COMPLETA
+===================================================== */
 
 .dado.girando{
-
 animation:
-rolarDado
-700ms
-cubic-bezier(.18,.75,.2,1)
+misturaDado
+1800ms
+cubic-bezier(.12,.72,.18,1)
 both;
-
 }
 
-@keyframes rolarDado{
+
+/* DADO 1 */
+
+#dado1.girando{
+animation-name:misturaDado1;
+}
+
+
+/* DADO 2 */
+
+#dado2.girando{
+animation-name:misturaDado2;
+}
+
+
+/* =====================================================
+   MISTURA DO PRIMEIRO DADO
+===================================================== */
+
+@keyframes misturaDado1{
 
 0%{
 transform:
-translate(0,0)
+translate3d(0,35px,0)
 rotate(0deg)
 scale(1);
 }
 
-15%{
+10%{
 transform:
-translate(-8px,-20px)
-rotate(110deg)
-scale(1.03);
+translate3d(-18px,-45px,0)
+rotate(120deg)
+scale(1.04);
 }
 
-30%{
+22%{
 transform:
-translate(10px,-30px)
-rotate(220deg)
+translate3d(25px,-75px,0)
+rotate(260deg)
+scale(.96);
+}
+
+34%{
+transform:
+translate3d(-30px,-20px,0)
+rotate(420deg)
+scale(1.06);
+}
+
+46%{
+transform:
+translate3d(28px,-62px,0)
+rotate(570deg)
+scale(.95);
+}
+
+58%{
+transform:
+translate3d(-25px,-10px,0)
+rotate(720deg)
+scale(1.04);
+}
+
+68%{
+transform:
+translate3d(18px,-38px,0)
+rotate(850deg)
 scale(.98);
 }
 
-45%{
+78%{
 transform:
-translate(-9px,-18px)
-rotate(340deg)
+translate3d(-12px,-8px,0)
+rotate(970deg)
 scale(1.02);
 }
 
-60%{
+87%{
 transform:
-translate(7px,-8px)
-rotate(470deg)
-scale(.98);
+translate3d(7px,-20px,0)
+rotate(1060deg)
+scale(1);
 }
 
-75%{
+94%{
 transform:
-translate(-4px,2px)
-rotate(590deg)
-scale(1.01);
-}
-
-90%{
-transform:
-translate(2px,0)
-rotate(680deg)
+translate3d(-3px,3px,0)
+rotate(1120deg)
 scale(1);
 }
 
 100%{
 transform:
-translate(0,0)
-rotate(720deg)
+translate3d(0,0,0)
+rotate(1140deg)
 scale(1);
 }
 
 }
 
-/* RESULTADO */
+
+/* =====================================================
+   MISTURA DO SEGUNDO DADO
+===================================================== */
+
+@keyframes misturaDado2{
+
+0%{
+transform:
+translate3d(0,35px,0)
+rotate(0deg)
+scale(1);
+}
+
+10%{
+transform:
+translate3d(18px,-50px,0)
+rotate(-130deg)
+scale(1.04);
+}
+
+22%{
+transform:
+translate3d(-24px,-78px,0)
+rotate(-280deg)
+scale(.96);
+}
+
+34%{
+transform:
+translate3d(30px,-25px,0)
+rotate(-430deg)
+scale(1.06);
+}
+
+46%{
+transform:
+translate3d(-28px,-65px,0)
+rotate(-590deg)
+scale(.95);
+}
+
+58%{
+transform:
+translate3d(25px,-12px,0)
+rotate(-735deg)
+scale(1.04);
+}
+
+68%{
+transform:
+translate3d(-18px,-42px,0)
+rotate(-865deg)
+scale(.98);
+}
+
+78%{
+transform:
+translate3d(12px,-8px,0)
+rotate(-985deg)
+scale(1.02);
+}
+
+87%{
+transform:
+translate3d(-7px,-22px,0)
+rotate(-1075deg)
+scale(1);
+}
+
+94%{
+transform:
+translate3d(3px,3px,0)
+rotate(-1135deg)
+scale(1);
+}
+
+100%{
+transform:
+translate3d(0,0,0)
+rotate(-1155deg)
+scale(1);
+}
+
+}
+
+
+/* RESULTADOS */
 
 #resultadoDados{
-
 min-height:42px;
 
 margin:5px 0 10px;
@@ -369,13 +496,9 @@ color:#ffd21c;
 
 text-shadow:
 0 0 12px #ffd21c;
-
 }
 
-/* MENSAGEM */
-
 #resultado{
-
 min-height:40px;
 
 margin:5px 0 18px;
@@ -388,59 +511,48 @@ color:#ffd21c;
 
 text-shadow:
 0 0 12px #ffd21c;
-
 }
 
 .vitoria{
-
 color:#00ff91 !important;
 
 text-shadow:
 0 0 10px #00ff91,
 0 0 30px #00ff91 !important;
-
 }
 
 .derrota{
-
 color:#ff416d !important;
 
 text-shadow:
 0 0 10px #ff416d,
 0 0 25px #ff416d !important;
-
 }
+
 
 /* NÚMEROS */
 
 .selecao{
-
 margin:10px auto 18px;
-
 }
 
 .selecao-titulo{
-
 font-size:14px;
 
 color:#aaa;
 
 margin-bottom:10px;
-
 }
 
 .numeros{
-
 display:flex;
 
 justify-content:center;
 
 gap:7px;
-
 }
 
 .numero{
-
 width:45px;
 height:45px;
 
@@ -467,11 +579,9 @@ font-weight:bold;
 cursor:pointer;
 
 box-shadow:none;
-
 }
 
 .numero.ativo{
-
 background:
 linear-gradient(
 180deg,
@@ -485,19 +595,16 @@ border-color:#ffe78a;
 
 box-shadow:
 0 0 14px rgba(255,210,28,.55);
-
 }
+
 
 /* APOSTA */
 
 .aposta-area{
-
 margin:10px auto;
-
 }
 
 label{
-
 display:block;
 
 color:#aaa;
@@ -505,11 +612,9 @@ color:#aaa;
 font-size:14px;
 
 margin-bottom:6px;
-
 }
 
 input{
-
 width:170px;
 
 padding:13px;
@@ -529,21 +634,18 @@ font-weight:bold;
 text-align:center;
 
 outline:none;
-
 }
 
 input:focus{
-
 border-color:#ffd21c;
 
 box-shadow:0 0 10px #ffd21c;
-
 }
+
 
 /* BOTÃO */
 
 button#botao{
-
 width:90%;
 
 max-width:320px;
@@ -574,25 +676,20 @@ cursor:pointer;
 box-shadow:
 0 0 12px #ffd21c,
 0 0 35px rgba(255,170,0,.45);
-
 }
 
 button#botao:active{
-
 transform:scale(.95);
-
 }
 
 button#botao:disabled{
-
 opacity:.55;
-
 }
+
 
 /* INFO */
 
 .info{
-
 margin-top:25px;
 
 padding-top:18px;
@@ -602,7 +699,6 @@ border-top:1px solid rgba(255,255,255,.12);
 font-size:14px;
 
 line-height:1.7;
-
 }
 
 .ganha{
@@ -613,6 +709,7 @@ color:#00ff91;
 color:#ff416d;
 }
 
+
 /* CELULAR */
 
 @media(max-width:450px){
@@ -622,12 +719,12 @@ font-size:38px;
 }
 
 .area-dados{
-height:220px;
+height:225px;
 gap:18px;
 }
 
 .dado{
-font-size:64px;
+font-size:62px;
 }
 
 .numero{
@@ -640,6 +737,7 @@ height:42px;
 </style>
 
 </head>
+
 
 <body>
 
@@ -662,13 +760,16 @@ height:42px;
 
 </div>
 
+
 <h1 class="titulo">
 🎲 DICE
 </h1>
 
+
 <div id="saldo">
 💰 Saldo: R$ 0,00
 </div>
+
 
 <div class="caixa">
 
@@ -676,21 +777,22 @@ height:42px;
 
 <div class="sombra"></div>
 
-<!-- OS DOIS SÃO EXATAMENTE O MESMO 🎲 -->
-
 <div id="dado1" class="dado">🎲</div>
 
 <div id="dado2" class="dado">🎲</div>
 
 </div>
 
+
 <div id="resultadoDados">
 🎲 🎲
 </div>
 
+
 <div id="resultado">
 Escolha sua sorte
 </div>
+
 
 <div class="selecao">
 
@@ -711,6 +813,7 @@ ESCOLHA O NÚMERO
 
 </div>
 
+
 <div class="aposta-area">
 
 <label>
@@ -727,9 +830,11 @@ step="0.10"
 
 </div>
 
+
 <button id="botao">
 🎲 JOGAR
 </button>
+
 
 <div class="info">
 
@@ -745,9 +850,11 @@ step="0.10"
 
 </div>
 
-<!-- MESMO SISTEMA DE SALDO DOS OUTROS JOGOS -->
+
+<!-- SALDO REAL DOS OUTROS JOGOS -->
 
 <script type="module" src="../saldo.js"></script>
+
 
 <script>
 
@@ -785,7 +892,7 @@ let jogando = false;
 
 
 /* =====================================================
-SALDO — SISTEMA REAL DO SITE
+SALDO REAL
 ===================================================== */
 
 async function atualizarSaldo(){
@@ -826,10 +933,11 @@ erro
 
 
 /* =====================================================
-ESCOLHER NÚMERO
+ESCOLHA DO NÚMERO
 ===================================================== */
 
-botoesNumero.forEach(botaoNumero=>{
+botoesNumero.forEach(
+botaoNumero=>{
 
 botaoNumero.addEventListener(
 "click",
@@ -866,14 +974,14 @@ VIBRAÇÃO
 
 function vibrar(){
 
-if(
-navigator.vibrate
-){
+if(navigator.vibrate){
 
 navigator.vibrate([
-30,
 35,
-30
+40,
+35,
+40,
+25
 ]);
 
 }
@@ -914,14 +1022,13 @@ audioCtx.currentTime;
 
 
 /*
-PEQUENOS TOQUES
-IMITANDO O DADO
-BATENDO NO CHÃO
+VÁRIOS TOQUES CURTOS,
+COMO UM DADO QUICANDO
 */
 
 for(
 let i=0;
-i<6;
+i<11;
 i++
 ){
 
@@ -935,12 +1042,12 @@ oscilador.type =
 "triangle";
 
 oscilador.frequency.value =
-100 +
-Math.random()*150;
+80 +
+Math.random()*190;
 
 const inicio =
 agora +
-i * 0.075;
+i * 0.145;
 
 ganho.gain.setValueAtTime(
 0.0001,
@@ -949,12 +1056,12 @@ inicio
 
 ganho.gain.exponentialRampToValueAtTime(
 0.055,
-inicio + 0.01
+inicio + 0.008
 );
 
 ganho.gain.exponentialRampToValueAtTime(
 0.0001,
-inicio + 0.055
+inicio + 0.065
 );
 
 oscilador.connect(ganho);
@@ -966,7 +1073,7 @@ audioCtx.destination
 oscilador.start(inicio);
 
 oscilador.stop(
-inicio + 0.06
+inicio + 0.07
 );
 
 }
@@ -996,12 +1103,10 @@ return;
 
 
 /*
-SISTEMA DE SALDO PRECISA EXISTIR
+PRECISA DO SISTEMA REAL
 */
 
-if(
-!window.SistemaSaldo
-){
+if(!window.SistemaSaldo){
 
 resultado.className =
 "derrota";
@@ -1041,7 +1146,7 @@ return;
 
 
 /*
-CONSULTA O SALDO REAL
+CONSULTA SALDO REAL
 */
 
 let saldoAtual;
@@ -1087,7 +1192,7 @@ return;
 
 
 /*
-COMEÇA
+TRAVA O JOGO
 */
 
 jogando = true;
@@ -1096,7 +1201,7 @@ botao.disabled = true;
 
 
 /*
-DEBITA A APOSTA
+DEBITA APOSTA REAL
 */
 
 try{
@@ -1108,7 +1213,7 @@ aposta
 }catch(erro){
 
 console.error(
-"Erro ao debitar aposta:",
+"Erro ao debitar:",
 erro
 );
 
@@ -1130,7 +1235,7 @@ return;
 
 
 /*
-ATUALIZA IMEDIATAMENTE
+MOSTRA O SALDO JÁ DESCONTADO
 */
 
 await atualizarSaldo();
@@ -1143,14 +1248,14 @@ MENSAGEM
 resultado.className = "";
 
 resultado.textContent =
-"🎲 ROLANDO...";
+"🎲 OS DADOS ESTÃO ROLANDO...";
 
 resultadoDados.textContent =
 "🎲 🎲";
 
 
 /*
-REINICIA ANIMAÇÃO
+REINICIA AS ANIMAÇÕES
 */
 
 dado1.classList.remove("girando");
@@ -1161,8 +1266,7 @@ void dado2.offsetWidth;
 
 
 /*
-OS DOIS DADOS
-COMEÇAM JUNTOS
+OS DOIS DADOS ROLAM JUNTOS
 */
 
 dado1.classList.add("girando");
@@ -1170,7 +1274,7 @@ dado2.classList.add("girando");
 
 
 /*
-SOM + VIBRAÇÃO
+SOM E VIBRAÇÃO
 */
 
 somDado();
@@ -1179,7 +1283,7 @@ vibrar();
 
 
 /*
-SORTEIO DOS DOIS DADOS
+RESULTADO DOS DOIS DADOS
 */
 
 const numero1 =
@@ -1194,7 +1298,7 @@ Math.random()*6
 
 
 /*
-AGUARDA A ROLAGEM
+ESPERA A ROLAGEM TERMINAR
 */
 
 setTimeout(
@@ -1210,7 +1314,7 @@ dado2.classList.remove(
 
 
 /*
-MOSTRA OS RESULTADOS
+MOSTRA OS DOIS RESULTADOS
 */
 
 resultadoDados.textContent =
@@ -1222,8 +1326,28 @@ numero2 +
 
 
 /*
-VERIFICA SE O NÚMERO
-ESCOLHIDO APARECEU
+=====================================================
+REGRA CORRETA:
+
+SE O NÚMERO ESCOLHIDO APARECER
+EM QUALQUER UM DOS DOIS DADOS,
+A APOSTA GANHA.
+
+EXEMPLO:
+
+ESCOLHEU 2
+DADO 1 = 2
+DADO 2 = 5
+
+GANHA.
+
+SE:
+
+DADO 1 = 3
+DADO 2 = 5
+
+PERDE.
+=====================================================
 */
 
 const acertou =
@@ -1237,13 +1361,14 @@ GANHOU
 
 if(acertou){
 
-const multiplicador = 2;
+const premio =
+aposta * 2;
 
 try{
 
 await window.SistemaSaldo.ganhar(
 aposta,
-multiplicador
+2
 );
 
 resultado.className =
@@ -1251,9 +1376,7 @@ resultado.className =
 
 resultado.textContent =
 "🎉 GANHOU R$ " +
-(aposta * multiplicador)
-.toFixed(2)
-.replace(".",",");
+premio.toFixed(2).replace(".",",");
 
 vibrar();
 
@@ -1293,15 +1416,14 @@ numeroEscolhido +
 
 
 /*
-ATUALIZA O SALDO REAL
-DEPOIS DO RESULTADO
+SALDO REAL FINAL
 */
 
 await atualizarSaldo();
 
 
 /*
-LIBERA
+LIBERA O JOGO
 */
 
 jogando = false;
@@ -1309,14 +1431,14 @@ jogando = false;
 botao.disabled = false;
 
 },
-700
+1800
 );
 
 });
 
 
 /* =====================================================
-CARREGA O SALDO REAL AO ABRIR
+CARREGA SALDO REAL AO ABRIR
 ===================================================== */
 
 atualizarSaldo();
