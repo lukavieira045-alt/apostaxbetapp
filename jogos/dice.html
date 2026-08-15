@@ -2,9 +2,8 @@
 <html lang="pt-BR">
 
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Dice ApostaXBet</title>
 
@@ -21,337 +20,143 @@ min-height:100%;
 }
 
 body{
+margin:0;
 min-height:100vh;
-overflow-x:hidden;
-color:#fff;
+color:white;
 text-align:center;
+overflow-x:hidden;
 
 background:
-radial-gradient(circle at 15% 20%,#19cfff 0,transparent 24%),
-radial-gradient(circle at 85% 20%,#ff28bd 0,transparent 25%),
-radial-gradient(circle at 50% 90%,#7b38ff 0,transparent 30%),
-linear-gradient(135deg,#071329,#10051d,#06152b);
+radial-gradient(circle at 15% 15%,#0066ff 0,transparent 25%),
+radial-gradient(circle at 85% 20%,#e600ff 0,transparent 25%),
+radial-gradient(circle at 50% 100%,#ff0066 0,transparent 30%),
+linear-gradient(135deg,#02020c,#09001c,#00132c);
 
-position:relative;
+background-size:180% 180%;
+animation:fundo 12s ease-in-out infinite alternate;
 }
 
-/* FUNDO */
+@keyframes fundo{
+0%{background-position:0% 0%}
+50%{background-position:100% 50%}
+100%{background-position:0% 100%}
+}
 
-body::before{
-content:"";
+/* LUZES */
+
+.luz{
+position:fixed;
+width:280px;
+height:280px;
+border-radius:50%;
+filter:blur(90px);
+opacity:.45;
+pointer-events:none;
+z-index:-2;
+}
+
+.luz1{
+background:#0066ff;
+left:-100px;
+top:15%;
+animation:mov1 8s infinite alternate;
+}
+
+.luz2{
+background:#ff0088;
+right:-100px;
+top:40%;
+animation:mov2 9s infinite alternate;
+}
+
+.luz3{
+background:#7b00ff;
+left:30%;
+bottom:-180px;
+animation:mov3 7s infinite alternate;
+}
+
+@keyframes mov1{
+to{transform:translate(180px,100px) scale(1.3)}
+}
+
+@keyframes mov2{
+to{transform:translate(-150px,-80px) scale(1.4)}
+}
+
+@keyframes mov3{
+to{transform:translate(80px,-100px) scale(1.3)}
+}
+
+/* PARTÍCULAS */
+
+.particulas{
 position:fixed;
 inset:0;
+overflow:hidden;
 pointer-events:none;
-
-background:
-radial-gradient(circle at 20% 30%,rgba(0,220,255,.18),transparent 22%),
-radial-gradient(circle at 80% 70%,rgba(255,0,180,.16),transparent 25%);
-
-animation:luzes 9s ease-in-out infinite alternate;
+z-index:-1;
 }
 
-@keyframes luzes{
-from{
-transform:scale(1);
-}
-to{
-transform:scale(1.08);
-}
+.particulas i{
+position:absolute;
+bottom:-20px;
+width:4px;
+height:4px;
+border-radius:50%;
+background:white;
+box-shadow:
+0 0 10px #00ccff,
+0 0 20px #ff00aa;
+animation:subir linear infinite;
 }
 
-/* =====================================================
-SALDO
-===================================================== */
+.particulas i:nth-child(1){left:5%;animation-duration:7s}
+.particulas i:nth-child(2){left:15%;animation-duration:11s}
+.particulas i:nth-child(3){left:25%;animation-duration:8s}
+.particulas i:nth-child(4){left:35%;animation-duration:13s}
+.particulas i:nth-child(5){left:45%;animation-duration:9s}
+.particulas i:nth-child(6){left:55%;animation-duration:12s}
+.particulas i:nth-child(7){left:65%;animation-duration:8s}
+.particulas i:nth-child(8){left:75%;animation-duration:10s}
+.particulas i:nth-child(9){left:85%;animation-duration:7s}
+.particulas i:nth-child(10){left:95%;animation-duration:12s}
+
+@keyframes subir{
+
+0%{
+transform:translateY(0);
+opacity:0;
+}
+
+20%{
+opacity:1;
+}
+
+100%{
+transform:translateY(-110vh);
+opacity:0;
+}
+
+}
+
+/* SALDO */
 
 #saldo{
 
 display:inline-block;
 
-margin:20px auto 8px;
+margin:15px auto 5px;
 
 padding:10px 22px;
 
+border-radius:30px;
+
+background:rgba(0,0,0,.6);
+
 border:1px solid #00ff91;
 
-border-radius:25px;
-
-background:rgba(0,0,0,.45);
-
 color:#00ff91;
-
-font-size:20px;
-
-font-weight:bold;
-
-box-shadow:
-0 0 18px rgba(0,255,145,.25);
-
-}
-
-/* =====================================================
-TÍTULO
-===================================================== */
-
-.titulo{
-
-margin:5px 0 8px;
-
-font-size:42px;
-
-font-weight:900;
-
-color:#ffd21c;
-
-text-shadow:
-0 0 8px #fff,
-0 0 20px #ffd21c,
-0 0 35px #ff8c00;
-
-}
-
-/* =====================================================
-ÁREA DOS DADOS
-===================================================== */
-
-.area-dados{
-
-width:100%;
-max-width:500px;
-margin:auto;
-
-min-height:230px;
-
-display:flex;
-
-justify-content:center;
-align-items:center;
-
-gap:25px;
-
-position:relative;
-
-perspective:700px;
-
-}
-
-/* =====================================================
-DADO
-===================================================== */
-
-.dado{
-
-width:62px;
-height:62px;
-
-position:relative;
-
-flex:0 0 62px;
-
-transform-style:preserve-3d;
-
-margin:0;
-
-user-select:none;
-
-will-change:transform;
-
-filter:
-drop-shadow(
-0 12px 8px rgba(0,0,0,.65)
-)
-drop-shadow(
-0 0 12px rgba(255,215,0,.25)
-);
-
-}
-
-/* CUBO */
-
-.dado-cubo{
-
-width:62px;
-height:62px;
-
-position:relative;
-
-transform-style:preserve-3d;
-
-}
-
-/* FACES */
-
-.face-dado{
-
-position:absolute;
-
-width:62px;
-height:62px;
-
-display:flex;
-
-align-items:center;
-justify-content:center;
-
-background:
-linear-gradient(
-145deg,
-#ffffff,
-#dedede
-);
-
-border:2px solid #aaa;
-
-border-radius:10px;
-
-box-shadow:
-inset 0 0 8px rgba(0,0,0,.25);
-
-font-size:25px;
-
-font-weight:900;
-
-color:#111;
-
-backface-visibility:hidden;
-
-}
-
-/* POSIÇÃO DAS FACES */
-
-.face-1{
-transform:translateZ(31px);
-}
-
-.face-6{
-transform:
-rotateY(180deg)
-translateZ(31px);
-}
-
-.face-2{
-transform:
-rotateY(90deg)
-translateZ(31px);
-}
-
-.face-5{
-transform:
-rotateY(-90deg)
-translateZ(31px);
-}
-
-.face-3{
-transform:
-rotateX(90deg)
-translateZ(31px);
-}
-
-.face-4{
-transform:
-rotateX(-90deg)
-translateZ(31px);
-}
-
-/* =====================================================
-ROLAGEM DOS DOIS DADOS
-===================================================== */
-
-.dado.girando{
-
-animation:
-dadoRolando
-0.75s
-cubic-bezier(.15,.75,.25,1)
-forwards;
-
-}
-
-@keyframes dadoRolando{
-
-0%{
-transform:
-translate3d(0,0,0)
-rotateX(0deg)
-rotateY(0deg)
-rotateZ(0deg);
-}
-
-15%{
-transform:
-translate3d(-12px,-20px,0)
-rotateX(110deg)
-rotateY(80deg)
-rotateZ(20deg);
-}
-
-35%{
-transform:
-translate3d(15px,-35px,0)
-rotateX(250deg)
-rotateY(180deg)
-rotateZ(-35deg);
-}
-
-55%{
-transform:
-translate3d(-12px,-18px,0)
-rotateX(410deg)
-rotateY(300deg)
-rotateZ(25deg);
-}
-
-75%{
-transform:
-translate3d(8px,-8px,0)
-rotateX(530deg)
-rotateY(420deg)
-rotateZ(-15deg);
-}
-
-90%{
-transform:
-translate3d(-3px,2px,0)
-rotateX(620deg)
-rotateY(510deg)
-rotateZ(5deg);
-}
-
-100%{
-transform:
-translate3d(0,0,0)
-rotateX(720deg)
-rotateY(540deg)
-rotateZ(0deg);
-}
-
-}
-
-/* =====================================================
-RESULTADO
-===================================================== */
-
-.resultado-dados{
-
-min-height:50px;
-
-font-size:32px;
-
-font-weight:900;
-
-color:#ffd21c;
-
-text-shadow:
-0 0 15px #ffd21c;
-
-}
-
-/* =====================================================
-MENSAGEM
-===================================================== */
-
-#mensagem{
-
-min-height:35px;
 
 font-size:21px;
 
@@ -359,43 +164,266 @@ font-weight:bold;
 
 }
 
-.ganha{
+/* TÍTULO */
+
+.titulo{
+
+margin-top:8px;
+
+font-size:44px;
+
+font-weight:900;
+
+color:#ffd21c;
+
+text-shadow:
+0 0 8px #fff,
+0 0 18px #ffd21c,
+0 0 35px #ff8c00;
+
+}
+
+/* CAIXA */
+
+.caixa{
+
+width:92%;
+max-width:440px;
+
+margin:auto;
+
+padding:25px 18px 30px;
+
+border-radius:28px;
+
+background:
+linear-gradient(
+145deg,
+rgba(20,20,35,.94),
+rgba(3,4,15,.96)
+);
+
+box-shadow:
+0 0 25px rgba(255,215,0,.25),
+0 0 70px rgba(0,100,255,.18);
+
+backdrop-filter:blur(12px);
+
+}
+
+/* ÁREA DOS DOIS DADOS */
+
+.area-dados{
+
+height:240px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+gap:24px;
+
+position:relative;
+
+}
+
+/* SOMBRAS */
+
+.sombra{
+
+position:absolute;
+
+bottom:48px;
+
+width:170px;
+
+height:28px;
+
+border-radius:50%;
+
+background:#000;
+
+filter:blur(15px);
+
+opacity:.65;
+
+}
+
+/* OS DOIS DADOS SÃO O MESMO 🎲 */
+
+.dado{
+
+position:relative;
+
+z-index:2;
+
+font-family:
+"Noto Color Emoji",
+"Apple Color Emoji",
+"Segoe UI Emoji",
+sans-serif;
+
+font-size:72px;
+
+line-height:1;
+
+display:block;
+
+user-select:none;
+
+will-change:transform;
+
+filter:
+drop-shadow(0 15px 10px rgba(0,0,0,.75))
+drop-shadow(0 0 14px rgba(255,215,0,.3));
+
+}
+
+/* ROLAGEM */
+
+.dado.girando{
+
+animation:
+rolarDado
+700ms
+cubic-bezier(.18,.75,.2,1)
+both;
+
+}
+
+@keyframes rolarDado{
+
+0%{
+transform:
+translate(0,0)
+rotate(0deg)
+scale(1);
+}
+
+15%{
+transform:
+translate(-8px,-20px)
+rotate(110deg)
+scale(1.03);
+}
+
+30%{
+transform:
+translate(10px,-30px)
+rotate(220deg)
+scale(.98);
+}
+
+45%{
+transform:
+translate(-9px,-18px)
+rotate(340deg)
+scale(1.02);
+}
+
+60%{
+transform:
+translate(7px,-8px)
+rotate(470deg)
+scale(.98);
+}
+
+75%{
+transform:
+translate(-4px,2px)
+rotate(590deg)
+scale(1.01);
+}
+
+90%{
+transform:
+translate(2px,0)
+rotate(680deg)
+scale(1);
+}
+
+100%{
+transform:
+translate(0,0)
+rotate(720deg)
+scale(1);
+}
+
+}
+
+/* RESULTADO */
+
+#resultadoDados{
+
+min-height:42px;
+
+margin:5px 0 10px;
+
+font-size:26px;
+
+font-weight:bold;
+
+color:#ffd21c;
+
+text-shadow:
+0 0 12px #ffd21c;
+
+}
+
+/* MENSAGEM */
+
+#resultado{
+
+min-height:40px;
+
+margin:5px 0 18px;
+
+font-size:22px;
+
+font-weight:bold;
+
+color:#ffd21c;
+
+text-shadow:
+0 0 12px #ffd21c;
+
+}
+
+.vitoria{
+
 color:#00ff91 !important;
-text-shadow:0 0 10px #00ff91;
+
+text-shadow:
+0 0 10px #00ff91,
+0 0 30px #00ff91 !important;
+
 }
 
-.perde{
+.derrota{
+
 color:#ff416d !important;
-text-shadow:0 0 10px #ff416d;
+
+text-shadow:
+0 0 10px #ff416d,
+0 0 25px #ff416d !important;
+
 }
 
-/* =====================================================
-SELEÇÃO
-===================================================== */
+/* NÚMEROS */
 
 .selecao{
 
-width:92%;
-max-width:420px;
-
-margin:10px auto;
-
-padding:14px;
-
-border-radius:18px;
-
-background:rgba(0,0,0,.35);
-
-border:
-1px solid rgba(255,255,255,.15);
+margin:10px auto 18px;
 
 }
 
 .selecao-titulo{
 
-color:#aaa;
+font-size:14px;
 
-font-size:13px;
+color:#aaa;
 
 margin-bottom:10px;
 
@@ -407,7 +435,7 @@ display:flex;
 
 justify-content:center;
 
-gap:8px;
+gap:7px;
 
 }
 
@@ -421,24 +449,24 @@ margin:0;
 
 border-radius:50%;
 
-border:1px solid #466083;
+border:1px solid #4b5870;
 
 background:
 linear-gradient(
 180deg,
-#172541,
-#091221
+#18253d,
+#080f1c
 );
 
 color:white;
 
-font-size:19px;
+font-size:18px;
 
 font-weight:bold;
 
-box-shadow:none;
-
 cursor:pointer;
+
+box-shadow:none;
 
 }
 
@@ -448,7 +476,7 @@ background:
 linear-gradient(
 180deg,
 #ffe66b,
-#ffad00
+#ffb000
 );
 
 color:#211600;
@@ -460,120 +488,116 @@ box-shadow:
 
 }
 
-/* =====================================================
-APOSTAS
-===================================================== */
+/* APOSTA */
 
-.apostas{
-
-width:92%;
-max-width:420px;
+.aposta-area{
 
 margin:10px auto;
 
-padding:12px;
-
-border-radius:18px;
-
-background:rgba(0,0,0,.30);
-
-border:
-1px solid rgba(255,255,255,.12);
-
 }
 
-.apostas-titulo{
+label{
+
+display:block;
 
 color:#aaa;
 
-font-size:13px;
+font-size:14px;
 
-margin-bottom:9px;
-
-}
-
-.valores{
-
-display:flex;
-
-justify-content:center;
-
-gap:7px;
-
-flex-wrap:wrap;
+margin-bottom:6px;
 
 }
 
-.valor{
+input{
 
-padding:8px 12px;
+width:170px;
 
-border-radius:18px;
+padding:13px;
 
-background:#111b31;
+border-radius:13px;
 
-border:1px solid #466083;
+border:2px solid #444;
+
+background:#050505;
 
 color:white;
 
+font-size:20px;
+
 font-weight:bold;
+
+text-align:center;
+
+outline:none;
 
 }
 
-/* =====================================================
-BOTÃO
-===================================================== */
+input:focus{
 
-#jogar{
+border-color:#ffd21c;
+
+box-shadow:0 0 10px #ffd21c;
+
+}
+
+/* BOTÃO */
+
+button#botao{
 
 width:90%;
+
 max-width:320px;
 
-padding:16px;
+margin-top:15px;
 
-margin-top:12px;
+padding:17px;
 
-border:0;
+border:2px solid #ffe78a;
 
-border-radius:17px;
+border-radius:16px;
 
 background:
 linear-gradient(
 180deg,
 #ffe66b,
-#ffad00
+#ffb000
 );
 
 color:#211600;
 
-font-size:21px;
+font-size:22px;
 
 font-weight:900;
 
-box-shadow:
-0 0 18px rgba(255,190,0,.4);
-
 cursor:pointer;
 
+box-shadow:
+0 0 12px #ffd21c,
+0 0 35px rgba(255,170,0,.45);
+
 }
 
-#jogar:active{
-transform:scale(.96);
+button#botao:active{
+
+transform:scale(.95);
+
 }
 
-#jogar:disabled{
+button#botao:disabled{
+
 opacity:.55;
+
 }
 
-/* =====================================================
-INFO
-===================================================== */
+/* INFO */
 
 .info{
 
-margin:18px auto;
+margin-top:25px;
 
-color:#bfc7d8;
+padding-top:18px;
+
+border-top:1px solid rgba(255,255,255,.12);
 
 font-size:14px;
 
@@ -589,75 +613,21 @@ color:#00ff91;
 color:#ff416d;
 }
 
-/* =====================================================
-CELULAR
-===================================================== */
+/* CELULAR */
 
-@media(max-width:430px){
+@media(max-width:450px){
 
 .titulo{
-font-size:36px;
+font-size:38px;
 }
 
 .area-dados{
-min-height:210px;
+height:220px;
 gap:18px;
 }
 
-/*
-OS DOIS DADOS FICAM
-EXATAMENTE IGUAIS
-*/
-
 .dado{
-width:56px;
-height:56px;
-flex:0 0 56px;
-}
-
-.dado-cubo{
-width:56px;
-height:56px;
-}
-
-.face-dado{
-width:56px;
-height:56px;
-font-size:23px;
-}
-
-.face-1{
-transform:translateZ(28px);
-}
-
-.face-6{
-transform:
-rotateY(180deg)
-translateZ(28px);
-}
-
-.face-2{
-transform:
-rotateY(90deg)
-translateZ(28px);
-}
-
-.face-5{
-transform:
-rotateY(-90deg)
-translateZ(28px);
-}
-
-.face-3{
-transform:
-rotateX(90deg)
-translateZ(28px);
-}
-
-.face-4{
-transform:
-rotateX(-90deg)
-translateZ(28px);
+font-size:64px;
 }
 
 .numero{
@@ -673,70 +643,54 @@ height:42px;
 
 <body>
 
+<div class="luz luz1"></div>
+<div class="luz luz2"></div>
+<div class="luz luz3"></div>
+
+<div class="particulas">
+
+<i></i>
+<i></i>
+<i></i>
+<i></i>
+<i></i>
+<i></i>
+<i></i>
+<i></i>
+<i></i>
+<i></i>
+
+</div>
+
+<h1 class="titulo">
+🎲 DICE
+</h1>
+
 <div id="saldo">
 💰 Saldo: R$ 0,00
 </div>
 
-<div class="titulo">
-🎲 DICE
-</div>
-
-
-<!-- =====================================================
-DOIS DADOS IGUAIS
-===================================================== -->
+<div class="caixa">
 
 <div class="area-dados">
 
-<div class="dado" id="dado1">
+<div class="sombra"></div>
 
-<div class="dado-cubo">
+<!-- OS DOIS SÃO EXATAMENTE O MESMO 🎲 -->
 
-<div class="face-dado face-1">1</div>
-<div class="face-dado face-2">2</div>
-<div class="face-dado face-3">3</div>
-<div class="face-dado face-4">4</div>
-<div class="face-dado face-5">5</div>
-<div class="face-dado face-6">6</div>
+<div id="dado1" class="dado">🎲</div>
+
+<div id="dado2" class="dado">🎲</div>
 
 </div>
 
-</div>
-
-
-<div class="dado" id="dado2">
-
-<div class="dado-cubo">
-
-<div class="face-dado face-1">1</div>
-<div class="face-dado face-2">2</div>
-<div class="face-dado face-3">3</div>
-<div class="face-dado face-4">4</div>
-<div class="face-dado face-5">5</div>
-<div class="face-dado face-6">6</div>
-
-</div>
-
-</div>
-
-</div>
-
-
-<div
-class="resultado-dados"
-id="resultadoDados">
-
+<div id="resultadoDados">
 🎲 🎲
-
 </div>
 
-
-<div id="mensagem">
-Escolha o número
+<div id="resultado">
+Escolha sua sorte
 </div>
-
-
-<!-- ESCOLHA -->
 
 <div class="selecao">
 
@@ -757,57 +711,45 @@ ESCOLHA O NÚMERO
 
 </div>
 
+<div class="aposta-area">
 
-<!-- APOSTA -->
-
-<div class="apostas">
-
-<div class="apostas-titulo">
+<label>
 VALOR DA APOSTA
-</div>
+</label>
 
-<div class="valores">
-
-<div class="valor">R$ 0,50</div>
-<div class="valor">R$ 1,00</div>
-<div class="valor">R$ 2,00</div>
-<div class="valor">R$ 5,00</div>
-<div class="valor">R$ 10,00</div>
-
-</div>
+<input
+id="aposta"
+type="number"
+value="1"
+min="0.10"
+step="0.10"
+>
 
 </div>
 
-
-<button id="jogar">
+<button id="botao">
 🎲 JOGAR
 </button>
-
 
 <div class="info">
 
 <div class="ganha">
-🎉 Se o número escolhido aparecer nos dados, ganha 2X
+🎉 Se o número escolhido aparecer em um dos dados = GANHA 2X
 </div>
 
 <div class="perde">
-😢 Se não aparecer, perde a aposta
+😢 Se não aparecer = PERDE
 </div>
 
 </div>
 
+</div>
+
+<!-- MESMO SISTEMA DE SALDO DOS OUTROS JOGOS -->
 
 <script type="module" src="../saldo.js"></script>
 
 <script>
-
-/* =====================================================
-CONFIGURAÇÃO
-===================================================== */
-
-const APOSTA = 1.00;
-const MULTIPLICADOR = 2;
-
 
 /* =====================================================
 ELEMENTOS
@@ -825,11 +767,14 @@ document.getElementById("dado2");
 const resultadoDados =
 document.getElementById("resultadoDados");
 
-const mensagem =
-document.getElementById("mensagem");
+const resultado =
+document.getElementById("resultado");
 
-const jogar =
-document.getElementById("jogar");
+const botao =
+document.getElementById("botao");
+
+const apostaInput =
+document.getElementById("aposta");
 
 const botoesNumero =
 document.querySelectorAll(".numero");
@@ -840,7 +785,7 @@ let jogando = false;
 
 
 /* =====================================================
-SALDO
+SALDO — SISTEMA REAL DO SITE
 ===================================================== */
 
 async function atualizarSaldo(){
@@ -849,17 +794,22 @@ try{
 
 if(
 window.SistemaSaldo &&
-window.SistemaSaldo.get
+typeof window.SistemaSaldo.get === "function"
 ){
 
-const valor =
+const saldo =
 await window.SistemaSaldo.get();
+
+if(
+typeof saldo === "number" &&
+Number.isFinite(saldo)
+){
 
 saldoEl.textContent =
 "💰 Saldo: R$ " +
-Number(valor)
-.toFixed(2)
-.replace(".",",");
+saldo.toFixed(2).replace(".",",");
+
+}
 
 }
 
@@ -876,32 +826,32 @@ erro
 
 
 /* =====================================================
-ESCOLHA DO NÚMERO
+ESCOLHER NÚMERO
 ===================================================== */
 
-botoesNumero.forEach(botao=>{
+botoesNumero.forEach(botaoNumero=>{
 
-botao.addEventListener(
+botaoNumero.addEventListener(
 "click",
 ()=>{
 
 if(jogando)
 return;
 
-botoesNumero.forEach(b=>{
-b.classList.remove("ativo");
-});
+botoesNumero.forEach(
+b=>b.classList.remove("ativo")
+);
 
-botao.classList.add("ativo");
+botaoNumero.classList.add("ativo");
 
 numeroEscolhido =
 Number(
-botao.dataset.numero
+botaoNumero.dataset.numero
 );
 
-mensagem.className="";
+resultado.className="";
 
-mensagem.textContent =
+resultado.textContent =
 "🎯 Número escolhido: " +
 numeroEscolhido;
 
@@ -911,45 +861,19 @@ numeroEscolhido;
 
 
 /* =====================================================
-MOSTRAR FACE
-===================================================== */
-
-function mostrarFace(dado,numero){
-
-const cubo =
-dado.querySelector(".dado-cubo");
-
-const faces =
-cubo.querySelectorAll(".face-dado");
-
-faces.forEach(face=>{
-face.style.opacity="0";
-});
-
-const face =
-cubo.querySelector(
-".face-"+numero
-);
-
-if(face){
-face.style.opacity="1";
-}
-
-}
-
-
-/* =====================================================
 VIBRAÇÃO
 ===================================================== */
 
 function vibrar(){
 
-if(navigator.vibrate){
+if(
+navigator.vibrate
+){
 
 navigator.vibrate([
-25,
 30,
-25
+35,
+30
 ]);
 
 }
@@ -961,7 +885,7 @@ navigator.vibrate([
 SOM DE DADO
 ===================================================== */
 
-let audioCtx=null;
+let audioCtx = null;
 
 function somDado(){
 
@@ -977,65 +901,82 @@ window.webkitAudioContext
 
 }
 
-if(audioCtx.state==="suspended"){
+if(
+audioCtx.state === "suspended"
+){
+
 audioCtx.resume();
+
 }
 
 const agora =
 audioCtx.currentTime;
 
+
+/*
+PEQUENOS TOQUES
+IMITANDO O DADO
+BATENDO NO CHÃO
+*/
+
 for(
 let i=0;
-i<7;
+i<6;
 i++
 ){
 
-const osc =
+const oscilador =
 audioCtx.createOscillator();
 
 const ganho =
 audioCtx.createGain();
 
-osc.type="triangle";
+oscilador.type =
+"triangle";
 
-osc.frequency.value =
+oscilador.frequency.value =
 100 +
-Math.random()*130;
+Math.random()*150;
+
+const inicio =
+agora +
+i * 0.075;
 
 ganho.gain.setValueAtTime(
 0.0001,
-agora+i*.085
+inicio
 );
 
 ganho.gain.exponentialRampToValueAtTime(
-0.06,
-agora+i*.085+.012
+0.055,
+inicio + 0.01
 );
 
 ganho.gain.exponentialRampToValueAtTime(
 0.0001,
-agora+i*.085+.055
+inicio + 0.055
 );
 
-osc.connect(ganho);
+oscilador.connect(ganho);
 
 ganho.connect(
 audioCtx.destination
 );
 
-osc.start(
-agora+i*.085
-);
+oscilador.start(inicio);
 
-osc.stop(
-agora+i*.085+.065
+oscilador.stop(
+inicio + 0.06
 );
 
 }
 
-}catch(e){
+}catch(erro){
 
-console.log(e);
+console.log(
+"Áudio indisponível:",
+erro
+);
 
 }
 
@@ -1046,31 +987,64 @@ console.log(e);
 JOGAR
 ===================================================== */
 
-jogar.addEventListener(
+botao.addEventListener(
 "click",
 async()=>{
 
 if(jogando)
 return;
 
-if(!window.SistemaSaldo){
 
-mensagem.className="perde";
+/*
+SISTEMA DE SALDO PRECISA EXISTIR
+*/
 
-mensagem.textContent =
+if(
+!window.SistemaSaldo
+){
+
+resultado.className =
+"derrota";
+
+resultado.textContent =
 "⚠️ Sistema de saldo não encontrado.";
 
 return;
 
 }
 
-jogando=true;
-jogar.disabled=true;
+
+const aposta =
+Number(
+apostaInput.value
+);
 
 
-/* BUSCA SALDO */
+/*
+VALIDAÇÃO
+*/
 
-let saldoAtual=0;
+if(
+!Number.isFinite(aposta) ||
+aposta < 0.10
+){
+
+resultado.className =
+"derrota";
+
+resultado.textContent =
+"⚠️ Aposta mínima: R$ 0,10.";
+
+return;
+
+}
+
+
+/*
+CONSULTA O SALDO REAL
+*/
+
+let saldoAtual;
 
 try{
 
@@ -1079,55 +1053,74 @@ Number(
 await window.SistemaSaldo.get()
 );
 
-}catch(e){
+}catch(erro){
 
-console.error(e);
+console.error(erro);
 
-}
+resultado.className =
+"derrota";
 
-
-/* SALDO INSUFICIENTE */
-
-if(
-!Number.isFinite(saldoAtual) ||
-saldoAtual < APOSTA
-){
-
-mensagem.className="perde";
-
-mensagem.textContent =
-"❌ Saldo insuficiente.";
-
-jogando=false;
-jogar.disabled=false;
+resultado.textContent =
+"⚠️ Não foi possível consultar o saldo.";
 
 return;
 
 }
 
 
-/* DEBITA */
+if(
+!Number.isFinite(saldoAtual) ||
+saldoAtual < aposta
+){
+
+resultado.className =
+"derrota";
+
+resultado.textContent =
+"❌ Saldo insuficiente.";
+
+await atualizarSaldo();
+
+return;
+
+}
+
+
+/*
+COMEÇA
+*/
+
+jogando = true;
+
+botao.disabled = true;
+
+
+/*
+DEBITA A APOSTA
+*/
 
 try{
 
 await window.SistemaSaldo.debitar(
-APOSTA
+aposta
 );
 
 }catch(erro){
 
 console.error(
-"Erro ao debitar:",
+"Erro ao debitar aposta:",
 erro
 );
 
-mensagem.className="perde";
+resultado.className =
+"derrota";
 
-mensagem.textContent =
+resultado.textContent =
 "⚠️ Não foi possível realizar a aposta.";
 
-jogando=false;
-jogar.disabled=false;
+jogando = false;
+
+botao.disabled = false;
 
 await atualizarSaldo();
 
@@ -1136,23 +1129,29 @@ return;
 }
 
 
-/* ATUALIZA SALDO */
+/*
+ATUALIZA IMEDIATAMENTE
+*/
 
 await atualizarSaldo();
 
 
-/* INÍCIO */
+/*
+MENSAGEM
+*/
 
-mensagem.className="";
+resultado.className = "";
 
-mensagem.textContent =
-"🎲 Os dados estão rolando...";
+resultado.textContent =
+"🎲 ROLANDO...";
 
 resultadoDados.textContent =
 "🎲 🎲";
 
 
-/* REINICIA ANIMAÇÃO */
+/*
+REINICIA ANIMAÇÃO
+*/
 
 dado1.classList.remove("girando");
 dado2.classList.remove("girando");
@@ -1161,89 +1160,98 @@ void dado1.offsetWidth;
 void dado2.offsetWidth;
 
 
-/* OS DOIS COMEÇAM JUNTOS */
+/*
+OS DOIS DADOS
+COMEÇAM JUNTOS
+*/
 
 dado1.classList.add("girando");
 dado2.classList.add("girando");
 
+
+/*
+SOM + VIBRAÇÃO
+*/
+
 somDado();
+
 vibrar();
 
 
-/* SORTEIO */
+/*
+SORTEIO DOS DOIS DADOS
+*/
 
 const numero1 =
-Math.floor(Math.random()*6)+1;
+Math.floor(
+Math.random()*6
+)+1;
 
 const numero2 =
-Math.floor(Math.random()*6)+1;
+Math.floor(
+Math.random()*6
+)+1;
 
 
-/* RESULTADO */
+/*
+AGUARDA A ROLAGEM
+*/
 
 setTimeout(
 async()=>{
 
-dado1.classList.remove("girando");
-dado2.classList.remove("girando");
+dado1.classList.remove(
+"girando"
+);
 
-mostrarFace(dado1,numero1);
-mostrarFace(dado2,numero2);
+dado2.classList.remove(
+"girando"
+);
+
+
+/*
+MOSTRA OS RESULTADOS
+*/
 
 resultadoDados.textContent =
 numero1 +
 " + " +
 numero2 +
 " = " +
-(numero1+numero2);
+(numero1 + numero2);
 
 
-/* VERIFICAÇÃO */
+/*
+VERIFICA SE O NÚMERO
+ESCOLHIDO APARECEU
+*/
 
-const acertouPrimeiro =
-numero1 === numeroEscolhido;
-
-const acertouSegundo =
+const acertou =
+numero1 === numeroEscolhido ||
 numero2 === numeroEscolhido;
 
-const ganhou =
-acertouPrimeiro ||
-acertouSegundo;
 
+/*
+GANHOU
+*/
 
-/* VITÓRIA */
+if(acertou){
 
-if(ganhou){
-
-const premio =
-APOSTA * MULTIPLICADOR;
+const multiplicador = 2;
 
 try{
 
-if(
-window.SistemaSaldo.ganhar
-){
-
 await window.SistemaSaldo.ganhar(
-APOSTA,
-MULTIPLICADOR
+aposta,
+multiplicador
 );
 
-}else if(
-window.SistemaSaldo.creditar
-){
+resultado.className =
+"vitoria";
 
-await window.SistemaSaldo.creditar(
-premio
-);
-
-}
-
-mensagem.className="ganha";
-
-mensagem.textContent =
-"🎉 ACERTOU! + R$ " +
-premio
+resultado.textContent =
+"🎉 GANHOU R$ " +
+(aposta * multiplicador)
 .toFixed(2)
 .replace(".",",");
 
@@ -1252,13 +1260,14 @@ vibrar();
 }catch(erro){
 
 console.error(
-"Erro ao creditar:",
+"Erro ao registrar prêmio:",
 erro
 );
 
-mensagem.className="perde";
+resultado.className =
+"derrota";
 
-mensagem.textContent =
+resultado.textContent =
 "⚠️ Erro ao registrar o prêmio.";
 
 }
@@ -1266,13 +1275,16 @@ mensagem.textContent =
 }
 
 
-/* DERROTA */
+/*
+PERDEU
+*/
 
 else{
 
-mensagem.className="perde";
+resultado.className =
+"derrota";
 
-mensagem.textContent =
+resultado.textContent =
 "😢 PERDEU! O número " +
 numeroEscolhido +
 " não saiu.";
@@ -1280,22 +1292,31 @@ numeroEscolhido +
 }
 
 
-/* SALDO FINAL */
+/*
+ATUALIZA O SALDO REAL
+DEPOIS DO RESULTADO
+*/
 
 await atualizarSaldo();
 
-jogando=false;
-jogar.disabled=false;
+
+/*
+LIBERA
+*/
+
+jogando = false;
+
+botao.disabled = false;
 
 },
-750
+700
 );
 
 });
 
 
 /* =====================================================
-CARREGAR SALDO
+CARREGA O SALDO REAL AO ABRIR
 ===================================================== */
 
 atualizarSaldo();
