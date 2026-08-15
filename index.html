@@ -665,7 +665,7 @@ input:focus{
 }
 
 /* =========================
-   OPÇÕES DO SUPORTE
+   OPÇÕES
 ========================= */
 
 .suporte-opcoes{
@@ -693,7 +693,7 @@ input:focus{
 }
 
 /* =========================
-   ESCREVER NO SUPORTE
+   ESCREVER
 ========================= */
 
 .suporte-escrever{
@@ -962,6 +962,7 @@ do ApostaXBet.
 
 </section>
 
+
 <section id="telaRecuperacao">
 
 <div class="recuperacao-container">
@@ -1020,6 +1021,7 @@ onclick="voltarLogin()">
 </div>
 
 </section>
+
 
 <section id="telaNovaSenha">
 
@@ -1103,6 +1105,7 @@ class="mensagem">
 
 </section>
 
+
 <section id="site">
 
 <header class="topo">
@@ -1167,6 +1170,7 @@ Para jogar, toque em 🎮 Jogos no menu abaixo.
 
 </section>
 
+
 <section id="paginaConta">
 
 <div class="conta-container">
@@ -1220,6 +1224,7 @@ onclick="sair()">
 </div>
 
 </section>
+
 
 <nav
 class="menu"
@@ -1297,7 +1302,6 @@ onclick="abrirSuporte()">
 
 </div>
 
-<!-- X PARA FECHAR -->
 <button
 class="fechar-suporte"
 type="button"
@@ -1379,8 +1383,6 @@ onclick="perguntaSuporte('problema')">
 
 </div>
 
-
-<!-- CAMPO PARA A PESSOA ESCREVER -->
 
 <div class="suporte-escrever">
 
@@ -1474,7 +1476,76 @@ function esconderMenu(){
 
 
 /* ==================================================
-   SUPORTE - MOSTRAR/ESCONDER
+   RESET COMPLETO DO SUPORTE
+================================================== */
+
+function resetarSuporte(){
+
+    const mensagens =
+        document.getElementById(
+            "suporteMensagens"
+        );
+
+    const campo =
+        document.getElementById(
+            "entradaSuporte"
+        );
+
+
+    /* Cancela qualquer indicador de digitação */
+
+    removerDigitando();
+
+
+    /*
+       Limpa TODAS as mensagens anteriores.
+    */
+
+    if(mensagens){
+
+        mensagens.innerHTML = "";
+
+    }
+
+
+    /*
+       Limpa o campo de texto.
+    */
+
+    if(campo){
+
+        campo.value = "";
+
+    }
+
+
+    /*
+       Coloca somente a mensagem inicial.
+    */
+
+    if(mensagens){
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "msg-suporte msg-bot";
+
+        div.innerText =
+            "👋 Olá! Sou o assistente do ApostaXBet.\n\nComo posso ajudar?";
+
+        mensagens.appendChild(div);
+
+        mensagens.scrollTop =
+            mensagens.scrollHeight;
+
+    }
+
+}
+
+
+/* ==================================================
+   SUPORTE - MOSTRAR / ESCONDER
 ================================================== */
 
 function mostrarBotaoSuporte(){
@@ -1489,8 +1560,12 @@ function esconderBotaoSuporte(){
     botaoSuporte.style.display =
         "none";
 
-    janelaSuporte.style.display =
-        "none";
+    /*
+       Ao sair do suporte,
+       encerra a conversa.
+    */
+
+    fecharSuporte();
 
 }
 
@@ -1501,8 +1576,17 @@ function esconderBotaoSuporte(){
 
 function abrirSuporte(){
 
+    /*
+       Sempre que o usuário abrir o suporte,
+       começa uma conversa NOVA.
+    */
+
+    resetarSuporte();
+
+
     janelaSuporte.style.display =
         "block";
+
 
     setTimeout(function(){
 
@@ -1528,6 +1612,17 @@ function abrirSuporte(){
 
 function fecharSuporte(){
 
+    /*
+       Encerra e apaga a conversa.
+    */
+
+    resetarSuporte();
+
+
+    /*
+       Fecha a janela.
+    */
+
     janelaSuporte.style.display =
         "none";
 
@@ -1548,18 +1643,30 @@ function adicionarMensagemSuporte(
             "suporteMensagens"
         );
 
+
+    if(!mensagens){
+
+        return;
+
+    }
+
+
     const div =
         document.createElement("div");
+
 
     div.className =
         usuario
         ? "msg-suporte msg-usuario"
         : "msg-suporte msg-bot";
 
+
     div.innerText =
         texto;
 
+
     mensagens.appendChild(div);
+
 
     mensagens.scrollTop =
         mensagens.scrollHeight;
@@ -1568,7 +1675,7 @@ function adicionarMensagemSuporte(
 
 
 /* ==================================================
-   INDICADOR "ASSISTENTE ESTÁ DIGITANDO"
+   INDICADOR DIGITANDO
 ================================================== */
 
 function mostrarDigitando(){
@@ -1578,19 +1685,35 @@ function mostrarDigitando(){
             "suporteMensagens"
         );
 
+
+    if(!mensagens){
+
+        return;
+
+    }
+
+
+    removerDigitando();
+
+
     const div =
         document.createElement("div");
+
 
     div.id =
         "mensagemDigitando";
 
+
     div.className =
         "msg-suporte msg-bot msg-digitando";
+
 
     div.innerHTML =
         "<span></span><span></span><span></span>";
 
+
     mensagens.appendChild(div);
+
 
     mensagens.scrollTop =
         mensagens.scrollHeight;
@@ -1605,6 +1728,7 @@ function removerDigitando(){
             "mensagemDigitando"
         );
 
+
     if(digitando){
 
         digitando.remove();
@@ -1615,7 +1739,7 @@ function removerDigitando(){
 
 
 /* ==================================================
-   RESPONDER SUPORTE
+   RESPOSTAS DO SUPORTE
 ================================================== */
 
 function responderSuporte(texto){
@@ -1731,7 +1855,7 @@ function responderSuporte(texto){
         pergunta.includes("falha")
     ){
 
-        return "❓ Entendi. Tente sair da conta e entrar novamente. Se o problema continuar, anote o que aconteceu e descreva aqui no campo de mensagem para receber uma orientação.";
+        return "❓ Entendi. Tente sair da conta e entrar novamente. Se o problema continuar, descreva aqui o que aconteceu para receber uma orientação.";
 
     }
 
@@ -1744,7 +1868,7 @@ function responderSuporte(texto){
 
 
 /* ==================================================
-   RESPONDER COM EFEITO DE DIGITAÇÃO
+   RESPOSTA COM DIGITAÇÃO
 ================================================== */
 
 function responderComDigitacao(
@@ -1753,14 +1877,35 @@ function responderComDigitacao(
 
     mostrarDigitando();
 
+
     setTimeout(function(){
 
+        /*
+           Se o usuário fechou o suporte
+           enquanto o assistente estava digitando,
+           não envia a resposta depois do fechamento.
+        */
+
+        if(
+            janelaSuporte.style.display ===
+            "none"
+        ){
+
+            removerDigitando();
+
+            return;
+
+        }
+
+
         removerDigitando();
+
 
         const resposta =
             responderSuporte(
                 pergunta
             );
+
 
         adicionarMensagemSuporte(
             resposta
@@ -1803,6 +1948,7 @@ function perguntaSuporte(tipo){
     const pergunta =
         respostas[tipo];
 
+
     if(!pergunta){
 
         return;
@@ -1824,7 +1970,7 @@ function perguntaSuporte(tipo){
 
 
 /* ==================================================
-   ENVIAR PERGUNTA DIGITADA
+   ENVIAR PERGUNTA ESCRITA
 ================================================== */
 
 function enviarPerguntaSuporte(){
@@ -1833,6 +1979,7 @@ function enviarPerguntaSuporte(){
         document.getElementById(
             "entradaSuporte"
         );
+
 
     if(!campo){
 
@@ -1852,15 +1999,28 @@ function enviarPerguntaSuporte(){
     }
 
 
+    /*
+       Mostra a pergunta do usuário.
+    */
+
     adicionarMensagemSuporte(
         texto,
         true
     );
 
 
+    /*
+       Limpa o campo imediatamente.
+    */
+
     campo.value =
         "";
 
+
+    /*
+       Mostra "digitando..."
+       antes da resposta.
+    */
 
     responderComDigitacao(
         texto
@@ -1892,6 +2052,7 @@ function mostrarCadastro(){
     .classList.remove("active");
 
 }
+
 
 function mostrarLogin(){
 
@@ -1957,7 +2118,7 @@ function mensagem(
 
 
 /* ==================================================
-   TELA RECUPERAÇÃO
+   RECUPERAÇÃO
 ================================================== */
 
 function mostrarRecuperacao(){
@@ -2488,6 +2649,13 @@ function mostrarSite(user){
 
     mostrarBotaoSuporte();
 
+    /*
+       Começa o suporte limpo.
+    */
+
+    resetarSuporte();
+
+
     let nome =
         user?.user_metadata?.nome;
 
@@ -2547,6 +2715,11 @@ function mostrarConta(){
 
     paginaConta.style.display =
         "block";
+
+    /*
+       Ao entrar na conta,
+       encerra o suporte.
+    */
 
     esconderBotaoSuporte();
 
@@ -2644,6 +2817,13 @@ async function sair(){
         "apostaxbet_logout",
         "1"
     );
+
+
+    /*
+       Encerra o suporte antes de sair.
+    */
+
+    fecharSuporte();
 
 
     site.style.display =
