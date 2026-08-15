@@ -48,7 +48,6 @@ body::before{
         radial-gradient(circle at 15% 85%,rgba(80,0,255,.32),transparent 27%);
 
     filter:blur(35px);
-
     animation:luzesFundo 12s ease-in-out infinite alternate;
 }
 
@@ -69,15 +68,9 @@ body::after{
 }
 
 @keyframes luzesFundo{
-    0%{
-        transform:translate(-4%,-3%) scale(1);
-    }
-    50%{
-        transform:translate(4%,3%) scale(1.08);
-    }
-    100%{
-        transform:translate(-2%,5%) scale(1.04);
-    }
+    0%{transform:translate(-4%,-3%) scale(1);}
+    50%{transform:translate(4%,3%) scale(1.08);}
+    100%{transform:translate(-2%,5%) scale(1.04);}
 }
 
 @keyframes particulas{
@@ -214,7 +207,7 @@ body::after{
 ===================================================== */
 
 .game-container.impacto{
-    animation:tremor 0.65s ease;
+    animation:tremor .65s ease;
 }
 
 @keyframes tremor{
@@ -259,7 +252,6 @@ body::after{
     position:relative;
 }
 
-/* sem quadrado amarelo */
 .game-container::before{
     content:"";
     position:absolute;
@@ -290,16 +282,49 @@ body::after{
 }
 
 /* =====================================================
-   TÍTULO
+   TÍTULO FORTUNE SNAKE
 ===================================================== */
 
-h2{
-    margin:0 0 5px;
+.titulo-fortune{
+    font-size:36px;
+    font-weight:900;
+    letter-spacing:2px;
+
+    margin:0 0 8px;
+
     color:#ffd700;
 
     text-shadow:
-        0 0 8px #ffd700,
-        0 0 18px #ff00cc;
+        0 0 5px #fff,
+        0 0 10px #ffd700,
+        0 0 20px #ff00cc,
+        0 0 35px #8a00ff;
+
+    animation:
+        tituloBrilho 2.2s ease-in-out infinite alternate;
+}
+
+@keyframes tituloBrilho{
+
+    0%{
+        transform:scale(1);
+
+        text-shadow:
+            0 0 5px #fff,
+            0 0 10px #ffd700,
+            0 0 20px #ff00cc,
+            0 0 35px #8a00ff;
+    }
+
+    100%{
+        transform:scale(1.04);
+
+        text-shadow:
+            0 0 8px #fff,
+            0 0 18px #ffd700,
+            0 0 30px #ff00cc,
+            0 0 50px #8a00ff;
+    }
 }
 
 .subtitle{
@@ -505,8 +530,14 @@ button:disabled{
 }
 
 @media(max-width:380px){
+
     .game-container{
         padding:16px;
+    }
+
+    .titulo-fortune{
+        font-size:29px;
+        letter-spacing:1px;
     }
 
     .reel{
@@ -538,7 +569,9 @@ button:disabled{
 
 <div class="game-container" id="gameContainer">
 
-    <h2>🐍 Fortune Snake</h2>
+    <h2 class="titulo-fortune">
+        🐍 FORTUNE SNAKE
+    </h2>
 
     <div class="subtitle">
         🐍 Boa sorte!
@@ -684,7 +717,7 @@ function iniciarSomGiro(){
 
             passo++;
 
-        }, 115);
+        },115);
 }
 
 function pararSomGiro(){
@@ -782,9 +815,7 @@ function efeitosGiro(){
 
     jogo.classList.add("impacto");
 
-    if(
-        navigator.vibrate
-    ){
+    if(navigator.vibrate){
 
         navigator.vibrate([
             80,
@@ -860,7 +891,6 @@ function mensagem(
 
 // =====================================================
 // CRIA ROLOS GRANDES
-// IMPORTANTE: MUITAS VOLTAS PARA OS ÍCONES NÃO SUMIREM
 // =====================================================
 
 function criarRolo(strip){
@@ -868,8 +898,8 @@ function criarRolo(strip){
     strip.innerHTML = "";
 
     for(
-        let volta = 0;
-        volta < 18;
+        let volta=0;
+        volta<18;
         volta++
     ){
 
@@ -880,7 +910,7 @@ function criarRolo(strip){
             const div =
                 document.createElement("div");
 
-            div.className = "symbol";
+            div.className="symbol";
 
             div.textContent =
                 simbolo;
@@ -908,8 +938,7 @@ function simboloAleatorio(){
 
 function prepararRolo(strip){
 
-    strip.style.transition =
-        "none";
+    strip.style.transition="none";
 
     strip.style.transform =
         "translate3d(0,0,0)";
@@ -935,7 +964,7 @@ function girarRolo(
         const reel =
             reels[index];
 
-        const altura = 100;
+        const altura=100;
 
         const quantidade =
             SIMBOLOS.length;
@@ -948,10 +977,6 @@ function girarRolo(
                 simboloFinal
             );
 
-        /*
-         * Mantemos o resultado bem dentro
-         * do rolo para nunca ficar vazio.
-         */
         const voltas =
             10 + index * 2;
 
@@ -1039,7 +1064,6 @@ function calcularPremio(
         return PAGAMENTOS[
             resultado[0]
         ] || 0;
-
     }
 
     return 0;
@@ -1063,7 +1087,7 @@ button.addEventListener(
             return;
         }
 
-        button.disabled = true;
+        button.disabled=true;
 
         iniciarAudio();
 
@@ -1082,7 +1106,7 @@ button.addEventListener(
                     "#ff4d4d"
                 );
 
-                button.disabled = false;
+                button.disabled=false;
 
                 return;
             }
@@ -1091,10 +1115,8 @@ button.addEventListener(
                 APOSTA
             );
 
-            /* efeitos ao apertar */
             efeitosGiro();
 
-            /* som contínuo de caça-níquel */
             iniciarSomGiro();
 
             mensagem(
@@ -1116,7 +1138,6 @@ button.addEventListener(
                 resultado
             );
 
-            /* para o som dos rolos */
             pararSomGiro();
 
             result.textContent =
@@ -1144,9 +1165,7 @@ button.addEventListener(
 
                 somMoedas();
 
-                if(
-                    navigator.vibrate
-                ){
+                if(navigator.vibrate){
 
                     navigator.vibrate([
                         100,
@@ -1210,7 +1229,7 @@ button.addEventListener(
                     }
                 );
 
-                button.disabled = false;
+                button.disabled=false;
 
             },600);
         }
