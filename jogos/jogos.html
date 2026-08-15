@@ -43,14 +43,17 @@
       letter-spacing: -6px;
       color: rgba(230, 194, 41, 0.18);
       -webkit-text-stroke: 2px rgba(230, 194, 41, 0.18);
+
       text-shadow:
         0 0 10px rgba(230, 194, 41, 0.65),
         0 0 25px rgba(230, 194, 41, 0.55),
         0 0 50px rgba(230, 194, 41, 0.40),
         0 0 90px rgba(230, 194, 41, 0.25);
+
       pointer-events: none;
       z-index: 0;
       white-space: nowrap;
+
       animation: brilhoApostaX 2.5s ease-in-out infinite alternate;
     }
 
@@ -136,6 +139,7 @@
       width: 5px;
       height: 5px;
       border-radius: 50%;
+
       background: #e6c229;
 
       box-shadow:
@@ -249,12 +253,16 @@
       position: fixed;
       right: 15px;
       top: 15px;
+
       width: 48px;
       height: 48px;
+
       border: none;
       border-radius: 50%;
+
       background: #e6c229;
       color: #000;
+
       font-size: 22px;
 
       display: flex;
@@ -359,9 +367,11 @@
       display: block;
       text-align: center;
       margin: 20px auto;
+
       color: #e6bc24;
       text-decoration: none;
       font-weight: bold;
+
       position: relative;
       z-index: 4;
     }
@@ -375,7 +385,6 @@
       height: 75px;
 
       background: rgba(17,17,17,.96);
-
       border-top: 2px solid #d8af16;
 
       display: flex;
@@ -435,660 +444,623 @@
         letter-spacing: -4px;
       }
     }
-
-    /* =========================================
-       TELA DE BLOQUEIO
-    ========================================= */
-
-    #bloqueio {
-      display: none;
-
-      position: fixed;
-      inset: 0;
-
-      background:
-        radial-gradient(circle at 50% 30%, #173b30 0%, #050505 65%);
-
-      z-index: 9999;
-
-      align-items: center;
-      justify-content: center;
-
-      text-align: center;
-      padding: 25px;
-    }
-
-    .bloqueio-caixa {
-      width: 100%;
-      max-width: 400px;
-      padding: 30px 20px;
-
-      background: #111;
-      border: 2px solid #d9b21f;
-      border-radius: 20px;
-
-      box-shadow:
-        0 0 30px rgba(230,194,41,.20);
-    }
-
-    .bloqueio-icone {
-      font-size: 55px;
-      margin-bottom: 15px;
-    }
-
-    .bloqueio-caixa h2 {
-      color: #e6c229;
-      margin-bottom: 12px;
-    }
-
-    .bloqueio-caixa p {
-      color: #aaa;
-      line-height: 1.5;
-      margin-bottom: 20px;
-    }
-
-    .botao-login {
-      display: block;
-      width: 100%;
-      padding: 15px;
-
-      border-radius: 12px;
-
-      background: #e1bd28;
-      color: #000;
-
-      text-decoration: none;
-      font-weight: bold;
-    }
-
   </style>
 </head>
 
 <body>
 
-  <!-- =========================================
-       PROTEÇÃO
-  ========================================= -->
+<!-- ==================================================
+     PROTEÇÃO CONTRA VOLTAR DEPOIS DO LOGOUT
+================================================== -->
 
-  <div id="bloqueio">
+<script>
 
-    <div class="bloqueio-caixa">
+const SUPABASE_URL =
+'https://jxbzjiwmajjzxgihfjgt.supabase.co';
 
-      <div class="bloqueio-icone">
-        🔐
-      </div>
+const SUPABASE_KEY =
+'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ';
 
-      <h2>
-        Acesso necessário
-      </h2>
+const clienteSupabase =
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
-      <p>
-        Você saiu da sua conta.
-        Faça login novamente para acessar os jogos.
-      </p>
 
-      <a
-        class="botao-login"
-        href="../index.html">
+/* ==========================================
+   MANDAR PARA O LOGIN
+========================================== */
 
-        ENTRAR NA CONTA
+function redirecionarLogin(){
 
-      </a>
+  window.location.replace(
+    "../index.html"
+  );
 
-    </div>
+}
 
-  </div>
 
+/* ==========================================
+   VERIFICAR SE O USUÁRIO PODE ESTAR NOS JOGOS
+========================================== */
 
-  <!-- =========================================
-       LUZES
-  ========================================= -->
+async function protegerJogos(){
 
-  <div class="luzes">
+  const saiu =
+    sessionStorage.getItem(
+      "apostaxbet_logout"
+    );
 
-    <div class="luz"></div>
-    <div class="luz"></div>
-    <div class="luz"></div>
-    <div class="luz"></div>
-    <div class="luz"></div>
-    <div class="luz"></div>
-    <div class="luz"></div>
 
-  </div>
+  /*
+   * Se clicou em SAIR,
+   * não pode voltar para os jogos.
+   */
 
+  if(saiu === "1"){
 
-  <!-- =========================================
-       MÚSICA
-  ========================================= -->
+    redirecionarLogin();
 
-  <audio
-    id="musicaJogos"
-    loop
-    preload="auto">
+    return;
 
-    <source
-      src="musica-jogos.mp3"
-      type="audio/mpeg">
+  }
 
-  </audio>
 
+  try{
 
-  <!-- =========================================
-       BOTÃO DE SOM
-  ========================================= -->
+    const { data, error } =
+      await clienteSupabase.auth.getSession();
 
-  <button
-    id="botaoSom"
-    type="button"
-    aria-label="Ativar ou desativar música">
 
-    🔇
+    if(error){
 
-  </button>
-
-
-  <!-- =========================================
-       CABEÇALHO
-  ========================================= -->
-
-  <header>
-
-    <h1>🎰 ApostaXBet</h1>
-
-    <p>🎮 Escolha um jogo</p>
-
-  </header>
-
-
-  <!-- =========================================
-       JOGOS
-  ========================================= -->
-
-  <main class="container">
-
-    <h2 class="titulo">
-      🎮 Jogos
-    </h2>
-
-    <div class="jogos">
-
-      <a class="jogo" href="roleta.html">
-
-        <div class="icone">🎰</div>
-
-        <div class="nome">
-          Roleta
-        </div>
-
-        <div class="descricao">
-          Gire a roleta
-        </div>
-
-      </a>
-
-
-      <a class="jogo" href="roleta-cassino.html">
-
-        <div class="icone">🎰</div>
-
-        <div class="nome">
-          Roleta Cassino
-        </div>
-
-        <div class="descricao">
-          Roleta automática
-        </div>
-
-      </a>
-
-
-      <a class="jogo" href="mines.html">
-
-        <div class="icone">💣</div>
-
-        <div class="nome">
-          Mines
-        </div>
-
-        <div class="descricao">
-          Encontre os diamantes
-        </div>
-
-      </a>
-
-
-      <a class="jogo" href="crash.html">
-
-        <div class="icone">🚀</div>
-
-        <div class="nome">
-          Crash
-        </div>
-
-        <div class="descricao">
-          Acompanhe o multiplicador
-        </div>
-
-      </a>
-
-
-      <a class="jogo" href="plinko.html">
-
-        <div class="icone">🎯</div>
-
-        <div class="nome">
-          Plinko
-        </div>
-
-        <div class="descricao">
-          Solte a bola
-        </div>
-
-      </a>
-
-
-      <a class="jogo" href="dice.html">
-
-        <div class="icone">🎲</div>
-
-        <div class="nome">
-          Dice
-        </div>
-
-        <div class="descricao">
-          Jogue os dados
-        </div>
-
-      </a>
-
-
-      <a class="jogo" href="lobby.html">
-
-        <div class="icone">🐺</div>
-
-        <div class="nome">
-          Lobby
-        </div>
-
-        <div class="descricao">
-          Jogue Lobby
-        </div>
-
-      </a>
-
-
-      <a
-        class="jogo"
-        href="hotel-transylvania/index.html">
-
-        <div class="icone">🧛</div>
-
-        <div class="nome">
-          Night Monsters
-        </div>
-
-        <div class="descricao">
-          Hotel Transilvânia
-        </div>
-
-      </a>
-
-
-      <a
-        class="jogo"
-        href="fortune-snake.html">
-
-        <div class="icone">🐍</div>
-
-        <div class="nome">
-          Fortune Snake
-        </div>
-
-        <div class="descricao">
-          Gire e tente a sorte
-        </div>
-
-      </a>
-
-    </div>
-
-
-    <!-- VOLTAR -->
-
-    <a
-      class="voltar"
-      href="../index.html">
-
-      ← Voltar para o início
-
-    </a>
-
-  </main>
-
-
-  <!-- =========================================
-       MENU
-  ========================================= -->
-
-  <nav>
-
-    <a href="../index.html">
-
-      <span>🏠</span>
-
-      Início
-
-    </a>
-
-
-    <a href="jogos.html">
-
-      <span>🎮</span>
-
-      Jogos
-
-    </a>
-
-
-    <a href="../index.html">
-
-      <span>👤</span>
-
-      Conta
-
-    </a>
-
-  </nav>
-
-
-  <!-- =========================================
-       SUPABASE + PROTEÇÃO
-  ========================================= -->
-
-  <script>
-
-    const SUPABASE_URL =
-      'https://jxbzjiwmajjzxgihfjgt.supabase.co';
-
-    const SUPABASE_KEY =
-      'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ';
-
-    const supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
+      console.log(
+        "Erro ao verificar sessão:",
+        error
       );
 
+      redirecionarLogin();
 
-    /*
-     * =========================================
-     * PROTEÇÃO DA PÁGINA
-     * =========================================
-     *
-     * Primeiro verifica se existe uma sessão.
-     *
-     * Se não existir:
-     * - esconde os jogos
-     * - mostra a tela de bloqueio
-     *
-     * Se existir:
-     * - libera normalmente
-     */
-
-    async function verificarAcesso() {
-
-      try {
-
-        const resultado =
-          await supabaseClient.auth.getSession();
-
-        const session =
-          resultado.data?.session;
-
-
-        /*
-         * NÃO ESTÁ LOGADO
-         */
-
-        if (!session) {
-
-          bloquearPagina();
-
-          return;
-
-        }
-
-
-        /*
-         * ESTÁ LOGADO
-         */
-
-        liberarPagina();
-
-      } catch (erro) {
-
-        console.error(
-          "Erro ao verificar sessão:",
-          erro
-        );
-
-        bloquearPagina();
-
-      }
+      return;
 
     }
 
 
-    function bloquearPagina() {
+    /*
+     * Não existe sessão.
+     */
 
-      document
-        .getElementById("bloqueio")
-        .style.display = "flex";
+    if(
+      !data ||
+      !data.session ||
+      !data.session.user
+    ){
 
-      document
-        .querySelector("header")
-        .style.display = "none";
+      redirecionarLogin();
 
-      document
-        .querySelector("main")
-        .style.display = "none";
+      return;
 
-      document
-        .querySelector("nav")
-        .style.display = "none";
+    }
 
-      document
-        .getElementById("botaoSom")
-        .style.display = "none";
+  }catch(erro){
+
+    console.log(
+      "Erro na proteção:",
+      erro
+    );
+
+    redirecionarLogin();
+
+  }
+
+}
 
 
-      /*
-       * Para a música se houver.
-       */
+/* ==========================================
+   VERIFICAÇÃO INICIAL
+========================================== */
+
+protegerJogos();
+
+
+/* ==========================================
+   IMPORTANTE PARA O BOTÃO VOLTAR DO CELULAR
+========================================== */
+
+window.addEventListener(
+  "pageshow",
+  function(){
+
+    protegerJogos();
+
+  }
+);
+
+
+/* ==========================================
+   SE A SESSÃO ACABAR, MANDA PARA LOGIN
+========================================== */
+
+clienteSupabase.auth.onAuthStateChange(
+  function(event, session){
+
+    if(!session){
+
+      redirecionarLogin();
+
+    }
+
+  }
+);
+
+</script>
+
+
+<!-- ==================================================
+     LUZES
+================================================== -->
+
+<div class="luzes">
+
+  <div class="luz"></div>
+  <div class="luz"></div>
+  <div class="luz"></div>
+  <div class="luz"></div>
+  <div class="luz"></div>
+  <div class="luz"></div>
+  <div class="luz"></div>
+
+</div>
+
+
+<!-- ==================================================
+     MÚSICA
+================================================== -->
+
+<audio
+  id="musicaJogos"
+  loop
+  preload="auto">
+
+  <source
+    src="musica-jogos.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+
+<!-- ==================================================
+     BOTÃO DE SOM
+================================================== -->
+
+<button
+  id="botaoSom"
+  type="button"
+  aria-label="Ativar ou desativar música">
+
+  🔇
+
+</button>
+
+
+<!-- ==================================================
+     CABEÇALHO
+================================================== -->
+
+<header>
+
+  <h1>🎰 ApostaXBet</h1>
+
+  <p>🎮 Escolha um jogo</p>
+
+</header>
+
+
+<!-- ==================================================
+     JOGOS
+================================================== -->
+
+<main class="container">
+
+  <h2 class="titulo">
+    🎮 Jogos
+  </h2>
+
+
+  <div class="jogos">
+
+
+    <!-- 1 - ROLETA -->
+
+    <a
+      class="jogo"
+      href="roleta.html">
+
+      <div class="icone">
+        🎰
+      </div>
+
+      <div class="nome">
+        Roleta
+      </div>
+
+      <div class="descricao">
+        Gire a roleta
+      </div>
+
+    </a>
+
+
+    <!-- 2 - ROLETA CASSINO -->
+
+    <a
+      class="jogo"
+      href="roleta-cassino.html">
+
+      <div class="icone">
+        🎰
+      </div>
+
+      <div class="nome">
+        Roleta Cassino
+      </div>
+
+      <div class="descricao">
+        Roleta automática
+      </div>
+
+    </a>
+
+
+    <!-- 3 - MINES -->
+
+    <a
+      class="jogo"
+      href="mines.html">
+
+      <div class="icone">
+        💣
+      </div>
+
+      <div class="nome">
+        Mines
+      </div>
+
+      <div class="descricao">
+        Encontre os diamantes
+      </div>
+
+    </a>
+
+
+    <!-- 4 - CRASH -->
+
+    <a
+      class="jogo"
+      href="crash.html">
+
+      <div class="icone">
+        🚀
+      </div>
+
+      <div class="nome">
+        Crash
+      </div>
+
+      <div class="descricao">
+        Acompanhe o multiplicador
+      </div>
+
+    </a>
+
+
+    <!-- 5 - PLINKO -->
+
+    <a
+      class="jogo"
+      href="plinko.html">
+
+      <div class="icone">
+        🎯
+      </div>
+
+      <div class="nome">
+        Plinko
+      </div>
+
+      <div class="descricao">
+        Solte a bola
+      </div>
+
+    </a>
+
+
+    <!-- 6 - DICE -->
+
+    <a
+      class="jogo"
+      href="dice.html">
+
+      <div class="icone">
+        🎲
+      </div>
+
+      <div class="nome">
+        Dice
+      </div>
+
+      <div class="descricao">
+        Jogue os dados
+      </div>
+
+    </a>
+
+
+    <!-- 7 - LOBBY -->
+
+    <a
+      class="jogo"
+      href="lobby.html">
+
+      <div class="icone">
+        🐺
+      </div>
+
+      <div class="nome">
+        Lobby
+      </div>
+
+      <div class="descricao">
+        Jogue Lobby
+      </div>
+
+    </a>
+
+
+    <!-- 8 - NIGHT MONSTERS -->
+
+    <a
+      class="jogo"
+      href="hotel-transylvania/index.html">
+
+      <div class="icone">
+        🧛
+      </div>
+
+      <div class="nome">
+        Night Monsters
+      </div>
+
+      <div class="descricao">
+        Hotel Transilvânia
+      </div>
+
+    </a>
+
+
+    <!-- 9 - FORTUNE SNAKE -->
+
+    <a
+      class="jogo"
+      href="fortune-snake.html">
+
+      <div class="icone">
+        🐍
+      </div>
+
+      <div class="nome">
+        Fortune Snake
+      </div>
+
+      <div class="descricao">
+        Gire e tente a sorte
+      </div>
+
+    </a>
+
+
+  </div>
+
+
+  <!-- VOLTAR -->
+
+  <a
+    class="voltar"
+    href="../index.html">
+
+    ← Voltar para o início
+
+  </a>
+
+</main>
+
+
+<!-- ==================================================
+     MENU
+================================================== -->
+
+<nav>
+
+  <a
+    href="../index.html">
+
+    <span>
+      🏠
+    </span>
+
+    Início
+
+  </a>
+
+
+  <a
+    href="jogos.html">
+
+    <span>
+      🎮
+    </span>
+
+    Jogos
+
+  </a>
+
+
+  <a
+    href="../index.html">
+
+    <span>
+      👤
+    </span>
+
+    Conta
+
+  </a>
+
+</nav>
+
+
+<!-- ==================================================
+     CONTROLE DA MÚSICA
+================================================== -->
+
+<script>
+
+const musica =
+  document.getElementById(
+    "musicaJogos"
+  );
+
+const botaoSom =
+  document.getElementById(
+    "botaoSom"
+  );
+
+
+musica.volume = 0.70;
+
+
+function atualizarBotao(){
+
+  if(musica.paused){
+
+    botaoSom.innerText =
+      "🔇";
+
+  }else{
+
+    botaoSom.innerText =
+      "🔊";
+
+  }
+
+}
+
+
+async function alternarMusica(){
+
+  if(musica.paused){
+
+    try{
+
+      await musica.play();
+
+      botaoSom.innerText =
+        "🔊";
+
+    }catch(erro){
+
+      console.log(
+        "Não foi possível iniciar a música:",
+        erro
+      );
+
+      botaoSom.innerText =
+        "🔇";
+
+    }
+
+  }else{
+
+    musica.pause();
+
+    musica.currentTime = 0;
+
+    botaoSom.innerText =
+      "🔇";
+
+  }
+
+}
+
+
+botaoSom.addEventListener(
+  "click",
+  function(event){
+
+    event.preventDefault();
+
+    event.stopPropagation();
+
+    alternarMusica();
+
+  }
+);
+
+
+musica.addEventListener(
+  "pause",
+  atualizarBotao
+);
+
+
+musica.addEventListener(
+  "play",
+  atualizarBotao
+);
+
+
+/* ==========================================
+   PARAR MÚSICA AO SAIR
+========================================== */
+
+window.addEventListener(
+  "pagehide",
+  function(){
+
+    musica.pause();
+
+    musica.currentTime = 0;
+
+  }
+);
+
+
+document.addEventListener(
+  "visibilitychange",
+  function(){
+
+    if(
+      document.visibilityState ===
+      "hidden"
+    ){
 
       musica.pause();
 
       musica.currentTime = 0;
 
-    }
-
-
-    function liberarPagina() {
-
-      document
-        .getElementById("bloqueio")
-        .style.display = "none";
-
-      document
-        .querySelector("header")
-        .style.display = "block";
-
-      document
-        .querySelector("main")
-        .style.display = "block";
-
-      document
-        .querySelector("nav")
-        .style.display = "flex";
-
-      document
-        .getElementById("botaoSom")
-        .style.display = "flex";
+      botaoSom.innerText =
+        "🔇";
 
     }
 
+  }
+);
 
-    /*
-     * Se a sessão mudar enquanto a pessoa
-     * estiver nesta página, verifica novamente.
-     */
 
-    supabaseClient.auth.onAuthStateChange(
-      function(event, session) {
+atualizarBotao();
 
-        if (!session) {
-
-          bloquearPagina();
-
-        } else {
-
-          liberarPagina();
-
-        }
-
-      }
-    );
-
-
-    /*
-     * Verificação inicial.
-     */
-
-    verificarAcesso();
-
-
-    /* =========================================
-       MÚSICA
-    ========================================= */
-
-    const musica =
-      document.getElementById("musicaJogos");
-
-    const botaoSom =
-      document.getElementById("botaoSom");
-
-
-    musica.volume = 0.70;
-
-
-    function atualizarBotao() {
-
-      if (musica.paused) {
-
-        botaoSom.innerText = "🔇";
-
-      } else {
-
-        botaoSom.innerText = "🔊";
-
-      }
-
-    }
-
-
-    async function alternarMusica() {
-
-      if (musica.paused) {
-
-        try {
-
-          await musica.play();
-
-          botaoSom.innerText = "🔊";
-
-        } catch (erro) {
-
-          console.log(
-            "Não foi possível iniciar a música:",
-            erro
-          );
-
-          botaoSom.innerText = "🔇";
-
-        }
-
-      } else {
-
-        musica.pause();
-
-        botaoSom.innerText = "🔇";
-
-      }
-
-    }
-
-
-    botaoSom.addEventListener(
-      "click",
-      function(event) {
-
-        event.preventDefault();
-
-        event.stopPropagation();
-
-        alternarMusica();
-
-      }
-    );
-
-
-    musica.addEventListener(
-      "pause",
-      atualizarBotao
-    );
-
-
-    musica.addEventListener(
-      "play",
-      atualizarBotao
-    );
-
-
-    window.addEventListener(
-      "pagehide",
-      function() {
-
-        musica.pause();
-
-        musica.currentTime = 0;
-
-      }
-    );
-
-
-    document.addEventListener(
-      "visibilitychange",
-      function() {
-
-        if (
-          document.visibilityState === "hidden"
-        ) {
-
-          musica.pause();
-
-          musica.currentTime = 0;
-
-          botaoSom.innerText = "🔇";
-
-        }
-
-      }
-    );
-
-
-    atualizarBotao();
-
-  </script>
+</script>
 
 </body>
 </html>
