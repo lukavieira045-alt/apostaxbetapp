@@ -240,13 +240,12 @@ body{
 
   color:#fff3a6;
   line-height:15px;
+
   white-space:nowrap;
 
   text-shadow:
     0 2px 3px #000,
     0 0 7px rgba(255,215,70,.9);
-
-  transform:rotate(0deg);
 }
 
 .numero.valor-normal .numero-conteudo{
@@ -413,13 +412,15 @@ body{
 
 .resultado{
   min-height:52px;
+
   text-align:center;
+
   color:#ddd;
+
   font-size:18px;
   font-weight:900;
 
-  text-shadow:
-    0 0 10px currentColor;
+  text-shadow:0 0 10px currentColor;
 
   line-height:24px;
 }
@@ -494,7 +495,9 @@ body{
 .valores{
   display:grid;
   grid-template-columns:repeat(3,1fr);
+
   gap:5px;
+
   margin-bottom:8px;
 }
 
@@ -515,6 +518,7 @@ body{
 
 .btn-valor.ativo{
   color:#ffe36a;
+
   border-color:#ffe36a;
 
   box-shadow:
@@ -563,6 +567,7 @@ body{
   margin-top:9px;
 
   color:#aaa;
+
   font-size:12px;
 }
 
@@ -572,8 +577,11 @@ body{
 
 .mensagem{
   text-align:center;
+
   color:#555;
+
   font-size:9px;
+
   margin-top:8px;
 }
 
@@ -629,7 +637,7 @@ body{
 }
 
 /* =====================================================
-   SUPER BÔNUS — EFEITO NA TELA TODA
+   SUPER BÔNUS — EFEITO TELA INTEIRA
 ===================================================== */
 
 .superbonus-overlay{
@@ -646,14 +654,14 @@ body{
   background:
     radial-gradient(
       circle at center,
-      rgba(255,255,210,.95) 0%,
-      rgba(255,230,70,.78) 18%,
-      rgba(255,190,0,.48) 40%,
-      rgba(255,160,0,.20) 60%,
+      rgba(255,255,180,.95) 0%,
+      rgba(255,225,40,.72) 18%,
+      rgba(255,190,0,.42) 40%,
+      rgba(255,150,0,.18) 60%,
       rgba(0,0,0,.96) 100%
     );
 
-  z-index:10000;
+  z-index:1000;
 
   pointer-events:none;
 
@@ -662,99 +670,98 @@ body{
 
 .superbonus-overlay.ativo{
   display:flex;
-
-  animation:
-    superBonusTela
-    2.4s
-    ease-out
-    forwards;
+  animation:superBonusTela 2.2s ease forwards;
 }
 
-/* FLASH DA TELA */
-
+/* clarão que cobre a tela inteira */
 .superbonus-overlay::before{
   content:"";
-
   position:absolute;
-  inset:0;
+  inset:-30%;
 
   background:
     radial-gradient(
       circle,
-      rgba(255,255,255,.95),
-      rgba(255,230,60,.55) 30%,
-      transparent 70%
+      rgba(255,255,255,.95) 0%,
+      rgba(255,235,80,.75) 12%,
+      rgba(255,180,0,.18) 38%,
+      transparent 65%
     );
 
   animation:
-    flashBonus
-    .35s
-    ease-out;
+    superFlash 2.2s ease-out forwards;
 }
 
-/* ANEL DE LUZ */
-
+/* anel luminoso */
 .superbonus-overlay::after{
   content:"";
-
   position:absolute;
 
-  width:120px;
-  height:120px;
+  width:180px;
+  height:180px;
 
   border-radius:50%;
 
-  border:8px solid #fff8a0;
+  border:8px solid rgba(255,255,180,.95);
 
   box-shadow:
     0 0 20px #fff,
     0 0 50px #ffe33c,
-    0 0 100px #ffae00;
+    0 0 100px #ffb300,
+    0 0 180px #ff8c00;
 
   animation:
-    explosaoBonus
-    1.5s
-    ease-out
-    forwards;
+    superAnel 1.8s ease-out forwards;
 }
-
-/* RAIOS */
 
 .superbonus-raio{
   position:absolute;
 
-  width:7px;
-  height:120vh;
+  width:6px;
+  height:130vh;
 
   background:#fff;
 
   box-shadow:
-    0 0 10px #fff,
-    0 0 25px #fff,
-    0 0 50px #ffe33c,
-    0 0 80px #ffae00;
+    0 0 15px #fff,
+    0 0 35px #ffe33c,
+    0 0 70px #ff9d00;
 
   animation:
-    raioSuper
-    .18s
-    infinite
-    alternate;
+    raioSuper .35s infinite alternate;
 }
 
-.superbonus-raio:nth-child(1){
-  transform:rotate(15deg);
+.superbonus-raio::before,
+.superbonus-raio::after{
+  content:"";
+
+  position:absolute;
+
+  width:4px;
+  height:100%;
+
+  background:#fff;
+
+  box-shadow:
+    0 0 15px #fff,
+    0 0 35px #ffe33c;
 }
 
-/* TEXTO */
+.superbonus-raio::before{
+  transform:rotate(45deg);
+}
+
+.superbonus-raio::after{
+  transform:rotate(-45deg);
+}
 
 .superbonus-titulo{
   position:relative;
-
-  z-index:3;
+  z-index:5;
 
   color:#fff;
 
-  font-size:38px;
+  font-size:34px;
 
   font-weight:1000;
 
@@ -763,105 +770,51 @@ body{
   text-align:center;
 
   text-shadow:
-    0 0 5px #fff,
-    0 0 15px #fff,
-    0 0 30px #ffe33c,
-    0 0 55px #ff9d00,
-    0 0 90px #ff7b00;
+    0 0 8px white,
+    0 0 20px #ffe33c,
+    0 0 40px #ff9d00,
+    0 0 70px #ff8c00;
 
   animation:
-    superBonusTexto
-    .8s
-    cubic-bezier(.2,1.6,.3,1);
+    superBonusTexto .8s ease-out;
 }
-
-/* VALOR */
 
 .superbonus-valor{
   position:relative;
+  z-index:5;
 
-  z-index:3;
+  margin-top:10px;
 
-  margin-top:12px;
+  color:#ffe44f;
 
-  color:#fff;
-
-  font-size:52px;
+  font-size:48px;
 
   font-weight:1000;
 
   text-shadow:
-    0 0 8px #fff,
-    0 0 20px #fff,
-    0 0 40px #ffe33c,
-    0 0 70px #ff9d00;
+    0 0 10px #fff,
+    0 0 25px #ffe33c,
+    0 0 50px #ff8c00,
+    0 0 80px #ff6600;
 
   animation:
-    superBonusValor
-    1s
-    cubic-bezier(.2,1.5,.3,1);
+    superBonusValor 1s ease-out;
 }
-
-/* PARTICULAS DE LUZ */
-
-.superbonus-particula{
-  position:absolute;
-
-  width:10px;
-  height:10px;
-
-  border-radius:50%;
-
-  background:#fff;
-
-  box-shadow:
-    0 0 8px #fff,
-    0 0 20px #ffe33c;
-
-  animation:
-    particulaBonus
-    1.3s
-    ease-out
-    forwards;
-}
-
-.superbonus-particula:nth-child(2){
-  left:15%;
-  top:20%;
-}
-
-.superbonus-particula:nth-child(3){
-  left:80%;
-  top:25%;
-}
-
-.superbonus-particula:nth-child(4){
-  left:20%;
-  top:75%;
-}
-
-.superbonus-particula:nth-child(5){
-  left:82%;
-  top:72%;
-}
-
-/* ANIMAÇÕES */
 
 @keyframes superBonusTela{
-
   0%{
     opacity:0;
   }
 
-  8%{
+  12%{
     opacity:1;
   }
 
-  18%{
-    opacity:.65;
+  25%{
+    opacity:.75;
   }
 
-  28%{
+  35%{
     opacity:1;
   }
 
@@ -872,116 +825,94 @@ body{
   100%{
     opacity:0;
   }
-
 }
 
-@keyframes flashBonus{
-
+@keyframes superFlash{
   0%{
-    opacity:1;
-  }
-
-  100%{
+    transform:scale(.2);
     opacity:0;
   }
 
-}
-
-@keyframes explosaoBonus{
-
-  0%{
-    width:80px;
-    height:80px;
+  15%{
+    transform:scale(.6);
     opacity:1;
   }
 
-  100%{
-    width:1000px;
-    height:1000px;
-    opacity:0;
-  }
-
-}
-
-@keyframes superBonusTexto{
-
-  0%{
-    transform:scale(.15);
-    opacity:0;
-  }
-
-  45%{
-    transform:scale(1.35);
-    opacity:1;
+  35%{
+    transform:scale(1);
+    opacity:.7;
   }
 
   70%{
-    transform:scale(.95);
+    transform:scale(1.25);
+    opacity:.35;
   }
 
   100%{
-    transform:scale(1);
-    opacity:1;
-  }
-
-}
-
-@keyframes superBonusValor{
-
-  0%{
-    transform:scale(.15);
+    transform:scale(1.5);
     opacity:0;
   }
-
-  50%{
-    transform:scale(1.4);
-    opacity:1;
-  }
-
-  75%{
-    transform:scale(.95);
-  }
-
-  100%{
-    transform:scale(1);
-  }
-
 }
 
-@keyframes raioSuper{
-
-  from{
-    opacity:.25;
-  }
-
-  to{
-    opacity:1;
-  }
-
-}
-
-@keyframes particulaBonus{
-
+@keyframes superAnel{
   0%{
-    transform:scale(.3);
+    transform:scale(.1);
     opacity:0;
   }
 
   20%{
+    transform:scale(.8);
     opacity:1;
   }
 
   100%{
-    transform:
-      translate(
-        calc((50vw - 50%) * 1.5),
-        calc((50vh - 50%) * 1.5)
-      )
-      scale(2);
+    transform:scale(5);
+    opacity:0;
+  }
+}
 
+@keyframes superBonusTexto{
+  0%{
+    transform:scale(.2);
     opacity:0;
   }
 
+  60%{
+    transform:scale(1.25);
+    opacity:1;
+  }
+
+  100%{
+    transform:scale(1);
+  }
+}
+
+@keyframes superBonusValor{
+  0%{
+    transform:scale(.2);
+    opacity:0;
+  }
+
+  60%{
+    transform:scale(1.35);
+    opacity:1;
+  }
+
+  100%{
+    transform:scale(1);
+  }
+}
+
+@keyframes raioSuper{
+  from{
+    opacity:.2;
+    transform:scaleY(.7) rotate(0deg);
+  }
+
+  to{
+    opacity:1;
+    transform:scaleY(1.1) rotate(0deg);
+  }
 }
 
 /* =====================================================
@@ -1025,11 +956,11 @@ body{
   }
 
   .superbonus-titulo{
-    font-size:29px;
+    font-size:27px;
   }
 
   .superbonus-valor{
-    font-size:43px;
+    font-size:40px;
   }
 }
 </style>
@@ -1048,20 +979,12 @@ body{
   🔐 VERIFICANDO CONTA...
 </div>
 
-<!-- =====================================================
-     SUPER BÔNUS
-===================================================== -->
-
+<!-- SUPER BÔNUS -->
 <div
   class="superbonus-overlay"
   id="superBonusOverlay">
 
   <div class="superbonus-raio"></div>
-
-  <div class="superbonus-particula"></div>
-  <div class="superbonus-particula"></div>
-  <div class="superbonus-particula"></div>
-  <div class="superbonus-particula"></div>
 
   <div class="superbonus-titulo">
     ⚡ SUPER BÔNUS ⚡
@@ -1167,7 +1090,9 @@ body{
       <div
         class="ficha"
         id="fichaDisplay">
+
         1,00
+
       </div>
 
     </div>
@@ -1199,7 +1124,9 @@ body{
       class="btn-apostar"
       onclick="girarRoleta()"
       disabled>
+
       CARREGANDO...
+
     </button>
 
     <div class="info">
@@ -1307,8 +1234,8 @@ function iniciarMusica(){
     }).catch(()=>{});
 
   }
-
 }
+
 
 let audioContext = null;
 let timerRoleta = null;
@@ -1338,7 +1265,6 @@ function iniciarAudio(){
   }
 
   iniciarMusica();
-
 }
 
 
@@ -1357,14 +1283,10 @@ function tocarClique(){
   const ganho =
     audioContext.createGain();
 
-  oscilador.type =
-    "square";
+  oscilador.type = "square";
 
   oscilador.frequency
-    .setValueAtTime(
-      180,
-      agora
-    );
+    .setValueAtTime(180,agora);
 
   oscilador.frequency
     .exponentialRampToValueAtTime(
@@ -1373,10 +1295,7 @@ function tocarClique(){
     );
 
   ganho.gain
-    .setValueAtTime(
-      .5,
-      agora
-    );
+    .setValueAtTime(.5,agora);
 
   ganho.gain
     .exponentialRampToValueAtTime(
@@ -1389,7 +1308,6 @@ function tocarClique(){
 
   oscilador.start(agora);
   oscilador.stop(agora + .08);
-
 }
 
 
@@ -1404,7 +1322,6 @@ function iniciarSomRoleta(){
   velocidadeSom = 45;
 
   tocarTic();
-
 }
 
 
@@ -1421,14 +1338,10 @@ function tocarTic(){
   const ganho =
     audioContext.createGain();
 
-  oscilador.type =
-    "square";
+  oscilador.type = "square";
 
   oscilador.frequency
-    .setValueAtTime(
-      850,
-      agora
-    );
+    .setValueAtTime(850,agora);
 
   oscilador.frequency
     .exponentialRampToValueAtTime(
@@ -1437,10 +1350,7 @@ function tocarTic(){
     );
 
   ganho.gain
-    .setValueAtTime(
-      .45,
-      agora
-    );
+    .setValueAtTime(.45,agora);
 
   ganho.gain
     .exponentialRampToValueAtTime(
@@ -1465,7 +1375,6 @@ function tocarTic(){
       tocarTic,
       velocidadeSom
     );
-
 }
 
 
@@ -1476,9 +1385,7 @@ function pararSomRoleta(){
     clearTimeout(timerRoleta);
 
     timerRoleta = null;
-
   }
-
 }
 
 
@@ -1508,8 +1415,7 @@ function tocarPremio(){
       const inicio =
         agora + i * .12;
 
-      oscilador.type =
-        "sine";
+      oscilador.type = "sine";
 
       oscilador.frequency
         .setValueAtTime(
@@ -1537,7 +1443,6 @@ function tocarPremio(){
 
     }
   );
-
 }
 
 
@@ -1561,8 +1466,7 @@ function tocarSuperBonus(){
     523.25,
     659.25,
     783.99,
-    1046.50,
-    1318.51
+    1046.50
   ].forEach(
     function(frequencia,i){
 
@@ -1575,8 +1479,7 @@ function tocarSuperBonus(){
       const inicio =
         agora + i * .10;
 
-      oscilador.type =
-        "sawtooth";
+      oscilador.type = "sawtooth";
 
       oscilador.frequency
         .setValueAtTime(
@@ -1610,7 +1513,6 @@ function tocarSuperBonus(){
 
     }
   );
-
 }
 
 
@@ -1618,31 +1520,38 @@ function tocarSuperBonus(){
    PRÊMIOS
 ===================================================== */
 
+/*
+   IMPORTANTE:
+
+   CADA POSIÇÃO POSSUI UM PRÊMIO.
+
+   O ÍNDICE ESCOLHIDO PELO SORTEIO
+   É EXATAMENTE O ÍNDICE USADO
+   PARA CREDITAR O SALDO.
+*/
+
 const premios = [
 
-  0.20,
-  0.40,
-  0.50,
-  0.80,
-  1.00,
-  0.20,
-  0.50,
-  0,
-  0.80,
-  1.00,
-  0.40,
-  0.50,
-  0.20,
-  0.80,
-
-  /* SUPER BÔNUS */
-  5.00,
-
-  0.40,
-  0,
-  0.50,
-  1.00,
-  0.20
+  0.20,  // 0
+  0.40,  // 1
+  0.50,  // 2
+  0.80,  // 3
+  1.00,  // 4
+  0.20,  // 5
+  0.50,  // 6
+  0,     // 7
+  0.80,  // 8
+  1.00,  // 9
+  0.40,  // 10
+  0.50,  // 11
+  0.20,  // 12
+  0.80,  // 13
+  5.00,  // 14 = SUPER BÔNUS
+  0.40,  // 15
+  0,     // 16
+  0.50,  // 17
+  1.00,  // 18
+  0.20   // 19
 
 ];
 
@@ -1735,11 +1644,9 @@ async function obterUsuario(){
     );
 
     return null;
-
   }
 
   return data?.session?.user || null;
-
 }
 
 
@@ -1775,16 +1682,16 @@ async function carregarSaldo(){
       "#ff4141";
 
     return false;
-
   }
 
   saldoReal =
-    Number(data?.valor || 0);
+    Number(
+      data?.valor || 0
+    );
 
   atualizarSaldo();
 
   return true;
-
 }
 
 
@@ -1795,7 +1702,8 @@ async function salvarSaldo(novoSaldo){
 
   const valorFinal =
     Number(
-      Number(novoSaldo).toFixed(2)
+      Number(novoSaldo)
+        .toFixed(2)
     );
 
   const {
@@ -1825,7 +1733,6 @@ async function salvarSaldo(novoSaldo){
       "#ff4141";
 
     return false;
-
   }
 
   saldoReal =
@@ -1834,12 +1741,11 @@ async function salvarSaldo(novoSaldo){
   atualizarSaldo();
 
   return true;
-
 }
 
 
 /* =====================================================
-   NÚMEROS DA ROLETA
+   CRIAR NÚMEROS
 ===================================================== */
 
 function criarNumeros(){
@@ -1876,7 +1782,9 @@ function criarNumeros(){
 
     if(premio === 0){
 
-      numero.classList.add("perdeu");
+      numero.classList.add(
+        "perdeu"
+      );
 
       conteudo.innerHTML =
         "PERDEU";
@@ -1885,7 +1793,9 @@ function criarNumeros(){
 
     else if(premio === 5){
 
-      numero.classList.add("super-bonus");
+      numero.classList.add(
+        "super-bonus"
+      );
 
       conteudo.innerHTML =
         "⚡<br>R$ 5,00<br>SUPER";
@@ -1894,7 +1804,9 @@ function criarNumeros(){
 
     else{
 
-      numero.classList.add("valor-normal");
+      numero.classList.add(
+        "valor-normal"
+      );
 
       conteudo.innerHTML =
         dinheiro(premio);
@@ -1902,7 +1814,10 @@ function criarNumeros(){
     }
 
 
-    numero.appendChild(conteudo);
+    numero.appendChild(
+      conteudo
+    );
+
 
     const angulo =
       i * (360 / total);
@@ -1911,17 +1826,18 @@ function criarNumeros(){
       `rotate(${angulo}deg)`;
 
     numero.dataset.index =
-      i;
+      String(i);
 
-    area.appendChild(numero);
+    area.appendChild(
+      numero
+    );
 
   }
-
 }
 
 
 /* =====================================================
-   APOSTA
+   SELECIONAR APOSTA
 ===================================================== */
 
 window.selecionarValor =
@@ -1953,7 +1869,6 @@ function(valor,botao){
       .replace(".",",");
 
   atualizarSaldo();
-
 };
 
 
@@ -1965,31 +1880,34 @@ function atualizarBotao(){
 
   if(girando){
 
-    btnApostar.disabled = true;
+    btnApostar.disabled =
+      true;
 
     btnApostar.innerText =
       "ROLETA GIRANDO...";
 
     return;
-
   }
 
-  if(saldoReal < valorAposta){
+  if(
+    saldoReal <
+    valorAposta
+  ){
 
-    btnApostar.disabled = true;
+    btnApostar.disabled =
+      true;
 
     btnApostar.innerText =
       "SALDO INSUFICIENTE";
 
     return;
-
   }
 
-  btnApostar.disabled = false;
+  btnApostar.disabled =
+    false;
 
   btnApostar.innerText =
     "GIRAR ROLETA";
-
 }
 
 
@@ -2001,15 +1919,15 @@ function mostrarSuperBonus(valor){
 
   /*
     Mostra exatamente o valor
-    que foi realmente creditado.
+    que foi creditado.
   */
 
   superBonusValor.innerText =
     dinheiro(valor);
 
   /*
-    Reinicia a animação para
-    funcionar em todas as vitórias.
+    Reinicia a animação mesmo se
+    o jogador ganhar novamente.
   */
 
   superBonusOverlay
@@ -2032,9 +1950,8 @@ function mostrarSuperBonus(valor){
         .remove("ativo");
 
     },
-    2400
+    2200
   );
-
 }
 
 
@@ -2049,7 +1966,6 @@ async function(){
     return;
 
   iniciarAudio();
-
   tocarClique();
 
 
@@ -2062,11 +1978,13 @@ async function(){
       "#ff4141";
 
     return;
-
   }
 
 
-  if(saldoReal < valorAposta){
+  if(
+    saldoReal <
+    valorAposta
+  ){
 
     resultado.innerHTML =
       "⚠️ SALDO INSUFICIENTE";
@@ -2075,7 +1993,6 @@ async function(){
       "#ff4141";
 
     return;
-
   }
 
 
@@ -2085,16 +2002,25 @@ async function(){
 
 
   /*
-    Debita a aposta.
+    PRIMEIRO DEBITA A APOSTA.
   */
 
+  const saldoAntes =
+    Number(saldoReal);
+
   const novoSaldo =
-    saldoReal -
-    valorAposta;
+    Number(
+      (
+        saldoAntes -
+        valorAposta
+      ).toFixed(2)
+    );
 
 
   const debitado =
-    await salvarSaldo(novoSaldo);
+    await salvarSaldo(
+      novoSaldo
+    );
 
 
   if(!debitado){
@@ -2104,7 +2030,6 @@ async function(){
     atualizarBotao();
 
     return;
-
   }
 
 
@@ -2119,7 +2044,9 @@ async function(){
     .querySelectorAll(".numero")
     .forEach(
       n =>
-        n.classList.remove("destaque")
+        n.classList.remove(
+          "destaque"
+        )
     );
 
 
@@ -2127,7 +2054,8 @@ async function(){
 
 
   /*
-    Escolhe uma casa.
+    ESCOLHE UMA ÚNICA VEZ
+    O ÍNDICE DA CASA.
   */
 
   const indice =
@@ -2136,22 +2064,37 @@ async function(){
       premios.length
     );
 
+
+  /*
+    ESTE É O ÚNICO VALOR
+    DA RODADA.
+  */
+
   const premio =
-    premios[indice];
+    Number(
+      premios[indice]
+    );
 
 
   /*
-    Rotação.
+    A MESMA POSIÇÃO VISUAL
+    USA O MESMO ÍNDICE.
   */
 
+  const total =
+    premios.length;
+
   const tamanhoCasa =
-    360 / premios.length;
+    360 / total;
 
   const anguloPremio =
-    indice * tamanhoCasa;
+    indice *
+    tamanhoCasa;
+
 
   const voltas =
     360 * 8;
+
 
   const novaRotacao =
     rotacaoAtual +
@@ -2162,8 +2105,21 @@ async function(){
   roleta.style.transform =
     `rotate(${novaRotacao}deg)`;
 
+
   rotacaoAtual =
     novaRotacao;
+
+
+  /*
+    Guarda os valores na própria
+    roleta para a finalização.
+  */
+
+  roleta.dataset.indiceResultado =
+    String(indice);
+
+  roleta.dataset.premioResultado =
+    premio.toFixed(2);
 
 
   setTimeout(
@@ -2193,22 +2149,76 @@ async function finalizarRodada(
   pararSomRoleta();
 
 
+  /*
+    GARANTE QUE O PRÊMIO USADO
+    É O MESMO ÍNDICE SORTEADO.
+  */
+
+  const indiceConfirmado =
+    Number(
+      roleta.dataset.indiceResultado
+    );
+
+  const premioConfirmado =
+    Number(
+      roleta.dataset.premioResultado
+    );
+
+
+  if(
+    indice !== indiceConfirmado
+  ){
+
+    console.error(
+      "ERRO: índice diferente do resultado."
+    );
+
+    girando = false;
+    atualizarBotao();
+    return;
+  }
+
+
+  if(
+    Math.abs(
+      premio -
+      premioConfirmado
+    ) > 0.001
+  ){
+
+    console.error(
+      "ERRO: prêmio diferente do resultado."
+    );
+
+    girando = false;
+    atualizarBotao();
+    return;
+  }
+
+
+  /*
+    DESTACA A CASA EXATA.
+  */
+
   const numero =
     document.querySelector(
-      `.numero[data-index="${indice}"]`
+      `.numero[data-index="${indiceConfirmado}"]`
     );
 
 
   if(numero){
 
-    numero.classList.add("destaque");
-
+    numero.classList.add(
+      "destaque"
+    );
   }
 
 
-  /* PERDEU */
+  /*
+    PERDEU
+  */
 
-  if(premio === 0){
+  if(premioConfirmado === 0){
 
     resultado.innerHTML =
       "💥 PERDEU";
@@ -2221,24 +2231,37 @@ async function finalizarRodada(
     atualizarBotao();
 
     return;
-
   }
 
 
   /*
-    Crédito real do prêmio.
+    CRÉDITO EXATO DO PRÊMIO.
+    
+    Exemplo:
+    0.20 -> +0.20
+    0.40 -> +0.40
+    0.50 -> +0.50
+    0.80 -> +0.80
+    1.00 -> +1.00
+    5.00 -> +5.00
   */
 
-  const saldoAntesDoPremio =
-    saldoReal;
+  const saldoAtual =
+    Number(saldoReal);
 
-  const novoSaldo =
-    saldoAntesDoPremio +
-    premio;
+  const saldoDepois =
+    Number(
+      (
+        saldoAtual +
+        premioConfirmado
+      ).toFixed(2)
+    );
 
 
   const creditado =
-    await salvarSaldo(novoSaldo);
+    await salvarSaldo(
+      saldoDepois
+    );
 
 
   if(!creditado){
@@ -2248,21 +2271,19 @@ async function finalizarRodada(
     atualizarBotao();
 
     return;
-
   }
 
 
   /*
-    SUPER BÔNUS = EXATAMENTE
-    A CASA DE R$ 5,00.
+    SUPER BÔNUS
   */
 
-  if(premio === 5.00){
+  if(premioConfirmado === 5.00){
 
     resultado.innerHTML =
       "⚡ SUPER BÔNUS ⚡<br>" +
       "<span style='font-size:28px;color:#ffe36a'>" +
-      dinheiro(premio) +
+      "R$ 5,00" +
       "</span>";
 
     resultado.style.color =
@@ -2270,10 +2291,13 @@ async function finalizarRodada(
 
 
     /*
-      EFEITO NA TELA TODA
+      EFEITO AMARELO
+      NA TELA INTEIRA.
     */
 
-    mostrarSuperBonus(premio);
+    mostrarSuperBonus(
+      premioConfirmado
+    );
 
   }
 
@@ -2288,12 +2312,11 @@ async function finalizarRodada(
     resultado.innerHTML =
       "⚡ PRÊMIO<br>" +
       "<span style='font-size:25px;color:#ffe36a'>" +
-      dinheiro(premio) +
+      dinheiro(premioConfirmado) +
       "</span>";
 
     resultado.style.color =
       "#ffe36a";
-
   }
 
 
@@ -2307,7 +2330,6 @@ async function finalizarRodada(
     },
     1400
   );
-
 }
 
 
@@ -2322,11 +2344,9 @@ function(){
     return;
 
   iniciarAudio();
-
   tocarClique();
 
   girarRoleta();
-
 };
 
 
@@ -2338,7 +2358,6 @@ window.abrirMenu =
 function(){
 
   iniciarAudio();
-
   tocarClique();
 
   alert(
@@ -2346,7 +2365,6 @@ function(){
     "ROLETA DE RELÂMPAGOS\n\n" +
     "Seu saldo está conectado à sua conta."
   );
-
 };
 
 
@@ -2372,7 +2390,6 @@ async function iniciar(){
         "../index.html";
 
       return;
-
     }
 
 
@@ -2386,7 +2403,6 @@ async function iniciar(){
         "none";
 
       return;
-
     }
 
 
@@ -2413,9 +2429,7 @@ async function iniciar(){
 
     resultado.style.color =
       "#ff4141";
-
   }
-
 }
 
 
