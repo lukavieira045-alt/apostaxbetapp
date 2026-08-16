@@ -1,59 +1,105 @@
 // =====================================================
 // APOSTAXBET - SCRIPT.JS
-// VERSÃO CORRIGIDA
+// VERSÃO CORRIGIDA - SUPABASE
 // =====================================================
 
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+(function () {
+
+"use strict";
 
 // =====================================================
-// CONFIGURAÇÃO DO SUPABASE
+// CONFIGURAÇÃO SUPABASE
 // =====================================================
 
-const SUPABASE_URL = 'https://jxbzjiwmajjzxgihfjgt.supabase.co';
+const SUPABASE_URL =
+    "https://jxbzjiwmajjzxgihfjgt.supabase.co";
 
 const SUPABASE_KEY =
-    'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ';
+    "sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ";
 
 const CASA_VANTAGEM = 0.95;
 
 
 // =====================================================
-// INICIALIZAÇÃO DO SUPABASE
-// IMPORTANTE: PRIMEIRO CRIA O CLIENTE,
-// DEPOIS QUALQUER FUNÇÃO PODE USÁ-LO.
+// VERIFICAR SUPABASE
 // =====================================================
 
-const supabaseClient = createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
+if (
+    !window.supabase ||
+    typeof window.supabase.createClient !== "function"
+) {
 
-// Disponibiliza também globalmente.
-// Isso evita problemas com outros scripts da página.
-window.supabaseClient = supabaseClient;
+    console.error(
+        "❌ Biblioteca Supabase não foi carregada."
+    );
 
-// Mantém o nome "supabase" usado no restante do projeto.
-const supabase = supabaseClient;
+    alert(
+        "❌ Erro: o Supabase não foi carregado. Recarregue a página."
+    );
+
+    return;
+}
 
 
 // =====================================================
-// FUNÇÕES DE USUÁRIO
+// CRIAR CLIENTE SUPABASE
+// =====================================================
+// IMPORTANTE:
+// Não usamos `const supabaseClient`.
+// Usamos diretamente window.supabaseClient.
+// Isso evita o erro:
+// Cannot access 'supabaseClient' before initialization
+// =====================================================
+
+window.supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+// =====================================================
+// FUNÇÃO AUXILIAR
+// =====================================================
+
+function clienteSupabase() {
+
+    return window.supabaseClient;
+}
+
+
+// =====================================================
+// USUÁRIO LOGADO
 // =====================================================
 
 async function getUsuarioLogado() {
+
     try {
+
         const { data, error } =
-            await supabaseClient.auth.getSession();
+            await clienteSupabase()
+                .auth
+                .getSession();
 
         if (error) {
-            console.error('Erro ao verificar sessão:', error);
+
+            console.error(
+                "Erro ao verificar sessão:",
+                error
+            );
+
             return null;
         }
 
         return data?.session?.user || null;
 
     } catch (erro) {
-        console.error('Erro na sessão:', erro);
+
+        console.error(
+            "Erro na sessão:",
+            erro
+        );
+
         return null;
     }
 }
@@ -65,7 +111,8 @@ async function getUsuarioLogado() {
 
 async function buscarSaldo() {
 
-    const user = await getUsuarioLogado();
+    const user =
+        await getUsuarioLogado();
 
     if (!user) {
         return 0;
@@ -73,28 +120,42 @@ async function buscarSaldo() {
 
     try {
 
-        const { data, error } = await supabaseClient
-            .from('saldos')
-            .select('valor')
-            .eq('user_id', user.id)
-            .single();
+        const { data, error } =
+            await clienteSupabase()
+                .from("saldos")
+                .select("valor")
+                .eq("user_id", user.id)
+                .maybeSingle();
 
         if (error) {
-            console.error('Erro ao buscar saldo:', error);
+
+            console.error(
+                "Erro ao buscar saldo:",
+                error
+            );
+
             return 0;
         }
 
         if (!data) {
+
             return 0;
         }
 
-        const saldo = parseFloat(data.valor);
+        const saldo =
+            parseFloat(data.valor);
 
-        return Number.isFinite(saldo) ? saldo : 0;
+        return Number.isFinite(saldo)
+            ? saldo
+            : 0;
 
     } catch (erro) {
 
-        console.error('Erro ao buscar saldo:', erro);
+        console.error(
+            "Erro ao buscar saldo:",
+            erro
+        );
+
         return 0;
     }
 }
@@ -106,34 +167,52 @@ async function buscarSaldo() {
 
 async function salvarSaldo(novoValor) {
 
-    const user = await getUsuarioLogado();
+    const user =
+        await getUsuarioLogado();
 
     if (!user) {
+
+        console.error(
+            "Usuário não está logado."
+        );
+
         return false;
     }
 
-    const valor = Number(novoValor);
+    const valor =
+        Number(novoValor);
 
     if (!Number.isFinite(valor)) {
+
+        console.error(
+            "Valor de saldo inválido."
+        );
+
         return false;
     }
 
     try {
 
-        const { error } = await supabaseClient
-            .from('saldos')
-            .upsert(
-                {
-                    user_id: user.id,
-                    valor: valor
-                },
-                {
-                    onConflict: 'user_id'
-                }
-            );
+        const { error } =
+            await clienteSupabase()
+                .from("saldos")
+                .upsert(
+                    {
+                        user_id: user.id,
+                        valor: valor
+                    },
+                    {
+                        onConflict: "user_id"
+                    }
+                );
 
         if (error) {
-            console.error('Erro ao salvar saldo:', error);
+
+            console.error(
+                "Erro ao salvar saldo:",
+                error
+            );
+
             return false;
         }
 
@@ -141,7 +220,11 @@ async function salvarSaldo(novoValor) {
 
     } catch (erro) {
 
-        console.error('Erro ao salvar saldo:', erro);
+        console.error(
+            "Erro ao salvar saldo:",
+            erro
+        );
+
         return false;
     }
 }
@@ -153,22 +236,85 @@ async function salvarSaldo(novoValor) {
 
 async function carregarSaldoDisplay() {
 
-    const saldo = await buscarSaldo();
+    const saldo =
+        await buscarSaldo();
 
     const valorFormatado =
-        saldo.toFixed(2).replace('.', ',');
+        saldo
+            .toFixed(2)
+            .replace(".", ",");
+
 
     document
-        .querySelectorAll('#displaySaldo, .saldo')
-        .forEach(el => {
+        .querySelectorAll(
+            "#displaySaldo, .saldo"
+        )
+        .forEach(function (el) {
 
-            el.innerText = `R$ ${valorFormatado}`;
+            // Não duplica "R$" caso o elemento
+            // já possua esse texto no HTML.
+            if (
+                el.id === "displaySaldo"
+            ) {
+
+                el.innerText =
+                    "R$ " + valorFormatado;
+
+            } else {
+
+                // Para o elemento .saldo
+                // preserva o texto original
+                // quando ele possui "R$".
+                const span =
+                    el.querySelector(
+                        "#saldoValor"
+                    );
+
+                if (span) {
+
+                    span.innerText =
+                        valorFormatado;
+
+                } else {
+
+                    el.innerText =
+                        "💰 Saldo: R$ " +
+                        valorFormatado;
+                }
+            }
 
             el.style.color =
                 saldo < 10
-                    ? '#ff4d4d'
-                    : '#00ed91';
+                    ? "#ff4d4d"
+                    : "#00ed91";
+
         });
+
+
+    // Compatibilidade com o HTML
+    const saldoValor =
+        document.getElementById(
+            "saldoValor"
+        );
+
+    if (saldoValor) {
+
+        saldoValor.innerText =
+            valorFormatado;
+    }
+
+
+    const contaSaldo =
+        document.getElementById(
+            "contaSaldo"
+        );
+
+    if (contaSaldo) {
+
+        contaSaldo.innerText =
+            valorFormatado;
+    }
+
 
     return saldo;
 }
@@ -180,27 +326,47 @@ async function carregarSaldoDisplay() {
 
 async function descontarSaldo(valor) {
 
-    const valorNumerico = Number(valor);
+    const valorNumerico =
+        Number(valor);
 
-    if (!Number.isFinite(valorNumerico) || valorNumerico <= 0) {
+    if (
+        !Number.isFinite(valorNumerico) ||
+        valorNumerico <= 0
+    ) {
+
         return false;
     }
 
-    const saldoAtual = await buscarSaldo();
 
-    if (saldoAtual < valorNumerico) {
+    const saldoAtual =
+        await buscarSaldo();
+
+
+    if (
+        saldoAtual <
+        valorNumerico
+    ) {
+
         return false;
     }
+
 
     const novoSaldo =
-        saldoAtual - valorNumerico;
+        saldoAtual -
+        valorNumerico;
+
 
     const salvo =
-        await salvarSaldo(novoSaldo);
+        await salvarSaldo(
+            novoSaldo
+        );
+
 
     if (salvo) {
+
         await carregarSaldoDisplay();
     }
+
 
     return salvo;
 }
@@ -210,33 +376,50 @@ async function descontarSaldo(valor) {
 // PROCESSAR VITÓRIA
 // =====================================================
 
-async function processarVitoria(aposta, multiplicador) {
+async function processarVitoria(
+    aposta,
+    multiplicador
+) {
 
-    const apostaNumerica = Number(aposta);
-    const multiplicadorNumerico = Number(multiplicador);
+    const apostaNumerica =
+        Number(aposta);
+
+    const multiplicadorNumerico =
+        Number(multiplicador);
+
 
     if (
         !Number.isFinite(apostaNumerica) ||
         !Number.isFinite(multiplicadorNumerico)
     ) {
+
         return 0;
     }
 
+
     const ganhoReal =
-        (apostaNumerica * multiplicadorNumerico)
-        * CASA_VANTAGEM;
+        (
+            apostaNumerica *
+            multiplicadorNumerico
+        ) * CASA_VANTAGEM;
+
 
     const saldoAtual =
         await buscarSaldo();
 
+
     const salvo =
         await salvarSaldo(
-            saldoAtual + ganhoReal
+            saldoAtual +
+            ganhoReal
         );
 
+
     if (salvo) {
+
         await carregarSaldoDisplay();
     }
+
 
     return ganhoReal;
 }
@@ -246,48 +429,87 @@ async function processarVitoria(aposta, multiplicador) {
 // PROCESSAR SAQUE
 // =====================================================
 
-async function processarSaque(valor, chavePix) {
+async function processarSaque(
+    valor,
+    chavePix
+) {
 
     const user =
         await getUsuarioLogado();
 
+
     if (!user) {
 
         alert(
-            '⚠️ Você precisa estar logado para sacar!'
+            "⚠️ Você precisa estar logado para sacar!"
         );
 
         return false;
     }
 
+
+    const valorNumerico =
+        Number(valor);
+
+
+    if (
+        !Number.isFinite(valorNumerico) ||
+        valorNumerico <= 0
+    ) {
+
+        alert(
+            "❌ Valor de saque inválido."
+        );
+
+        return false;
+    }
+
+
+    if (!chavePix) {
+
+        alert(
+            "❌ Informe sua chave Pix."
+        );
+
+        return false;
+    }
+
+
     try {
 
         const { data, error } =
-            await supabaseClient.functions.invoke(
-                'quick-endpoint',
-                {
-                    body: {
-                        userId: user.id,
-                        valor: parseFloat(valor),
-                        chavePix: chavePix
+            await clienteSupabase()
+                .functions
+                .invoke(
+                    "quick-endpoint",
+                    {
+                        body: {
+                            userId: user.id,
+                            valor: valorNumerico,
+                            chavePix: chavePix
+                        }
                     }
-                }
-            );
+                );
+
 
         if (error) {
+
             throw error;
         }
+
 
         if (data?.mensagem) {
 
             alert(
-                '✅ ' + data.mensagem
+                "✅ " +
+                data.mensagem
             );
 
         } else if (data?.erro) {
 
             alert(
-                '❌ ' + data.erro
+                "❌ " +
+                data.erro
             );
 
             return false;
@@ -295,9 +517,10 @@ async function processarSaque(valor, chavePix) {
         } else {
 
             alert(
-                '✅ Solicitação enviada para análise!'
+                "✅ Solicitação enviada para análise!"
             );
         }
+
 
         await carregarSaldoDisplay();
 
@@ -306,14 +529,19 @@ async function processarSaque(valor, chavePix) {
     } catch (err) {
 
         console.error(
-            'Erro no saque:',
+            "Erro no saque:",
             err
         );
 
+
         alert(
-            '❌ Erro ao processar saque: ' +
-            (err?.message || err)
+            "❌ Erro ao processar saque:\n" +
+            (
+                err?.message ||
+                String(err)
+            )
         );
+
 
         return false;
     }
@@ -321,65 +549,197 @@ async function processarSaque(valor, chavePix) {
 
 
 // =====================================================
-// QUANDO A PÁGINA CARREGAR
+// CADASTRO
+// =====================================================
+
+async function realizarCadastro(
+    nome,
+    email,
+    senha
+) {
+
+    try {
+
+        const { data, error } =
+            await clienteSupabase()
+                .auth
+                .signUp({
+
+                    email: email,
+
+                    password: senha,
+
+                    options: {
+
+                        data: {
+                            nome: nome,
+                            full_name: nome
+                        }
+                    }
+                });
+
+
+        if (error) {
+
+            throw error;
+        }
+
+
+        console.log(
+            "✅ Cadastro realizado:",
+            data
+        );
+
+
+        return {
+            sucesso: true,
+            data: data
+        };
+
+
+    } catch (erro) {
+
+        console.error(
+            "❌ Erro no cadastro:",
+            erro
+        );
+
+
+        return {
+            sucesso: false,
+            erro: erro
+        };
+    }
+}
+
+
+// =====================================================
+// LOGIN
+// =====================================================
+
+async function realizarLogin(
+    email,
+    senha
+) {
+
+    try {
+
+        const { data, error } =
+            await clienteSupabase()
+                .auth
+                .signInWithPassword({
+
+                    email: email,
+                    password: senha
+
+                });
+
+
+        if (error) {
+
+            throw error;
+        }
+
+
+        return {
+            sucesso: true,
+            data: data
+        };
+
+
+    } catch (erro) {
+
+        console.error(
+            "❌ Erro no login:",
+            erro
+        );
+
+
+        return {
+            sucesso: false,
+            erro: erro
+        };
+    }
+}
+
+
+// =====================================================
+// DOM READY
 // =====================================================
 
 document.addEventListener(
-    'DOMContentLoaded',
-    async () => {
+    "DOMContentLoaded",
+    async function () {
 
-        // =================================================
-        // ATUALIZA SALDO
-        // =================================================
+        console.log(
+            "✅ ApostaXBet: Supabase inicializado corretamente!"
+        );
+
+
+        console.log(
+            "✅ window.supabaseClient disponível!"
+        );
+
+
+        // =============================================
+        // ATUALIZAR SALDO
+        // =============================================
 
         await carregarSaldoDisplay();
 
 
-        // =================================================
-        // CADASTRO
-        // =================================================
+        // =============================================
+        // BOTÃO CADASTRO
+        // =============================================
 
         const btnCriarConta =
             document.getElementById(
-                'btn-criar-conta'
+                "btn-criar-conta"
             );
+
 
         if (btnCriarConta) {
 
             btnCriarConta.addEventListener(
-                'click',
-                async (e) => {
+                "click",
+                async function (e) {
 
                     e.preventDefault();
 
+
                     const nome =
                         document
-                            .getElementById('input-nome')
+                            .getElementById(
+                                "input-nome"
+                            )
                             ?.value
                             .trim();
+
 
                     const email =
                         document
-                            .getElementById('input-email')
+                            .getElementById(
+                                "input-email"
+                            )
                             ?.value
                             .trim();
 
+
                     const senha =
                         document
-                            .getElementById('input-senha')
-                            ?.value;
-
-                    const confirmar =
-                        document
                             .getElementById(
-                                'input-confirmar-senha'
+                                "input-senha"
                             )
                             ?.value;
 
 
-                    // -----------------------------------------
-                    // VALIDAÇÕES
-                    // -----------------------------------------
+                    const confirmar =
+                        document
+                            .getElementById(
+                                "input-confirmar-senha"
+                            )
+                            ?.value;
+
 
                     if (
                         !nome ||
@@ -389,27 +749,7 @@ document.addEventListener(
                     ) {
 
                         alert(
-                            '⚠️ Preencha TODOS os campos!'
-                        );
-
-                        return;
-                    }
-
-
-                    if (senha.length < 6) {
-
-                        alert(
-                            '⚠️ A senha precisa ter no mínimo 6 caracteres!'
-                        );
-
-                        return;
-                    }
-
-
-                    if (senha !== confirmar) {
-
-                        alert(
-                            '⚠️ As senhas não coincidem!'
+                            "⚠️ Preencha todos os campos!"
                         );
 
                         return;
@@ -417,57 +757,76 @@ document.addEventListener(
 
 
                     if (
-                        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/
-                            .test(email)
+                        senha.length < 6
                     ) {
 
                         alert(
-                            '⚠️ E-mail inválido!'
+                            "⚠️ A senha precisa ter pelo menos 6 caracteres!"
                         );
 
                         return;
                     }
 
 
-                    // -----------------------------------------
-                    // CADASTRAR NO SUPABASE
-                    // -----------------------------------------
+                    if (
+                        senha !== confirmar
+                    ) {
 
-                    btnCriarConta.disabled = true;
+                        alert(
+                            "⚠️ As senhas não coincidem!"
+                        );
+
+                        return;
+                    }
+
+
+                    const emailValido =
+                        /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                            .test(email);
+
+
+                    if (!emailValido) {
+
+                        alert(
+                            "⚠️ Digite um e-mail válido!"
+                        );
+
+                        return;
+                    }
+
+
+                    btnCriarConta.disabled =
+                        true;
+
 
                     const textoOriginal =
                         btnCriarConta.innerText;
 
+
                     btnCriarConta.innerText =
-                        '⏳ Criando conta...';
+                        "⏳ Criando conta...";
 
 
                     try {
 
-                        const { data, error } =
-                            await supabaseClient.auth.signUp(
-                                {
-                                    email: email,
-                                    password: senha,
-
-                                    options: {
-                                        data: {
-                                            full_name: nome
-                                        }
-                                    }
-                                }
+                        const resultado =
+                            await realizarCadastro(
+                                nome,
+                                email,
+                                senha
                             );
 
 
-                        if (error) {
-                            throw error;
+                        if (
+                            !resultado.sucesso
+                        ) {
+
+                            throw resultado.erro;
                         }
 
 
-                        console.log(
-                            'Cadastro realizado:',
-                            data
-                        );
+                        const data =
+                            resultado.data;
 
 
                         if (
@@ -476,14 +835,14 @@ document.addEventListener(
                         ) {
 
                             alert(
-                                '✅ Cadastro realizado!\n\n' +
-                                'Verifique seu e-mail para confirmar a conta.'
+                                "✅ Cadastro realizado!\n\n" +
+                                "Verifique seu e-mail para confirmar a conta."
                             );
 
                         } else {
 
                             alert(
-                                '✅ Conta criada com sucesso!'
+                                "✅ Conta criada com sucesso!"
                             );
                         }
 
@@ -491,14 +850,19 @@ document.addEventListener(
                     } catch (err) {
 
                         console.error(
-                            'Erro no cadastro:',
+                            "Erro no cadastro:",
                             err
                         );
 
+
                         alert(
-                            '❌ Erro ao criar conta:\n' +
-                            (err?.message || err)
+                            "❌ Erro ao criar conta:\n" +
+                            traduzirErro(
+                                err?.message ||
+                                String(err)
+                            )
                         );
+
 
                     } finally {
 
@@ -513,83 +877,86 @@ document.addEventListener(
         }
 
 
-        // =================================================
-        // LOGIN
-        // =================================================
+        // =============================================
+        // BOTÃO LOGIN
+        // =============================================
 
         const btnEntrar =
             document.getElementById(
-                'btn-entrar'
+                "btn-entrar"
             );
+
 
         if (btnEntrar) {
 
             btnEntrar.addEventListener(
-                'click',
-                async (e) => {
+                "click",
+                async function (e) {
 
                     e.preventDefault();
+
 
                     const email =
                         document
                             .getElementById(
-                                'input-login-email'
+                                "input-login-email"
                             )
                             ?.value
                             .trim();
 
+
                     const senha =
                         document
                             .getElementById(
-                                'input-login-senha'
+                                "input-login-senha"
                             )
                             ?.value;
 
 
-                    if (!email || !senha) {
+                    if (
+                        !email ||
+                        !senha
+                    ) {
 
                         alert(
-                            '⚠️ Preencha e-mail e senha!'
+                            "⚠️ Preencha e-mail e senha!"
                         );
 
                         return;
                     }
 
 
-                    btnEntrar.disabled = true;
+                    btnEntrar.disabled =
+                        true;
+
 
                     const textoOriginal =
                         btnEntrar.innerText;
 
+
                     btnEntrar.innerText =
-                        '⏳ Entrando...';
+                        "⏳ Entrando...";
 
 
                     try {
 
-                        const { data, error } =
-                            await supabaseClient.auth
-                                .signInWithPassword(
-                                    {
-                                        email: email,
-                                        password: senha
-                                    }
-                                );
+                        const resultado =
+                            await realizarLogin(
+                                email,
+                                senha
+                            );
 
 
-                        if (error) {
-                            throw error;
+                        if (
+                            !resultado.sucesso
+                        ) {
+
+                            throw resultado.erro;
                         }
 
 
-                        console.log(
-                            'Login realizado:',
-                            data
-                        );
-
-
                         alert(
-                            '✅ Login realizado com sucesso!'
+                            "✅ Login realizado com sucesso!"
                         );
 
 
@@ -599,14 +966,19 @@ document.addEventListener(
                     } catch (err) {
 
                         console.error(
-                            'Erro no login:',
+                            "Erro no login:",
                             err
                         );
 
+
                         alert(
-                            '❌ Erro ao entrar:\n' +
-                            (err?.message || err)
+                            "❌ Erro ao entrar:\n" +
+                            traduzirErro(
+                                err?.message ||
+                                String(err)
+                            )
                         );
+
 
                     } finally {
 
@@ -621,223 +993,25 @@ document.addEventListener(
         }
 
 
-        // =================================================
-        // SAQUE
-        // =================================================
-
-        const botoes =
-            Array.from(
-                document.querySelectorAll('button')
-            );
-
-
-        const btnSaque =
-            botoes.find(
-                b =>
-                    b.innerText
-                        ?.toLowerCase()
-                        .includes(
-                            'solicitar saque'
-                        )
-            ) ||
-            document.getElementById(
-                'btn-solicitar-saque'
-            );
-
-
-        if (btnSaque) {
-
-            console.log(
-                '✅ Botão de saque detectado!'
-            );
-
-
-            btnSaque.addEventListener(
-                'click',
-                async () => {
-
-                    const inputs =
-                        Array.from(
-                            document.querySelectorAll(
-                                'input'
-                            )
-                        );
-
-
-                    let inputValor =
-                        inputs.find(
-                            i =>
-                                i.type === 'number' ||
-                                (
-                                    i.placeholder &&
-                                    i.placeholder
-                                        .toLowerCase()
-                                        .includes(
-                                            'valor'
-                                        )
-                                )
-                        );
-
-
-                    let inputPix =
-                        inputs.find(
-                            i =>
-                                (
-                                    i.placeholder &&
-                                    i.placeholder
-                                        .toLowerCase()
-                                        .includes(
-                                            'pix'
-                                        )
-                                ) ||
-                                (
-                                    i.value &&
-                                    i.value
-                                        .toString()
-                                        .length > 8
-                                )
-                        );
-
-
-                    // Fallback
-                    if (
-                        !inputValor &&
-                        inputs.length >= 2
-                    ) {
-                        inputValor = inputs[0];
-                    }
-
-
-                    if (
-                        !inputPix &&
-                        inputs.length >= 2
-                    ) {
-                        inputPix = inputs[1];
-                    }
-
-
-                    const valorStr =
-                        inputValor?.value;
-
-                    const chavePix =
-                        inputPix?.value;
-
-
-                    if (
-                        !valorStr ||
-                        !chavePix
-                    ) {
-
-                        alert(
-                            '⚠️ Preencha o valor e a chave Pix!'
-                        );
-
-                        return;
-                    }
-
-
-                    const valorNumerico =
-                        parseFloat(
-                            String(valorStr)
-                                .replace(',', '.')
-                        );
-
-
-                    if (
-                        isNaN(valorNumerico) ||
-                        valorNumerico <= 0
-                    ) {
-
-                        alert(
-                            '⚠️ Digite um valor válido!'
-                        );
-
-                        return;
-                    }
-
-
-                    const saldoAtual =
-                        await buscarSaldo();
-
-
-                    if (
-                        valorNumerico >
-                        saldoAtual
-                    ) {
-
-                        alert(
-                            '❌ Saldo insuficiente!'
-                        );
-
-                        return;
-                    }
-
-
-                    btnSaque.disabled = true;
-
-                    const textoOriginal =
-                        btnSaque.innerText;
-
-                    btnSaque.innerText =
-                        '⏳ Processando...';
-
-
-                    try {
-
-                        const sucesso =
-                            await processarSaque(
-                                valorNumerico,
-                                chavePix
-                            );
-
-
-                        if (
-                            sucesso &&
-                            inputValor
-                        ) {
-
-                            inputValor.value = '';
-                        }
-
-
-                    } finally {
-
-                        btnSaque.disabled =
-                            false;
-
-                        btnSaque.innerText =
-                            textoOriginal;
-                    }
-                }
-            );
-
-        } else {
-
-            console.error(
-                '❌ Botão de saque NÃO encontrado.'
-            );
-        }
-
-
-        // =================================================
-        // MINES
-        // =================================================
+        // =============================================
+        // BOTÃO MINES
+        // =============================================
 
         const btnMines =
             document.getElementById(
-                'btn-apostar-mines'
+                "btn-apostar-mines"
             );
 
 
         if (btnMines) {
 
             btnMines.addEventListener(
-                'click',
-                async () => {
+                "click",
+                async function () {
 
                     const campo =
                         document.getElementById(
-                            'input-aposta-mines'
+                            "input-aposta-mines"
                         );
 
 
@@ -853,7 +1027,7 @@ document.addEventListener(
                     ) {
 
                         alert(
-                            '⚠️ Digite um valor válido!'
+                            "⚠️ Digite um valor válido!"
                         );
 
                         return;
@@ -864,10 +1038,12 @@ document.addEventListener(
                         await buscarSaldo();
 
 
-                    if (valor > saldo) {
+                    if (
+                        valor > saldo
+                    ) {
 
                         alert(
-                            '❌ Saldo insuficiente!'
+                            "❌ Saldo insuficiente!"
                         );
 
                         return;
@@ -883,15 +1059,17 @@ document.addEventListener(
                     if (sucesso) {
 
                         alert(
-                            `✅ Aposta de R$ ${valor
+                            "✅ Aposta de R$ " +
+                            valor
                                 .toFixed(2)
-                                .replace('.', ',')} realizada! Boa sorte!`
+                                .replace(".", ",") +
+                            " realizada!"
                         );
 
                     } else {
 
                         alert(
-                            '❌ Não foi possível debitar o saldo.'
+                            "❌ Não foi possível debitar o saldo."
                         );
                     }
                 }
@@ -904,7 +1082,6 @@ document.addEventListener(
 
 // =====================================================
 // API GLOBAL DOS JOGOS
-// NÃO REMOVER
 // =====================================================
 
 window.SistemaSaldo = {
@@ -915,19 +1092,162 @@ window.SistemaSaldo = {
 
     ganhar: processarVitoria,
 
-    atualizarTela: carregarSaldoDisplay
+    atualizarTela:
+        carregarSaldoDisplay,
+
+    salvar:
+        salvarSaldo
 
 };
 
 
 // =====================================================
-// CONFIRMAÇÃO NO CONSOLE
+// FUNÇÕES GLOBAIS
 // =====================================================
 
+window.ApostaXBet = {
+
+    supabase:
+        window.supabaseClient,
+
+    getUsuarioLogado:
+        getUsuarioLogado,
+
+    buscarSaldo:
+        buscarSaldo,
+
+    salvarSaldo:
+        salvarSaldo,
+
+    descontarSaldo:
+        descontarSaldo,
+
+    processarVitoria:
+        processarVitoria,
+
+    processarSaque:
+        processarSaque,
+
+    cadastrar:
+        realizarCadastro,
+
+    login:
+        realizarLogin
+
+};
+
+
+// =====================================================
+// TRADUÇÃO DE ERROS
+// =====================================================
+
+function traduzirErro(erro) {
+
+    if (!erro) {
+
+        return "Ocorreu um erro.";
+    }
+
+
+    const texto =
+        String(erro)
+            .toLowerCase();
+
+
+    if (
+        texto.includes(
+            "invalid login credentials"
+        )
+    ) {
+
+        return "E-mail ou senha incorretos.";
+    }
+
+
+    if (
+        texto.includes(
+            "user already registered"
+        )
+    ) {
+
+        return "Esse e-mail já está cadastrado.";
+    }
+
+
+    if (
+        texto.includes(
+            "email rate limit exceeded"
+        )
+    ) {
+
+        return "Muitas tentativas de cadastro. Aguarde alguns minutos e tente novamente.";
+    }
+
+
+    if (
+        texto.includes(
+            "password should be at least"
+        )
+    ) {
+
+        return "A senha precisa ter pelo menos 6 caracteres.";
+    }
+
+
+    if (
+        texto.includes(
+            "unable to validate email address"
+        )
+    ) {
+
+        return "Digite um e-mail válido.";
+    }
+
+
+    if (
+        texto.includes(
+            "email not confirmed"
+        )
+    ) {
+
+        return "Confirme seu e-mail antes de entrar.";
+    }
+
+
+    if (
+        texto.includes(
+            "database error saving new user"
+        )
+    ) {
+
+        return "O cadastro chegou ao Supabase, mas existe um problema na configuração do banco de dados. Verifique as configurações de cadastro do Supabase.";
+    }
+
+
+    if (
+        texto.includes(
+            "cannot access"
+        ) &&
+        texto.includes(
+            "before initialization"
+        )
+    ) {
+
+        return "Erro de inicialização do Supabase. Verifique se existe outro script criando ou usando supabaseClient antes deste arquivo.";
+    }
+
+
+    return String(erro);
+}
+
+
 console.log(
-    '✅ ApostaXBet: Supabase inicializado corretamente!'
+    "✅ ApostaXBet carregado."
 );
 
 console.log(
-    '✅ supabaseClient disponível globalmente!'
+    "✅ Supabase Client:",
+    window.supabaseClient
 );
+
+})();
