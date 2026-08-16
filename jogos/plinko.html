@@ -1,43 +1,65 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>Plinko ApostaXBet</title>
 
 <style>
-
 *{
     box-sizing:border-box;
+    margin:0;
+    padding:0;
     font-family:Arial,sans-serif;
     -webkit-tap-highlight-color:transparent;
 }
 
 body{
-    margin:0;
     min-height:100vh;
     color:white;
     text-align:center;
-
     background:
-    radial-gradient(circle at 15% 15%,#0066ff,transparent 28%),
-    radial-gradient(circle at 85% 25%,#e600ff,transparent 28%),
-    radial-gradient(circle at 50% 100%,#ff0066,transparent 30%),
-    linear-gradient(135deg,#02030b,#090018,#001526);
-
+        radial-gradient(circle at 15% 15%,#0066ff,transparent 28%),
+        radial-gradient(circle at 85% 25%,#e600ff,transparent 28%),
+        radial-gradient(circle at 50% 100%,#ff0066,transparent 30%),
+        linear-gradient(135deg,#02030b,#090018,#001526);
     background-size:180% 180%;
     animation:fundo 12s ease-in-out infinite alternate;
     overflow-x:hidden;
-    padding-bottom:30px;
 }
 
 @keyframes fundo{
     0%{background-position:0% 0%}
     50%{background-position:100% 50%}
     100%{background-position:0% 100%}
+}
+
+#carregando{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    gap:12px;
+    background:#020305;
+    color:#ffd700;
+    font-weight:bold;
+}
+
+.loader{
+    width:38px;
+    height:38px;
+    border:4px solid rgba(255,215,0,.2);
+    border-top-color:#ffd700;
+    border-radius:50%;
+    animation:girarLoader .8s linear infinite;
+}
+
+@keyframes girarLoader{
+    to{transform:rotate(360deg)}
 }
 
 .luz{
@@ -88,11 +110,7 @@ body{
     height:4px;
     border-radius:50%;
     background:#fff;
-
-    box-shadow:
-    0 0 8px #00ffff,
-    0 0 18px #ff00aa;
-
+    box-shadow:0 0 8px #00ffff,0 0 18px #ff00aa;
     animation:subir linear infinite;
 }
 
@@ -108,115 +126,115 @@ body{
 .particulas span:nth-child(10){left:95%;animation-duration:12s}
 
 @keyframes subir{
-    0%{
-        transform:translateY(0);
-        opacity:0;
-    }
-
+    0%{transform:translateY(0);opacity:0}
     20%{opacity:1}
-
-    100%{
-        transform:translateY(-110vh);
-        opacity:0;
-    }
+    100%{transform:translateY(-110vh);opacity:0}
 }
 
-h1{
-    margin-top:25px;
-    color:#ffd700;
-    font-size:38px;
+.topo{
+    width:100%;
+    height:58px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 14px;
+    background:rgba(2,3,8,.94);
+    border-bottom:1px solid rgba(255,215,0,.25);
+}
 
-    text-shadow:
-    0 0 8px #fff,
-    0 0 18px #ffd700,
-    0 0 35px #ff8800;
+.logo{
+    color:#ffd700;
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+.saldoBox{
+    text-align:right;
+}
+
+.saldoLabel{
+    color:#777;
+    font-size:9px;
 }
 
 #saldo{
-    display:inline-block;
     color:#00ff88;
-    font-size:22px;
-    margin:10px 15px 20px;
-    padding:10px 22px;
-    border:1px solid #00ff88;
-    border-radius:30px;
-    background:rgba(0,0,0,.6);
-
-    box-shadow:
-    0 0 15px rgba(0,255,136,.25);
+    font-size:16px;
+    font-weight:bold;
 }
 
-#statusConta{
-    min-height:20px;
-    margin:-8px 15px 12px;
+.lobby{
+    position:absolute;
+    top:68px;
+    left:7px;
+    width:60px;
+    height:60px;
+    border:1px solid #777;
+    border-radius:10px;
+    background:#090b0c;
+    color:white;
+    text-decoration:none;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    font-size:10px;
+    z-index:30;
+}
+
+.lobbyIcon{
+    font-size:27px;
+}
+
+h1{
+    margin:72px 0 5px;
+    color:#ffd700;
+    font-size:34px;
+    text-shadow:
+        0 0 8px #fff,
+        0 0 18px #ffd700,
+        0 0 35px #ff8800;
+}
+
+.subtitulo{
     color:#aaa;
-    font-size:12px;
+    font-size:11px;
+    margin-bottom:15px;
+    letter-spacing:2px;
 }
 
 .caixa{
     width:95%;
     max-width:430px;
     margin:auto;
-    padding:20px;
-
-    background:
-    linear-gradient(
-        145deg,
-        rgba(20,25,40,.96),
-        rgba(3,5,15,.97)
-    );
-
+    padding:16px;
+    background:linear-gradient(145deg,rgba(20,25,40,.96),rgba(3,5,15,.97));
     border:2px solid #ffd700;
     border-radius:25px;
-
     box-shadow:
-    0 0 25px rgba(255,215,0,.25),
-    0 20px 70px rgba(0,0,0,.7);
-
-    backdrop-filter:blur(10px);
+        0 0 25px rgba(255,215,0,.25),
+        0 20px 70px rgba(0,0,0,.7);
 }
 
 #jogo{
-    height:370px;
+    height:390px;
     position:relative;
     overflow:hidden;
     border-radius:18px;
     border:1px solid rgba(255,215,0,.35);
-
     background:
-    radial-gradient(
-        circle at 50% 0%,
-        rgba(0,150,255,.20),
-        transparent 45%
-    ),
-
-    linear-gradient(
-        180deg,
-        #030712,
-        #02020a
-    );
-
-    box-shadow:
-    inset 0 0 40px rgba(0,0,0,.9);
+        radial-gradient(circle at 50% 0%,rgba(0,150,255,.20),transparent 45%),
+        linear-gradient(180deg,#030712,#02020a);
+    box-shadow:inset 0 0 40px rgba(0,0,0,.9);
 }
 
 .grade{
     position:absolute;
     inset:0;
     opacity:.12;
-
     background-image:
-    linear-gradient(
-        rgba(0,255,255,.4) 1px,
-        transparent 1px
-    ),
-
-    linear-gradient(
-        90deg,
-        rgba(0,255,255,.4) 1px,
-        transparent 1px
-    );
-
+        linear-gradient(rgba(0,255,255,.4) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(0,255,255,.4) 1px,transparent 1px);
     background-size:35px 35px;
 }
 
@@ -224,51 +242,27 @@ h1{
     position:absolute;
     width:11px;
     height:11px;
-
-    background:
-    radial-gradient(
-        circle at 35% 30%,
-        white,
-        #ffd700 35%,
-        #ff9800
-    );
-
+    background:radial-gradient(circle at 35% 30%,white,#ffd700 35%,#ff9800);
     border-radius:50%;
-
-    box-shadow:
-    0 0 6px #ffd700,
-    0 0 14px rgba(255,215,0,.7);
-
+    box-shadow:0 0 6px #ffd700,0 0 14px rgba(255,215,0,.7);
     z-index:2;
 }
 
 #bola{
     position:absolute;
-    top:10px;
-    left:50%;
     width:24px;
     height:24px;
     margin-left:-12px;
+    margin-top:-12px;
     border-radius:50%;
-
-    background:
-    radial-gradient(
-        circle at 30% 25%,
-        white,
-        #00ff88 30%,
-        #00aaff 75%
-    );
-
-    box-shadow:
-    0 0 10px #00ff88,
-    0 0 25px #00ffff;
-
+    background:radial-gradient(circle at 30% 25%,white,#00ff88 30%,#00aaff 75%);
+    box-shadow:0 0 10px #00ff88,0 0 25px #00ffff;
     z-index:10;
-    opacity:0;
+    display:none;
 }
 
 #bola.caindo{
-    opacity:1;
+    display:block;
 }
 
 .trilha{
@@ -277,11 +271,9 @@ h1{
     height:5px;
     border-radius:50%;
     background:#00ffff;
-
-    box-shadow:
-    0 0 8px #00ffff;
-
+    box-shadow:0 0 8px #00ffff;
     pointer-events:none;
+    z-index:5;
 }
 
 #casas{
@@ -294,6 +286,7 @@ h1{
     align-items:stretch;
     justify-content:center;
     z-index:4;
+    padding:2px;
 }
 
 .casa{
@@ -301,25 +294,13 @@ h1{
     max-width:58px;
     margin:2px;
     border-radius:10px 10px 4px 4px;
-
     border:1px solid rgba(255,255,255,.15);
-
-    background:
-    linear-gradient(
-        180deg,
-        #151525,
-        #080811
-    );
-
+    background:linear-gradient(180deg,#151525,#080811);
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
-
     transition:.25s;
-
-    cursor:pointer;
-    touch-action:manipulation;
 }
 
 .casaNumero{
@@ -328,46 +309,22 @@ h1{
     color:#ffd700;
 }
 
-.casaTipo{
-    font-size:9px;
-    color:#777;
+.casaMult{
+    font-size:10px;
+    color:#aaa;
 }
 
 .casa.escolhida{
-    border-color:#00ff88;
-
-    box-shadow:
-    0 0 10px #00ff88,
-    0 0 25px rgba(0,255,136,.6);
-
-    transform:translateY(-5px) scale(1.05);
-}
-
-.casa.escolhida .casaNumero{
-    color:#00ff88;
+    border:2px solid #00ff88;
+    box-shadow:0 0 12px #00ff88,0 0 25px rgba(0,255,136,.4);
 }
 
 .casa.vencedora{
-    background:
-    linear-gradient(
-        180deg,
-        #ffe66b,
-        #ff9800
-    );
-
+    background:linear-gradient(180deg,#ffe66b,#ff9800);
     color:#160e00;
-
-    transform:
-    translateY(-8px)
-    scale(1.08);
-
+    transform:translateY(-8px) scale(1.08);
     border-color:white;
-
-    box-shadow:
-    0 0 10px #ffd700,
-    0 0 30px #ff9800,
-    0 0 50px rgba(255,215,0,.7);
-
+    box-shadow:0 0 10px #ffd700,0 0 30px #ff9800,0 0 50px rgba(255,215,0,.7);
     animation:ganhadora .5s infinite alternate;
 }
 
@@ -376,223 +333,91 @@ h1{
     to{filter:brightness(1.4)}
 }
 
-.casa.superbonus{
-    border-color:#ff00ff;
-
-    box-shadow:
-    0 0 10px #ff00ff,
-    0 0 25px #ff00ff,
-    inset 0 0 15px rgba(255,0,255,.2);
+.casa.vencedora .casaNumero{
+    color:#160e00;
 }
 
-.casa.superbonus .casaTipo{
-    color:#ff66ff;
+.fichaArea{
+    height:54px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
-#ficha{
-    position:absolute;
-
-    width:43px;
-    height:43px;
-
+.ficha{
+    width:42px;
+    height:42px;
     border-radius:50%;
-
-    background:
-    radial-gradient(
-        circle,
-        #555 0 42%,
-        #eee 43% 51%,
-        #777 52% 68%,
-        #eee 69% 73%,
-        #222 74%
-    );
-
-    border:2px solid white;
-
-    box-shadow:
-    0 0 8px white,
-    0 0 20px #ffd700,
-    0 3px 7px #000;
-
-    display:none;
-
+    display:flex;
     align-items:center;
     justify-content:center;
-
+    background:radial-gradient(circle,#555 0 45%,#eee 46% 54%,#666 55% 70%,#eee 71% 74%,#333 75%);
+    border:2px solid #eee;
     color:white;
     font-size:10px;
     font-weight:bold;
-
     text-shadow:0 1px 2px #000;
-
-    z-index:20;
-    pointer-events:none;
+    cursor:pointer;
+    box-shadow:0 0 8px rgba(255,255,255,.3);
 }
 
-#ficha.visivel{
-    display:flex;
+.ficha.selecionada{
+    box-shadow:0 0 8px #fff,0 0 20px #ffe36a;
 }
 
-.instrucoes{
-    margin-top:10px;
-    min-height:30px;
-    color:#aaa;
-    font-size:13px;
+#mensagem{
+    min-height:40px;
+    margin:8px 0;
+    color:#ffe36a;
+    font-size:14px;
+    font-weight:bold;
 }
 
 #premio{
-    margin-top:10px;
-    min-height:45px;
-
+    min-height:35px;
     color:#ffd700;
     font-size:20px;
     font-weight:bold;
-
-    text-shadow:
-    0 0 12px #ffd700;
+    text-shadow:0 0 12px #ffd700;
 }
 
-.areaFicha{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    margin:8px 0 10px;
+.controles{
+    margin-top:10px;
 }
 
-.fichaBotao{
-    width:55px;
-    height:55px;
-
-    border-radius:50%;
-
-    background:
-    radial-gradient(
-        circle,
-        #555 0 42%,
-        #eee 43% 51%,
-        #777 52% 68%,
-        #eee 69% 73%,
-        #222 74%
-    );
-
-    border:2px solid white;
-
-    box-shadow:
-    0 0 8px rgba(255,255,255,.5),
-    0 0 18px rgba(255,215,0,.5),
-    0 3px 8px #000;
-
-    color:white;
-    font-size:11px;
-    font-weight:bold;
-
-    cursor:pointer;
-    padding:0;
-
-    transition:.2s;
-}
-
-.fichaBotao.selecionada{
-    transform:scale(1.12);
-
-    box-shadow:
-    0 0 8px white,
-    0 0 20px #ffe36a,
-    0 0 35px #ff9800;
-}
-
-.valores{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:6px;
-    margin-bottom:8px;
-}
-
-.valorBtn{
-    height:42px;
-    padding:5px;
-
-    border:1px solid #555;
-    border-radius:8px;
-
-    background:#080a10;
+.valorInfo{
     color:#aaa;
-
-    font-size:13px;
-    font-weight:bold;
-
-    box-shadow:none;
-}
-
-.valorBtn.ativo{
-    border-color:#ffd700;
-    color:#ffd700;
-
-    box-shadow:
-    0 0 10px rgba(255,215,0,.35);
+    font-size:12px;
+    margin-bottom:8px;
 }
 
 #botao{
     width:100%;
-    margin-top:8px;
-
-    padding:15px 20px;
-
-    background:
-    linear-gradient(
-        180deg,
-        #ffe66b,
-        #ffb000
-    );
-
+    padding:15px;
+    background:linear-gradient(180deg,#ffe66b,#ffb000);
     border:0;
     border-radius:12px;
-    font-size:18px;
+    font-size:17px;
     font-weight:bold;
     cursor:pointer;
-
-    box-shadow:
-    0 0 15px rgba(255,215,0,.4);
-}
-
-#botao:active{
-    transform:scale(.97);
+    box-shadow:0 0 15px rgba(255,215,0,.4);
 }
 
 #botao:disabled{
-    opacity:.5;
-}
-
-.info{
-    display:flex;
-    justify-content:space-between;
-
-    margin-top:12px;
-
-    color:#aaa;
-    font-size:12px;
-}
-
-.info strong{
-    color:#ffe34f;
+    opacity:.45;
 }
 
 #resultadoTela{
     position:fixed;
     inset:0;
-
     display:flex;
     align-items:center;
     justify-content:center;
-
     background:rgba(0,0,0,.78);
     backdrop-filter:blur(8px);
-
     opacity:0;
     pointer-events:none;
-
     z-index:100;
-
     transition:.25s;
 }
 
@@ -605,41 +430,10 @@ h1{
     width:85%;
     max-width:340px;
     padding:30px 20px;
-
     border-radius:25px;
-
     border:2px solid #ffd700;
-
-    background:
-    linear-gradient(
-        145deg,
-        #11172a,
-        #080912
-    );
-
-    box-shadow:
-    0 0 25px #ffd700,
-    0 0 80px rgba(0,150,255,.5);
-
-    transform:scale(.5);
-}
-
-#resultadoTela.mostrar .resultadoCard{
-    animation:entrarResultado .45s forwards;
-}
-
-@keyframes entrarResultado{
-    0%{
-        transform:scale(.5) rotate(-8deg);
-    }
-
-    70%{
-        transform:scale(1.08) rotate(2deg);
-    }
-
-    100%{
-        transform:scale(1) rotate(0);
-    }
+    background:linear-gradient(145deg,#11172a,#080912);
+    box-shadow:0 0 25px #ffd700,0 0 80px rgba(0,150,255,.5);
 }
 
 .resultadoTitulo{
@@ -649,15 +443,10 @@ h1{
 
 .resultadoNumero{
     margin:10px 0;
-
     font-size:70px;
     font-weight:900;
-
     color:#ffd700;
-
-    text-shadow:
-    0 0 10px #ffd700,
-    0 0 35px #ff8800;
+    text-shadow:0 0 10px #ffd700,0 0 35px #ff8800;
 }
 
 .resultadoPremio{
@@ -667,333 +456,140 @@ h1{
 
 #fecharResultado{
     margin-top:20px;
-
     padding:13px 30px;
-
     border:0;
     border-radius:12px;
-
     background:#ffd700;
-
     font-weight:bold;
     font-size:17px;
 }
 
-.superbonus-overlay{
-    position:fixed;
-    inset:0;
-
-    display:none;
-
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-
-    background:
-    radial-gradient(
-        circle,
-        rgba(255,0,255,.5),
-        rgba(255,180,0,.25) 35%,
-        rgba(0,0,0,.96) 75%
-    );
-
-    z-index:200;
-    pointer-events:none;
+.erro{
+    color:#ff4141!important;
 }
 
-.superbonus-overlay.mostrar{
-    display:flex;
-    animation:bonusTela 4s forwards;
-}
-
-.superbonus-titulo{
-    color:white;
-
-    font-size:34px;
-    font-weight:900;
-
-    text-shadow:
-    0 0 8px white,
-    0 0 20px #ff00ff,
-    0 0 40px #ffd700;
-
-    animation:bonusTexto .8s ease-out;
-}
-
-.superbonus-valor{
-    margin-top:12px;
-
-    color:#ffe44f;
-
-    font-size:50px;
-    font-weight:900;
-
-    text-shadow:
-    0 0 10px white,
-    0 0 25px #ffd700,
-    0 0 50px #ff00ff;
-
-    animation:bonusValor 1s ease-out;
-}
-
-@keyframes bonusTela{
-    0%{opacity:0}
-    10%{opacity:1}
-    80%{opacity:1}
-    100%{opacity:0}
-}
-
-@keyframes bonusTexto{
-    0%{transform:scale(.2)}
-    60%{transform:scale(1.25)}
-    100%{transform:scale(1)}
-}
-
-@keyframes bonusValor{
-    0%{transform:scale(.2)}
-    60%{transform:scale(1.35)}
-    100%{transform:scale(1)}
-}
-
-#carregando{
-    position:fixed;
-    inset:0;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-
-    background:#020303;
-
-    z-index:999;
-
-    color:#ffe36a;
-    font-size:16px;
-}
-
-#carregando small{
-    margin-top:12px;
-    color:#777;
-    font-size:11px;
-}
-
-.erroConta{
-    color:#ff4141 !important;
-}
-
-@media(max-width:450px){
-
-    h1{
-        font-size:34px;
-    }
-
+@media(max-width:360px){
     #jogo{
         height:370px;
     }
 
-    .casa{
-        margin:1px;
-    }
-
     .casaNumero{
-        font-size:13px;
+        font-size:12px;
     }
 
+    .casaMult{
+        font-size:9px;
+    }
 }
-
 </style>
-
 </head>
 
 <body>
 
 <div id="carregando">
-    🔐 VERIFICANDO CONTA...
-    <small id="textoCarregando">Conectando ao ApostaXBet</small>
+    <div class="loader"></div>
+    <div id="textoCarregando">🔐 VERIFICANDO CONTA...</div>
 </div>
 
 <div class="luz luz1"></div>
 <div class="luz luz2"></div>
 
 <div class="particulas">
-
-<span></span>
-<span></span>
-<span></span>
-<span></span>
-<span></span>
-<span></span>
-<span></span>
-<span></span>
-<span></span>
-<span></span>
-
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
 </div>
 
-<h1>
-🎯 Plinko
-</h1>
+<div class="topo">
+    <div class="logo">⚡ APOSTAXBET</div>
 
-<div id="saldo">
-💰 Saldo: R$ 0,00
+    <div class="saldoBox">
+        <div class="saldoLabel">SALDO DA CONTA</div>
+        <div id="saldo">R$ 0,00</div>
+    </div>
 </div>
 
-<div id="statusConta">
-Conectando...
+<a href="../index.html" class="lobby">
+    <div class="lobbyIcon">⌂</div>
+    Lobby
+</a>
+
+<h1>🎯 PLINKO</h1>
+
+<div class="subtitulo">
+    ESCOLHA UM NÚMERO E ACOMPANHE A BOLINHA
 </div>
 
 <div class="caixa">
 
-<div id="jogo">
+    <div class="fichaArea">
+        <div class="ficha" id="ficha">1,00</div>
+    </div>
 
-<div class="grade"></div>
+    <div id="jogo">
 
-<div id="bola"></div>
+        <div class="grade"></div>
 
-<div id="ficha">
-1,00
-</div>
+        <div id="bola"></div>
 
-<div id="casas"></div>
+        <div id="casas"></div>
 
-</div>
+    </div>
 
-<div class="instrucoes" id="instrucoes">
-🎯 Toque na ficha e depois escolha um número
-</div>
+    <div id="mensagem">
+        🎯 Toque na ficha e escolha uma casa
+    </div>
 
-<div id="premio">
-Escolha sua posição
-</div>
+    <div id="premio">
+        Prêmio: R$ 0,00
+    </div>
 
-<div class="areaFicha">
+    <div class="controles">
 
-<button
-class="fichaBotao"
-id="fichaBotao"
-onclick="selecionarFicha()"
->
-1,00
-</button>
+        <div class="valorInfo">
+            Valor selecionado: <strong>R$ 1,00</strong>
+        </div>
 
-</div>
+        <button id="botao" disabled>
+            🎯 ESCOLHA UMA CASA
+        </button>
 
-<div class="valores">
-
-<button
-class="valorBtn ativo"
-onclick="selecionarValor(1,this)"
->
-R$ 1
-</button>
-
-<button
-class="valorBtn"
-onclick="selecionarValor(2,this)"
->
-R$ 2
-</button>
-
-<button
-class="valorBtn"
-onclick="selecionarValor(5,this)"
->
-R$ 5
-</button>
-
-</div>
-
-<button
-id="botao"
-onclick="soltar()"
-disabled
->
-AGUARDANDO CONTA...
-</button>
-
-<div class="info">
-
-<span>
-Aposta:
-<strong id="apostaInfo">
-R$ 1,00
-</strong>
-</span>
-
-<span>
-Saldo:
-<strong id="saldoInfo">
-R$ 0,00
-</strong>
-</span>
-
-</div>
+    </div>
 
 </div>
 
 <div id="resultadoTela">
 
-<div class="resultadoCard">
+    <div class="resultadoCard">
 
-<div class="resultadoTitulo" id="resultadoTitulo">
-🎉 RESULTADO
-</div>
+        <div class="resultadoTitulo">
+            🎉 RESULTADO
+        </div>
 
-<div
-class="resultadoNumero"
-id="resultadoNumero"
->
-0
-</div>
+        <div class="resultadoNumero" id="resultadoNumero">
+            0
+        </div>
 
-<div
-class="resultadoPremio"
-id="resultadoPremio"
->
-R$ 0,00
-</div>
+        <div class="resultadoPremio" id="resultadoPremio">
+            R$ 0,00
+        </div>
 
-<button
-id="fecharResultado"
-onclick="fecharResultado()"
->
-CONTINUAR
-</button>
+        <button id="fecharResultado">
+            CONTINUAR
+        </button>
 
-</div>
-
-</div>
-
-<div
-class="superbonus-overlay"
-id="superbonusOverlay"
->
-
-<div class="superbonus-titulo">
-⚡ SUPER BÔNUS ⚡
-</div>
-
-<div
-class="superbonus-valor"
-id="superbonusValor"
->
-R$ 10,00
-</div>
+    </div>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-
 "use strict";
 
 /*
-========================================================
+====================================================
 SUPABASE
-MESMA CONFIGURAÇÃO USADA NA ROLETA
-========================================================
+====================================================
 */
 
 const SUPABASE_URL =
@@ -1002,45 +598,16 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ";
 
-const supabase =
+const supabaseClient =
 window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
 
-
 /*
-========================================================
-ESTADO
-========================================================
-*/
-
-let usuarioAtual = null;
-
-let saldoReal = 0;
-
-let valorAposta = 1;
-
-let numeroEscolhido = null;
-
-let fichaSelecionada = false;
-
-let jogando = false;
-
-
-/*
-Número 5 será o SUPER BÔNUS.
-*/
-
-const SUPER_BONUS_INDEX = 4;
-
-const SUPER_BONUS_VALOR = 10;
-
-
-/*
-========================================================
+====================================================
 ELEMENTOS
-========================================================
+====================================================
 */
 
 const carregando =
@@ -1052,21 +619,6 @@ document.getElementById("textoCarregando");
 const saldoEl =
 document.getElementById("saldo");
 
-const saldoInfo =
-document.getElementById("saldoInfo");
-
-const statusConta =
-document.getElementById("statusConta");
-
-const botao =
-document.getElementById("botao");
-
-const fichaBotao =
-document.getElementById("fichaBotao");
-
-const ficha =
-document.getElementById("ficha");
-
 const jogo =
 document.getElementById("jogo");
 
@@ -1076,20 +628,20 @@ document.getElementById("bola");
 const casas =
 document.getElementById("casas");
 
+const ficha =
+document.getElementById("ficha");
+
+const mensagem =
+document.getElementById("mensagem");
+
 const premio =
 document.getElementById("premio");
 
-const instrucoes =
-document.getElementById("instrucoes");
-
-const apostaInfo =
-document.getElementById("apostaInfo");
+const botao =
+document.getElementById("botao");
 
 const resultadoTela =
 document.getElementById("resultadoTela");
-
-const resultadoTitulo =
-document.getElementById("resultadoTitulo");
 
 const resultadoNumero =
 document.getElementById("resultadoNumero");
@@ -1097,17 +649,54 @@ document.getElementById("resultadoNumero");
 const resultadoPremio =
 document.getElementById("resultadoPremio");
 
-const superbonusOverlay =
-document.getElementById("superbonusOverlay");
-
-const superbonusValor =
-document.getElementById("superbonusValor");
-
+const fecharResultado =
+document.getElementById("fecharResultado");
 
 /*
-========================================================
+====================================================
+ESTADO
+====================================================
+*/
+
+let usuarioAtual = null;
+
+let saldoReal = 0;
+
+let fichaSelecionada = false;
+
+let numeroEscolhido = null;
+
+let jogando = false;
+
+/*
+Valor visual da ficha.
+Não altera o saldo da conta.
+*/
+
+const valorFicha = 1.00;
+
+/*
+====================================================
+PRÊMIOS VISUAIS
+====================================================
+*/
+
+const premios = [
+    0.5,
+    1,
+    1.5,
+    2,
+    10,
+    2,
+    1.5,
+    1,
+    0.5
+];
+
+/*
+====================================================
 DINHEIRO
-========================================================
+====================================================
 */
 
 function dinheiro(valor){
@@ -1119,83 +708,325 @@ function dinheiro(valor){
 
 }
 
-
 /*
-========================================================
-ATUALIZAR SALDO NA TELA
-========================================================
+====================================================
+MOSTRAR SALDO REAL
+====================================================
 */
 
 function atualizarSaldo(){
 
-    saldoEl.textContent =
-    "💰 Saldo: " +
+    saldoEl.innerText =
     dinheiro(saldoReal);
-
-    saldoInfo.textContent =
-    dinheiro(saldoReal);
-
-    saldoEl.style.color =
-    saldoReal < valorAposta
-    ? "#ff4141"
-    : "#00ff88";
-
-    atualizarBotao();
 
 }
 
-
 /*
-========================================================
-BOTÃO
-========================================================
+====================================================
+OBTER SESSÃO
+====================================================
 */
 
-function atualizarBotao(){
+async function obterUsuario(){
 
-    if(jogando){
+    try{
 
-        botao.disabled = true;
+        const resposta =
+        await supabaseClient.auth.getSession();
 
-        botao.innerText =
-        "🎯 BOLINHA DESCENDO...";
+        if(resposta.error){
 
-        return;
+            console.error(
+                "Erro sessão:",
+                resposta.error
+            );
 
+            return null;
+        }
+
+        return resposta.data?.session?.user || null;
+
+    }catch(error){
+
+        console.error(
+            "Erro obter sessão:",
+            error
+        );
+
+        return null;
     }
+
+}
+
+/*
+====================================================
+CARREGAR SALDO REAL
+====================================================
+*/
+
+async function carregarSaldo(){
 
     if(!usuarioAtual){
 
+        return false;
+    }
+
+    try{
+
+        const resposta =
+        await supabaseClient
+        .from("saldos")
+        .select("valor")
+        .eq(
+            "user_id",
+            usuarioAtual.id
+        )
+        .maybeSingle();
+
+        if(resposta.error){
+
+            console.error(
+                "Erro ao buscar saldo:",
+                resposta.error
+            );
+
+            mensagem.innerText =
+            "❌ ERRO AO CARREGAR SALDO";
+
+            mensagem.classList.add("erro");
+
+            return false;
+        }
+
+        saldoReal =
+        Number(
+            resposta.data?.valor || 0
+        );
+
+        atualizarSaldo();
+
+        return true;
+
+    }catch(error){
+
+        console.error(
+            "Erro saldo:",
+            error
+        );
+
+        mensagem.innerText =
+        "❌ ERRO AO CONECTAR AO SALDO";
+
+        mensagem.classList.add("erro");
+
+        return false;
+    }
+
+}
+
+/*
+====================================================
+CRIAR PINOS
+====================================================
+*/
+
+function criarPinos(){
+
+    document
+    .querySelectorAll(".pino")
+    .forEach(
+        p => p.remove()
+    );
+
+    const largura =
+    jogo.clientWidth;
+
+    const centro =
+    largura / 2;
+
+    for(
+        let linha = 0;
+        linha < 7;
+        linha++
+    ){
+
+        const quantidade =
+        linha + 3;
+
+        const espacamento = 35;
+
+        const larguraLinha =
+        (quantidade - 1) *
+        espacamento;
+
+        const inicio =
+        centro -
+        larguraLinha / 2;
+
+        for(
+            let coluna = 0;
+            coluna < quantidade;
+            coluna++
+        ){
+
+            const p =
+            document.createElement("div");
+
+            p.className =
+            "pino";
+
+            p.style.top =
+            (38 + linha * 38) +
+            "px";
+
+            p.style.left =
+            (inicio +
+            coluna * espacamento -
+            5.5) +
+            "px";
+
+            jogo.appendChild(p);
+        }
+    }
+
+}
+
+/*
+====================================================
+CRIAR CASAS
+====================================================
+*/
+
+function criarCasas(){
+
+    casas.innerHTML = "";
+
+    premios.forEach(
+        function(valor,index){
+
+            const casa =
+            document.createElement("div");
+
+            casa.className =
+            "casa";
+
+            casa.dataset.index =
+            index;
+
+            casa.innerHTML =
+            "<div class='casaNumero'>" +
+            (index + 1) +
+            "</div>" +
+            "<div class='casaMult'>" +
+            (valor === 10
+                ? "⚡ SUPER"
+                : valor + "x") +
+            "</div>";
+
+            casa.addEventListener(
+                "click",
+                function(){
+
+                    escolherCasa(index);
+
+                }
+            );
+
+            casas.appendChild(casa);
+
+        }
+    );
+
+}
+
+/*
+====================================================
+ESCOLHER FICHA
+====================================================
+*/
+
+ficha.addEventListener(
+    "click",
+    function(){
+
+        if(jogando)return;
+
+        fichaSelecionada = true;
+
+        numeroEscolhido = null;
+
+        document
+        .querySelectorAll(".casa")
+        .forEach(
+            c => c.classList.remove("escolhida")
+        );
+
+        ficha.classList.add(
+            "selecionada"
+        );
+
+        mensagem.innerHTML =
+        "🎯 Agora toque no número que deseja escolher";
+
+        mensagem.classList.remove(
+            "erro"
+        );
+
         botao.disabled = true;
 
         botao.innerText =
-        "AGUARDANDO CONTA";
-
-        return;
+        "🎯 ESCOLHA UMA CASA";
 
     }
+);
 
-    if(numeroEscolhido === null){
+/*
+====================================================
+ESCOLHER CASA
+====================================================
+*/
 
-        botao.disabled = true;
+function escolherCasa(index){
 
-        botao.innerText =
-        "ESCOLHA UM NÚMERO";
+    if(jogando)return;
 
-        return;
+    if(!fichaSelecionada){
 
-    }
-
-    if(saldoReal < valorAposta){
-
-        botao.disabled = true;
-
-        botao.innerText =
-        "SALDO INSUFICIENTE";
+        mensagem.innerHTML =
+        "🎯 Primeiro toque na ficha";
 
         return;
-
     }
+
+    numeroEscolhido = index;
+
+    fichaSelecionada = false;
+
+    ficha.classList.remove(
+        "selecionada"
+    );
+
+    document
+    .querySelectorAll(".casa")
+    .forEach(
+        c => c.classList.remove("escolhida")
+    );
+
+    const casa =
+    document.querySelector(
+        `.casa[data-index="${index}"]`
+    );
+
+    if(casa){
+
+        casa.classList.add(
+            "escolhida"
+        );
+    }
+
+    mensagem.innerHTML =
+    "🎯 NÚMERO ESCOLHIDO: " +
+    (index + 1);
 
     botao.disabled = false;
 
@@ -1204,274 +1035,45 @@ function atualizarBotao(){
 
 }
 
-
 /*
-========================================================
-OBTER USUÁRIO
-========================================================
-*/
-
-async function obterUsuario(){
-
-    const resultado =
-    await supabase.auth.getSession();
-
-    if(resultado.error){
-
-        throw resultado.error;
-
-    }
-
-    return resultado.data?.session?.user || null;
-
-}
-
-
-/*
-========================================================
-CARREGAR SALDO REAL
-========================================================
-*/
-
-async function carregarSaldo(){
-
-    if(!usuarioAtual){
-
-        return false;
-
-    }
-
-    const {data,error} =
-    await supabase
-    .from("saldos")
-    .select("valor")
-    .eq("user_id",usuarioAtual.id)
-    .maybeSingle();
-
-    if(error){
-
-        console.error(
-            "Erro Supabase ao carregar saldo:",
-            error
-        );
-
-        statusConta.innerText =
-        "❌ Erro ao carregar saldo: " +
-        error.message;
-
-        statusConta.classList.add(
-            "erroConta"
-        );
-
-        return false;
-
-    }
-
-
-    /*
-    Se existir saldo, usa o valor real.
-    */
-
-    saldoReal =
-    Number(data?.valor || 0);
-
-
-    atualizarSaldo();
-
-
-    statusConta.innerText =
-    "✅ Conta conectada";
-
-
-    return true;
-
-}
-
-
-/*
-========================================================
-SALVAR SALDO REAL
-========================================================
-*/
-
-async function salvarSaldo(novoSaldo){
-
-    if(!usuarioAtual){
-
-        return false;
-
-    }
-
-    const valorFinal =
-    Number(
-        Number(novoSaldo)
-        .toFixed(2)
-    );
-
-
-    const {error} =
-    await supabase
-    .from("saldos")
-    .update({
-        valor:valorFinal
-    })
-    .eq(
-        "user_id",
-        usuarioAtual.id
-    );
-
-
-    if(error){
-
-        console.error(
-            "Erro ao salvar saldo:",
-            error
-        );
-
-        return false;
-
-    }
-
-
-    saldoReal =
-    valorFinal;
-
-    atualizarSaldo();
-
-    return true;
-
-}
-
-
-/*
-========================================================
-DEBITAR APOSTA
-========================================================
-*/
-
-async function debitarAposta(){
-
-    if(!usuarioAtual){
-
-        return false;
-
-    }
-
-    const saldoAntes =
-    Number(saldoReal);
-
-
-    if(saldoAntes < valorAposta){
-
-        return false;
-
-    }
-
-
-    const novoSaldo =
-    Number(
-        (saldoAntes - valorAposta)
-        .toFixed(2)
-    );
-
-
-    const {error} =
-    await supabase
-    .from("saldos")
-    .update({
-        valor:novoSaldo
-    })
-    .eq(
-        "user_id",
-        usuarioAtual.id
-    );
-
-
-    if(error){
-
-        console.error(
-            "Erro ao debitar:",
-            error
-        );
-
-        return false;
-
-    }
-
-
-    saldoReal =
-    novoSaldo;
-
-    atualizarSaldo();
-
-    return true;
-
-}
-
-
-/*
-========================================================
-AUDIO
-========================================================
+====================================================
+ÁUDIO
+====================================================
 */
 
 let audioContext = null;
 
-let somLiberado = false;
-
-
 function iniciarAudio(){
 
-    try{
+    if(!audioContext){
 
-        if(!audioContext){
+        const AudioContext =
+        window.AudioContext ||
+        window.webkitAudioContext;
 
-            const AudioCtx =
-            window.AudioContext ||
-            window.webkitAudioContext;
+        if(!AudioContext)return;
 
-            if(!AudioCtx){
-
-                return;
-
-            }
-
-            audioContext =
-            new AudioCtx();
-
-        }
-
-
-        if(
-            audioContext.state ===
-            "suspended"
-        ){
-
-            audioContext.resume();
-
-        }
-
-        somLiberado = true;
-
-    }catch(error){
-
-        console.log(
-            "Áudio indisponível:",
-            error
-        );
-
+        audioContext =
+        new AudioContext();
     }
 
+    if(
+        audioContext.state ===
+        "suspended"
+    ){
+
+        audioContext.resume();
+    }
 }
 
-
-function somClique(){
+function tocarSom(
+    frequencia,
+    duracao = .08
+){
 
     iniciarAudio();
 
-    if(!audioContext)
-        return;
-
+    if(!audioContext)return;
 
     const agora =
     audioContext.currentTime;
@@ -1481,95 +1083,24 @@ function somClique(){
 
     const ganho =
     audioContext.createGain();
-
-
-    osc.type =
-    "square";
-
-
-    osc.frequency.setValueAtTime(
-        520,
-        agora
-    );
-
-
-    osc.frequency.exponentialRampToValueAtTime(
-        260,
-        agora + .06
-    );
-
-
-    ganho.gain.setValueAtTime(
-        .45,
-        agora
-    );
-
-
-    ganho.gain.exponentialRampToValueAtTime(
-        .001,
-        agora + .07
-    );
-
-
-    osc.connect(ganho);
-
-    ganho.connect(
-        audioContext.destination
-    );
-
-
-    osc.start(agora);
-
-    osc.stop(
-        agora + .08
-    );
-
-}
-
-
-function somPino(){
-
-    if(!somLiberado || !audioContext)
-        return;
-
-
-    const agora =
-    audioContext.currentTime;
-
-    const osc =
-    audioContext.createOscillator();
-
-    const ganho =
-    audioContext.createGain();
-
 
     osc.type =
     "triangle";
 
-
     osc.frequency.setValueAtTime(
-        850 + Math.random()*180,
+        frequencia,
         agora
     );
-
-
-    osc.frequency.exponentialRampToValueAtTime(
-        430,
-        agora + .045
-    );
-
 
     ganho.gain.setValueAtTime(
-        .32,
+        .25,
         agora
     );
-
 
     ganho.gain.exponentialRampToValueAtTime(
         .001,
-        agora + .06
+        agora + duracao
     );
-
 
     osc.connect(ganho);
 
@@ -1577,734 +1108,143 @@ function somPino(){
         audioContext.destination
     );
 
-
     osc.start(agora);
 
     osc.stop(
-        agora + .07
+        agora + duracao
     );
-
 }
-
-
-function somQueda(){
-
-    if(!somLiberado || !audioContext)
-        return;
-
-
-    const agora =
-    audioContext.currentTime;
-
-    const osc =
-    audioContext.createOscillator();
-
-    const ganho =
-    audioContext.createGain();
-
-
-    osc.type =
-    "sine";
-
-
-    osc.frequency.setValueAtTime(
-        180,
-        agora
-    );
-
-
-    osc.frequency.exponentialRampToValueAtTime(
-        70,
-        agora + .45
-    );
-
-
-    ganho.gain.setValueAtTime(
-        .16,
-        agora
-    );
-
-
-    ganho.gain.exponentialRampToValueAtTime(
-        .001,
-        agora + .45
-    );
-
-
-    osc.connect(ganho);
-
-    ganho.connect(
-        audioContext.destination
-    );
-
-
-    osc.start(agora);
-
-    osc.stop(
-        agora + .46
-    );
-
-}
-
 
 function somPremio(){
 
-    if(!somLiberado || !audioContext)
-        return;
+    iniciarAudio();
 
+    [523,659,784,1047].forEach(
+        (freq,i)=>{
 
-    const notas = [
-        523.25,
-        659.25,
-        783.99,
-        1046.50
-    ];
-
-
-    notas.forEach(
-    function(freq,index){
-
-        setTimeout(
-        function(){
-
-            const agora =
-            audioContext.currentTime;
-
-            const osc =
-            audioContext.createOscillator();
-
-            const ganho =
-            audioContext.createGain();
-
-
-            osc.type =
-            "sine";
-
-
-            osc.frequency.value =
-            freq;
-
-
-            ganho.gain.setValueAtTime(
-                .42,
-                agora
+            setTimeout(
+                ()=>{
+                    tocarSom(
+                        freq,
+                        .3
+                    );
+                },
+                i * 100
             );
-
-
-            ganho.gain.exponentialRampToValueAtTime(
-                .001,
-                agora + .28
-            );
-
-
-            osc.connect(ganho);
-
-            ganho.connect(
-                audioContext.destination
-            );
-
-
-            osc.start(agora);
-
-            osc.stop(
-                agora + .30
-            );
-
-        },
-        index * 100
-        );
-
-    });
-
+        }
+    );
 }
 
+function somSuperBonus(){
 
-function somGrandePremio(){
+    iniciarAudio();
 
-    if(!somLiberado || !audioContext)
-        return;
+    [523,659,784,1047,1319].forEach(
+        (freq,i)=>{
 
-
-    const notas = [
-        523.25,
-        659.25,
-        783.99,
-        1046.50,
-        1318.51
-    ];
-
-
-    notas.forEach(
-    function(freq,index){
-
-        setTimeout(
-        function(){
-
-            const agora =
-            audioContext.currentTime;
-
-            const osc =
-            audioContext.createOscillator();
-
-            const ganho =
-            audioContext.createGain();
-
-
-            osc.type =
-            "triangle";
-
-
-            osc.frequency.value =
-            freq;
-
-
-            ganho.gain.setValueAtTime(
-                .5,
-                agora
+            setTimeout(
+                ()=>{
+                    tocarSom(
+                        freq,
+                        .45
+                    );
+                },
+                i * 110
             );
-
-
-            ganho.gain.exponentialRampToValueAtTime(
-                .001,
-                agora + .42
-            );
-
-
-            osc.connect(ganho);
-
-            ganho.connect(
-                audioContext.destination
-            );
-
-
-            osc.start(agora);
-
-            osc.stop(
-                agora + .45
-            );
-
-        },
-        index * 110
-        );
-
-    });
-
+        }
+    );
 }
 
-
 /*
-========================================================
-VALOR DA APOSTA
-========================================================
+====================================================
+TRILHA
+====================================================
 */
 
-window.selecionarValor =
-function(valor,botaoClicado){
+function criarTrilha(x,y){
 
-    if(jogando)
-        return;
+    const ponto =
+    document.createElement("div");
 
+    ponto.className =
+    "trilha";
 
-    valorAposta =
-    Number(valor);
+    ponto.style.left =
+    x + "px";
 
-
-    document
-    .querySelectorAll(".valorBtn")
-    .forEach(
-        function(btn){
-
-            btn.classList.remove(
-                "ativo"
-            );
-
-        }
-    );
-
-
-    botaoClicado.classList.add(
-        "ativo"
-    );
-
-
-    apostaInfo.textContent =
-    dinheiro(valorAposta);
-
-
-    fichaBotao.innerText =
-    valorAposta
-    .toFixed(2)
-    .replace(".",",");
-
-
-    ficha.innerText =
-    valorAposta
-    .toFixed(2)
-    .replace(".",",");
-
-
-    atualizarSaldo();
-
-};
-
-
-/*
-========================================================
-SELECIONAR FICHA
-========================================================
-*/
-
-window.selecionarFicha =
-function(){
-
-    if(jogando)
-        return;
-
-
-    if(!usuarioAtual){
-
-        instrucoes.innerText =
-        "❌ Conta ainda não carregada.";
-
-        return;
-
-    }
-
-
-    if(saldoReal < valorAposta){
-
-        instrucoes.innerText =
-        "⚠️ Saldo insuficiente.";
-
-        return;
-
-    }
-
-
-    fichaSelecionada = true;
-
-    numeroEscolhido = null;
-
-
-    document
-    .querySelectorAll(".casa")
-    .forEach(
-        function(c){
-
-            c.classList.remove(
-                "escolhida"
-            );
-
-        }
-    );
-
-
-    fichaBotao.classList.add(
-        "selecionada"
-    );
-
-
-    ficha.classList.remove(
-        "visivel"
-    );
-
-
-    instrucoes.innerText =
-    "🎯 Agora toque no número que você quer escolher.";
-
-    premio.innerText =
-    "Escolha uma casa";
-
-
-    atualizarBotao();
-
-};
-
-
-/*
-========================================================
-COLOCAR FICHA NO NÚMERO
-========================================================
-*/
-
-function escolherNumero(indice){
-
-    if(jogando)
-        return;
-
-
-    if(!fichaSelecionada){
-
-        instrucoes.innerText =
-        "🎯 Primeiro toque na ficha.";
-
-        return;
-
-    }
-
-
-    numeroEscolhido =
-    indice;
-
-
-    fichaSelecionada =
-    false;
-
-
-    fichaBotao.classList.remove(
-        "selecionada"
-    );
-
-
-    document
-    .querySelectorAll(".casa")
-    .forEach(
-        function(c){
-
-            c.classList.remove(
-                "escolhida"
-            );
-
-        }
-    );
-
-
-    const casa =
-    document.querySelector(
-        `.casa[data-index="${indice}"]`
-    );
-
-
-    if(casa){
-
-        casa.classList.add(
-            "escolhida"
-        );
-
-    }
-
-
-    /*
-    Posiciona a ficha sobre a casa.
-    */
-
-    const largura =
-    jogo.clientWidth /
-    9;
-
-
-    const x =
-    (indice + .5) *
-    largura;
-
-
-    const y =
-    jogo.clientHeight - 82;
-
-
-    ficha.style.left =
-    (x - 21) + "px";
-
-
-    ficha.style.top =
+    ponto.style.top =
     y + "px";
 
-
-    ficha.innerText =
-    valorAposta
-    .toFixed(2)
-    .replace(".",",");
-
-
-    ficha.classList.add(
-        "visivel"
+    jogo.appendChild(
+        ponto
     );
 
-
-    if(indice === SUPER_BONUS_INDEX){
-
-        instrucoes.innerText =
-        "⚡ Você escolheu o SUPER BÔNUS de R$ 10,00!";
-
-        premio.innerText =
-        "⚡ SUPER BÔNUS — R$ 10,00";
-
-    }else{
-
-        instrucoes.innerText =
-        "✅ Número escolhido: " +
-        (indice + 1);
-
-        premio.innerText =
-        "🎯 Agora toque em SOLTAR BOLA";
-
-    }
-
-
-    atualizarBotao();
-
+    setTimeout(
+        ()=>{
+            ponto.remove();
+        },
+        350
+    );
 }
 
-
 /*
-========================================================
-CRIAR PINOS
-========================================================
-*/
-
-function criarPinos(){
-
-    for(
-        let linha=0;
-        linha<7;
-        linha++
-    ){
-
-        for(
-            let coluna=0;
-            coluna<linha+3;
-            coluna++
-        ){
-
-            const p =
-            document.createElement("div");
-
-
-            p.className =
-            "pino";
-
-
-            p.style.top =
-            (35 + linha * 35) +
-            "px";
-
-
-            p.style.left =
-            (
-                90 +
-                coluna * 35 -
-                linha * 17
-            ) +
-            "px";
-
-
-            jogo.appendChild(p);
-
-        }
-
-    }
-
-}
-
-
-/*
-========================================================
-CRIAR CASAS
-========================================================
-*/
-
-function criarCasas(){
-
-    const nomes = [
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9"
-    ];
-
-
-    nomes.forEach(
-    function(nome,index){
-
-        const casa =
-        document.createElement("div");
-
-
-        casa.className =
-        "casa";
-
-
-        if(index === SUPER_BONUS_INDEX){
-
-            casa.classList.add(
-                "superbonus"
-            );
-
-        }
-
-
-        casa.dataset.index =
-        index;
-
-
-        casa.innerHTML =
-
-        "<div class='casaNumero'>" +
-        nome +
-        "</div>" +
-
-        "<div class='casaTipo'>" +
-        (
-            index === SUPER_BONUS_INDEX
-            ? "⚡ R$ 10"
-            : "NÚMERO"
-        ) +
-        "</div>";
-
-
-        casa.addEventListener(
-            "click",
-            function(){
-
-                escolherNumero(index);
-
-            }
-        );
-
-
-        casas.appendChild(casa);
-
-    });
-
-}
-
-
-/*
-========================================================
+====================================================
 SOLTAR BOLA
-========================================================
+====================================================
 */
 
-window.soltar =
-async function(){
+function soltar(){
 
-    somClique();
-
-
-    if(jogando)
-        return;
-
-
-    if(!usuarioAtual){
-
-        instrucoes.innerText =
-        "❌ Conta não carregada.";
-
-        return;
-
-    }
-
+    if(jogando)return;
 
     if(numeroEscolhido === null){
 
-        instrucoes.innerText =
-        "🎯 Escolha primeiro o número.";
+        mensagem.innerText =
+        "🎯 Escolha primeiro um número";
 
         return;
-
     }
-
-
-    if(saldoReal < valorAposta){
-
-        instrucoes.innerText =
-        "⚠️ Saldo insuficiente.";
-
-        atualizarBotao();
-
-        return;
-
-    }
-
 
     /*
-    Desconta a aposta ANTES da bola cair.
+    Nesta versão o saldo real é apenas
+    consultado/exibido. Nenhum valor é
+    debitado ou creditado.
     */
 
-    const debitado =
-    await debitarAposta();
+    iniciarAudio();
 
-
-    if(!debitado){
-
-        instrucoes.innerText =
-        "❌ Não foi possível descontar a aposta.";
-
-        return;
-
-    }
-
+    tocarSom(520);
 
     jogando = true;
 
-    atualizarBotao();
-
-
-    const escolhaJogador =
-    numeroEscolhido;
-
-
-    /*
-    Sorteia onde a bola vai cair.
-    */
-
-    const indiceResultado =
-    Math.floor(
-        Math.random() * 9
-    );
-
-
-    /*
-    Limpa visual.
-    */
+    botao.disabled = true;
 
     document
     .querySelectorAll(".casa")
     .forEach(
-        function(c){
-
-            c.classList.remove(
-                "vencedora"
-            );
-
-        }
+        c => c.classList.remove(
+            "vencedora"
+        )
     );
-
 
     resultadoTela.classList.remove(
         "mostrar"
     );
 
-
     premio.innerText =
     "🎯 A bolinha está descendo...";
 
+    mensagem.innerText =
+    "⚡ PLINKO EM ANDAMENTO...";
 
-    instrucoes.innerText =
-    "⚡ Não tire os olhos da bolinha!";
-
-
-    /*
-    Som.
-    */
-
-    somQueda();
-
-
-    /*
-    Posição inicial.
-    */
+    bola.classList.add(
+        "caindo"
+    );
 
     let x =
-    jogo.clientWidth / 2 - 12;
+    jogo.clientWidth / 2;
 
-    let y = 10;
-
+    let y = 15;
 
     bola.style.left =
     x + "px";
@@ -2312,55 +1252,37 @@ async function(){
     bola.style.top =
     y + "px";
 
-    bola.classList.add(
-        "caindo"
-    );
-
-
     /*
-    Destino.
+    Resultado visual da bolinha.
     */
 
-    let destinoX =
-    (
-        indiceResultado + .5
-    ) *
-    (
-        jogo.clientWidth / 9
-    ) - 12;
-
-
-    destinoX =
-    Math.max(
-        10,
-        Math.min(
-            destinoX,
-            jogo.clientWidth - 35
-        )
+    const indiceResultado =
+    Math.floor(
+        Math.random() *
+        premios.length
     );
 
+    const larguraCasa =
+    jogo.clientWidth /
+    premios.length;
 
-    const inicioX =
-    x;
+    const destinoX =
+    (indiceResultado + .5) *
+    larguraCasa;
 
-    const inicioY =
-    y;
+    const inicioX = x;
 
+    const inicioY = y;
 
     const fimY =
-    jogo.clientHeight - 75;
+    jogo.clientHeight - 82;
 
-
-    const duracao =
-    2600;
-
+    const duracao = 2600;
 
     const inicio =
     performance.now();
 
-
-    let ultimoTic = 0;
-
+    let ultimoSom = 0;
 
     function animar(agora){
 
@@ -2371,72 +1293,58 @@ async function(){
             1
         );
 
-
         const suave =
         progresso *
         progresso *
         (3 - 2 * progresso);
 
-
         const ondas =
         Math.sin(
-            progresso * Math.PI * 18
+            progresso *
+            Math.PI *
+            15
         ) *
         (1 - progresso) *
-        20;
-
+        22;
 
         x =
         inicioX +
-        (
-            destinoX -
-            inicioX
-        ) *
+        (destinoX - inicioX) *
         suave +
         ondas;
 
-
         y =
         inicioY +
-        (
-            fimY -
-            inicioY
-        ) *
+        (fimY - inicioY) *
         suave;
-
 
         bola.style.left =
         x + "px";
 
-
         bola.style.top =
         y + "px";
 
-
         if(
-            somLiberado &&
-            agora - ultimoTic > 145
+            agora - ultimoSom > 180
         ){
 
-            somPino();
+            tocarSom(
+                700 + Math.random()*250,
+                .05
+            );
 
-            ultimoTic =
-            agora;
-
+            ultimoSom = agora;
         }
-
 
         if(
             Math.random() > .55
         ){
 
             criarTrilha(
-                x + 12,
-                y + 12
+                x,
+                y
             );
-
         }
-
 
         if(progresso < 1){
 
@@ -2447,74 +1355,24 @@ async function(){
         }else{
 
             finalizarBola(
-                indiceResultado,
-                escolhaJogador,
-                valorAposta
+                indiceResultado
             );
-
         }
-
     }
-
 
     requestAnimationFrame(
         animar
     );
-
-};
-
-
-/*
-========================================================
-TRILHA
-========================================================
-*/
-
-function criarTrilha(x,y){
-
-    const ponto =
-    document.createElement("div");
-
-
-    ponto.className =
-    "trilha";
-
-
-    ponto.style.left =
-    x + "px";
-
-
-    ponto.style.top =
-    y + "px";
-
-
-    jogo.appendChild(
-        ponto
-    );
-
-
-    setTimeout(
-        function(){
-
-            ponto.remove();
-
-        },
-        400
-    );
-
 }
 
-
 /*
-========================================================
-FINALIZAR BOLA
-========================================================
+====================================================
+FINALIZAR
+====================================================
 */
 
-async function finalizarBola(
-    indiceResultado,
-    escolhaJogador,
-    aposta
+function finalizarBola(
+    indiceResultado
 ){
 
     const lista =
@@ -2522,501 +1380,221 @@ async function finalizarBola(
         ".casa"
     );
 
+    const casaResultado =
+    lista[indiceResultado];
 
-    if(lista[indiceResultado]){
+    if(casaResultado){
 
-        lista[indiceResultado]
-        .classList.add(
+        casaResultado.classList.add(
             "vencedora"
         );
-
     }
 
-
-    /*
-    O jogador só ganha se a bola
-    cair exatamente no número escolhido.
-    */
+    const valor =
+    premios[indiceResultado];
 
     const acertou =
     indiceResultado ===
-    escolhaJogador;
+    numeroEscolhido;
 
+    if(valor === 10){
 
-    /*
-    ================================================
-    PERDEU
-    ================================================
-    */
+        somSuperBonus();
 
-    if(!acertou){
-
-        resultadoTitulo.innerText =
-        "💥 VOCÊ PERDEU";
-
-
-        resultadoTitulo.style.color =
-        "#ff4141";
-
-
-        resultadoNumero.innerText =
-        indiceResultado + 1;
-
-
-        resultadoPremio.innerText =
-        "Aposta perdida: " +
-        dinheiro(aposta);
-
-
-        premio.innerText =
-        "💥 A bola caiu no nº " +
-        (indiceResultado + 1);
-
-
-        instrucoes.innerText =
-        "Você escolheu o nº " +
-        (escolhaJogador + 1) +
-        ".";
-
-
-        jogando = false;
-
-
-        bola.classList.remove(
-            "caindo"
-        );
-
-
-        atualizarBotao();
-
-
-        setTimeout(
-            function(){
-
-                resultadoTela.classList.add(
-                    "mostrar"
-                );
-
-            },
-            350
-        );
-
-
-        return;
-
-    }
-
-
-    /*
-    ================================================
-    ACERTOU
-    ================================================
-    */
-
-
-    let valorPremio = 0;
-
-
-    /*
-    Se acertar o número 5:
-    SUPER BÔNUS R$ 10.
-    */
-
-    if(indiceResultado === SUPER_BONUS_INDEX){
-
-        valorPremio =
-        SUPER_BONUS_VALOR;
+        premio.innerHTML =
+        "⚡ SUPER BÔNUS — R$ 10,00";
 
     }else{
-
-        /*
-        Acertou número normal:
-        paga 2x a aposta.
-        */
-
-        valorPremio =
-        Number(
-            (aposta * 2)
-            .toFixed(2)
-        );
-
-    }
-
-
-    /*
-    Credita o prêmio no saldo real.
-    */
-
-    const saldoAntes =
-    Number(saldoReal);
-
-
-    const saldoDepois =
-    Number(
-        (
-            saldoAntes +
-            valorPremio
-        ).toFixed(2)
-    );
-
-
-    const creditado =
-    await salvarSaldo(
-        saldoDepois
-    );
-
-
-    if(!creditado){
-
-        /*
-        A aposta já foi debitada.
-        Não inventamos crédito local.
-        */
-
-        resultadoTitulo.innerText =
-        "❌ ERRO AO CREDITAR";
-
-
-        resultadoTitulo.style.color =
-        "#ff4141";
-
-
-        resultadoNumero.innerText =
-        indiceResultado + 1;
-
-
-        resultadoPremio.innerText =
-        "Prêmio pendente de processamento";
-
-
-        premio.innerText =
-        "❌ Não foi possível atualizar o saldo.";
-
-
-        jogando = false;
-
-
-        bola.classList.remove(
-            "caindo"
-        );
-
-
-        atualizarBotao();
-
-
-        resultadoTela.classList.add(
-            "mostrar"
-        );
-
-
-        return;
-
-    }
-
-
-    /*
-    ================================================
-    SUPER BÔNUS
-    ================================================
-    */
-
-    if(indiceResultado === SUPER_BONUS_INDEX){
-
-        resultadoTitulo.innerText =
-        "⚡ SUPER BÔNUS!";
-
-
-        resultadoTitulo.style.color =
-        "#ff66ff";
-
-
-        resultadoNumero.innerText =
-        indiceResultado + 1;
-
-
-        resultadoPremio.innerText =
-        "⚡ R$ 10,00";
-
-
-        premio.innerText =
-        "⚡ SUPER BÔNUS DE R$ 10,00!";
-
-
-        instrucoes.innerText =
-        "🎉 Você acertou o SUPER BÔNUS!";
-
-
-        somGrandePremio();
-
-
-        mostrarSuperBonus();
-
-    }else{
-
-        resultadoTitulo.innerText =
-        "🎉 VOCÊ GANHOU!";
-
-
-        resultadoTitulo.style.color =
-        "#00ff88";
-
-
-        resultadoNumero.innerText =
-        indiceResultado + 1;
-
-
-        resultadoPremio.innerText =
-        "Prêmio: " +
-        dinheiro(valorPremio);
-
-
-        premio.innerText =
-        "🎉 ACERTOU! +" +
-        dinheiro(valorPremio);
-
-
-        instrucoes.innerText =
-        "⚡ A bola caiu exatamente no seu número!";
-
 
         somPremio();
 
+        premio.innerHTML =
+        "🎯 CASA " +
+        (indiceResultado + 1) +
+        " — " +
+        valor +
+        "x";
+
     }
 
+    if(acertou){
 
-    jogando = false;
+        mensagem.innerHTML =
+        "🎉 VOCÊ ACERTOU O NÚMERO!";
 
+        mensagem.style.color =
+        "#00ff88";
 
-    bola.classList.remove(
-        "caindo"
-    );
+    }else{
 
+        mensagem.innerHTML =
+        "💥 A BOLINHA CAIU EM OUTRO NÚMERO";
 
-    atualizarBotao();
-
+        mensagem.style.color =
+        "#ff7777";
+    }
 
     setTimeout(
         function(){
+
+            resultadoNumero.innerText =
+            indiceResultado + 1;
+
+            if(valor === 10){
+
+                resultadoPremio.innerText =
+                "⚡ SUPER BÔNUS — R$ 10,00";
+
+            }else{
+
+                resultadoPremio.innerText =
+                valor + "x";
+
+            }
 
             resultadoTela.classList.add(
                 "mostrar"
             );
 
         },
-        450
+        350
     );
 
-}
+    jogando = false;
 
+    botao.disabled = false;
 
-/*
-========================================================
-SUPER BÔNUS
-========================================================
-*/
-
-function mostrarSuperBonus(){
-
-    superbonusValor.innerText =
-    "R$ 10,00";
-
-
-    superbonusOverlay.classList.add(
-        "mostrar"
-    );
-
+    botao.innerText =
+    "🎯 JOGAR NOVAMENTE";
 
     setTimeout(
         function(){
 
-            superbonusOverlay.classList.remove(
-                "mostrar"
+            bola.classList.remove(
+                "caindo"
             );
 
         },
-        4000
+        400
     );
-
 }
 
-
 /*
-========================================================
+====================================================
 FECHAR RESULTADO
-========================================================
+====================================================
 */
 
-window.fecharResultado =
-function(){
+fecharResultado.addEventListener(
+    "click",
+    function(){
 
-    somClique();
+        tocarSom(520);
 
+        resultadoTela.classList.remove(
+            "mostrar"
+        );
 
-    resultadoTela.classList.remove(
-        "mostrar"
-    );
+        numeroEscolhido = null;
 
-};
+        document
+        .querySelectorAll(".casa")
+        .forEach(
+            c => c.classList.remove(
+                "escolhida",
+                "vencedora"
+            )
+        );
 
+        mensagem.innerHTML =
+        "🎯 Toque na ficha e escolha uma casa";
 
-/*
-========================================================
-AUTENTICAÇÃO
-========================================================
-*/
+        mensagem.style.color =
+        "#ffe36a";
 
-supabase.auth.onAuthStateChange(
-function(event,session){
+        premio.innerText =
+        "Prêmio: R$ 0,00";
 
-    console.log(
-        "Auth:",
-        event
-    );
+        botao.disabled = true;
 
-
-    if(session){
-
-        usuarioAtual =
-        session.user;
-
-        /*
-        Não fazemos redirect aqui.
-        Isso evita travamento no carregamento.
-        */
-
+        botao.innerText =
+        "🎯 ESCOLHA UMA CASA";
     }
-
-});
-
+);
 
 /*
-========================================================
-INICIALIZAÇÃO COM TIMEOUT
-========================================================
+====================================================
+AUTENTICAÇÃO
+====================================================
+*/
+
+supabaseClient.auth.onAuthStateChange(
+    function(event,session){
+
+        if(
+            !session &&
+            event !== "INITIAL_SESSION"
+        ){
+
+            window.location.href =
+            "../index.html";
+        }
+    }
+);
+
+/*
+====================================================
+INICIAR JOGO
+====================================================
 */
 
 async function iniciar(){
 
+    textoCarregando.innerText =
+    "🔐 VERIFICANDO CONTA...";
+
     try{
 
-        textoCarregando.innerText =
-        "Verificando sessão...";
-
-
-        /*
-        Se o Supabase não responder,
-        não fica preso infinitamente.
-        */
-
-        const resultado =
-        await Promise.race([
-
-            obterUsuario(),
-
-            new Promise(
-            function(_,reject){
-
-                setTimeout(
-                    function(){
-
-                        reject(
-                            new Error(
-                                "Tempo limite ao conectar ao Supabase."
-                            )
-                        );
-
-                    },
-                    10000
-                );
-
-            })
-
-        ]);
-
-
         usuarioAtual =
-        resultado;
-
+        await obterUsuario();
 
         if(!usuarioAtual){
 
             textoCarregando.innerText =
-            "Nenhuma conta conectada.";
+            "⚠️ REDIRECIONANDO PARA LOGIN...";
 
-
-            carregando.innerHTML =
-            `
-            <div style="text-align:center;padding:25px">
-                🔐 <strong>CONTA NÃO ENCONTRADA</strong>
-                <br><br>
-                <small style="color:#aaa">
-                Entre na sua conta no ApostaXBet
-                para jogar.
-                </small>
-                <br><br>
-                <button
-                onclick="window.location.href='../index.html'"
-                style="
-                padding:12px 20px;
-                border:0;
-                border-radius:10px;
-                background:#ffd700;
-                font-weight:bold;
-                "
-                >
-                VOLTAR AO LOBBY
-                </button>
-            </div>
-            `;
+            setTimeout(
+                ()=>{
+                    window.location.href =
+                    "../index.html";
+                },
+                800
+            );
 
             return;
-
         }
-
 
         textoCarregando.innerText =
-        "Carregando saldo real...";
+        "💰 CARREGANDO SALDO...";
 
-
-        const carregou =
+        const saldoCarregado =
         await carregarSaldo();
 
+        if(!saldoCarregado){
 
-        if(!carregou){
+            textoCarregando.innerText =
+            "❌ NÃO FOI POSSÍVEL CARREGAR O SALDO";
 
-            carregando.innerHTML =
-            `
-            <div style="text-align:center;padding:25px">
-                ❌ <strong>ERRO AO CARREGAR SALDO</strong>
-                <br><br>
-                <small style="color:#aaa">
-                Verifique a conexão com o Supabase
-                e tente novamente.
-                </small>
-                <br><br>
-                <button
-                onclick="location.reload()"
-                style="
-                padding:12px 20px;
-                border:0;
-                border-radius:10px;
-                background:#ffd700;
-                font-weight:bold;
-                "
-                >
-                RECARREGAR
-                </button>
-            </div>
-            `;
+            setTimeout(
+                ()=>{
+                    carregando.style.display =
+                    "none";
+                },
+                1200
+            );
 
             return;
-
         }
-
-
-        /*
-        Tudo carregado.
-        */
 
         criarPinos();
 
@@ -3024,90 +1602,54 @@ async function iniciar(){
 
         atualizarSaldo();
 
-
         carregando.style.display =
         "none";
-
-
-        instrucoes.innerText =
-        "🎯 Toque na ficha e depois escolha um número.";
-
 
     }catch(error){
 
         console.error(
-            "Erro ao iniciar Plinko:",
+            "Erro inicial:",
             error
         );
 
+        textoCarregando.innerText =
+        "❌ ERRO AO INICIAR PLINKO";
 
-        statusConta.innerText =
-        "❌ " + error.message;
+        setTimeout(
+            ()=>{
+                carregando.style.display =
+                "none";
 
+                mensagem.innerText =
+                "❌ Erro ao iniciar o jogo";
 
-        statusConta.classList.add(
-            "erroConta"
+                mensagem.classList.add(
+                    "erro"
+                );
+            },
+            1200
         );
-
-
-        carregando.innerHTML =
-        `
-        <div style="text-align:center;padding:25px">
-
-            ❌ <strong>ERRO AO CARREGAR CONTA</strong>
-
-            <br><br>
-
-            <small style="color:#aaa">
-            ${String(error.message)
-                .replace(/</g,"&lt;")
-                .replace(/>/g,"&gt;")}
-            </small>
-
-            <br><br>
-
-            <button
-            onclick="location.reload()"
-            style="
-            padding:12px 20px;
-            border:0;
-            border-radius:10px;
-            background:#ffd700;
-            font-weight:bold;
-            "
-            >
-            TENTAR NOVAMENTE
-            </button>
-
-            <br><br>
-
-            <button
-            onclick="window.location.href='../index.html'"
-            style="
-            padding:10px 18px;
-            border:1px solid #555;
-            border-radius:10px;
-            background:#111;
-            color:white;
-            font-weight:bold;
-            "
-            >
-            VOLTAR
-            </button>
-
-        </div>
-        `;
-
     }
-
 }
 
-
 /*
-========================================================
-INICIAR
-========================================================
+Recria os pinos se a tela mudar
+de tamanho.
 */
+
+window.addEventListener(
+    "resize",
+    function(){
+
+        if(
+            usuarioAtual &&
+            !jogando
+        ){
+
+            criarPinos();
+        }
+    }
+);
 
 iniciar();
 
