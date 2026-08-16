@@ -7,7 +7,6 @@
 <title>Roleta de Relâmpagos - ApostaXBet</title>
 
 <style>
-
 *{
 box-sizing:border-box;
 margin:0;
@@ -460,6 +459,7 @@ box-shadow:
 0 2px 4px #000;
 
 cursor:pointer;
+
 user-select:none;
 touch-action:manipulation;
 
@@ -587,8 +587,6 @@ border-radius:4px;
 box-shadow:
 0 0 12px rgba(255,215,60,.18),
 inset 0 0 10px #000;
-
-cursor:pointer;
 }
 
 .btn-apostar:disabled{
@@ -806,7 +804,6 @@ line-height:9px;
 }
 
 }
-
 </style>
 </head>
 
@@ -823,9 +820,7 @@ preload="auto">
 🔐 VERIFICANDO CONTA...
 </div>
 
-<div
-class="superbonus-overlay"
-id="superBonusOverlay">
+<div class="superbonus-overlay" id="superBonusOverlay">
 
 <div class="superbonus-raio"></div>
 
@@ -833,9 +828,7 @@ id="superBonusOverlay">
 ⚡ SUPER BÔNUS ⚡
 </div>
 
-<div
-class="superbonus-valor"
-id="superBonusValor">
+<div class="superbonus-valor" id="superBonusValor">
 R$ 5,00
 </div>
 
@@ -861,9 +854,7 @@ R$ 0,00
 
 </div>
 
-<a
-href="../index.html"
-class="lobby">
+<a href="../index.html" class="lobby">
 
 <div class="lobby-icon">
 ⌂
@@ -891,20 +882,13 @@ ESCOLHA O VALOR DA APOSTA
 <div class="raio raio2"></div>
 <div class="raio raio3"></div>
 
-<div
-class="roleta"
-id="roleta">
+<div class="roleta" id="roleta">
 
 <div class="roleta-inner"></div>
 
-<div
-class="numeros"
-id="numeros">
-</div>
+<div class="numeros" id="numeros"></div>
 
-<div
-class="ficha-roleta"
-id="fichaRoleta">
+<div class="ficha-roleta" id="fichaRoleta">
 1,00
 </div>
 
@@ -924,21 +908,15 @@ PRÊMIO
 
 </div>
 
-<div
-class="resultado"
-id="resultado">
-
+<div class="resultado" id="resultado">
 ESCOLHA O VALOR DA APOSTA
-
 </div>
 
 <div class="painel">
 
 <div class="ficha-area">
 
-<div
-class="ficha"
-id="fichaDisplay">
+<div class="ficha" id="fichaDisplay">
 1,00
 </div>
 
@@ -968,24 +946,22 @@ R$ 5
 
 <button
 id="btnApostar"
-class="btn-apostar">
-GIRAR ROLETA
+class="btn-apostar"
+onclick="girarRoleta"
+disabled>
+CARREGANDO...
 </button>
 
 <div class="info">
 
 <span>
 Aposta:
-<strong id="apostaInfo">
-R$ 1,00
-</strong>
+<strong id="apostaInfo">R$ 1,00</strong>
 </span>
 
 <span>
 Saldo:
-<strong id="saldoPainel">
-R$ 0,00
-</strong>
+<strong id="saldoPainel">R$ 0,00</strong>
 </span>
 
 </div>
@@ -1041,11 +1017,17 @@ VARIÁVEIS
 ===================================================== */
 
 let usuarioAtual = null;
+
 let saldoReal = 0;
+
 let valorAposta = 1;
+
 let rotacaoAtual = 0;
+
 let girando = false;
+
 let numeroEscolhido = null;
+
 let fichaSelecionada = false;
 
 
@@ -1135,7 +1117,7 @@ Number(valor || 0)
 
 
 /* =====================================================
-SALDO NA TELA
+ATUALIZAR SALDO NA TELA
 ===================================================== */
 
 function atualizarSaldo(){
@@ -1184,15 +1166,16 @@ return;
 
 }
 
-/*
-IMPORTANTE:
-O botão NÃO fica desabilitado
-quando o saldo está zerado.
+if(saldoReal < valorAposta){
 
-Assim os números continuam aparecendo
-e o jogador recebe a mensagem correta
-ao tentar apostar sem saldo.
-*/
+btnApostar.disabled = true;
+
+btnApostar.innerText =
+"SALDO INSUFICIENTE";
+
+return;
+
+}
 
 btnApostar.disabled = false;
 
@@ -1219,7 +1202,7 @@ await supabase.auth.getSession();
 if(error){
 
 console.error(
-"Erro ao verificar sessão:",
+"Erro ao obter sessão:",
 error
 );
 
@@ -1231,7 +1214,10 @@ return data?.session?.user || null;
 
 }catch(error){
 
-console.error(error);
+console.error(
+"Erro de autenticação:",
+error
+);
 
 return null;
 
@@ -1268,25 +1254,22 @@ console.error(
 error
 );
 
-saldoReal = 0;
+resultado.innerText =
+"❌ ERRO AO CARREGAR SALDO";
 
-atualizarSaldo();
+resultado.style.color =
+"#ff4141";
 
 return false;
 
 }
 
-/*
-Se ainda não existir uma linha de saldo,
-o jogo continua funcionando visualmente
-com saldo R$ 0,00.
-*/
-
 saldoReal =
 Number(data?.valor || 0);
 
-if(!Number.isFinite(saldoReal))
+if(!Number.isFinite(saldoReal)){
 saldoReal = 0;
+}
 
 atualizarSaldo();
 
@@ -1295,10 +1278,6 @@ return true;
 }catch(error){
 
 console.error(error);
-
-saldoReal = 0;
-
-atualizarSaldo();
 
 return false;
 
@@ -1322,12 +1301,35 @@ Number(novoSaldo)
 .toFixed(2)
 );
 
-if(!Number.isFinite(valorFinal))
+if(
+!Number.isFinite(valorFinal) ||
+valorFinal < 0
+){
+
+console.error(
+"Saldo inválido:",
+novoSaldo
+);
+
 return false;
+
+}
 
 try{
 
+/*
+IMPORTANTE:
+
+Usamos UPSERT para garantir que o saldo
+seja gravado imediatamente no registro
+do usuário.
+
+Depois do banco confirmar, atualizamos
+saldoReal e a tela.
+*/
+
 const {
+data,
 error
 } =
 await supabase
@@ -1340,17 +1342,19 @@ valor:valorFinal
 {
 onConflict:"user_id"
 }
-);
+)
+.select("valor")
+.single();
 
 if(error){
 
 console.error(
-"Erro ao atualizar saldo:",
+"ERRO AO SALVAR SALDO:",
 error
 );
 
 resultado.innerText =
-"❌ ERRO AO ATUALIZAR SALDO";
+"❌ ERRO AO SALVAR SALDO";
 
 resultado.style.color =
 "#ff4141";
@@ -1359,8 +1363,16 @@ return false;
 
 }
 
+
+/*
+Só atualiza o saldo local DEPOIS que
+o Supabase confirmou a gravação.
+*/
+
 saldoReal =
-valorFinal;
+Number(
+data?.valor ?? valorFinal
+);
 
 atualizarSaldo();
 
@@ -1368,7 +1380,16 @@ return true;
 
 }catch(error){
 
-console.error(error);
+console.error(
+"Erro ao salvar saldo:",
+error
+);
+
+resultado.innerText =
+"❌ ERRO AO SALVAR SALDO";
+
+resultado.style.color =
+"#ff4141";
 
 return false;
 
@@ -1378,7 +1399,7 @@ return false;
 
 
 /* =====================================================
-LÓGICA DO PRÊMIO
+CALCULAR PRÊMIO
 ===================================================== */
 
 function calcularPremio(valorRoleta){
@@ -1412,9 +1433,6 @@ function criarNumeros(){
 const area =
 document.getElementById("numeros");
 
-if(!area)
-return;
-
 area.innerHTML = "";
 
 premios.forEach(
@@ -1431,7 +1449,6 @@ numero.className =
 
 conteudo.className =
 "numero-conteudo";
-
 
 if(premio === 0){
 
@@ -1470,7 +1487,6 @@ index;
 numero.style.transform =
 `rotate(${index * (360 / premios.length)}deg)`;
 
-
 numero.addEventListener(
 "click",
 function(e){
@@ -1504,17 +1520,8 @@ function colocarFichaNoNumero(index){
 if(girando)
 return;
 
-if(!fichaSelecionada){
-
-resultado.innerHTML =
-"🎯 PRIMEIRO TOQUE NA FICHA";
-
-resultado.style.color =
-"#ffe36a";
-
+if(!fichaSelecionada)
 return;
-
-}
 
 numeroEscolhido =
 index;
@@ -1664,8 +1671,11 @@ passive:false
 ===================================================== */
 
 let audioContext = null;
+
 let timerRoleta = null;
+
 let velocidadeSom = 45;
+
 let musicaIniciada = false;
 
 
@@ -1764,16 +1774,10 @@ agora + .08
 );
 
 o.connect(g);
-
-g.connect(
-audioContext.destination
-);
+g.connect(audioContext.destination);
 
 o.start(agora);
-
-o.stop(
-agora + .08
-);
+o.stop(agora + .08);
 
 }
 
@@ -1829,16 +1833,10 @@ agora + .055
 );
 
 o.connect(g);
-
-g.connect(
-audioContext.destination
-);
+g.connect(audioContext.destination);
 
 o.start(agora);
-
-o.stop(
-agora + .06
-);
+o.stop(agora + .06);
 
 velocidadeSom += 8;
 
@@ -1914,16 +1912,10 @@ inicio + .45
 );
 
 o.connect(g);
-
-g.connect(
-audioContext.destination
-);
+g.connect(audioContext.destination);
 
 o.start(inicio);
-
-o.stop(
-inicio + .45
-);
+o.stop(inicio + .45);
 
 });
 
@@ -1997,15 +1989,15 @@ deslocamento
 GIRAR ROLETA
 ===================================================== */
 
-async function girarRoleta(){
+window.girarRoleta =
+async function(){
 
 if(girando)
 return;
 
 
 /*
-PRIMEIRO:
-precisa escolher um número.
+PRECISA EXISTIR UMA FICHA.
 */
 
 if(numeroEscolhido === null){
@@ -2019,9 +2011,6 @@ resultado.style.color =
 return;
 
 }
-
-iniciarAudio();
-tocarClique();
 
 
 if(!usuarioAtual){
@@ -2038,9 +2027,7 @@ return;
 
 
 /*
-SALDO ZERO:
-a roleta continua aparecendo,
-mas não permite apostar.
+CONFERE O SALDO ATUAL ANTES DA APOSTA.
 */
 
 if(saldoReal < valorAposta){
@@ -2051,9 +2038,16 @@ resultado.innerText =
 resultado.style.color =
 "#ff4141";
 
+atualizarBotao();
+
 return;
 
 }
+
+
+iniciarAudio();
+
+tocarClique();
 
 girando = true;
 
@@ -2061,11 +2055,11 @@ atualizarBotao();
 
 
 /* =================================================
-1. DEBITA A APOSTA
+DEBITAR IMEDIATAMENTE
 ================================================= */
 
 const saldoAntes =
-saldoReal;
+Number(saldoReal);
 
 const saldoDepoisAposta =
 Number(
@@ -2073,27 +2067,58 @@ Number(
 .toFixed(2)
 );
 
+
+/*
+IMPORTANTE:
+
+O banco é atualizado PRIMEIRO.
+
+A roleta NÃO começa a girar enquanto
+o débito não for confirmado.
+*/
+
+resultado.innerText =
+"💳 CONFIRMANDO APOSTA...";
+
+resultado.style.color =
+"#ffe36a";
+
 const debitado =
 await salvarSaldo(
 saldoDepoisAposta
 );
 
+
+/*
+SE O SUPABASE NÃO CONFIRMAR,
+NÃO GIRA A ROLETA.
+*/
+
 if(!debitado){
 
 girando = false;
 
-atualizarBotao();
-
 resultado.innerText =
-"❌ NÃO FOI POSSÍVEL DEBITAR A APOSTA";
+"❌ NÃO FOI POSSÍVEL REGISTRAR A APOSTA";
 
 resultado.style.color =
 "#ff4141";
+
+await carregarSaldo();
+
+atualizarBotao();
 
 return;
 
 }
 
+
+/*
+AQUI O SALDO JÁ FOI GRAVADO NO SUPABASE.
+
+Se o jogador fechar a página agora,
+a aposta já foi descontada.
+*/
 
 resultado.innerText =
 "⚡ GIRANDO...";
@@ -2105,14 +2130,12 @@ document
 .querySelectorAll(".numero")
 .forEach(
 n =>
-n.classList.remove(
-"destaque"
-)
+n.classList.remove("destaque")
 );
 
 
 /* =================================================
-2. SORTEIO REAL
+SORTEIA RESULTADO REAL
 ================================================= */
 
 const indice =
@@ -2126,7 +2149,7 @@ premios[indice];
 
 
 /* =================================================
-3. ROTAÇÃO
+ROTAÇÃO
 ================================================= */
 
 const novaRotacao =
@@ -2136,19 +2159,19 @@ indice
 
 
 /* =================================================
-4. SOM
+SOM
 ================================================= */
 
 iniciarSomRoleta();
 
 
 /* =================================================
-5. GIRAR
+GIRAR
 ================================================= */
 
 /*
-CORREÇÃO IMPORTANTE:
-faltava o ")" no rotate.
+CORRIGIDO:
+rotate(${novaRotacao}deg)
 */
 
 roleta.style.transform =
@@ -2159,7 +2182,7 @@ novaRotacao;
 
 
 /* =================================================
-6. FINALIZAR
+FINALIZAR
 ================================================= */
 
 setTimeout(
@@ -2174,23 +2197,7 @@ premio
 7600
 );
 
-}
-
-
-/* =====================================================
-LIGAR BOTÃO
-===================================================== */
-
-btnApostar.addEventListener(
-"click",
-function(e){
-
-e.preventDefault();
-
-girarRoleta();
-
-}
-);
+};
 
 
 /* =====================================================
@@ -2219,13 +2226,9 @@ numero.classList.add(
 }
 
 
-/*
-IMPORTANTE:
-
-SÓ PAGA SE O RESULTADO
-FOR EXATAMENTE O NÚMERO
-ONDE A FICHA FOI COLOCADA.
-*/
+/* =================================================
+CONFERE SE A FICHA ACERTOU
+================================================= */
 
 if(
 numeroEscolhido !== indice
@@ -2249,6 +2252,14 @@ resultado.innerHTML =
 resultado.style.color =
 "#ff4141";
 
+
+/*
+A aposta já foi descontada
+ANTES da roleta girar.
+
+Não faz nenhum novo desconto aqui.
+*/
+
 girando = false;
 
 numeroEscolhido = null;
@@ -2256,6 +2267,8 @@ numeroEscolhido = null;
 fichaRoleta.classList.remove(
 "visivel"
 );
+
+await carregarSaldo();
 
 atualizarBotao();
 
@@ -2265,7 +2278,7 @@ return;
 
 
 /* =================================================
-ACERTOU
+ACERTOU O NÚMERO
 ================================================= */
 
 if(valorRoleta === 0){
@@ -2283,6 +2296,12 @@ resultado.innerHTML =
 resultado.style.color =
 "#ff4141";
 
+
+/*
+O saldo já está descontado.
+Não devolve a aposta.
+*/
+
 girando = false;
 
 numeroEscolhido = null;
@@ -2290,6 +2309,8 @@ numeroEscolhido = null;
 fichaRoleta.classList.remove(
 "visivel"
 );
+
+await carregarSaldo();
 
 atualizarBotao();
 
@@ -2312,8 +2333,16 @@ valorRoleta
 CREDITA PRÊMIO
 ================================================= */
 
+/*
+saldoReal já contém o saldo
+DEPOIS da aposta.
+
+Portanto acrescentamos somente
+o prêmio.
+*/
+
 const saldoAtual =
-saldoReal;
+Number(saldoReal);
 
 const saldoFinal =
 Number(
@@ -2321,14 +2350,24 @@ Number(
 .toFixed(2)
 );
 
+
 const creditado =
 await salvarSaldo(
 saldoFinal
 );
 
+
 if(!creditado){
 
 girando = false;
+
+resultado.innerHTML =
+"⚠️ PRÊMIO PENDENTE";
+
+resultado.style.color =
+"#ff4141";
+
+await carregarSaldo();
 
 atualizarBotao();
 
@@ -2386,7 +2425,7 @@ resultado.style.color =
 
 
 /* =================================================
-LIBERA NOVA RODADA
+LIBERA
 ================================================= */
 
 setTimeout(
@@ -2495,50 +2534,47 @@ async function iniciar(){
 
 try{
 
-/*
-CRIAMOS OS NÚMEROS PRIMEIRO.
-
-Assim a roleta aparece mesmo que
-o saldo seja R$ 0,00.
-*/
-
-criarNumeros();
-
-atualizarSaldo();
-
-
 usuarioAtual =
 await obterUsuario();
 
-
 if(!usuarioAtual){
 
-carregando.style.display =
-"none";
+alert(
+"Você precisa estar logado para jogar."
+);
 
-atualizarBotao();
+window.location.href =
+"../index.html";
 
 return;
 
 }
 
-
+const carregou =
 await carregarSaldo();
+
+if(!carregou){
+
+carregando.style.display =
+"none";
+
+return;
+
+}
+
+criarNumeros();
 
 atualizarSaldo();
 
 carregando.style.display =
 "none";
 
-
 }catch(error){
 
 console.error(
-"Erro ao iniciar roleta:",
+"Erro ao iniciar:",
 error
 );
-
-criarNumeros();
 
 carregando.style.display =
 "none";
@@ -2552,11 +2588,6 @@ resultado.style.color =
 }
 
 }
-
-
-/* =====================================================
-INICIAR SISTEMA
-===================================================== */
 
 iniciar();
 
