@@ -6,168 +6,414 @@
 <title>Roleta de Relâmpagos - ApostaXBet</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+-webkit-tap-highlight-color:transparent
+}
 
 body{
 background:radial-gradient(circle at 50% 30%,#18231f,#070a0a 45%,#020303 85%);
-color:white;font-family:Arial,sans-serif;min-height:100vh;
-overflow-x:hidden;padding-bottom:30px
+color:white;
+font-family:Arial,sans-serif;
+min-height:100vh;
+overflow-x:hidden;
+padding-bottom:30px
 }
 
 .topo{
-height:58px;display:flex;align-items:center;justify-content:space-between;
-padding:0 14px;background:#050708;border-bottom:1px solid #292929
+height:58px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 14px;
+background:#050708;
+border-bottom:1px solid #292929
 }
 
-.logo{color:#f5d76e;font-weight:900;letter-spacing:1px}
+.logo{
+color:#f5d76e;
+font-weight:900;
+letter-spacing:1px
+}
 
-.saldo-topo{text-align:right}
-.saldo-label{font-size:9px;color:#777}
+.saldo-topo{
+text-align:right
+}
+
+.saldo-label{
+font-size:9px;
+color:#777
+}
 
 #displaySaldo{
-color:#ffe34f;font-weight:bold;font-size:16px
+color:#ffe34f;
+font-weight:bold;
+font-size:16px
 }
 
 .container{
-width:100%;max-width:520px;margin:auto;padding:10px 8px 40px
+width:100%;
+max-width:520px;
+margin:auto;
+padding:10px 8px 40px
 }
 
 .lobby{
-position:absolute;top:68px;left:7px;width:60px;height:60px;
-border:1px solid #777;border-radius:10px;background:#090b0c;
-color:white;text-decoration:none;display:flex;flex-direction:column;
-align-items:center;justify-content:center;font-size:10px;z-index:30
+position:absolute;
+top:68px;
+left:7px;
+width:60px;
+height:60px;
+border:1px solid #777;
+border-radius:10px;
+background:#090b0c;
+color:white;
+text-decoration:none;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+font-size:10px;
+z-index:30
 }
 
-.lobby-icon{font-size:27px}
+.lobby-icon{
+font-size:27px
+}
 
 .titulo{
-text-align:center;margin-top:10px;color:#d8c36a;font-size:13px;
-letter-spacing:3px;font-weight:bold
+text-align:center;
+margin-top:10px;
+color:#d8c36a;
+font-size:13px;
+letter-spacing:3px;
+font-weight:bold
 }
 
 .subtitulo{
-text-align:center;color:#555;font-size:9px;letter-spacing:2px;margin:5px 0 10px
+text-align:center;
+color:#555;
+font-size:9px;
+letter-spacing:2px;
+margin:5px 0 10px
 }
 
 /* =====================================================
-   ROLETA
+ROLETA
 ===================================================== */
 
 .roleta-area{
-position:relative;width:100%;display:flex;justify-content:center;
-align-items:center;margin-bottom:10px
+position:relative;
+width:100%;
+display:flex;
+justify-content:center;
+align-items:center;
+margin-bottom:10px
 }
 
 .roleta{
-width:min(92vw,390px);height:min(92vw,390px);
-border-radius:50%;position:relative;border:6px solid #d7ae31;
+width:min(92vw,390px);
+height:min(92vw,390px);
+border-radius:50%;
+position:relative;
+border:6px solid #d7ae31;
 background:radial-gradient(circle,#1b2925 0 15%,#060a09 16% 23%,transparent 24%);
-box-shadow:0 0 8px #ffd84a,0 0 25px rgba(255,205,45,.45),
-0 0 55px rgba(255,190,20,.2),inset 0 0 25px #000;
+box-shadow:
+0 0 8px #ffd84a,
+0 0 25px rgba(255,205,45,.45),
+0 0 55px rgba(255,190,20,.2),
+inset 0 0 25px #000;
 transition:transform 7.5s cubic-bezier(.15,.65,.20,1);
 overflow:hidden
 }
 
 .roleta::before{
-content:"";position:absolute;inset:7px;border-radius:50%;
-border:12px solid #101a21;box-shadow:inset 0 0 8px #000,0 0 4px #000;
+content:"";
+position:absolute;
+inset:7px;
+border-radius:50%;
+border:12px solid #101a21;
+box-shadow:inset 0 0 8px #000,0 0 4px #000;
 z-index:3
 }
 
 .roleta::after{
-content:"";position:absolute;inset:28px;border-radius:50%;
+content:"";
+position:absolute;
+inset:28px;
+border-radius:50%;
 background:repeating-conic-gradient(
-from 0deg,rgba(255,225,100,.7) 0deg 1deg,transparent 1deg 18deg);
+from 0deg,
+rgba(255,225,100,.7) 0deg 1deg,
+transparent 1deg 18deg
+);
 z-index:2
 }
 
 .roleta-inner{
-position:absolute;inset:30px;border-radius:50%;
-background:repeating-conic-gradient(#28645b 0deg 9deg,#668c82 9deg 18deg);
-box-shadow:inset 0 0 35px rgba(0,0,0,.85),inset 0 0 8px #ffe05b;
+position:absolute;
+inset:30px;
+border-radius:50%;
+background:repeating-conic-gradient(
+#28645b 0deg 9deg,
+#668c82 9deg 18deg
+);
+box-shadow:
+inset 0 0 35px rgba(0,0,0,.85),
+inset 0 0 8px #ffe05b;
 z-index:1
 }
 
 /* =====================================================
-   NÚMEROS
+NÚMEROS
 ===================================================== */
 
 .numeros{
-position:absolute;inset:0;z-index:7;pointer-events:none
+position:absolute;
+inset:0;
+z-index:7;
+pointer-events:none
 }
 
 .numero{
-position:absolute;left:50%;top:50%;width:54px;height:160px;
-margin-left:-27px;margin-top:-160px;
-transform-origin:27px 160px;display:flex;justify-content:center;
-align-items:flex-start;color:#fff3a6;font-size:14px;font-weight:900;
-text-align:center;z-index:8
+position:absolute;
+left:50%;
+top:50%;
+width:54px;
+height:160px;
+margin-left:-27px;
+margin-top:-160px;
+transform-origin:27px 160px;
+display:flex;
+justify-content:center;
+align-items:flex-start;
+color:#fff3a6;
+font-size:14px;
+font-weight:900;
+text-align:center;
+z-index:8;
+pointer-events:none
 }
 
 .numero-conteudo{
-position:absolute;top:8px;min-width:48px;display:flex;
-flex-direction:column;align-items:center;justify-content:center;
-color:#fff3a6;line-height:15px;white-space:nowrap;
-text-shadow:0 2px 3px #000,0 0 7px rgba(255,215,70,.9)
+position:absolute;
+top:8px;
+min-width:48px;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+color:#fff3a6;
+line-height:15px;
+white-space:nowrap;
+text-shadow:
+0 2px 3px #000,
+0 0 7px rgba(255,215,70,.9);
+transition:.2s
 }
 
 .numero.perdeu .numero-conteudo{
-color:#ff7777;font-size:11px;
-text-shadow:0 2px 3px #000,0 0 9px rgba(255,40,40,.8)
+color:#ff7777;
+font-size:11px;
+text-shadow:
+0 2px 3px #000,
+0 0 9px rgba(255,40,40,.8)
 }
 
 .numero.super-bonus .numero-conteudo{
-color:#fff;font-size:10px;line-height:12px;
-text-shadow:0 0 5px #fff,0 0 12px #ffe33c,0 0 20px #ff9d00
+color:#fff;
+font-size:10px;
+line-height:12px;
+text-shadow:
+0 0 5px #fff,
+0 0 12px #ffe33c,
+0 0 20px #ff9d00
 }
 
 .numero.destaque .numero-conteudo{
-color:#fff;transform:scale(1.25);
-text-shadow:0 0 5px white,0 0 12px #ffe36a,0 0 25px #ffb300
+color:#fff;
+transform:scale(1.25);
+text-shadow:
+0 0 5px white,
+0 0 12px #ffe36a,
+0 0 25px #ffb300
 }
 
 /* =====================================================
-   CENTRO
+NÚMERO ESCOLHIDO PELA FICHA
+===================================================== */
+
+.numero.selecionado .numero-conteudo{
+color:#fff;
+transform:scale(1.35);
+text-shadow:
+0 0 5px #fff,
+0 0 12px #00ffcc,
+0 0 25px #00ff99,
+0 0 40px #00ff88
+}
+
+.numero.selecionado::after{
+content:"";
+position:absolute;
+left:50%;
+top:8px;
+width:48px;
+height:48px;
+transform:translateX(-50%);
+border:2px solid #00ff99;
+border-radius:50%;
+box-shadow:
+0 0 8px #00ff99,
+0 0 20px rgba(0,255,150,.8);
+pointer-events:none
+}
+
+/* =====================================================
+FICHA SOBRE A ROLETA
+===================================================== */
+
+.ficha-roleta{
+position:absolute;
+width:42px;
+height:42px;
+border-radius:50%;
+z-index:50;
+display:none;
+align-items:center;
+justify-content:center;
+background:
+radial-gradient(
+circle,
+#666 0 40%,
+#f5f5f5 41% 48%,
+#777 49% 66%,
+#fff 67% 72%,
+#333 73%
+);
+border:2px solid #eee;
+color:white;
+font-size:9px;
+font-weight:bold;
+text-shadow:0 1px 2px #000;
+box-shadow:
+0 0 8px rgba(255,255,255,.7),
+0 0 18px rgba(255,220,80,.4),
+0 3px 7px #000;
+transform:translate(-50%,-50%);
+touch-action:none;
+user-select:none;
+cursor:grab
+}
+
+.ficha-roleta.arrastando{
+display:flex;
+cursor:grabbing;
+transform:translate(-50%,-50%) scale(1.15);
+box-shadow:
+0 0 10px #fff,
+0 0 25px #ffe36a,
+0 0 40px rgba(255,220,70,.8);
+}
+
+/* =====================================================
+CENTRO
 ===================================================== */
 
 .centro{
-position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-width:82px;height:82px;border-radius:50%;
-background:radial-gradient(circle,#283d38,#08100e 65%,#020303);
-border:4px solid #d5ad36;z-index:12;display:flex;
-flex-direction:column;align-items:center;justify-content:center;
-box-shadow:0 0 15px rgba(255,211,53,.55),inset 0 0 15px #000
+position:absolute;
+left:50%;
+top:50%;
+transform:translate(-50%,-50%);
+width:82px;
+height:82px;
+border-radius:50%;
+background:radial-gradient(
+circle,
+#283d38,
+#08100e 65%,
+#020303
+);
+border:4px solid #d5ad36;
+z-index:12;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+box-shadow:
+0 0 15px rgba(255,211,53,.55),
+inset 0 0 15px #000
 }
 
-.centro strong{color:#ffe36a;font-size:18px;letter-spacing:2px}
-.centro span{color:#777;font-size:8px;letter-spacing:2px}
+.centro strong{
+color:#ffe36a;
+font-size:18px;
+letter-spacing:2px
+}
+
+.centro span{
+color:#777;
+font-size:8px;
+letter-spacing:2px
+}
 
 /* =====================================================
-   PONTEIRO
+PONTEIRO
 ===================================================== */
 
 .ponteiro{
-position:absolute;z-index:20;top:-3px;left:50%;
-transform:translateX(-50%);width:0;height:0;
-border-left:13px solid transparent;border-right:13px solid transparent;
+position:absolute;
+z-index:20;
+top:-3px;
+left:50%;
+transform:translateX(-50%);
+width:0;
+height:0;
+border-left:13px solid transparent;
+border-right:13px solid transparent;
 border-top:27px solid white;
-filter:drop-shadow(0 0 4px white) drop-shadow(0 0 9px #ffe66b)
+filter:
+drop-shadow(0 0 4px white)
+drop-shadow(0 0 9px #ffe66b)
 }
 
 /* =====================================================
-   RAIOS
+RAIOS
 ===================================================== */
 
 .raio{
-position:absolute;width:100px;height:4px;background:white;
-opacity:.7;z-index:18;box-shadow:0 0 5px white,0 0 15px #dfffca;
+position:absolute;
+width:100px;
+height:4px;
+background:white;
+opacity:.7;
+z-index:18;
+box-shadow:
+0 0 5px white,
+0 0 15px #dfffca;
 animation:piscar .7s infinite alternate
 }
 
-.raio1{left:4px;bottom:50px;transform:rotate(-35deg)}
-.raio2{right:4px;top:65px;transform:rotate(35deg)}
-.raio3{left:45px;top:20px;width:70px;transform:rotate(65deg)}
+.raio1{
+left:4px;
+bottom:50px;
+transform:rotate(-35deg)
+}
+
+.raio2{
+right:4px;
+top:65px;
+transform:rotate(35deg)
+}
+
+.raio3{
+left:45px;
+top:20px;
+width:70px;
+transform:rotate(65deg)
+}
 
 @keyframes piscar{
 from{opacity:.2}
@@ -175,104 +421,211 @@ to{opacity:1}
 }
 
 /* =====================================================
-   RESULTADO
+RESULTADO
 ===================================================== */
 
 .resultado{
-min-height:52px;text-align:center;color:#ddd;font-size:18px;
-font-weight:900;text-shadow:0 0 10px currentColor;line-height:24px
+min-height:52px;
+text-align:center;
+color:#ddd;
+font-size:18px;
+font-weight:900;
+text-shadow:0 0 10px currentColor;
+line-height:24px
 }
 
 /* =====================================================
-   PAINEL
+PAINEL
 ===================================================== */
 
 .painel{
-position:relative;padding:16px 12px 13px;
+position:relative;
+padding:16px 12px 13px;
 background:linear-gradient(145deg,#0d1113,#050708);
 border:1px solid #77642d;
-box-shadow:0 0 15px rgba(0,0,0,.9),inset 0 0 15px rgba(255,200,50,.05)
+box-shadow:
+0 0 15px rgba(0,0,0,.9),
+inset 0 0 15px rgba(255,200,50,.05)
 }
 
 .ficha-area{
-height:38px;display:flex;justify-content:center;
-align-items:center;margin-bottom:5px
+height:52px;
+display:flex;
+justify-content:center;
+align-items:center;
+margin-bottom:5px
 }
 
 .ficha{
-width:40px;height:40px;border-radius:50%;
-background:radial-gradient(circle,#555 0 45%,#eee 46% 54%,#666 55% 70%,#eee 71% 74%,#333 75%);
-border:2px solid #eee;display:flex;align-items:center;justify-content:center;
-color:white;font-size:9px;font-weight:bold;text-shadow:0 1px 2px #000;
-box-shadow:0 0 8px rgba(255,255,255,.3),0 2px 4px #000
+width:40px;
+height:40px;
+border-radius:50%;
+background:
+radial-gradient(
+circle,
+#555 0 45%,
+#eee 46% 54%,
+#666 55% 70%,
+#eee 71% 74%,
+#333 75%
+);
+border:2px solid #eee;
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-size:9px;
+font-weight:bold;
+text-shadow:0 1px 2px #000;
+box-shadow:
+0 0 8px rgba(255,255,255,.3),
+0 2px 4px #000;
+cursor:grab;
+touch-action:none;
+user-select:none
+}
+
+.ficha.arrastando{
+transform:scale(1.15);
+box-shadow:
+0 0 10px white,
+0 0 25px #ffe36a,
+0 0 40px rgba(255,220,70,.8);
+cursor:grabbing
+}
+
+.ficha-instrucao{
+text-align:center;
+font-size:9px;
+color:#777;
+margin-top:2px;
+margin-bottom:5px;
+letter-spacing:.5px
 }
 
 .valores{
-display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:8px
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:5px;
+margin-bottom:8px
 }
 
 .btn-valor{
-height:39px;border:1px solid #5c4d26;background:#090b0c;
-color:#aaa;border-radius:4px;font-size:12px;font-weight:bold
+height:39px;
+border:1px solid #5c4d26;
+background:#090b0c;
+color:#aaa;
+border-radius:4px;
+font-size:12px;
+font-weight:bold
 }
 
 .btn-valor.ativo{
-color:#ffe36a;border-color:#ffe36a;
-box-shadow:0 0 10px rgba(255,215,60,.35),inset 0 0 12px rgba(255,215,60,.1)
+color:#ffe36a;
+border-color:#ffe36a;
+box-shadow:
+0 0 10px rgba(255,215,60,.35),
+inset 0 0 12px rgba(255,215,60,.1)
 }
 
 .btn-apostar{
-width:100%;height:54px;margin-top:9px;
-border:1px solid #d5af3d;background:linear-gradient(180deg,#332b12,#171306);
-color:#f5d76b;font-size:16px;font-weight:900;
-letter-spacing:2px;border-radius:4px;
-box-shadow:0 0 12px rgba(255,215,60,.18),inset 0 0 10px #000
+width:100%;
+height:54px;
+margin-top:9px;
+border:1px solid #d5af3d;
+background:linear-gradient(180deg,#332b12,#171306);
+color:#f5d76b;
+font-size:16px;
+font-weight:900;
+letter-spacing:2px;
+border-radius:4px;
+box-shadow:
+0 0 12px rgba(255,215,60,.18),
+inset 0 0 10px #000
 }
 
 .btn-apostar:disabled{
-opacity:.45;filter:none
+opacity:.45;
+filter:none
 }
 
 .info{
-display:flex;justify-content:space-between;margin-top:9px;
-color:#aaa;font-size:12px
+display:flex;
+justify-content:space-between;
+margin-top:9px;
+color:#aaa;
+font-size:12px
 }
 
-.info strong{color:#ffe04f}
+.info strong{
+color:#ffe04f
+}
 
 .mensagem{
-text-align:center;color:#555;font-size:9px;margin-top:8px
+text-align:center;
+color:#555;
+font-size:9px;
+margin-top:8px
 }
 
-.repeat-btn,.menu-btn{
-position:fixed;bottom:15px;width:52px;height:52px;
-border-radius:50%;border:1px solid #777;background:#090b0c;
-color:#ddd;font-size:23px;z-index:40
+.repeat-btn,
+.menu-btn{
+position:fixed;
+bottom:15px;
+width:52px;
+height:52px;
+border-radius:50%;
+border:1px solid #777;
+background:#090b0c;
+color:#ddd;
+font-size:23px;
+z-index:40
 }
 
-.repeat-btn{left:8px}
-.menu-btn{right:8px}
+.repeat-btn{
+left:8px
+}
+
+.menu-btn{
+right:8px
+}
 
 /* =====================================================
-   CARREGAMENTO
+CARREGAMENTO
 ===================================================== */
 
 #carregando{
-position:fixed;inset:0;background:#020303;display:flex;
-align-items:center;justify-content:center;z-index:999;
-color:#ffe36a;font-size:16px
+position:fixed;
+inset:0;
+background:#020303;
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:999;
+color:#ffe36a;
+font-size:16px
 }
 
 /* =====================================================
-   SUPER BÔNUS
+SUPER BÔNUS
 ===================================================== */
 
 .superbonus-overlay{
-position:fixed;inset:0;display:none;align-items:center;
-justify-content:center;flex-direction:column;
-background:radial-gradient(circle,rgba(255,220,60,.45),
-rgba(255,190,0,.18) 30%,rgba(0,0,0,.96) 75%);
-z-index:1000;pointer-events:none
+position:fixed;
+inset:0;
+display:none;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+background:
+radial-gradient(
+circle,
+rgba(255,220,60,.45),
+rgba(255,190,0,.18) 30%,
+rgba(0,0,0,.96) 75%
+);
+z-index:1000;
+pointer-events:none
 }
 
 .superbonus-overlay.ativo{
@@ -281,21 +634,38 @@ animation:superBonusTela 5s ease forwards
 }
 
 .superbonus-raio{
-position:absolute;width:5px;height:100vh;background:#fff;
-box-shadow:0 0 15px #fff,0 0 35px #ffe33c;
+position:absolute;
+width:5px;
+height:100vh;
+background:#fff;
+box-shadow:
+0 0 15px #fff,
+0 0 35px #ffe33c;
 animation:raioSuper .5s infinite alternate
 }
 
 .superbonus-titulo{
-color:#fff;font-size:34px;font-weight:1000;
-letter-spacing:3px;text-align:center;
-text-shadow:0 0 8px white,0 0 20px #ffe33c,0 0 40px #ff9d00;
+color:#fff;
+font-size:34px;
+font-weight:1000;
+letter-spacing:3px;
+text-align:center;
+text-shadow:
+0 0 8px white,
+0 0 20px #ffe33c,
+0 0 40px #ff9d00;
 animation:superBonusTexto .8s ease-out
 }
 
 .superbonus-valor{
-margin-top:10px;color:#ffe44f;font-size:48px;font-weight:1000;
-text-shadow:0 0 10px #fff,0 0 25px #ffe33c,0 0 50px #ff8c00;
+margin-top:10px;
+color:#ffe44f;
+font-size:48px;
+font-weight:1000;
+text-shadow:
+0 0 10px #fff,
+0 0 25px #ffe33c,
+0 0 50px #ff8c00;
 animation:superBonusValor 1s ease-out
 }
 
@@ -319,8 +689,14 @@ animation:superBonusValor 1s ease-out
 }
 
 @keyframes raioSuper{
-from{opacity:.2;transform:scaleY(.7)}
-to{opacity:1;transform:scaleY(1.1)}
+from{
+opacity:.2;
+transform:scaleY(.7)
+}
+to{
+opacity:1;
+transform:scaleY(1.1)
+}
 }
 
 @media(max-width:360px){
@@ -331,13 +707,17 @@ height:310px
 }
 
 .numero{
-width:44px;height:130px;
-margin-left:-22px;margin-top:-130px;
+width:44px;
+height:130px;
+margin-left:-22px;
+margin-top:-130px;
 transform-origin:22px 130px
 }
 
 .numero-conteudo{
-top:7px;font-size:11px;line-height:12px
+top:7px;
+font-size:11px;
+line-height:12px
 }
 
 .numero.perdeu .numero-conteudo{
@@ -345,7 +725,8 @@ font-size:9px
 }
 
 .numero.super-bonus .numero-conteudo{
-font-size:8px;line-height:9px
+font-size:8px;
+line-height:9px
 }
 
 }
@@ -411,7 +792,7 @@ ROLETA DE RELÂMPAGOS
 </div>
 
 <div class="subtitulo">
-ESCOLHA O VALOR DA APOSTA
+ARRASTE A FICHA PARA O NÚMERO
 </div>
 
 <div class="roleta-area">
@@ -427,6 +808,10 @@ ESCOLHA O VALOR DA APOSTA
 <div class="roleta-inner"></div>
 
 <div class="numeros" id="numeros"></div>
+
+<div class="ficha-roleta" id="fichaRoleta">
+1,00
+</div>
 
 <div class="centro">
 
@@ -446,7 +831,7 @@ PRÊMIO
 
 <div class="resultado" id="resultado">
 
-ESCOLHA O VALOR DA APOSTA
+ARRASTE A FICHA PARA UM NÚMERO
 
 </div>
 
@@ -458,6 +843,10 @@ ESCOLHA O VALOR DA APOSTA
 1,00
 </div>
 
+</div>
+
+<div class="ficha-instrucao">
+👆 SEGURE A FICHA E ARRASTE ATÉ O NÚMERO QUE DESEJA
 </div>
 
 <div class="valores">
@@ -482,7 +871,7 @@ R$ 5
 <button
 id="btnApostar"
 class="btn-apostar"
-onclick="girarRoleta()"
+onclick="girarRoleta"
 disabled>
 
 CARREGANDO...
@@ -565,6 +954,16 @@ let rotacaoAtual = 0;
 
 let girando = false;
 
+/*
+NOVO:
+
+Número onde a ficha foi colocada.
+*/
+
+let numeroSelecionado = null;
+
+let arrastandoFicha = false;
+
 
 /* =====================================================
 PRÊMIOS DA ROLETA
@@ -620,6 +1019,9 @@ document.getElementById("apostaInfo");
 
 const fichaDisplay =
 document.getElementById("fichaDisplay");
+
+const fichaRoleta =
+document.getElementById("fichaRoleta");
 
 const carregando =
 document.getElementById("carregando");
@@ -693,6 +1095,17 @@ btnApostar.disabled = true;
 
 btnApostar.innerText =
 "AGUARDANDO CONTA";
+
+return;
+
+}
+
+if(numeroSelecionado === null){
+
+btnApostar.disabled = true;
+
+btnApostar.innerText =
+"COLOQUE A FICHA";
 
 return;
 
@@ -839,16 +1252,6 @@ return true;
 
 /* =====================================================
 LÓGICA DO PRÊMIO
-=====================================================
-
-0,20 = 0,40
-0,40 = 0,80
-0,50 = 1,00
-0,80 = 1,60
-1,00 = 2,00
-
-A aposta é debitada primeiro.
-
 ===================================================== */
 
 function calcularPremio(valorRoleta){
@@ -948,7 +1351,7 @@ numero
 
 
 /* =====================================================
-ESCOLHER APOSTA
+ESCOLHER VALOR
 ===================================================== */
 
 window.selecionarValor =
@@ -977,9 +1380,388 @@ valorAposta
 .toFixed(2)
 .replace(".",",");
 
+fichaRoleta.innerText =
+valorAposta
+.toFixed(2)
+.replace(".",",");
+
 atualizarSaldo();
 
 };
+
+
+/* =====================================================
+SISTEMA DA FICHA
+===================================================== */
+
+let inicioX = 0;
+let inicioY = 0;
+
+
+/*
+Começa o arrasto.
+*/
+
+function iniciarArrasto(event){
+
+if(girando)
+return;
+
+event.preventDefault();
+
+arrastandoFicha = true;
+
+fichaDisplay.classList.add(
+"arrastando"
+);
+
+fichaRoleta.classList.add(
+"arrastando"
+);
+
+fichaRoleta.style.display =
+"flex";
+
+moverFicha(event);
+
+}
+
+
+/*
+Move a ficha.
+*/
+
+function moverFicha(event){
+
+if(!arrastandoFicha)
+return;
+
+const toque =
+event.touches
+? event.touches[0]
+: event;
+
+const rect =
+roleta.getBoundingClientRect();
+
+const x =
+toque.clientX - rect.left;
+
+const y =
+toque.clientY - rect.top;
+
+fichaRoleta.style.left =
+x + "px";
+
+fichaRoleta.style.top =
+y + "px";
+
+
+/*
+Descobre se a ficha está
+sobre algum número.
+*/
+
+verificarNumeroSobFicha(
+x,
+y
+);
+
+}
+
+
+/*
+Finaliza o arrasto.
+*/
+
+function finalizarArrasto(event){
+
+if(!arrastandoFicha)
+return;
+
+arrastandoFicha = false;
+
+fichaDisplay.classList.remove(
+"arrastando"
+);
+
+fichaRoleta.classList.remove(
+"arrastando"
+);
+
+
+/*
+Se não escolheu nenhum número,
+volta para o painel.
+*/
+
+if(numeroSelecionado === null){
+
+fichaRoleta.style.display =
+"none";
+
+resultado.innerText =
+"ARRASTE A FICHA PARA UM NÚMERO";
+
+resultado.style.color =
+"#aaa";
+
+atualizarBotao();
+
+return;
+
+}
+
+
+/*
+Coloca a ficha exatamente sobre
+o número escolhido.
+*/
+
+posicionarFichaNoNumero(
+numeroSelecionado
+);
+
+resultado.innerHTML =
+"🎯 APOSTA NO NÚMERO " +
+"<strong style='color:#00ff99'>" +
+(numeroSelecionado + 1) +
+"</strong>";
+
+resultado.style.color =
+"#00ff99";
+
+atualizarBotao();
+
+}
+
+
+/*
+Verifica qual número está
+embaixo da ficha.
+*/
+
+function verificarNumeroSobFicha(x,y){
+
+const centroX =
+roleta.clientWidth / 2;
+
+const centroY =
+roleta.clientHeight / 2;
+
+const dx =
+x - centroX;
+
+const dy =
+y - centroY;
+
+
+/*
+Calcula o ângulo em relação
+ao topo da roleta.
+*/
+
+let angulo =
+Math.atan2(dx,-dy)
+* 180 / Math.PI;
+
+if(angulo < 0)
+angulo += 360;
+
+
+/*
+Como existem 20 casas:
+18 graus cada uma.
+*/
+
+const tamanhoCasa =
+360 / premios.length;
+
+const index =
+Math.floor(
+(angulo + tamanhoCasa / 2)
+/
+tamanhoCasa
+)
+% premios.length;
+
+
+/*
+Seleciona visualmente a casa.
+*/
+
+document
+.querySelectorAll(".numero")
+.forEach(
+n =>
+n.classList.remove(
+"selecionado"
+)
+);
+
+const numero =
+document.querySelector(
+`.numero[data-index="${index}"]`
+);
+
+if(numero){
+
+numero.classList.add(
+"selecionado"
+);
+
+numeroSelecionado =
+index;
+
+}
+
+}
+
+
+/*
+Coloca a ficha no centro
+da casa selecionada.
+*/
+
+function posicionarFichaNoNumero(index){
+
+const numero =
+document.querySelector(
+`.numero[data-index="${index}"]`
+);
+
+if(!numero)
+return;
+
+const rectRoleta =
+roleta.getBoundingClientRect();
+
+const rectNumero =
+numero.getBoundingClientRect();
+
+const x =
+rectNumero.left +
+rectNumero.width / 2 -
+rectRoleta.left;
+
+const y =
+rectNumero.top +
+15 -
+rectRoleta.top;
+
+fichaRoleta.style.left =
+x + "px";
+
+fichaRoleta.style.top =
+y + "px";
+
+fichaRoleta.style.display =
+"flex";
+
+}
+
+
+/* =====================================================
+EVENTOS TOUCH
+===================================================== */
+
+fichaDisplay.addEventListener(
+"touchstart",
+iniciarArrasto,
+{passive:false}
+);
+
+document.addEventListener(
+"touchmove",
+moverFicha,
+{passive:false}
+);
+
+document.addEventListener(
+"touchend",
+finalizarArrasto,
+{passive:false}
+);
+
+
+/* =====================================================
+EVENTOS MOUSE
+===================================================== */
+
+fichaDisplay.addEventListener(
+"mousedown",
+iniciarArrasto
+);
+
+document.addEventListener(
+"mousemove",
+moverFicha
+);
+
+document.addEventListener(
+"mouseup",
+finalizarArrasto
+);
+
+
+/* =====================================================
+CLIQUE DIRETO EM NÚMERO
+=====================================================
+
+Além de arrastar, permite tocar
+diretamente no número.
+
+*/
+
+document.addEventListener(
+"click",
+function(event){
+
+if(girando)
+return;
+
+const numero =
+event.target.closest(".numero");
+
+if(!numero)
+return;
+
+const index =
+Number(numero.dataset.index);
+
+numeroSelecionado =
+index;
+
+document
+.querySelectorAll(".numero")
+.forEach(
+n =>
+n.classList.remove(
+"selecionado"
+)
+);
+
+numero.classList.add(
+"selecionado"
+);
+
+posicionarFichaNoNumero(
+index
+);
+
+resultado.innerHTML =
+"🎯 APOSTA NO NÚMERO " +
+"<strong style='color:#00ff99'>" +
+(index + 1) +
+"</strong>";
+
+resultado.style.color =
+"#00ff99";
+
+atualizarBotao();
+
+}
+);
 
 
 /* =====================================================
@@ -1286,27 +2068,7 @@ superBonusOverlay
 
 
 /* =====================================================
-CALCULAR POSIÇÃO CORRETA
-=====================================================
-
-IMPORTANTE:
-
-Os números são criados assim:
-
-0 = 0°
-1 = 18°
-2 = 36°
-...
-
-O ponteiro está no topo.
-
-Então precisamos levar exatamente
-a casa sorteada para 0°.
-
-Não usamos +9° porque o texto
-da casa está sobre a própria linha
-radial criada pelo .numero.
-
+ROTAÇÃO
 ===================================================== */
 
 function calcularRotacaoCorreta(indice){
@@ -1317,31 +2079,18 @@ const tamanhoCasa =
 const anguloDaCasa =
 indice * tamanhoCasa;
 
-
-/*
-Normaliza a rotação atual.
-*/
-
 const atualNormalizado =
 ((rotacaoAtual % 360) + 360) % 360;
 
-
-/*
-Quanto precisa girar para levar
-a casa sorteada para o ponteiro.
-*/
-
 let deslocamento =
-(360 - anguloDaCasa - atualNormalizado + 360) % 360;
-
-
-/*
-8 voltas completas antes de parar.
-*/
+(360 -
+anguloDaCasa -
+atualNormalizado +
+360)
+% 360;
 
 deslocamento +=
 360 * 8;
-
 
 return (
 rotacaoAtual +
@@ -1360,6 +2109,23 @@ async function(){
 
 if(girando)
 return;
+
+
+/*
+Precisa escolher uma casa.
+*/
+
+if(numeroSelecionado === null){
+
+resultado.innerText =
+"⚠️ COLOQUE A FICHA EM UM NÚMERO";
+
+resultado.style.color =
+"#ff4141";
+
+return;
+
+}
 
 iniciarAudio();
 
@@ -1446,32 +2212,19 @@ n.classList.remove(
 
 
 /* =================================================
-2. SORTEIA UMA ÚNICA CASA
+2. USA O NÚMERO ONDE A FICHA FOI COLOCADA
 ================================================= */
 
 const indice =
-Math.floor(
-Math.random() *
-premios.length
-);
+numeroSelecionado;
 
 const premio =
 premios[indice];
 
 
 /*
-IMPORTANTE:
-
-A partir daqui NÃO sorteamos
-outro número.
-
-Este mesmo indice será usado
-para:
-
-- posição da roleta
-- destaque
-- prêmio
-- resultado
+O sistema de pagamento continua
+usando o mesmo cálculo de prêmio.
 */
 
 
@@ -1486,7 +2239,7 @@ indice
 
 
 /* =================================================
-4. INICIA SOM DA ROLETA
+4. SOM
 ================================================= */
 
 iniciarSomRoleta();
@@ -1504,7 +2257,7 @@ novaRotacao;
 
 
 /* =================================================
-6. ESPERA A TRANSIÇÃO TERMINAR
+6. ESPERA
 ================================================= */
 
 setTimeout(
@@ -1533,11 +2286,6 @@ valorRoleta
 
 pararSomRoleta();
 
-
-/*
-Pega exatamente a mesma casa
-que foi sorteada antes do giro.
-*/
 
 const numero =
 document.querySelector(
@@ -1658,7 +2406,7 @@ resultado.style.color =
 
 
 /* =================================================
-LIBERA BOTÃO
+LIBERA
 ================================================= */
 
 setTimeout(
@@ -1684,6 +2432,18 @@ function(){
 
 if(girando)
 return;
+
+if(numeroSelecionado === null){
+
+resultado.innerText =
+"⚠️ COLOQUE A FICHA EM UM NÚMERO";
+
+resultado.style.color =
+"#ff4141";
+
+return;
+
+}
 
 girarRoleta();
 
