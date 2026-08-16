@@ -9,449 +9,895 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
     }
 
-    html {
-      background: #050505;
+    html{
+      background:#050505;
     }
 
-    body {
-      background:
-        radial-gradient(circle at 50% 40%, #14251f 0%, #080b0a 45%, #050505 100%);
-      color: white;
-      font-family: Arial, sans-serif;
-      padding-bottom: 90px;
-      min-height: 100vh;
-      overflow-x: hidden;
-      position: relative;
-    }
+    body{
+      min-height:100vh;
+      padding-bottom:90px;
+      overflow-x:hidden;
 
-    body::before {
-      content: "ApostaXBet";
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 110%;
-      text-align: center;
-      font-size: clamp(75px, 22vw, 210px);
-      font-weight: 900;
-      letter-spacing: -6px;
-      color: rgba(230, 194, 41, 0.18);
-      -webkit-text-stroke: 2px rgba(230, 194, 41, 0.18);
-
-      text-shadow:
-        0 0 10px rgba(230, 194, 41, 0.65),
-        0 0 25px rgba(230, 194, 41, 0.55),
-        0 0 50px rgba(230, 194, 41, 0.40),
-        0 0 90px rgba(230, 194, 41, 0.25);
-
-      pointer-events: none;
-      z-index: 0;
-      white-space: nowrap;
-
-      animation: brilhoApostaX 2.5s ease-in-out infinite alternate;
-    }
-
-    @keyframes brilhoApostaX {
-      0% {
-        opacity: 0.45;
-        text-shadow:
-          0 0 10px rgba(230,194,41,.35),
-          0 0 25px rgba(230,194,41,.25),
-          0 0 50px rgba(230,194,41,.15);
-      }
-
-      100% {
-        opacity: 1;
-        text-shadow:
-          0 0 15px rgba(230,194,41,.9),
-          0 0 35px rgba(230,194,41,.75),
-          0 0 70px rgba(230,194,41,.55),
-          0 0 120px rgba(230,194,41,.35);
-      }
-    }
-
-    body::after {
-      content: "";
-      position: fixed;
-      inset: -100px;
+      color:#fff;
+      font-family:Arial,sans-serif;
 
       background:
         radial-gradient(
+          circle at 50% 20%,
+          #14251f 0%,
+          #080b0a 48%,
+          #050505 100%
+        );
+
+      position:relative;
+    }
+
+
+    /* ==========================================
+       FUNDO APOSTAXBET
+    ========================================== */
+
+    body::before{
+      content:"ApostaXBet";
+
+      position:fixed;
+      top:50%;
+      left:50%;
+
+      transform:translate(-50%,-50%);
+
+      width:110%;
+
+      text-align:center;
+
+      font-size:clamp(75px,22vw,210px);
+      font-weight:900;
+
+      letter-spacing:-6px;
+
+      color:rgba(230,194,41,.12);
+
+      -webkit-text-stroke:
+        2px rgba(230,194,41,.12);
+
+      text-shadow:
+        0 0 10px rgba(230,194,41,.45),
+        0 0 25px rgba(230,194,41,.35),
+        0 0 50px rgba(230,194,41,.20);
+
+      pointer-events:none;
+
+      z-index:0;
+
+      white-space:nowrap;
+
+      animation:
+        brilhoApostaX
+        3s
+        ease-in-out
+        infinite
+        alternate;
+    }
+
+
+    @keyframes brilhoApostaX{
+
+      0%{
+        opacity:.35;
+      }
+
+      100%{
+        opacity:.8;
+      }
+
+    }
+
+
+    /* ==========================================
+       LUZES
+    ========================================== */
+
+    body::after{
+      content:"";
+
+      position:fixed;
+      inset:-100px;
+
+      background:
+
+        radial-gradient(
           circle at 10% 20%,
-          rgba(0,255,170,.20) 0,
+          rgba(0,255,170,.15) 0,
           transparent 14%
         ),
 
         radial-gradient(
           circle at 90% 25%,
-          rgba(230,194,41,.22) 0,
+          rgba(230,194,41,.17) 0,
           transparent 15%
         ),
 
         radial-gradient(
           circle at 30% 80%,
-          rgba(0,255,170,.16) 0,
+          rgba(0,255,170,.12) 0,
           transparent 14%
         ),
 
         radial-gradient(
           circle at 80% 85%,
-          rgba(230,194,41,.18) 0,
+          rgba(230,194,41,.14) 0,
           transparent 15%
         );
 
-      pointer-events: none;
-      z-index: 1;
+      pointer-events:none;
 
-      animation: luzesFundo 8s ease-in-out infinite alternate;
+      z-index:1;
+
+      animation:
+        luzesFundo
+        8s
+        ease-in-out
+        infinite
+        alternate;
     }
 
-    @keyframes luzesFundo {
-      0% {
-        transform: translate(-20px, -10px) scale(1);
+
+    @keyframes luzesFundo{
+
+      0%{
+        transform:
+          translate(-20px,-10px)
+          scale(1);
       }
 
-      50% {
-        transform: translate(20px, 15px) scale(1.08);
+      50%{
+        transform:
+          translate(20px,15px)
+          scale(1.08);
       }
 
-      100% {
-        transform: translate(-10px, 25px) scale(1);
+      100%{
+        transform:
+          translate(-10px,25px)
+          scale(1);
       }
+
     }
 
-    .luzes {
-      position: fixed;
-      inset: 0;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 1;
+
+    .luzes{
+      position:fixed;
+      inset:0;
+
+      overflow:hidden;
+
+      pointer-events:none;
+
+      z-index:1;
     }
 
-    .luz {
-      position: absolute;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
 
-      background: #e6c229;
+    .luz{
+      position:absolute;
+
+      width:4px;
+      height:4px;
+
+      border-radius:50%;
+
+      background:#e6c229;
 
       box-shadow:
         0 0 8px #e6c229,
-        0 0 18px #e6c229,
-        0 0 30px rgba(230,194,41,.5);
+        0 0 18px #e6c229;
 
-      opacity: .7;
+      opacity:.7;
 
       animation:
         subir 7s linear infinite,
         piscar 2s ease-in-out infinite alternate;
     }
 
-    .luz:nth-child(1) {
-      left: 8%;
-      bottom: -20px;
-      animation-delay: 0s;
+
+    .luz:nth-child(1){
+      left:8%;
+      bottom:-20px;
+      animation-delay:0s;
     }
 
-    .luz:nth-child(2) {
-      left: 20%;
-      bottom: -30px;
-      animation-delay: 2s;
+    .luz:nth-child(2){
+      left:20%;
+      bottom:-30px;
+      animation-delay:2s;
     }
 
-    .luz:nth-child(3) {
-      left: 35%;
-      bottom: -20px;
-      animation-delay: 4s;
+    .luz:nth-child(3){
+      left:35%;
+      bottom:-20px;
+      animation-delay:4s;
     }
 
-    .luz:nth-child(4) {
-      left: 52%;
-      bottom: -30px;
-      animation-delay: 1s;
+    .luz:nth-child(4){
+      left:52%;
+      bottom:-30px;
+      animation-delay:1s;
     }
 
-    .luz:nth-child(5) {
-      left: 68%;
-      bottom: -20px;
-      animation-delay: 3s;
+    .luz:nth-child(5){
+      left:68%;
+      bottom:-20px;
+      animation-delay:3s;
     }
 
-    .luz:nth-child(6) {
-      left: 84%;
-      bottom: -30px;
-      animation-delay: 5s;
+    .luz:nth-child(6){
+      left:84%;
+      bottom:-30px;
+      animation-delay:5s;
     }
 
-    .luz:nth-child(7) {
-      left: 95%;
-      bottom: -20px;
-      animation-delay: 2.5s;
+    .luz:nth-child(7){
+      left:95%;
+      bottom:-20px;
+      animation-delay:2.5s;
     }
 
-    @keyframes subir {
-      0% {
-        transform: translateY(0) scale(.5);
-        opacity: 0;
+
+    @keyframes subir{
+
+      0%{
+        transform:
+          translateY(0)
+          scale(.5);
+
+        opacity:0;
       }
 
-      10% {
-        opacity: .8;
+      10%{
+        opacity:.8;
       }
 
-      50% {
-        transform: translateY(-50vh) scale(1);
-        opacity: 1;
+      50%{
+        transform:
+          translateY(-50vh)
+          scale(1);
+
+        opacity:1;
       }
 
-      100% {
-        transform: translateY(-110vh) scale(.4);
-        opacity: 0;
-      }
-    }
+      100%{
+        transform:
+          translateY(-110vh)
+          scale(.4);
 
-    @keyframes piscar {
-      0% {
-        opacity: .25;
+        opacity:0;
       }
 
-      100% {
-        opacity: 1;
+    }
+
+
+    @keyframes piscar{
+
+      0%{
+        opacity:.25;
       }
+
+      100%{
+        opacity:1;
+      }
+
     }
 
-    header {
-      position: relative;
-      z-index: 3;
-      text-align: center;
-      padding: 20px 15px;
-      background: rgba(17,17,17,.72);
-      backdrop-filter: blur(5px);
+
+    /* ==========================================
+       CABEÇALHO
+    ========================================== */
+
+    header{
+      position:relative;
+      z-index:5;
+
+      padding:17px 15px 14px;
+
+      text-align:center;
+
+      background:
+        linear-gradient(
+          180deg,
+          rgba(17,17,17,.92),
+          rgba(10,10,10,.72)
+        );
+
+      border-bottom:
+        1px solid rgba(230,194,41,.25);
+
+      backdrop-filter:blur(10px);
     }
 
-    header h1 {
-      color: #e6bc24;
-      font-size: 28px;
-      margin-bottom: 8px;
 
-      text-shadow:
-        0 0 10px rgba(230,194,41,.25);
-    }
+    header h1{
+      color:#e6bc24;
 
-    header p {
-      color: #aaa;
-    }
+      font-size:25px;
 
-    #botaoSom {
-      position: fixed;
-      right: 15px;
-      top: 15px;
-
-      width: 48px;
-      height: 48px;
-
-      border: none;
-      border-radius: 50%;
-
-      background: #e6c229;
-      color: #000;
-
-      font-size: 22px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      cursor: pointer;
-      z-index: 999;
-
-      box-shadow:
-        0 0 15px rgba(230,194,41,.6);
-
-      transition: .2s ease;
-    }
-
-    #botaoSom:active {
-      transform: scale(.90);
-    }
-
-    .container {
-      position: relative;
-      z-index: 3;
-      max-width: 700px;
-      margin: auto;
-      padding: 15px;
-    }
-
-    .titulo {
-      text-align: center;
-      color: #e6bc24;
-      font-size: 25px;
-      margin: 8px 0 15px;
+      margin-bottom:5px;
 
       text-shadow:
         0 0 12px rgba(230,194,41,.35);
     }
 
-    .jogos {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
+
+    header p{
+      color:#aaa;
+      font-size:13px;
     }
 
-    .jogo {
-      position: relative;
-      z-index: 4;
 
-      background: transparent;
-      border: none;
-      outline: none;
-      border-radius: 12px;
+    /* ==========================================
+       BOTÃO DE SOM
+    ========================================== */
 
-      min-height: 105px;
-      padding: 8px 3px;
+    #botaoSom{
 
-      text-align: center;
-      text-decoration: none;
-      color: white;
+      position:fixed;
 
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      right:13px;
+      top:13px;
 
-      transition:
-        transform .2s ease,
-        filter .2s ease;
-    }
+      width:42px;
+      height:42px;
 
-    .jogo:hover {
-      transform: translateY(-3px);
+      border:1px solid rgba(230,194,41,.55);
 
-      filter:
-        drop-shadow(0 0 8px rgba(230,194,41,.35));
-    }
+      border-radius:50%;
 
-    .jogo:active {
-      transform: scale(.92);
-    }
+      background:
+        rgba(20,20,20,.92);
 
-    .icone {
-      font-size: 46px;
-      line-height: 1;
-      margin-bottom: 7px;
+      color:#e6c229;
 
-      filter:
-        drop-shadow(0 0 8px rgba(230,194,41,.40));
-    }
+      font-size:19px;
 
-    .nome {
-      font-size: 15px;
-      font-weight: bold;
-      margin-bottom: 3px;
-    }
+      display:flex;
+      align-items:center;
+      justify-content:center;
 
-    .descricao {
-      color: #aaa;
-      font-size: 10px;
-    }
+      cursor:pointer;
 
-    .voltar {
-      display: block;
-      text-align: center;
-      margin: 20px auto;
-
-      color: #e6bc24;
-      text-decoration: none;
-      font-weight: bold;
-
-      position: relative;
-      z-index: 4;
-    }
-
-    nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-
-      height: 75px;
-
-      background: rgba(17,17,17,.96);
-      border-top: 2px solid #d8af16;
-
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-
-      z-index: 100;
+      z-index:999;
 
       box-shadow:
-        0 -5px 20px rgba(0,0,0,.45);
+        0 0 12px rgba(230,194,41,.25);
+
+      transition:.2s ease;
     }
 
-    nav a {
-      color: white;
-      text-decoration: none;
-      text-align: center;
-      font-size: 14px;
-      min-width: 60px;
+
+    #botaoSom:active{
+      transform:scale(.9);
     }
 
-    nav a:active {
-      transform: scale(.95);
+
+    /* ==========================================
+       CONTAINER
+    ========================================== */
+
+    .container{
+
+      position:relative;
+
+      z-index:3;
+
+      width:100%;
+
+      max-width:560px;
+
+      margin:auto;
+
+      padding:
+        14px
+        12px
+        20px;
     }
 
-    nav span {
-      display: block;
-      font-size: 27px;
-      margin-bottom: 3px;
+
+    /* ==========================================
+       TÍTULO
+    ========================================== */
+
+    .titulo{
+
+      display:flex;
+
+      align-items:center;
+
+      gap:8px;
+
+      color:#fff;
+
+      font-size:18px;
+
+      margin:
+        2px 3px
+        13px;
+
+      font-weight:700;
     }
 
-    @media (max-width: 380px) {
 
-      .jogos {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 3px;
-      }
+    .titulo::before{
 
-      .jogo {
-        min-height: 95px;
-        padding: 6px 2px;
-      }
+      content:"";
 
-      .icone {
-        font-size: 40px;
-      }
+      width:4px;
 
-      .nome {
-        font-size: 13px;
-      }
+      height:20px;
 
-      .descricao {
-        font-size: 9px;
-      }
+      border-radius:5px;
 
-      body::before {
-        font-size: 70px;
-        letter-spacing: -4px;
-      }
+      background:#e6c229;
+
+      box-shadow:
+        0 0 10px rgba(230,194,41,.7);
     }
+
+
+    /* ==========================================
+       GRID DE CARDS
+    ========================================== */
+
+    .jogos{
+
+      display:grid;
+
+      grid-template-columns:
+        repeat(3,1fr);
+
+      gap:9px;
+    }
+
+
+    /* ==========================================
+       CARD DO JOGO
+    ========================================== */
+
+    .jogo{
+
+      position:relative;
+
+      min-width:0;
+
+      min-height:112px;
+
+      padding:
+        10px
+        5px
+        9px;
+
+      border-radius:12px;
+
+      text-decoration:none;
+
+      color:#fff;
+
+      text-align:center;
+
+      display:flex;
+
+      flex-direction:column;
+
+      align-items:center;
+
+      justify-content:center;
+
+      overflow:hidden;
+
+      background:
+
+        linear-gradient(
+          145deg,
+          rgba(32,36,35,.96),
+          rgba(13,15,15,.96)
+        );
+
+      border:
+        1px solid
+        rgba(255,255,255,.08);
+
+      box-shadow:
+        0 5px 15px rgba(0,0,0,.35);
+
+      transition:
+        transform .18s ease,
+        border-color .18s ease,
+        box-shadow .18s ease;
+    }
+
+
+    /* brilho superior do card */
+
+    .jogo::before{
+
+      content:"";
+
+      position:absolute;
+
+      top:0;
+      left:15%;
+
+      width:70%;
+      height:1px;
+
+      background:
+        linear-gradient(
+          90deg,
+          transparent,
+          rgba(230,194,41,.75),
+          transparent
+        );
+
+      opacity:.65;
+    }
+
+
+    /* brilho ao tocar */
+
+    .jogo::after{
+
+      content:"";
+
+      position:absolute;
+
+      width:70px;
+      height:70px;
+
+      border-radius:50%;
+
+      background:
+        radial-gradient(
+          circle,
+          rgba(230,194,41,.12),
+          transparent 70%
+        );
+
+      top:-35px;
+      right:-25px;
+
+      pointer-events:none;
+    }
+
+
+    .jogo:hover{
+
+      transform:
+        translateY(-3px);
+
+      border-color:
+        rgba(230,194,41,.45);
+
+      box-shadow:
+        0 8px 20px rgba(0,0,0,.45),
+        0 0 14px rgba(230,194,41,.12);
+    }
+
+
+    .jogo:active{
+
+      transform:
+        scale(.94);
+    }
+
+
+    /* ==========================================
+       ÍCONE
+    ========================================== */
+
+    .icone{
+
+      width:53px;
+      height:53px;
+
+      margin-bottom:7px;
+
+      display:flex;
+
+      align-items:center;
+      justify-content:center;
+
+      border-radius:12px;
+
+      font-size:32px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(53,57,55,.95),
+          rgba(20,22,21,.95)
+        );
+
+      border:
+        1px solid
+        rgba(230,194,41,.18);
+
+      box-shadow:
+        inset 0 0 12px rgba(0,0,0,.4),
+        0 4px 10px rgba(0,0,0,.25);
+
+      filter:
+        drop-shadow(
+          0 0 5px
+          rgba(230,194,41,.2)
+        );
+    }
+
+
+    /* ==========================================
+       NOME
+    ========================================== */
+
+    .nome{
+
+      width:100%;
+
+      white-space:nowrap;
+
+      overflow:hidden;
+
+      text-overflow:ellipsis;
+
+      font-size:12px;
+
+      font-weight:700;
+
+      margin-bottom:3px;
+
+      color:#fff;
+    }
+
+
+    /* ==========================================
+       DESCRIÇÃO
+    ========================================== */
+
+    .descricao{
+
+      width:100%;
+
+      white-space:nowrap;
+
+      overflow:hidden;
+
+      text-overflow:ellipsis;
+
+      color:#8e9390;
+
+      font-size:9px;
+    }
+
+
+    /* ==========================================
+       VOLTAR
+    ========================================== */
+
+    .voltar{
+
+      display:block;
+
+      text-align:center;
+
+      margin:
+        22px
+        auto
+        5px;
+
+      color:#e6bc24;
+
+      text-decoration:none;
+
+      font-size:13px;
+
+      font-weight:bold;
+
+      position:relative;
+
+      z-index:4;
+    }
+
+
+    /* ==========================================
+       MENU INFERIOR
+    ========================================== */
+
+    nav{
+
+      position:fixed;
+
+      bottom:0;
+      left:0;
+      right:0;
+
+      height:74px;
+
+      background:
+        rgba(12,12,12,.97);
+
+      border-top:
+        1px solid
+        rgba(230,194,41,.55);
+
+      display:flex;
+
+      justify-content:
+        space-around;
+
+      align-items:center;
+
+      z-index:100;
+
+      box-shadow:
+        0 -6px 22px
+        rgba(0,0,0,.5);
+
+      backdrop-filter:blur(10px);
+    }
+
+
+    nav a{
+
+      position:relative;
+
+      width:33.333%;
+
+      height:100%;
+
+      color:#999;
+
+      text-decoration:none;
+
+      text-align:center;
+
+      font-size:11px;
+
+      display:flex;
+
+      flex-direction:column;
+
+      align-items:center;
+
+      justify-content:center;
+
+      gap:3px;
+
+      transition:.2s ease;
+    }
+
+
+    nav a:nth-child(2){
+
+      color:#e6c229;
+    }
+
+
+    nav a:nth-child(2)::before{
+
+      content:"";
+
+      position:absolute;
+
+      top:0;
+
+      width:42px;
+
+      height:2px;
+
+      background:#e6c229;
+
+      box-shadow:
+        0 0 10px
+        rgba(230,194,41,.8);
+
+      border-radius:0 0 5px 5px;
+    }
+
+
+    nav a:active{
+
+      transform:scale(.92);
+    }
+
+
+    nav span{
+
+      display:block;
+
+      font-size:24px;
+
+      line-height:1;
+    }
+
+
+    /* ==========================================
+       CELULARES PEQUENOS
+    ========================================== */
+
+    @media(max-width:380px){
+
+      .container{
+
+        padding-left:9px;
+        padding-right:9px;
+      }
+
+
+      .jogos{
+
+        gap:6px;
+      }
+
+
+      .jogo{
+
+        min-height:105px;
+
+        padding:
+          8px
+          3px
+          8px;
+
+        border-radius:10px;
+      }
+
+
+      .icone{
+
+        width:48px;
+        height:48px;
+
+        font-size:29px;
+
+        border-radius:10px;
+
+        margin-bottom:6px;
+      }
+
+
+      .nome{
+
+        font-size:11px;
+      }
+
+
+      .descricao{
+
+        font-size:8px;
+      }
+
+
+      body::before{
+
+        font-size:70px;
+
+        letter-spacing:-4px;
+      }
+
+    }
+
   </style>
 </head>
 
+
 <body>
 
-<!-- ==================================================
-     PROTEÇÃO CONTRA VOLTAR DEPOIS DO LOGOUT
-================================================== -->
+
+<!-- ==========================================
+     PROTEÇÃO SUPABASE
+========================================== -->
 
 <script>
 
@@ -468,10 +914,6 @@ window.supabase.createClient(
 );
 
 
-/* ==========================================
-   MANDAR PARA O LOGIN
-========================================== */
-
 function redirecionarLogin(){
 
   window.location.replace(
@@ -481,10 +923,6 @@ function redirecionarLogin(){
 }
 
 
-/* ==========================================
-   VERIFICAR SE O USUÁRIO PODE ESTAR NOS JOGOS
-========================================== */
-
 async function protegerJogos(){
 
   const saiu =
@@ -492,11 +930,6 @@ async function protegerJogos(){
       "apostaxbet_logout"
     );
 
-
-  /*
-   * Se clicou em SAIR,
-   * não pode voltar para os jogos.
-   */
 
   if(saiu === "1"){
 
@@ -509,7 +942,7 @@ async function protegerJogos(){
 
   try{
 
-    const { data, error } =
+    const {data,error} =
       await clienteSupabase.auth.getSession();
 
 
@@ -526,10 +959,6 @@ async function protegerJogos(){
 
     }
 
-
-    /*
-     * Não existe sessão.
-     */
 
     if(
       !data ||
@@ -557,16 +986,8 @@ async function protegerJogos(){
 }
 
 
-/* ==========================================
-   VERIFICAÇÃO INICIAL
-========================================== */
-
 protegerJogos();
 
-
-/* ==========================================
-   IMPORTANTE PARA O BOTÃO VOLTAR DO CELULAR
-========================================== */
 
 window.addEventListener(
   "pageshow",
@@ -578,12 +999,8 @@ window.addEventListener(
 );
 
 
-/* ==========================================
-   SE A SESSÃO ACABAR, MANDA PARA LOGIN
-========================================== */
-
 clienteSupabase.auth.onAuthStateChange(
-  function(event, session){
+  function(event,session){
 
     if(!session){
 
@@ -597,9 +1014,9 @@ clienteSupabase.auth.onAuthStateChange(
 </script>
 
 
-<!-- ==================================================
+<!-- ==========================================
      LUZES
-================================================== -->
+========================================== -->
 
 <div class="luzes">
 
@@ -614,9 +1031,9 @@ clienteSupabase.auth.onAuthStateChange(
 </div>
 
 
-<!-- ==================================================
+<!-- ==========================================
      MÚSICA
-================================================== -->
+========================================== -->
 
 <audio
   id="musicaJogos"
@@ -630,9 +1047,9 @@ clienteSupabase.auth.onAuthStateChange(
 </audio>
 
 
-<!-- ==================================================
-     BOTÃO DE SOM
-================================================== -->
+<!-- ==========================================
+     BOTÃO SOM
+========================================== -->
 
 <button
   id="botaoSom"
@@ -644,34 +1061,35 @@ clienteSupabase.auth.onAuthStateChange(
 </button>
 
 
-<!-- ==================================================
+<!-- ==========================================
      CABEÇALHO
-================================================== -->
+========================================== -->
 
 <header>
 
   <h1>🎰 ApostaXBet</h1>
 
-  <p>🎮 Escolha um jogo</p>
+  <p>Escolha seu jogo</p>
 
 </header>
 
 
-<!-- ==================================================
-     JOGOS
-================================================== -->
+<!-- ==========================================
+     ÁREA DOS JOGOS
+========================================== -->
 
 <main class="container">
 
+
   <h2 class="titulo">
-    🎮 Jogos
+    Jogos
   </h2>
 
 
   <div class="jogos">
 
 
-    <!-- 1 - ROLETA -->
+    <!-- ROLETA -->
 
     <a
       class="jogo"
@@ -692,7 +1110,7 @@ clienteSupabase.auth.onAuthStateChange(
     </a>
 
 
-    <!-- 2 - ROLETA CASSINO -->
+    <!-- ROLETA CASSINO -->
 
     <a
       class="jogo"
@@ -713,7 +1131,7 @@ clienteSupabase.auth.onAuthStateChange(
     </a>
 
 
-    <!-- 3 - MINES -->
+    <!-- MINES -->
 
     <a
       class="jogo"
@@ -734,7 +1152,7 @@ clienteSupabase.auth.onAuthStateChange(
     </a>
 
 
-    <!-- 4 - CRASH -->
+    <!-- CRASH -->
 
     <a
       class="jogo"
@@ -749,13 +1167,13 @@ clienteSupabase.auth.onAuthStateChange(
       </div>
 
       <div class="descricao">
-        Acompanhe o multiplicador
+        Multiplicador
       </div>
 
     </a>
 
 
-    <!-- 5 - PLINKO -->
+    <!-- PLINKO -->
 
     <a
       class="jogo"
@@ -776,7 +1194,7 @@ clienteSupabase.auth.onAuthStateChange(
     </a>
 
 
-    <!-- 6 - DICE -->
+    <!-- DICE -->
 
     <a
       class="jogo"
@@ -797,7 +1215,7 @@ clienteSupabase.auth.onAuthStateChange(
     </a>
 
 
-    <!-- 7 - LOBBY -->
+    <!-- LOBBY -->
 
     <a
       class="jogo"
@@ -818,7 +1236,7 @@ clienteSupabase.auth.onAuthStateChange(
     </a>
 
 
-    <!-- 8 - NIGHT MONSTERS -->
+    <!-- NIGHT MONSTERS -->
 
     <a
       class="jogo"
@@ -839,7 +1257,7 @@ clienteSupabase.auth.onAuthStateChange(
     </a>
 
 
-    <!-- 9 - FORTUNE SNAKE -->
+    <!-- FORTUNE SNAKE -->
 
     <a
       class="jogo"
@@ -854,7 +1272,7 @@ clienteSupabase.auth.onAuthStateChange(
       </div>
 
       <div class="descricao">
-        Gire e tente a sorte
+        Tente sua sorte
       </div>
 
     </a>
@@ -873,21 +1291,20 @@ clienteSupabase.auth.onAuthStateChange(
 
   </a>
 
+
 </main>
 
 
-<!-- ==================================================
-     MENU
-================================================== -->
+<!-- ==========================================
+     MENU INFERIOR
+========================================== -->
 
 <nav>
 
   <a
     href="../index.html">
 
-    <span>
-      🏠
-    </span>
+    <span>🏠</span>
 
     Início
 
@@ -897,9 +1314,7 @@ clienteSupabase.auth.onAuthStateChange(
   <a
     href="jogos.html">
 
-    <span>
-      🎮
-    </span>
+    <span>🎮</span>
 
     Jogos
 
@@ -909,9 +1324,7 @@ clienteSupabase.auth.onAuthStateChange(
   <a
     href="../index.html">
 
-    <span>
-      👤
-    </span>
+    <span>👤</span>
 
     Conta
 
@@ -920,9 +1333,9 @@ clienteSupabase.auth.onAuthStateChange(
 </nav>
 
 
-<!-- ==================================================
+<!-- ==========================================
      CONTROLE DA MÚSICA
-================================================== -->
+========================================== -->
 
 <script>
 
@@ -1020,10 +1433,6 @@ musica.addEventListener(
 );
 
 
-/* ==========================================
-   PARAR MÚSICA AO SAIR
-========================================== */
-
 window.addEventListener(
   "pagehide",
   function(){
@@ -1061,6 +1470,7 @@ document.addEventListener(
 atualizarBotao();
 
 </script>
+
 
 </body>
 </html>
