@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mines - ApostaXBet</title>
 
+<!-- MESMO SISTEMA DE SALDO DOS OUTROS JOGOS -->
+<script src="../saldo.js"></script>
 <script type="module" src="../script.js"></script>
 
 <style>
@@ -265,13 +267,10 @@ h1{
 
 @keyframes respirar{
     0%,100%{
-        box-shadow:
-            inset 0 0 20px rgba(0,0,0,.7);
+        box-shadow:inset 0 0 20px rgba(0,0,0,.7);
     }
-
     50%{
-        box-shadow:
-            inset 0 0 25px rgba(0,255,170,.08);
+        box-shadow:inset 0 0 25px rgba(0,255,170,.08);
     }
 }
 
@@ -299,11 +298,9 @@ h1{
         transform:scale(.65) rotate(-8deg);
         opacity:.2;
     }
-
     60%{
         transform:scale(1.12) rotate(3deg);
     }
-
     100%{
         transform:scale(1);
         opacity:1;
@@ -331,15 +328,12 @@ h1{
         transform:scale(.5);
         opacity:.3;
     }
-
     40%{
         transform:scale(1.18) rotate(-4deg);
     }
-
     70%{
         transform:scale(.95) rotate(4deg);
     }
-
     100%{
         transform:scale(1);
         opacity:1;
@@ -351,15 +345,11 @@ h1{
 }
 
 @keyframes abrindo{
-    from{
-        transform:scale(1);
-    }
-
+    from{transform:scale(1);}
     to{
         transform:scale(.92);
         border-color:#ffd700;
-        box-shadow:
-            0 0 20px rgba(255,215,0,.5);
+        box-shadow:0 0 20px rgba(255,215,0,.5);
     }
 }
 
@@ -382,12 +372,7 @@ h1{
 #barraProgresso{
     height:100%;
     width:100%;
-    background:
-        linear-gradient(
-            90deg,
-            #00ff88,
-            #ffd700
-        );
+    background:linear-gradient(90deg,#00ff88,#ffd700);
     transform-origin:left;
     transition:transform .1s linear;
 }
@@ -407,8 +392,7 @@ h1{
     font-weight:900;
     border-radius:14px;
     cursor:pointer;
-    box-shadow:
-        0 0 20px rgba(0,255,136,.3);
+    box-shadow:0 0 20px rgba(0,255,136,.3);
     text-transform:uppercase;
 }
 
@@ -472,7 +456,6 @@ h1{
         transform:scale(.65);
         opacity:0;
     }
-
     to{
         transform:scale(1);
         opacity:1;
@@ -563,7 +546,9 @@ h1{
 
     <br>
 
-    <button id="btnNovoJogo" type="button">
+    <button
+        id="btnNovoJogo"
+        type="button">
         💣 NOVO JOGO
     </button>
 
@@ -599,8 +584,8 @@ h1{
 
         <button
             class="btn-fechar"
-            type="button"
-            id="btnFecharResultado">
+            id="btnFecharResultado"
+            type="button">
             JOGAR NOVAMENTE
         </button>
 
@@ -679,6 +664,127 @@ let iniciandoJogo = false;
 
 
 /* =====================================================
+FORMATAÇÃO
+===================================================== */
+
+function dinheiro(valor){
+
+    return Number(valor || 0)
+        .toFixed(2)
+        .replace(".",",");
+
+}
+
+
+/* =====================================================
+ESPERAR SISTEMA DE SALDO
+===================================================== */
+
+async function esperarSistemaSaldo(){
+
+    for(
+        let i = 0;
+        i < 80;
+        i++
+    ){
+
+        if(
+            window.SistemaSaldo &&
+            typeof window.SistemaSaldo.get ===
+            "function" &&
+            typeof window.SistemaSaldo.debitar ===
+            "function"
+        ){
+
+            return true;
+
+        }
+
+        await new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    100
+                )
+        );
+
+    }
+
+    return false;
+
+}
+
+
+/* =====================================================
+ATUALIZAR SALDO
+===================================================== */
+
+async function atualizarSaldo(){
+
+    try{
+
+        const disponivel =
+            await esperarSistemaSaldo();
+
+        if(!disponivel){
+
+            saldoDisplay.textContent =
+                "💰 Saldo: R$ 0,00";
+
+            return 0;
+
+        }
+
+
+        /*
+        Usa exatamente o mesmo
+        SistemaSaldo dos outros jogos.
+        */
+
+        if(
+            typeof window.SistemaSaldo.atualizarTela ===
+            "function"
+        ){
+
+            await window.SistemaSaldo.atualizarTela();
+
+        }
+
+
+        const valor =
+            await window.SistemaSaldo.get();
+
+        const numero =
+            Number(valor);
+
+
+        if(
+            Number.isFinite(numero)
+        ){
+
+            saldoDisplay.textContent =
+                "💰 Saldo: R$ " +
+                dinheiro(numero);
+
+            return numero;
+
+        }
+
+    }catch(error){
+
+        console.error(
+            "Erro ao carregar saldo:",
+            error
+        );
+
+    }
+
+    return 0;
+
+}
+
+
+/* =====================================================
 ÁUDIO
 ===================================================== */
 
@@ -712,14 +818,7 @@ function iniciarAudio(){
 
         }
 
-    }catch(e){
-
-        console.warn(
-            "Áudio indisponível.",
-            e
-        );
-
-    }
+    }catch(e){}
 
 }
 
@@ -759,9 +858,7 @@ function tocarSom(
             duracao
         );
 
-        oscilador.connect(
-            ganho
-        );
+        oscilador.connect(ganho);
 
         ganho.connect(
             audioContext.destination
@@ -870,100 +967,7 @@ function somVitoria(){
 
 
 /* =====================================================
-SALDO
-===================================================== */
-
-async function atualizarSaldo(){
-
-    try{
-
-        if(
-            window.SistemaSaldo &&
-            typeof window.SistemaSaldo.atualizarTela ===
-            "function"
-        ){
-
-            await window.SistemaSaldo.atualizarTela();
-
-        }
-
-        if(
-            window.SistemaSaldo &&
-            typeof window.SistemaSaldo.get ===
-            "function"
-        ){
-
-            const valor =
-                await window.SistemaSaldo.get();
-
-            const numero =
-                Number(valor);
-
-            if(
-                Number.isFinite(numero)
-            ){
-
-                saldoDisplay.textContent =
-                    "💰 Saldo: R$ " +
-                    numero
-                    .toFixed(2)
-                    .replace(".",",");
-
-            }
-
-        }
-
-    }catch(e){
-
-        console.warn(
-            "Erro ao atualizar saldo:",
-            e
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-ESPERAR SISTEMA DE SALDO
-===================================================== */
-
-async function esperarSistemaSaldo(){
-
-    for(
-        let tentativa = 0;
-        tentativa < 50;
-        tentativa++
-    ){
-
-        if(
-            window.SistemaSaldo &&
-            typeof window.SistemaSaldo.debitar ===
-            "function"
-        ){
-
-            return true;
-
-        }
-
-        await new Promise(
-            resolve =>
-                setTimeout(
-                    resolve,
-                    100
-                )
-        );
-
-    }
-
-    return false;
-
-}
-
-
-/* =====================================================
-CRIAR BOMBAS
+BOMBAS
 ===================================================== */
 
 function criarBombas(){
@@ -998,7 +1002,7 @@ function criarBombas(){
 
 
 /* =====================================================
-CRIAR TABULEIRO
+TABULEIRO
 ===================================================== */
 
 function criarTabuleiro(){
@@ -1046,6 +1050,44 @@ function criarTabuleiro(){
 CONTAGEM
 ===================================================== */
 
+function atualizarContagem(){
+
+    tempo.textContent =
+        "⏱️ " +
+        tempoRestante +
+        "s";
+
+    const porcentagem =
+        Math.max(
+            0,
+            tempoRestante /
+            TEMPO_RODADA
+        );
+
+    barra.style.transform =
+        "scaleX(" +
+        porcentagem +
+        ")";
+
+    if(
+        tempoRestante <= 3
+    ){
+
+        tempo.classList.add(
+            "perigo"
+        );
+
+    }else{
+
+        tempo.classList.remove(
+            "perigo"
+        );
+
+    }
+
+}
+
+
 function iniciarContagem(){
 
     clearInterval(
@@ -1089,44 +1131,6 @@ function iniciarContagem(){
 }
 
 
-function atualizarContagem(){
-
-    tempo.textContent =
-        "⏱️ " +
-        tempoRestante +
-        "s";
-
-    const porcentagem =
-        Math.max(
-            0,
-            tempoRestante /
-            TEMPO_RODADA
-        );
-
-    barra.style.transform =
-        "scaleX(" +
-        porcentagem +
-        ")";
-
-    if(
-        tempoRestante <= 3
-    ){
-
-        tempo.classList.add(
-            "perigo"
-        );
-
-    }else{
-
-        tempo.classList.remove(
-            "perigo"
-        );
-
-    }
-
-}
-
-
 /* =====================================================
 NOVO JOGO
 ===================================================== */
@@ -1139,13 +1143,6 @@ async function iniciarJogo(){
         iniciandoJogo ||
         jogando
     ){
-
-        if(jogando){
-
-            premio.textContent =
-                "⚠️ Termine a rodada atual.";
-
-        }
 
         return;
 
@@ -1161,13 +1158,18 @@ async function iniciarJogo(){
 
     try{
 
+        /*
+        Garante que o mesmo SistemaSaldo
+        dos outros jogos esteja disponível.
+        */
+
         const sistemaOK =
             await esperarSistemaSaldo();
 
         if(!sistemaOK){
 
             premio.textContent =
-                "❌ Sistema de saldo indisponível.";
+                "❌ Sistema de saldo não carregou.";
 
             botao.disabled = false;
 
@@ -1176,31 +1178,42 @@ async function iniciarJogo(){
         }
 
 
-        let debitado = false;
+        /*
+        Busca o saldo REAL antes da aposta.
+        */
 
-        try{
+        const saldoAtual =
+            await atualizarSaldo();
 
-            debitado =
-                await window.SistemaSaldo.debitar(
-                    VALOR_APOSTA
-                );
 
-        }catch(e){
+        if(
+            saldoAtual < VALOR_APOSTA
+        ){
 
-            console.error(
-                "Erro ao debitar aposta:",
-                e
-            );
+            premio.textContent =
+                "💰 Saldo insuficiente.";
 
-            debitado = false;
+            botao.disabled = false;
+
+            return;
 
         }
+
+
+        /*
+        DEBITA R$ 1,00.
+        */
+
+        const debitado =
+            await window.SistemaSaldo.debitar(
+                VALOR_APOSTA
+            );
 
 
         if(!debitado){
 
             premio.textContent =
-                "💰 Saldo insuficiente.";
+                "💰 Não foi possível realizar a aposta.";
 
             botao.disabled = false;
 
@@ -1212,8 +1225,14 @@ async function iniciarJogo(){
 
 
         /*
-        O R$ 1,00 já foi debitado
-        antes de a rodada começar.
+        SALDO É ATUALIZADO IMEDIATAMENTE.
+        */
+
+        await atualizarSaldo();
+
+
+        /*
+        COMEÇA A RODADA.
         */
 
         jogando = true;
@@ -1221,10 +1240,6 @@ async function iniciarJogo(){
         rodadaEncerrada = false;
 
         diamantesEncontrados = 0;
-
-        tempoRestante =
-            TEMPO_RODADA;
-
 
         criarBombas();
 
@@ -1245,6 +1260,16 @@ async function iniciarJogo(){
             "🎯 RODADA EM ANDAMENTO";
 
         iniciarContagem();
+
+    }catch(error){
+
+        console.error(
+            "Erro ao iniciar Mines:",
+            error
+        );
+
+        premio.textContent =
+            "❌ Erro ao iniciar o jogo.";
 
         await atualizarSaldo();
 
@@ -1306,6 +1331,7 @@ function abrirCasa(
     cell.classList.add(
         "abrindo"
     );
+
 
     setTimeout(
         async () => {
@@ -1371,7 +1397,8 @@ function abrirCasa(
 
 
             /*
-            PRÊMIO DO DIAMANTE
+            CREDITA PELO MESMO
+            SISTEMA DOS OUTROS JOGOS.
             */
 
             try{
@@ -1388,23 +1415,24 @@ function abrirCasa(
 
                 }
 
-            }catch(e){
+            }catch(error){
 
                 console.error(
-                    "Erro ao creditar prêmio:",
-                    e
+                    "Erro ao creditar:",
+                    error
                 );
 
             }
 
 
+            await atualizarSaldo();
+
+
             premio.textContent =
                 "💎 + R$ " +
-                PREMIO_DIAMANTE
-                .toFixed(2)
-                .replace(".",",");
-
-            await atualizarSaldo();
+                dinheiro(
+                    PREMIO_DIAMANTE
+                );
 
 
             /*
@@ -1461,15 +1489,14 @@ function perderRodada(){
     premio.textContent =
         "💥 Você encontrou uma bomba!";
 
-    revelarBombas();
-
-
     /*
-    A aposta já foi debitada
-    quando o jogo começou.
+    A aposta já foi descontada
+    quando a rodada começou.
     */
 
     atualizarSaldo();
+
+    revelarBombas();
 
 
     setTimeout(
@@ -1488,6 +1515,7 @@ function perderRodada(){
         },
         900
     );
+
 
     botao.disabled = false;
 
@@ -1556,6 +1584,7 @@ function tempoEsgotado(){
         900
     );
 
+
     botao.disabled = false;
 
     botao.textContent =
@@ -1612,7 +1641,8 @@ function revelarBombas(){
                             "💣";
 
                         tocarSom(
-                            100 + ordem * 30,
+                            100 +
+                            ordem * 30,
                             .18,
                             "sawtooth",
                             .06
@@ -1689,6 +1719,7 @@ function ganharRodada(){
         900
     );
 
+
     botao.disabled = false;
 
     botao.textContent =
@@ -1716,12 +1747,6 @@ function fecharResultado(){
 
 }
 
-
-/*
-Deixa a função disponível caso
-alguma outra parte do site chame.
-*/
-
 window.fecharResultado =
     fecharResultado;
 
@@ -1730,7 +1755,7 @@ window.fecharResultado =
 INICIALIZAÇÃO
 ===================================================== */
 
-async function inicializarMines(){
+async function inicializar(){
 
     criarTabuleiro();
 
@@ -1745,26 +1770,33 @@ async function inicializarMines(){
     botao.textContent =
         "💣 NOVO JOGO";
 
+
     /*
-    O listener é colocado diretamente
-    aqui, evitando depender de outro
-    DOMContentLoaded.
+    IMPORTANTE:
+    o clique fica registrado diretamente.
     */
 
-    botao.onclick =
-        iniciarJogo;
+    botao.addEventListener(
+        "click",
+        iniciarJogo
+    );
 
-    btnFecharResultado.onclick =
-        fecharResultado;
+
+    btnFecharResultado.addEventListener(
+        "click",
+        fecharResultado
+    );
+
+
+    /*
+    Espera o saldo compartilhado
+    e mostra o saldo da conta.
+    */
 
     await atualizarSaldo();
 
 }
 
-
-/* =====================================================
-INICIAR
-===================================================== */
 
 if(
     document.readyState ===
@@ -1773,7 +1805,7 @@ if(
 
     document.addEventListener(
         "DOMContentLoaded",
-        inicializarMines,
+        inicializar,
         {
             once:true
         }
@@ -1781,13 +1813,13 @@ if(
 
 }else{
 
-    inicializarMines();
+    inicializar();
 
 }
 
 
 /* =====================================================
-ÁUDIO POR TOQUE
+ÁUDIO NO PRIMEIRO TOQUE
 ===================================================== */
 
 document.addEventListener(
@@ -1809,7 +1841,7 @@ document.addEventListener(
 
 
 /* =====================================================
-SEGURANÇA AO SAIR
+SEGURANÇA
 ===================================================== */
 
 window.addEventListener(
