@@ -76,23 +76,32 @@ body{
 .container{
     width:100%;
     max-width:500px;
+
     margin:auto;
+
     padding:12px 10px 35px;
 }
 
 .voltar{
     display:inline-block;
+
     color:#aaa;
     text-decoration:none;
+
     font-size:12px;
+
     margin-bottom:8px;
 }
 
 .titulo{
     text-align:center;
+
     color:#f4d35e;
+
     font-weight:900;
+
     font-size:20px;
+
     letter-spacing:2px;
 
     text-shadow:
@@ -101,17 +110,23 @@ body{
 
 .subtitulo{
     text-align:center;
+
     color:#777;
+
     font-size:9px;
+
     letter-spacing:3px;
+
     margin-top:4px;
 }
 
 .jogo{
     margin-top:15px;
+
     padding:12px 9px 15px;
 
     border:1px solid #73517e;
+
     border-radius:12px;
 
     background:
@@ -126,6 +141,7 @@ body{
         inset 0 0 20px rgba(0,0,0,.8);
 
     position:relative;
+
     overflow:hidden;
 }
 
@@ -150,20 +166,25 @@ body{
 .raio1{
     top:35px;
     left:-20px;
+
     transform:rotate(25deg);
 }
 
 .raio2{
     top:80px;
     right:-20px;
+
     transform:rotate(-28deg);
+
     animation-delay:.3s;
 }
 
 .raio3{
     bottom:45px;
     left:15px;
+
     transform:rotate(-20deg);
+
     animation-delay:.5s;
 }
 
@@ -184,13 +205,16 @@ body{
     height:45px;
 
     display:flex;
+
     align-items:center;
     justify-content:center;
 }
 
 #multiplicador{
     color:#ffe25b;
+
     font-size:22px;
+
     font-weight:900;
 
     text-shadow:
@@ -205,9 +229,11 @@ body{
         repeat(3,1fr);
 
     gap:7px;
+
     padding:10px;
 
     border:2px solid #b18b3a;
+
     border-radius:8px;
 
     background:
@@ -226,9 +252,11 @@ body{
     height:145px;
 
     overflow:hidden;
+
     position:relative;
 
     border:2px solid #6e4b7d;
+
     border-radius:7px;
 
     background:#09090c;
@@ -275,7 +303,9 @@ body{
 
 .simbolos{
     position:absolute;
+
     top:0;
+
     width:100%;
 
     transition:
@@ -287,6 +317,7 @@ body{
     height:70px;
 
     display:flex;
+
     align-items:center;
     justify-content:center;
 
@@ -327,6 +358,7 @@ body{
         0 0 10px #ffe45c;
 
     z-index:6;
+
     opacity:.75;
 
     pointer-events:none;
@@ -480,9 +512,9 @@ body{
 
     .simbolo{
         height:60px;
+
         font-size:34px;
     }
-
 }
 
 </style>
@@ -533,9 +565,11 @@ body{
         ← Voltar para Jogos
     </a>
 
+
     <div class="titulo">
         ⚡ NIGHT MONSTERS ⚡
     </div>
+
 
     <div class="subtitulo">
         SLOTS DE RELÂMPAGOS
@@ -607,6 +641,7 @@ body{
                 R$ 0,50
             </button>
 
+
             <button
                 class="valor"
                 onclick="escolherValor(1,this)"
@@ -614,12 +649,14 @@ body{
                 R$ 1
             </button>
 
+
             <button
                 class="valor"
                 onclick="escolherValor(2,this)"
             >
                 R$ 2
             </button>
+
 
             <button
                 class="valor"
@@ -708,16 +745,6 @@ const musicaNightMonsters =
 
 musicaNightMonsters.volume = 0.35;
 
-
-/*
-   O navegador do celular bloqueia
-   autoplay até o usuário tocar na tela.
-
-   No primeiro toque:
-   - libera o áudio
-   - inicia o MP3
-*/
-
 let musicaIniciada = false;
 
 
@@ -742,7 +769,7 @@ async function iniciarMusica(){
     }catch(error){
 
         console.log(
-            "O navegador bloqueou o áudio. Tentando novamente...",
+            "Áudio aguardando interação:",
             error
         );
 
@@ -752,23 +779,26 @@ async function iniciarMusica(){
 
 
 /*
-   Qualquer primeiro toque na página
-   tenta iniciar a música.
+   Primeiro toque na tela libera
+   o MP3 no celular.
 */
 
 document.addEventListener(
     "pointerdown",
-    iniciarMusica,
+    function(){
+
+        iniciarMusica();
+
+    },
     {
-        once:false,
         passive:true
     }
 );
 
 
 /*
-   Se o usuário clicar em GIRAR,
-   também garante que a música esteja tocando.
+   Também tenta iniciar quando
+   o usuário tocar em qualquer botão.
 */
 
 document.addEventListener(
@@ -782,7 +812,7 @@ document.addEventListener(
 
 
 /* =========================================================
-   CONFIGURAÇÃO DO JOGO
+   CONFIGURAÇÃO
 ========================================================= */
 
 let aposta = 0.50;
@@ -821,7 +851,7 @@ const premios = {
 
 
 /* =========================================================
-   FORMATA DINHEIRO
+   DINHEIRO
 ========================================================= */
 
 function dinheiro(valor){
@@ -835,7 +865,7 @@ function dinheiro(valor){
 
 
 /* =========================================================
-   USUÁRIO LOGADO
+   USUÁRIO
 ========================================================= */
 
 async function getUsuario(){
@@ -844,6 +874,7 @@ async function getUsuario(){
         await supabaseClient
         .auth
         .getSession();
+
 
     if(error){
 
@@ -856,13 +887,14 @@ async function getUsuario(){
 
     }
 
+
     return data?.session?.user || null;
 
 }
 
 
 /* =========================================================
-   BUSCAR SALDO
+   SALDO
 ========================================================= */
 
 async function getSaldo(){
@@ -870,11 +902,9 @@ async function getSaldo(){
     const user =
         await getUsuario();
 
-    if(!user){
 
+    if(!user)
         return 0;
-
-    }
 
 
     const { data,error } =
@@ -900,13 +930,14 @@ async function getSaldo(){
     saldoAtual =
         Number(data?.valor || 0);
 
+
     return saldoAtual;
 
 }
 
 
 /* =========================================================
-   MOSTRAR SALDO
+   ATUALIZAR SALDO
 ========================================================= */
 
 async function atualizarSaldo(){
@@ -1009,7 +1040,7 @@ async function alterarSaldo(novoSaldo){
 
 
 /* =========================================================
-   ESCOLHER SÍMBOLO
+   SÍMBOLO
 ========================================================= */
 
 function escolherSimbolo(){
@@ -1032,6 +1063,7 @@ function criarRolo(id){
 
     const area =
         document.getElementById(id);
+
 
     area.innerHTML = "";
 
@@ -1118,8 +1150,6 @@ async function girar(){
     if(girando)
         return;
 
-
-    /* GARANTE A MÚSICA */
 
     await iniciarMusica();
 
@@ -1254,11 +1284,9 @@ async function girar(){
     if(sorteio < 0.015){
 
         resultadoFinal = [
-
             "💎",
             "💎",
             "💎"
-
         ];
 
     }
@@ -1266,11 +1294,9 @@ async function girar(){
     else if(sorteio < 0.06){
 
         resultadoFinal = [
-
             "⚡",
             "⚡",
             "⚡"
-
         ];
 
     }
@@ -1282,11 +1308,9 @@ async function girar(){
 
 
         resultadoFinal = [
-
             s,
             s,
             s
-
         ];
 
     }
@@ -1317,11 +1341,9 @@ async function girar(){
 
 
         resultadoFinal = [
-
             a,
             b,
             c
-
         ];
 
     }
@@ -1621,7 +1643,7 @@ atualizarSaldo();
 
 
 /* =========================================================
-   ATUALIZAR SALDO
+   ATUALIZAÇÃO AUTOMÁTICA
 ========================================================= */
 
 setInterval(
@@ -1639,7 +1661,7 @@ setInterval(
 
 
 /* =========================================================
-   OBSERVAR LOGIN
+   LOGIN
 ========================================================= */
 
 supabaseClient.auth.onAuthStateChange(
