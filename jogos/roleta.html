@@ -121,7 +121,6 @@ body{
     height:min(94vw,400px);
 
     border-radius:50%;
-
     position:relative;
 
     border:6px solid #d7ae31;
@@ -141,20 +140,24 @@ body{
     inset 0 0 25px #000;
 
     /*
-       GIRO BEM MAIS LENTO
+       SAÍDA E PARADA SUAVES
 
-       16 segundos de animação
-       e desaceleração longa.
+       0%   começa devagar
+       20%  acelera
+       meio mantém
+       final desacelera
     */
 
     transition:
-    transform 16s cubic-bezier(.05,.82,.04,1);
+    transform 16s cubic-bezier(
+        .12,
+        .65,
+        .08,
+        1
+    );
 
     overflow:hidden;
 }
-
-
-/* BORDA INTERNA */
 
 .roleta::before{
 
@@ -175,9 +178,6 @@ body{
     z-index:3;
 }
 
-
-/* DIVISÕES DAS CASINHAS */
-
 .roleta::after{
 
     content:"";
@@ -196,13 +196,10 @@ body{
         transparent 1deg 18deg
     );
 
-    z-index:4;
+    z-index:5;
 
     pointer-events:none;
 }
-
-
-/* FUNDO DAS CASINHAS */
 
 .roleta-inner{
 
@@ -229,7 +226,7 @@ body{
 
 
 /* =====================================================
-   NÚMEROS / CASINHAS
+   CASINHAS VERTICAIS
 ===================================================== */
 
 .numeros{
@@ -245,7 +242,8 @@ body{
 
 
 /*
-   Cada número agora é uma casinha grande.
+   AGORA AS CASINHAS SÃO
+   COMPRIDAS / VERTICAIS.
 */
 
 .numero{
@@ -255,11 +253,16 @@ body{
     left:50%;
     top:50%;
 
-    width:52px;
-    height:38px;
+    /*
+       Largura pequena
+       Altura grande
+    */
 
-    margin-left:-26px;
-    margin-top:-19px;
+    width:42px;
+    height:66px;
+
+    margin-left:-21px;
+    margin-top:-33px;
 
     display:flex;
 
@@ -268,28 +271,28 @@ body{
 
     color:#fff3a1;
 
-    font-size:12px;
+    font-size:13px;
 
     font-weight:900;
 
     background:
     linear-gradient(
-        145deg,
-        rgba(20,25,23,.96),
-        rgba(3,6,6,.96)
+        180deg,
+        rgba(25,30,28,.98),
+        rgba(3,6,6,.98)
     );
 
     border:2px solid #e2bd48;
 
-    border-radius:6px;
+    border-radius:7px;
 
     text-shadow:
     0 1px 2px #000,
-    0 0 6px rgba(255,210,70,.9);
+    0 0 7px rgba(255,210,70,.9);
 
     box-shadow:
-    0 0 6px rgba(255,210,70,.35),
-    inset 0 0 7px rgba(0,0,0,.8);
+    0 0 7px rgba(255,210,70,.35),
+    inset 0 0 9px rgba(0,0,0,.9);
 
     white-space:nowrap;
 
@@ -300,7 +303,7 @@ body{
 
 
 /*
-   O conteúdo não encolhe.
+   TEXTO GRANDE E VERTICAL
 */
 
 .numero-conteudo{
@@ -314,41 +317,52 @@ body{
     width:100%;
     height:100%;
 
-    white-space:nowrap;
-
-    transform:none !important;
-
-    font-size:12px;
+    font-size:13px;
 
     font-weight:900;
+
+    white-space:nowrap;
+
+    /*
+       O texto acompanha a casa.
+    */
+
+    transform:
+        rotate(90deg);
+
+    text-align:center;
 }
 
 
-/* CASINHA PERDEU */
+/* =====================================================
+   PERDEU
+===================================================== */
 
 .numero.perdeu{
 
-    color:#ff8585;
+    color:#ff8c8c;
 
-    border-color:#ff4d4d;
+    border-color:#ff3f3f;
 
     background:
     linear-gradient(
-        145deg,
-        rgba(55,8,8,.98),
+        180deg,
+        rgba(65,8,8,.98),
         rgba(18,3,3,.98)
     );
 
     text-shadow:
-    0 0 6px rgba(255,50,50,.9);
+    0 0 8px rgba(255,50,50,.9);
 
     box-shadow:
-    0 0 10px rgba(255,40,40,.45),
+    0 0 12px rgba(255,40,40,.5),
     inset 0 0 8px #000;
 }
 
 
-/* CASINHA PREMIADA */
+/* =====================================================
+   CASA VENCEDORA
+===================================================== */
 
 .numero.destaque{
 
@@ -358,19 +372,15 @@ body{
 
     background:
     linear-gradient(
-        145deg,
+        180deg,
         #a87912,
         #493207
     );
 
     box-shadow:
-    0 0 8px #ffe36a,
-    0 0 20px rgba(255,220,70,.8),
-    inset 0 0 8px rgba(255,255,255,.25);
-
-    transform:
-    translate(var(--x),var(--y))
-    scale(1.18) !important;
+    0 0 10px #ffe36a,
+    0 0 25px rgba(255,220,70,.8),
+    inset 0 0 10px rgba(255,255,255,.25);
 
     z-index:20;
 }
@@ -807,18 +817,18 @@ body{
 
     .numero{
 
-        width:45px;
-        height:34px;
+        width:36px;
+        height:58px;
 
-        margin-left:-22.5px;
-        margin-top:-17px;
+        margin-left:-18px;
+        margin-top:-29px;
 
-        font-size:10px;
+        font-size:11px;
     }
 
     .numero-conteudo{
 
-        font-size:10px;
+        font-size:11px;
     }
 
     .centro{
@@ -1267,7 +1277,7 @@ function iniciarSomRoleta(){
 
     pararSomRoleta();
 
-    velocidadeSom = 45;
+    velocidadeSom = 55;
 
     tocarTic();
 
@@ -1723,9 +1733,7 @@ function criarNumeros(){
             "numeros"
         );
 
-
     area.innerHTML = "";
-
 
     const total =
         premios.length;
@@ -1768,27 +1776,18 @@ function criarNumeros(){
             "numero-conteudo";
 
 
-        /*
-           VALOR INTEIRO DENTRO DA CASINHA
-        */
-
         conteudo.innerText =
             premios[i] === 0
-                ? "PERDEU"
-                : dinheiro(
-                    premios[i]
-                );
+            ? "PERDEU"
+            : dinheiro(
+                premios[i]
+            );
 
 
         numero.appendChild(
             conteudo
         );
 
-
-        /*
-           20 CASINHAS
-           UMA A CADA 18 GRAUS
-        */
 
         const angulo =
             (
@@ -1798,12 +1797,11 @@ function criarNumeros(){
 
 
         /*
-           Posição das casinhas.
-           Mais para dentro para dar espaço
-           para o texto.
+           As casinhas ficam
+           mais afastadas do centro.
         */
 
-        const raio = 124;
+        const raio = 128;
 
 
         const x =
@@ -1824,20 +1822,11 @@ function criarNumeros(){
             `translate(${x}px,${y}px)`;
 
 
-        /*
-           Guarda a posição para poder
-           aumentar a casa vencedora.
-        */
+        numero.dataset.x =
+            x;
 
-        numero.style.setProperty(
-            "--x",
-            `${x}px`
-        );
-
-        numero.style.setProperty(
-            "--y",
-            `${y}px`
-        );
+        numero.dataset.y =
+            y;
 
 
         numero.dataset.index =
@@ -1866,9 +1855,7 @@ function(
     if(girando)
         return;
 
-
     tocarClique();
-
 
     valorAposta =
         Number(valor);
@@ -1961,7 +1948,7 @@ function atualizarBotao(){
 
 
 /* =====================================================
-   GIRAR
+   GIRAR ROLETA
 ===================================================== */
 
 window.girarRoleta =
@@ -2010,10 +1997,6 @@ async function(){
     atualizarBotao();
 
 
-    /*
-       REMOVE DESTAQUES ANTERIORES
-    */
-
     document
     .querySelectorAll(
         ".numero"
@@ -2028,10 +2011,6 @@ async function(){
         }
     );
 
-
-    /*
-       DEBITA APOSTA
-    */
 
     const saldoAnterior =
         saldoReal;
@@ -2071,7 +2050,7 @@ async function(){
 
 
     /*
-       ESCOLHE A CASA
+       ESCOLHE O RESULTADO
     */
 
     const indice =
@@ -2085,10 +2064,6 @@ async function(){
         premios[indice];
 
 
-    /*
-       CADA CASA = 18 GRAUS
-    */
-
     const tamanhoCasa =
         360 /
         premios.length;
@@ -2100,20 +2075,18 @@ async function(){
 
 
     /*
-       APENAS 6 VOLTAS.
+       6 VOLTAS.
 
-       6 voltas em 16 segundos
-       = giro bem mais lento.
+       A duração continua em
+       16 segundos.
+
+       A curva agora faz a
+       saída ser suave.
     */
 
     const voltas =
         360 * 6;
 
-
-    /*
-       POSICIONA A CASA ESCOLHIDA
-       NO PONTEIRO DE CIMA.
-    */
 
     const novaRotacao =
         rotacaoAtual +
@@ -2121,8 +2094,44 @@ async function(){
         (360 - anguloPremio);
 
 
-    roleta.style.transform =
-        `rotate(${novaRotacao}deg)`;
+    /*
+       Pequeno atraso antes
+       de começar o movimento.
+
+       Isso faz a roleta não
+       "dar um tranco" no clique.
+    */
+
+    roleta.style.transition =
+        "none";
+
+
+    /*
+       Força o navegador a
+       registrar a posição atual.
+    */
+
+    void roleta.offsetWidth;
+
+
+    roleta.style.transition =
+        "transform 16s cubic-bezier(.18,.70,.08,1)";
+
+
+    /*
+       COMEÇA O MOVIMENTO
+       DEPOIS DE 80ms.
+    */
+
+    setTimeout(
+        function(){
+
+            roleta.style.transform =
+                `rotate(${novaRotacao}deg)`;
+
+        },
+        80
+    );
 
 
     rotacaoAtual =
@@ -2130,8 +2139,7 @@ async function(){
 
 
     /*
-       ESPERA OS 16 SEGUNDOS
-       DA ANIMAÇÃO.
+       16 segundos + 80ms.
     */
 
     setTimeout(
@@ -2143,7 +2151,7 @@ async function(){
             );
 
         },
-        16000
+        16100
     );
 
 };
@@ -2283,7 +2291,6 @@ function(){
     if(girando)
         return;
 
-
     iniciarAudio();
 
     tocarClique();
@@ -2390,7 +2397,7 @@ async function iniciar(){
 
 
 /* =====================================================
-   LOGIN
+   OBSERVAR LOGIN
 ===================================================== */
 
 supabase
