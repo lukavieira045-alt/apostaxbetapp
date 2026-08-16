@@ -27,47 +27,15 @@ body{ background:radial-gradient(circle at 50% 30%,#18231f,#070a0a 45%,#020303 8
 
 /* ===================================================== CASAS / NÚMEROS (CORREÇÃO DEFINITIVA) ===================================================== */
 .numeros{ position:absolute; inset:0; z-index:7; }
+.numero{ position:absolute; left:50%; top:50%; width:64px; height:150px; margin-left:-32px; margin-top:-150px; display:flex; align-items:flex-start; justify-content:center; transform-origin:32px 150px; background:transparent; border:none; color:#fff2a1; font-size:20px; font-weight:900; text-shadow:0 2px 3px #000,0 0 7px rgba(255,220,80,.9); z-index:8; pointer-events:none; }
 
-/* 
-   CORREÇÃO PRINCIPAL: 
-   Aplicamos o translateY NEGATIVO diretamente aqui.
-   O valor -110px empurra o bloco inteiro para cima (borda externa)
-   ANTES de aplicar a rotação. Isso evita que o texto saia da tela.
-*/
-.numero{
-    position:absolute;
-    left:50%; top:50%;
-    width:64px; height:150px;
-    margin-left:-32px; margin-top:-150px;
-    
-    /* Ponto de pivô exato no centro da roda */
-    transform-origin:32px 150px; 
-    
-    display:flex; align-items:flex-start; justify-content:center;
-    background:transparent; border:none;
-    color:#fff2a1; font-size:20px; font-weight:900;
-    text-shadow:0 2px 3px #000,0 0 7px rgba(255,220,80,.9);
-    z-index:8; pointer-events:none;
-}
-
-/* Removemos o translateY daqui para não somar com o de cima */
-.numero-conteudo{
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    min-width:42px; color:#fff3a6; font-size:21px; font-weight:900;
-    line-height:22px; text-align:center; white-space:nowrap;
-    text-shadow:0 2px 3px #000,0 0 8px rgba(255,215,70,.85);
-}
+/* CORREÇÃO: translateY ajustado para -115px para ficar DENTRO da roda e não ser cortado */
+.numero-conteudo{ display:flex; flex-direction:column; align-items:center; justify-content:center; min-width:42px; color:#fff3a6; font-size:21px; font-weight:900; line-height:22px; text-align:center; white-space:nowrap; transform:translateY(-115px); text-shadow:0 2px 3px #000,0 0 8px rgba(255,215,70,.85); }
 
 .numero.valor-normal .numero-conteudo{ color:#fff3a6; }
 .numero.perdeu .numero-conteudo{ color:#ff7777; font-size:17px; line-height:18px; text-shadow:0 2px 3px #000,0 0 9px rgba(255,40,40,.8); }
 .numero.super-bonus .numero-conteudo{ color:#fff6a8; font-size:15px; line-height:17px; text-shadow:0 0 5px #fff,0 0 12px #ffe33c,0 0 20px #ff9d00; }
-
-/* Mantém o translateY no destaque para não voltar ao centro */
-.numero.destaque .numero-conteudo{
-    color:#ffffff;
-    transform:scale(1.22);
-    text-shadow:0 0 5px white,0 0 12px #ffe36a,0 0 25px #ffb300;
-}
+.numero.destaque .numero-conteudo{ color:#ffffff; transform:translateY(-115px) scale(1.22); text-shadow:0 0 5px white,0 0 12px #ffe36a,0 0 25px #ffb300; }
 
 /* ===================================================== CENTRO ===================================================== */
 .centro{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:82px; height:82px; border-radius:50%; background:radial-gradient(circle,#283d38,#08100e 65%,#020303); border:4px solid #d5ad36; z-index:12; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:0 0 15px rgba(255,211,53,.55),inset 0 0 15px #000; }
@@ -118,7 +86,9 @@ body{ background:radial-gradient(circle at 50% 30%,#18231f,#070a0a 45%,#020303 8
 @media(max-width:360px){
     .roleta{ width:310px; height:310px; }
     .numero{ width:52px; height:130px; margin-left:-26px; margin-top:-130px; transform-origin:26px 130px; }
-    .numero-conteudo{ font-size:17px; line-height:18px; }
+    /* Ajuste responsivo do translateY para telas menores */
+    .numero-conteudo{ font-size:17px; line-height:18px; transform:translateY(-95px); }
+    .numero.destaque .numero-conteudo{ transform:translateY(-95px) scale(1.22); }
 }
 </style>
 </head>
@@ -130,12 +100,12 @@ body{ background:radial-gradient(circle at 50% 30%,#18231f,#070a0a 45%,#020303 8
 
 <div class="superbonus-overlay" id="superBonusOverlay">
     <div class="superbonus-raio"></div>
-    <div class="superbonus-titulo">⚡ SUPER BÔNUS </div>
+    <div class="superbonus-titulo">⚡ SUPER BÔNUS ⚡</div>
     <div class="superbonus-valor">R$ 10,00</div>
 </div>
 
 <div class="topo">
-    <div class="logo"> APOSTAXBET</div>
+    <div class="logo">⚡ APOSTAXBET</div>
     <div class="saldo-topo">
         <div class="saldo-label">SALDO</div>
         <div id="displaySaldo">R$ 0,00</div>
@@ -143,7 +113,7 @@ body{ background:radial-gradient(circle at 50% 30%,#18231f,#070a0a 45%,#020303 8
 </div>
 
 <a href="../index.html" class="lobby">
-    <div class="lobby-icon"></div>
+    <div class="lobby-icon">⌂</div>
     Lobby
 </a>
 
@@ -364,7 +334,7 @@ async function salvarSaldo(novoSaldo){
     return true;
 }
 
-// ✅ FUNÇÃO CORRIGIDA: Aplica translateY(-110px) + rotate() juntos
+// ✅ FUNÇÃO CORRIGIDA: Distribui os números radialmente sem alterar lógica
 function criarNumeros(){
     const area = document.getElementById("numeros");
     area.innerHTML = "";
@@ -392,10 +362,9 @@ function criarNumeros(){
         
         numero.appendChild(conteudo);
         
-        // CORREÇÃO: Combina translateY e rotate na mesma propriedade
+        // Aplica apenas a rotação. O posicionamento radial é feito pelo translateY no CSS
         const angulo = i * (360 / total);
-        numero.style.transform = `translateY(-110px) rotate(${angulo}deg)`;
-        
+        numero.style.transform = `rotate(${angulo}deg)`;
         numero.dataset.index = i;
         area.appendChild(numero);
     }
@@ -432,7 +401,7 @@ window.girarRoleta = async function(){
     if(girando) return;
     iniciarAudio();
     tocarClique();
-    if(!usuarioAtual){ resultado.innerHTML="❌ USUÁRIO NÃO LOGADO"; resultado.style.color="#ff4141"; return; }
+    if(!usuarioAtual){ resultado.innerHTML=" USUÁRIO NÃO LOGADO"; resultado.style.color="#ff4141"; return; }
     if(saldoReal < valorAposta){ resultado.innerHTML=" SALDO INSUFICIENTE"; resultado.style.color="#ff4141"; return; }
     
     girando = true;
@@ -481,7 +450,7 @@ async function finalizarRodada(indice, premio){
     if(!creditado){ girando=false; atualizarBotao(); return; }
     
     if(premio === 10){
-        resultado.innerHTML = " SUPER BÔNUS ⚡<br><span style='font-size:28px;color:#ffe36a'>R$ 10,00</span>";
+        resultado.innerHTML = "⚡ SUPER BÔNUS ⚡<br><span style='font-size:28px;color:#ffe36a'>R$ 10,00</span>";
         resultado.style.color = "#ffe36a";
         mostrarSuperBonus();
     }else{
