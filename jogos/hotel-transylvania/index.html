@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
 
 <meta charset="UTF-8">
@@ -177,11 +176,11 @@ body{
     to{
         opacity:1;
     }
-
 }
 
 .multiplicador{
     text-align:center;
+
     height:45px;
 
     display:flex;
@@ -225,6 +224,7 @@ body{
 
 .rolo{
     height:145px;
+
     overflow:hidden;
     position:relative;
 
@@ -242,12 +242,14 @@ body{
     content:"";
 
     position:absolute;
+
     left:0;
     right:0;
 
     height:35px;
 
     z-index:4;
+
     pointer-events:none;
 }
 
@@ -345,7 +347,9 @@ body{
     height:40px;
 
     border:1px solid #624d29;
+
     background:#0a090b;
+
     color:#aaa;
 
     border-radius:5px;
@@ -355,6 +359,7 @@ body{
 
 .valor.ativo{
     color:#ffe45b;
+
     border-color:#ffe45b;
 
     box-shadow:
@@ -364,11 +369,13 @@ body{
 
 .apostar{
     width:100%;
+
     height:55px;
 
     margin-top:10px;
 
     border:1px solid #e1b93e;
+
     border-radius:6px;
 
     background:
@@ -381,7 +388,9 @@ body{
     color:#ffe36a;
 
     font-size:17px;
+
     font-weight:900;
+
     letter-spacing:2px;
 
     box-shadow:
@@ -395,6 +404,7 @@ body{
 
 .resultado{
     min-height:55px;
+
     margin-top:10px;
 
     text-align:center;
@@ -402,12 +412,15 @@ body{
     color:#bbb;
 
     font-weight:900;
+
     font-size:16px;
+
     line-height:22px;
 }
 
 .premio{
     color:#ffe45b;
+
     font-size:22px;
 
     text-shadow:
@@ -416,9 +429,11 @@ body{
 
 .info{
     display:flex;
+
     justify-content:space-between;
 
     color:#777;
+
     font-size:11px;
 
     margin-top:5px;
@@ -450,7 +465,6 @@ body{
     75%{
         transform:translateX(2px);
     }
-
 }
 
 .tremendo{
@@ -667,7 +681,7 @@ body{
 <script>
 
 /* =========================================================
-   CONFIGURAÇÃO SUPABASE
+   SUPABASE
 ========================================================= */
 
 const SUPABASE_URL =
@@ -680,6 +694,90 @@ const supabaseClient =
 window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
+);
+
+
+/* =========================================================
+   MÚSICA NIGHT MONSTERS
+========================================================= */
+
+const musicaNightMonsters =
+    document.getElementById(
+        "musicaNightMonsters"
+    );
+
+musicaNightMonsters.volume = 0.35;
+
+
+/*
+   O navegador do celular bloqueia
+   autoplay até o usuário tocar na tela.
+
+   No primeiro toque:
+   - libera o áudio
+   - inicia o MP3
+*/
+
+let musicaIniciada = false;
+
+
+async function iniciarMusica(){
+
+    if(musicaIniciada)
+        return;
+
+    try{
+
+        musicaNightMonsters.volume =
+            0.35;
+
+        await musicaNightMonsters.play();
+
+        musicaIniciada = true;
+
+        console.log(
+            "🎵 Música Night Monsters iniciada"
+        );
+
+    }catch(error){
+
+        console.log(
+            "O navegador bloqueou o áudio. Tentando novamente...",
+            error
+        );
+
+    }
+
+}
+
+
+/*
+   Qualquer primeiro toque na página
+   tenta iniciar a música.
+*/
+
+document.addEventListener(
+    "pointerdown",
+    iniciarMusica,
+    {
+        once:false,
+        passive:true
+    }
+);
+
+
+/*
+   Se o usuário clicar em GIRAR,
+   também garante que a música esteja tocando.
+*/
+
+document.addEventListener(
+    "click",
+    function(){
+
+        iniciarMusica();
+
+    }
 );
 
 
@@ -723,319 +821,7 @@ const premios = {
 
 
 /* =========================================================
-   MÚSICA DO NIGHT MONSTERS
-========================================================= */
-
-const musicaNightMonsters =
-    document.getElementById(
-        "musicaNightMonsters"
-    );
-
-let musicaIniciada = false;
-
-
-async function iniciarMusica(){
-
-    if(musicaIniciada)
-        return;
-
-    try{
-
-        musicaNightMonsters.volume = 0.35;
-
-        await musicaNightMonsters.play();
-
-        musicaIniciada = true;
-
-    }catch(error){
-
-        console.log(
-            "O navegador bloqueou o áudio até uma interação."
-        );
-
-    }
-
-}
-
-
-/*
-Primeiro toque do jogador libera
-a música automaticamente.
-*/
-
-document.addEventListener(
-    "pointerdown",
-    function(){
-
-        iniciarMusica();
-
-    },
-    {
-        once:true
-    }
-);
-
-
-/* =========================================================
-   SONS DOS EFEITOS
-========================================================= */
-
-let audioContext = null;
-
-
-function iniciarAudio(){
-
-    if(audioContext)
-        return;
-
-    try{
-
-        audioContext =
-            new (
-                window.AudioContext ||
-                window.webkitAudioContext
-            )();
-
-    }catch(error){
-
-        console.log(
-            "Áudio de efeitos indisponível."
-        );
-
-    }
-
-}
-
-
-function somMonstro(){
-
-    if(!audioContext)
-        return;
-
-    const agora =
-        audioContext.currentTime;
-
-
-    const osc =
-        audioContext.createOscillator();
-
-    const ganho =
-        audioContext.createGain();
-
-
-    osc.type =
-        "sawtooth";
-
-
-    osc.frequency.setValueAtTime(
-        130,
-        agora
-    );
-
-
-    osc.frequency.exponentialRampToValueAtTime(
-        55,
-        agora + 0.8
-    );
-
-
-    ganho.gain.setValueAtTime(
-        0.0001,
-        agora
-    );
-
-
-    ganho.gain.exponentialRampToValueAtTime(
-        0.045,
-        agora + 0.05
-    );
-
-
-    ganho.gain.exponentialRampToValueAtTime(
-        0.0001,
-        agora + 1
-    );
-
-
-    osc.connect(ganho);
-
-    ganho.connect(
-        audioContext.destination
-    );
-
-
-    osc.start(agora);
-
-    osc.stop(
-        agora + 1.1
-    );
-
-}
-
-
-function somSuspense(){
-
-    if(!audioContext)
-        return;
-
-    const agora =
-        audioContext.currentTime;
-
-
-    const osc =
-        audioContext.createOscillator();
-
-    const ganho =
-        audioContext.createGain();
-
-
-    osc.type =
-        "triangle";
-
-
-    osc.frequency.setValueAtTime(
-        220,
-        agora
-    );
-
-
-    osc.frequency.linearRampToValueAtTime(
-        440,
-        agora + 0.8
-    );
-
-
-    ganho.gain.setValueAtTime(
-        0.0001,
-        agora
-    );
-
-
-    ganho.gain.linearRampToValueAtTime(
-        0.035,
-        agora + 0.15
-    );
-
-
-    ganho.gain.exponentialRampToValueAtTime(
-        0.0001,
-        agora + 1
-    );
-
-
-    osc.connect(ganho);
-
-    ganho.connect(
-        audioContext.destination
-    );
-
-
-    osc.start(agora);
-
-    osc.stop(
-        agora + 1.1
-    );
-
-}
-
-
-function somPremio(){
-
-    if(!audioContext)
-        return;
-
-    const agora =
-        audioContext.currentTime;
-
-
-    [523,659,784,1046].forEach(
-        function(freq,i){
-
-            const osc =
-                audioContext.createOscillator();
-
-            const ganho =
-                audioContext.createGain();
-
-
-            osc.type =
-                "sine";
-
-
-            osc.frequency.value =
-                freq;
-
-
-            ganho.gain.setValueAtTime(
-                0.0001,
-                agora + i * 0.12
-            );
-
-
-            ganho.gain.exponentialRampToValueAtTime(
-                0.07,
-                agora + i * 0.12 + 0.03
-            );
-
-
-            ganho.gain.exponentialRampToValueAtTime(
-                0.0001,
-                agora + i * 0.12 + 0.4
-            );
-
-
-            osc.connect(ganho);
-
-            ganho.connect(
-                audioContext.destination
-            );
-
-
-            osc.start(
-                agora + i * 0.12
-            );
-
-
-            osc.stop(
-                agora + i * 0.12 + 0.45
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   PRIMEIRA INTERAÇÃO
-========================================================= */
-
-document.addEventListener(
-    "pointerdown",
-    function(){
-
-        iniciarMusica();
-
-        iniciarAudio();
-
-        if(
-            audioContext &&
-            audioContext.state === "suspended"
-        ){
-
-            audioContext.resume();
-
-        }
-
-    },
-    {
-        once:false
-    }
-);
-
-
-/* =========================================================
-   DINHEIRO
+   FORMATA DINHEIRO
 ========================================================= */
 
 function dinheiro(valor){
@@ -1049,16 +835,15 @@ function dinheiro(valor){
 
 
 /* =========================================================
-   USUÁRIO
+   USUÁRIO LOGADO
 ========================================================= */
 
 async function getUsuario(){
 
-    const {data,error} =
+    const { data,error } =
         await supabaseClient
         .auth
         .getSession();
-
 
     if(error){
 
@@ -1070,7 +855,6 @@ async function getUsuario(){
         return null;
 
     }
-
 
     return data?.session?.user || null;
 
@@ -1086,7 +870,6 @@ async function getSaldo(){
     const user =
         await getUsuario();
 
-
     if(!user){
 
         return 0;
@@ -1094,14 +877,11 @@ async function getSaldo(){
     }
 
 
-    const {data,error} =
+    const { data,error } =
         await supabaseClient
         .from("saldos")
         .select("valor")
-        .eq(
-            "user_id",
-            user.id
-        )
+        .eq("user_id",user.id)
         .single();
 
 
@@ -1118,10 +898,7 @@ async function getSaldo(){
 
 
     saldoAtual =
-        Number(
-            data?.valor || 0
-        );
-
+        Number(data?.valor || 0);
 
     return saldoAtual;
 
@@ -1156,9 +933,7 @@ async function atualizarSaldo(){
    ALTERAR SALDO
 ========================================================= */
 
-async function alterarSaldo(
-    novoSaldo
-){
+async function alterarSaldo(novoSaldo){
 
     const user =
         await getUsuario();
@@ -1197,16 +972,13 @@ async function alterarSaldo(
         );
 
 
-    const {error} =
+    const { error } =
         await supabaseClient
         .from("saldos")
         .update({
             valor:novoSaldo
         })
-        .eq(
-            "user_id",
-            user.id
-        );
+        .eq("user_id",user.id);
 
 
     if(error){
@@ -1261,7 +1033,6 @@ function criarRolo(id){
     const area =
         document.getElementById(id);
 
-
     area.innerHTML = "";
 
 
@@ -1272,9 +1043,7 @@ function criarRolo(id){
     ){
 
         const div =
-            document.createElement(
-                "div"
-            );
+            document.createElement("div");
 
 
         div.className =
@@ -1350,19 +1119,9 @@ async function girar(){
         return;
 
 
-    iniciarMusica();
+    /* GARANTE A MÚSICA */
 
-    iniciarAudio();
-
-
-    if(
-        audioContext &&
-        audioContext.state === "suspended"
-    ){
-
-        await audioContext.resume();
-
-    }
+    await iniciarMusica();
 
 
     const saldo =
@@ -1373,9 +1132,13 @@ async function girar(){
 
         alert(
             "Saldo insuficiente!\n\n" +
+
             "Saldo disponível: " +
+
             dinheiro(saldo) +
+
             "\n\nAposta: " +
+
             dinheiro(aposta)
         );
 
@@ -1387,40 +1150,28 @@ async function girar(){
     girando = true;
 
 
-    somMonstro();
-
-    somSuspense();
-
-
     const jogo =
-        document.getElementById(
-            "jogo"
-        );
+        document.getElementById("jogo");
 
 
     const btn =
-        document.getElementById(
-            "btn"
-        );
+        document.getElementById("btn");
 
 
     const resultado =
-        document.getElementById(
-            "resultado"
-        );
+        document.getElementById("resultado");
 
 
-    jogo.classList.add(
-        "jogando"
-    );
+    jogo.classList
+        .add("jogando");
 
 
-    jogo.classList.add(
-        "tremendo"
-    );
+    jogo.classList
+        .add("tremendo");
 
 
-    btn.disabled = true;
+    btn.disabled =
+        true;
 
 
     btn.innerText =
@@ -1455,17 +1206,16 @@ async function girar(){
         girando = false;
 
 
-        jogo.classList.remove(
-            "jogando"
-        );
+        jogo.classList
+            .remove("jogando");
 
 
-        jogo.classList.remove(
-            "tremendo"
-        );
+        jogo.classList
+            .remove("tremendo");
 
 
-        btn.disabled = false;
+        btn.disabled =
+            false;
 
 
         btn.innerText =
@@ -1491,7 +1241,7 @@ async function girar(){
     }
 
 
-    atualizarSaldo();
+    await atualizarSaldo();
 
 
     let resultadoFinal;
@@ -1504,9 +1254,11 @@ async function girar(){
     if(sorteio < 0.015){
 
         resultadoFinal = [
+
             "💎",
             "💎",
             "💎"
+
         ];
 
     }
@@ -1514,9 +1266,11 @@ async function girar(){
     else if(sorteio < 0.06){
 
         resultadoFinal = [
+
             "⚡",
             "⚡",
             "⚡"
+
         ];
 
     }
@@ -1528,9 +1282,11 @@ async function girar(){
 
 
         resultadoFinal = [
+
             s,
             s,
             s
+
         ];
 
     }
@@ -1540,8 +1296,10 @@ async function girar(){
         let a =
             escolherSimbolo();
 
+
         let b =
             escolherSimbolo();
+
 
         let c =
             escolherSimbolo();
@@ -1559,9 +1317,11 @@ async function girar(){
 
 
         resultadoFinal = [
+
             a,
             b,
             c
+
         ];
 
     }
@@ -1626,9 +1386,7 @@ function prepararRolo(
     ){
 
         const div =
-            document.createElement(
-                "div"
-            );
+            document.createElement("div");
 
 
         div.className =
@@ -1645,9 +1403,7 @@ function prepararRolo(
 
 
     const finalDiv =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
 
     finalDiv.className =
@@ -1658,9 +1414,7 @@ function prepararRolo(
         final;
 
 
-    area.appendChild(
-        finalDiv
-    );
+    area.appendChild(finalDiv);
 
 
     area.style.transition =
@@ -1706,26 +1460,19 @@ async function finalizar(
 ){
 
     const jogo =
-        document.getElementById(
-            "jogo"
-        );
+        document.getElementById("jogo");
 
 
     const btn =
-        document.getElementById(
-            "btn"
-        );
+        document.getElementById("btn");
 
 
     const resultado =
-        document.getElementById(
-            "resultado"
-        );
+        document.getElementById("resultado");
 
 
-    jogo.classList.remove(
-        "tremendo"
-    );
+    jogo.classList
+        .remove("tremendo");
 
 
     const iguais =
@@ -1805,17 +1552,18 @@ async function finalizar(
 
 
             resultado.innerHTML =
+
                 "⚡ COMBINAÇÃO PREMIADA!<br>" +
+
                 "<span class='premio'>" +
+
                 dinheiro(premio) +
+
                 "</span>";
 
 
             resultado.style.color =
                 "#ffe45b";
-
-
-            somPremio();
 
         }
 
@@ -1844,15 +1592,12 @@ async function finalizar(
     }
 
 
-    jogo.classList.remove(
-        "jogando"
-    );
+    girando =
+        false;
 
 
-    girando = false;
-
-
-    btn.disabled = false;
+    btn.disabled =
+        false;
 
 
     btn.innerText =
@@ -1876,7 +1621,7 @@ atualizarSaldo();
 
 
 /* =========================================================
-   ATUALIZAÇÃO DO SALDO
+   ATUALIZAR SALDO
 ========================================================= */
 
 setInterval(
