@@ -1,1476 +1,611 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Jogos - ApostaXBet</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-
-    *{
-      box-sizing:border-box;
-      margin:0;
-      padding:0;
-    }
-
-    html{
-      background:#050505;
-    }
-
-    body{
-      min-height:100vh;
-      padding-bottom:90px;
-      overflow-x:hidden;
-
-      color:#fff;
-      font-family:Arial,sans-serif;
-
-      background:
-        radial-gradient(
-          circle at 50% 20%,
-          #14251f 0%,
-          #080b0a 48%,
-          #050505 100%
-        );
-
-      position:relative;
-    }
-
-
-    /* ==========================================
-       FUNDO APOSTAXBET
-    ========================================== */
-
-    body::before{
-      content:"ApostaXBet";
-
-      position:fixed;
-      top:50%;
-      left:50%;
-
-      transform:translate(-50%,-50%);
-
-      width:110%;
-
-      text-align:center;
-
-      font-size:clamp(75px,22vw,210px);
-      font-weight:900;
-
-      letter-spacing:-6px;
-
-      color:rgba(230,194,41,.12);
-
-      -webkit-text-stroke:
-        2px rgba(230,194,41,.12);
-
-      text-shadow:
-        0 0 10px rgba(230,194,41,.45),
-        0 0 25px rgba(230,194,41,.35),
-        0 0 50px rgba(230,194,41,.20);
-
-      pointer-events:none;
-
-      z-index:0;
-
-      white-space:nowrap;
-
-      animation:
-        brilhoApostaX
-        3s
-        ease-in-out
-        infinite
-        alternate;
-    }
-
-
-    @keyframes brilhoApostaX{
-
-      0%{
-        opacity:.35;
-      }
-
-      100%{
-        opacity:.8;
-      }
-
-    }
-
-
-    /* ==========================================
-       LUZES
-    ========================================== */
-
-    body::after{
-      content:"";
-
-      position:fixed;
-      inset:-100px;
-
-      background:
-
-        radial-gradient(
-          circle at 10% 20%,
-          rgba(0,255,170,.15) 0,
-          transparent 14%
-        ),
-
-        radial-gradient(
-          circle at 90% 25%,
-          rgba(230,194,41,.17) 0,
-          transparent 15%
-        ),
-
-        radial-gradient(
-          circle at 30% 80%,
-          rgba(0,255,170,.12) 0,
-          transparent 14%
-        ),
-
-        radial-gradient(
-          circle at 80% 85%,
-          rgba(230,194,41,.14) 0,
-          transparent 15%
-        );
-
-      pointer-events:none;
-
-      z-index:1;
-
-      animation:
-        luzesFundo
-        8s
-        ease-in-out
-        infinite
-        alternate;
-    }
-
-
-    @keyframes luzesFundo{
-
-      0%{
-        transform:
-          translate(-20px,-10px)
-          scale(1);
-      }
-
-      50%{
-        transform:
-          translate(20px,15px)
-          scale(1.08);
-      }
-
-      100%{
-        transform:
-          translate(-10px,25px)
-          scale(1);
-      }
-
-    }
-
-
-    .luzes{
-      position:fixed;
-      inset:0;
-
-      overflow:hidden;
-
-      pointer-events:none;
-
-      z-index:1;
-    }
-
-
-    .luz{
-      position:absolute;
-
-      width:4px;
-      height:4px;
-
-      border-radius:50%;
-
-      background:#e6c229;
-
-      box-shadow:
-        0 0 8px #e6c229,
-        0 0 18px #e6c229;
-
-      opacity:.7;
-
-      animation:
-        subir 7s linear infinite,
-        piscar 2s ease-in-out infinite alternate;
-    }
-
-
-    .luz:nth-child(1){
-      left:8%;
-      bottom:-20px;
-      animation-delay:0s;
-    }
-
-    .luz:nth-child(2){
-      left:20%;
-      bottom:-30px;
-      animation-delay:2s;
-    }
-
-    .luz:nth-child(3){
-      left:35%;
-      bottom:-20px;
-      animation-delay:4s;
-    }
-
-    .luz:nth-child(4){
-      left:52%;
-      bottom:-30px;
-      animation-delay:1s;
-    }
-
-    .luz:nth-child(5){
-      left:68%;
-      bottom:-20px;
-      animation-delay:3s;
-    }
-
-    .luz:nth-child(6){
-      left:84%;
-      bottom:-30px;
-      animation-delay:5s;
-    }
-
-    .luz:nth-child(7){
-      left:95%;
-      bottom:-20px;
-      animation-delay:2.5s;
-    }
-
-
-    @keyframes subir{
-
-      0%{
-        transform:
-          translateY(0)
-          scale(.5);
-
-        opacity:0;
-      }
-
-      10%{
-        opacity:.8;
-      }
-
-      50%{
-        transform:
-          translateY(-50vh)
-          scale(1);
-
-        opacity:1;
-      }
-
-      100%{
-        transform:
-          translateY(-110vh)
-          scale(.4);
-
-        opacity:0;
-      }
-
-    }
-
-
-    @keyframes piscar{
-
-      0%{
-        opacity:.25;
-      }
-
-      100%{
-        opacity:1;
-      }
-
-    }
-
-
-    /* ==========================================
-       CABEÇALHO
-    ========================================== */
-
-    header{
-      position:relative;
-      z-index:5;
-
-      padding:17px 15px 14px;
-
-      text-align:center;
-
-      background:
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ApostaXBet — Jogos</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    min-height:100vh;
+    color:#fff;
+    overflow-x:hidden;
+
+    background:
+        radial-gradient(circle at 10% 10%, rgba(255,0,110,.28), transparent 28%),
+        radial-gradient(circle at 90% 15%, rgba(58,134,255,.25), transparent 30%),
+        radial-gradient(circle at 50% 100%, rgba(131,56,236,.35), transparent 40%),
+        linear-gradient(145deg,#070014,#120026,#080018);
+}
+
+/* LUZES DE FUNDO */
+body::before{
+    content:"";
+    position:fixed;
+    width:420px;
+    height:420px;
+    left:-180px;
+    top:35%;
+    background:#ff006e;
+    filter:blur(150px);
+    opacity:.18;
+    pointer-events:none;
+}
+
+body::after{
+    content:"";
+    position:fixed;
+    width:420px;
+    height:420px;
+    right:-180px;
+    bottom:5%;
+    background:#3a86ff;
+    filter:blur(150px);
+    opacity:.18;
+    pointer-events:none;
+}
+
+/* HEADER */
+.header{
+    position:relative;
+    z-index:2;
+    padding:18px 16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    background:rgba(10,5,25,.78);
+    border-bottom:1px solid rgba(255,255,255,.08);
+    backdrop-filter:blur(15px);
+}
+
+.logo{
+    font-size:25px;
+    font-weight:900;
+    letter-spacing:-1px;
+
+    background:linear-gradient(
+        90deg,
+        #ffd166,
+        #ff006e,
+        #8338ec,
+        #3a86ff
+    );
+
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+
+    text-shadow:0 0 25px rgba(255,0,110,.35);
+}
+
+.saldo{
+    padding:10px 15px;
+    border-radius:14px;
+
+    background:linear-gradient(
+        135deg,
+        rgba(131,56,236,.3),
+        rgba(255,0,110,.2)
+    );
+
+    border:1px solid rgba(255,255,255,.13);
+    box-shadow:
+        0 0 18px rgba(131,56,236,.2),
+        inset 0 0 15px rgba(255,255,255,.03);
+
+    font-weight:bold;
+    font-size:14px;
+}
+
+/* CONTEÚDO */
+.container{
+    position:relative;
+    z-index:1;
+    max-width:1100px;
+    margin:auto;
+    padding:25px 15px 50px;
+}
+
+.titulo{
+    text-align:center;
+    margin:8px 0 8px;
+    font-size:31px;
+    font-weight:900;
+
+    background:linear-gradient(
+        90deg,
+        #fff,
+        #ff72bd,
+        #a875ff,
+        #61a8ff
+    );
+
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+}
+
+.subtitulo{
+    text-align:center;
+    color:#b9afd0;
+    margin-bottom:28px;
+    font-size:14px;
+}
+
+/* DESTAQUE */
+.banner{
+    position:relative;
+    overflow:hidden;
+    border-radius:25px;
+    padding:25px 20px;
+    margin-bottom:30px;
+
+    background:
+        radial-gradient(circle at 15% 50%,rgba(255,190,11,.3),transparent 25%),
+        radial-gradient(circle at 85% 20%,rgba(58,134,255,.3),transparent 28%),
+        linear-gradient(135deg,#40106b,#b00068,#24105c);
+
+    border:1px solid rgba(255,255,255,.16);
+
+    box-shadow:
+        0 15px 45px rgba(0,0,0,.35),
+        0 0 35px rgba(255,0,110,.18);
+}
+
+.banner::before{
+    content:"";
+    position:absolute;
+    width:200px;
+    height:200px;
+    right:-80px;
+    top:-100px;
+    border-radius:50%;
+    background:#ffbe0b;
+    filter:blur(50px);
+    opacity:.2;
+}
+
+.banner h2{
+    position:relative;
+    font-size:25px;
+    margin-bottom:7px;
+}
+
+.banner p{
+    position:relative;
+    color:#eee;
+    font-size:14px;
+}
+
+/* TÍTULO DOS JOGOS */
+.secao{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin:0 3px 15px;
+}
+
+.secao h2{
+    font-size:21px;
+}
+
+.secao span{
+    color:#9185aa;
+    font-size:12px;
+}
+
+/* GRID */
+.games{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+/* CARD */
+.game-card{
+    position:relative;
+    min-height:190px;
+    overflow:hidden;
+    border-radius:23px;
+    text-decoration:none;
+    color:#fff;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+
+    padding:17px;
+
+    border:1px solid rgba(255,255,255,.15);
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.38),
+        inset 0 0 35px rgba(255,255,255,.04);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+}
+
+.game-card:hover{
+    transform:translateY(-7px) scale(1.015);
+
+    box-shadow:
+        0 18px 40px rgba(0,0,0,.5),
+        0 0 30px var(--glow);
+}
+
+.game-card:active{
+    transform:scale(.97);
+}
+
+/* BRILHO */
+.game-card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+
+    background:
         linear-gradient(
-          180deg,
-          rgba(17,17,17,.92),
-          rgba(10,10,10,.72)
+            135deg,
+            rgba(255,255,255,.20),
+            transparent 35%
         );
 
-      border-bottom:
-        1px solid rgba(230,194,41,.25);
+    pointer-events:none;
+}
 
-      backdrop-filter:blur(10px);
+.game-card::after{
+    content:"";
+    position:absolute;
+    width:160px;
+    height:160px;
+    right:-70px;
+    top:-65px;
+    border-radius:50%;
+    background:var(--light);
+    filter:blur(35px);
+    opacity:.35;
+}
+
+/* ÍCONE */
+.game-icon{
+    position:absolute;
+    top:17px;
+    left:17px;
+
+    width:63px;
+    height:63px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:19px;
+
+    background:rgba(0,0,0,.20);
+    border:1px solid rgba(255,255,255,.2);
+
+    font-size:39px;
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,.2),
+        inset 0 0 18px rgba(255,255,255,.08);
+}
+
+.game-name{
+    position:relative;
+    z-index:2;
+    font-size:20px;
+    font-weight:900;
+    margin-bottom:4px;
+}
+
+.game-desc{
+    position:relative;
+    z-index:2;
+    color:rgba(255,255,255,.78);
+    font-size:12px;
+}
+
+/* CORES INDIVIDUAIS */
+.roleta{
+    --glow:#ff006e;
+    --light:#ffbe0b;
+
+    background:
+        radial-gradient(circle at 80% 20%,rgba(255,190,11,.65),transparent 30%),
+        linear-gradient(145deg,#ff006e,#8b008b,#3b146d);
+}
+
+.mines{
+    --glow:#3a86ff;
+    --light:#00e5ff;
+
+    background:
+        radial-gradient(circle at 80% 20%,rgba(0,229,255,.5),transparent 30%),
+        linear-gradient(145deg,#0064d8,#122c91,#24105c);
+}
+
+.crash{
+    --glow:#ffbe0b;
+    --light:#ff5c00;
+
+    background:
+        radial-gradient(circle at 80% 20%,rgba(255,190,11,.65),transparent 30%),
+        linear-gradient(145deg,#ff5c00,#db0068,#551078);
+}
+
+.dice{
+    --glow:#8338ec;
+    --light:#ff00d4;
+
+    background:
+        radial-gradient(circle at 80% 20%,rgba(255,0,212,.5),transparent 30%),
+        linear-gradient(145deg,#8338ec,#5b13b8,#15104f);
+}
+
+.plinko{
+    --glow:#00e5ff;
+    --light:#00ff88;
+
+    background:
+        radial-gradient(circle at 80% 20%,rgba(0,255,136,.5),transparent 30%),
+        linear-gradient(145deg,#008ca8,#004f91,#1c155d);
+}
+
+.snake{
+    --glow:#ff006e;
+    --light:#ffbe0b;
+
+    background:
+        radial-gradient(circle at 80% 20%,rgba(255,190,11,.6),transparent 30%),
+        linear-gradient(145deg,#ff006e,#b3006e,#3d166f);
+}
+
+.ninja{
+    --glow:#00ff88;
+    --light:#8338ec;
+
+    background:
+        radial-gradient(circle at 80% 20%,rgba(0,255,136,.4),transparent 30%),
+        linear-gradient(145deg,#00834e,#123b68,#30106d);
+}
+
+/* BADGE */
+.badge{
+    position:absolute;
+    top:16px;
+    right:15px;
+    z-index:3;
+
+    padding:6px 9px;
+    border-radius:10px;
+
+    font-size:9px;
+    font-weight:900;
+    text-transform:uppercase;
+
+    background:rgba(255,255,255,.16);
+    border:1px solid rgba(255,255,255,.2);
+
+    backdrop-filter:blur(8px);
+}
+
+/* ANIMAÇÃO */
+@keyframes pulse{
+    0%,100%{
+        box-shadow:0 0 12px rgba(255,255,255,.08);
     }
-
-
-    header h1{
-      color:#e6bc24;
-
-      font-size:25px;
-
-      margin-bottom:5px;
-
-      text-shadow:
-        0 0 12px rgba(230,194,41,.35);
+    50%{
+        box-shadow:0 0 28px rgba(255,255,255,.18);
     }
+}
 
+.game-card{
+    animation:pulse 4s ease-in-out infinite;
+}
 
-    header p{
-      color:#aaa;
-      font-size:13px;
+.game-card:nth-child(2){
+    animation-delay:.4s;
+}
+
+.game-card:nth-child(3){
+    animation-delay:.8s;
+}
+
+.game-card:nth-child(4){
+    animation-delay:1.2s;
+}
+
+.game-card:nth-child(5){
+    animation-delay:1.6s;
+}
+
+.game-card:nth-child(6){
+    animation-delay:2s;
+}
+
+.game-card:nth-child(7){
+    animation-delay:2.4s;
+}
+
+/* MOBILE */
+@media(max-width:430px){
+    .logo{
+        font-size:22px;
     }
-
-
-    /* ==========================================
-       BOTÃO DE SOM
-    ========================================== */
-
-    #botaoSom{
-
-      position:fixed;
-
-      right:13px;
-      top:13px;
-
-      width:42px;
-      height:42px;
-
-      border:1px solid rgba(230,194,41,.55);
-
-      border-radius:50%;
-
-      background:
-        rgba(20,20,20,.92);
-
-      color:#e6c229;
-
-      font-size:19px;
-
-      display:flex;
-      align-items:center;
-      justify-content:center;
-
-      cursor:pointer;
-
-      z-index:999;
-
-      box-shadow:
-        0 0 12px rgba(230,194,41,.25);
-
-      transition:.2s ease;
-    }
-
-
-    #botaoSom:active{
-      transform:scale(.9);
-    }
-
-
-    /* ==========================================
-       CONTAINER
-    ========================================== */
-
-    .container{
-
-      position:relative;
-
-      z-index:3;
-
-      width:100%;
-
-      max-width:560px;
-
-      margin:auto;
-
-      padding:
-        14px
-        12px
-        20px;
-    }
-
-
-    /* ==========================================
-       TÍTULO
-    ========================================== */
 
     .titulo{
-
-      display:flex;
-
-      align-items:center;
-
-      gap:8px;
-
-      color:#fff;
-
-      font-size:18px;
-
-      margin:
-        2px 3px
-        13px;
-
-      font-weight:700;
+        font-size:27px;
     }
 
-
-    .titulo::before{
-
-      content:"";
-
-      width:4px;
-
-      height:20px;
-
-      border-radius:5px;
-
-      background:#e6c229;
-
-      box-shadow:
-        0 0 10px rgba(230,194,41,.7);
+    .game-card{
+        min-height:175px;
     }
 
-
-    /* ==========================================
-       GRID DE CARDS
-    ========================================== */
-
-    .jogos{
-
-      display:grid;
-
-      grid-template-columns:
-        repeat(3,1fr);
-
-      gap:9px;
+    .game-icon{
+        width:57px;
+        height:57px;
+        font-size:34px;
     }
 
+    .game-name{
+        font-size:18px;
+    }
+}
 
-    /* ==========================================
-       CARD DO JOGO
-    ========================================== */
-
-    .jogo{
-
-      position:relative;
-
-      min-width:0;
-
-      min-height:112px;
-
-      padding:
-        10px
-        5px
-        9px;
-
-      border-radius:12px;
-
-      text-decoration:none;
-
-      color:#fff;
-
-      text-align:center;
-
-      display:flex;
-
-      flex-direction:column;
-
-      align-items:center;
-
-      justify-content:center;
-
-      overflow:hidden;
-
-      background:
-
-        linear-gradient(
-          145deg,
-          rgba(32,36,35,.96),
-          rgba(13,15,15,.96)
-        );
-
-      border:
-        1px solid
-        rgba(255,255,255,.08);
-
-      box-shadow:
-        0 5px 15px rgba(0,0,0,.35);
-
-      transition:
-        transform .18s ease,
-        border-color .18s ease,
-        box-shadow .18s ease;
+@media(min-width:700px){
+    .games{
+        grid-template-columns:repeat(3,1fr);
     }
 
-
-    /* brilho superior do card */
-
-    .jogo::before{
-
-      content:"";
-
-      position:absolute;
-
-      top:0;
-      left:15%;
-
-      width:70%;
-      height:1px;
-
-      background:
-        linear-gradient(
-          90deg,
-          transparent,
-          rgba(230,194,41,.75),
-          transparent
-        );
-
-      opacity:.65;
+    .game-card{
+        min-height:210px;
     }
-
-
-    /* brilho ao tocar */
-
-    .jogo::after{
-
-      content:"";
-
-      position:absolute;
-
-      width:70px;
-      height:70px;
-
-      border-radius:50%;
-
-      background:
-        radial-gradient(
-          circle,
-          rgba(230,194,41,.12),
-          transparent 70%
-        );
-
-      top:-35px;
-      right:-25px;
-
-      pointer-events:none;
-    }
-
-
-    .jogo:hover{
-
-      transform:
-        translateY(-3px);
-
-      border-color:
-        rgba(230,194,41,.45);
-
-      box-shadow:
-        0 8px 20px rgba(0,0,0,.45),
-        0 0 14px rgba(230,194,41,.12);
-    }
-
-
-    .jogo:active{
-
-      transform:
-        scale(.94);
-    }
-
-
-    /* ==========================================
-       ÍCONE
-    ========================================== */
-
-    .icone{
-
-      width:53px;
-      height:53px;
-
-      margin-bottom:7px;
-
-      display:flex;
-
-      align-items:center;
-      justify-content:center;
-
-      border-radius:12px;
-
-      font-size:32px;
-
-      background:
-        linear-gradient(
-          145deg,
-          rgba(53,57,55,.95),
-          rgba(20,22,21,.95)
-        );
-
-      border:
-        1px solid
-        rgba(230,194,41,.18);
-
-      box-shadow:
-        inset 0 0 12px rgba(0,0,0,.4),
-        0 4px 10px rgba(0,0,0,.25);
-
-      filter:
-        drop-shadow(
-          0 0 5px
-          rgba(230,194,41,.2)
-        );
-    }
-
-
-    /* ==========================================
-       NOME
-    ========================================== */
-
-    .nome{
-
-      width:100%;
-
-      white-space:nowrap;
-
-      overflow:hidden;
-
-      text-overflow:ellipsis;
-
-      font-size:12px;
-
-      font-weight:700;
-
-      margin-bottom:3px;
-
-      color:#fff;
-    }
-
-
-    /* ==========================================
-       DESCRIÇÃO
-    ========================================== */
-
-    .descricao{
-
-      width:100%;
-
-      white-space:nowrap;
-
-      overflow:hidden;
-
-      text-overflow:ellipsis;
-
-      color:#8e9390;
-
-      font-size:9px;
-    }
-
-
-    /* ==========================================
-       VOLTAR
-    ========================================== */
-
-    .voltar{
-
-      display:block;
-
-      text-align:center;
-
-      margin:
-        22px
-        auto
-        5px;
-
-      color:#e6bc24;
-
-      text-decoration:none;
-
-      font-size:13px;
-
-      font-weight:bold;
-
-      position:relative;
-
-      z-index:4;
-    }
-
-
-    /* ==========================================
-       MENU INFERIOR
-    ========================================== */
-
-    nav{
-
-      position:fixed;
-
-      bottom:0;
-      left:0;
-      right:0;
-
-      height:74px;
-
-      background:
-        rgba(12,12,12,.97);
-
-      border-top:
-        1px solid
-        rgba(230,194,41,.55);
-
-      display:flex;
-
-      justify-content:
-        space-around;
-
-      align-items:center;
-
-      z-index:100;
-
-      box-shadow:
-        0 -6px 22px
-        rgba(0,0,0,.5);
-
-      backdrop-filter:blur(10px);
-    }
-
-
-    nav a{
-
-      position:relative;
-
-      width:33.333%;
-
-      height:100%;
-
-      color:#999;
-
-      text-decoration:none;
-
-      text-align:center;
-
-      font-size:11px;
-
-      display:flex;
-
-      flex-direction:column;
-
-      align-items:center;
-
-      justify-content:center;
-
-      gap:3px;
-
-      transition:.2s ease;
-    }
-
-
-    nav a:nth-child(2){
-
-      color:#e6c229;
-    }
-
-
-    nav a:nth-child(2)::before{
-
-      content:"";
-
-      position:absolute;
-
-      top:0;
-
-      width:42px;
-
-      height:2px;
-
-      background:#e6c229;
-
-      box-shadow:
-        0 0 10px
-        rgba(230,194,41,.8);
-
-      border-radius:0 0 5px 5px;
-    }
-
-
-    nav a:active{
-
-      transform:scale(.92);
-    }
-
-
-    nav span{
-
-      display:block;
-
-      font-size:24px;
-
-      line-height:1;
-    }
-
-
-    /* ==========================================
-       CELULARES PEQUENOS
-    ========================================== */
-
-    @media(max-width:380px){
-
-      .container{
-
-        padding-left:9px;
-        padding-right:9px;
-      }
-
-
-      .jogos{
-
-        gap:6px;
-      }
-
-
-      .jogo{
-
-        min-height:105px;
-
-        padding:
-          8px
-          3px
-          8px;
-
-        border-radius:10px;
-      }
-
-
-      .icone{
-
-        width:48px;
-        height:48px;
-
-        font-size:29px;
-
-        border-radius:10px;
-
-        margin-bottom:6px;
-      }
-
-
-      .nome{
-
-        font-size:11px;
-      }
-
-
-      .descricao{
-
-        font-size:8px;
-      }
-
-
-      body::before{
-
-        font-size:70px;
-
-        letter-spacing:-4px;
-      }
-
-    }
-
-  </style>
+}
+</style>
 </head>
-
 
 <body>
 
-
-<!-- ==========================================
-     PROTEÇÃO SUPABASE
-========================================== -->
-
-<script>
-
-const SUPABASE_URL =
-'https://jxbzjiwmajjzxgihfjgt.supabase.co';
-
-const SUPABASE_KEY =
-'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ';
-
-const clienteSupabase =
-window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
-
-function redirecionarLogin(){
-
-  window.location.replace(
-    "../index.html"
-  );
-
-}
-
-
-async function protegerJogos(){
-
-  const saiu =
-    sessionStorage.getItem(
-      "apostaxbet_logout"
-    );
-
-
-  if(saiu === "1"){
-
-    redirecionarLogin();
-
-    return;
-
-  }
-
-
-  try{
-
-    const {data,error} =
-      await clienteSupabase.auth.getSession();
-
-
-    if(error){
-
-      console.log(
-        "Erro ao verificar sessão:",
-        error
-      );
-
-      redirecionarLogin();
-
-      return;
-
-    }
-
-
-    if(
-      !data ||
-      !data.session ||
-      !data.session.user
-    ){
-
-      redirecionarLogin();
-
-      return;
-
-    }
-
-  }catch(erro){
-
-    console.log(
-      "Erro na proteção:",
-      erro
-    );
-
-    redirecionarLogin();
-
-  }
-
-}
-
-
-protegerJogos();
-
-
-window.addEventListener(
-  "pageshow",
-  function(){
-
-    protegerJogos();
-
-  }
-);
-
-
-clienteSupabase.auth.onAuthStateChange(
-  function(event,session){
-
-    if(!session){
-
-      redirecionarLogin();
-
-    }
-
-  }
-);
-
-</script>
-
-
-<!-- ==========================================
-     LUZES
-========================================== -->
-
-<div class="luzes">
-
-  <div class="luz"></div>
-  <div class="luz"></div>
-  <div class="luz"></div>
-  <div class="luz"></div>
-  <div class="luz"></div>
-  <div class="luz"></div>
-  <div class="luz"></div>
-
-</div>
-
-
-<!-- ==========================================
-     MÚSICA
-========================================== -->
-
-<audio
-  id="musicaJogos"
-  loop
-  preload="auto">
-
-  <source
-    src="musica-jogos.mp3"
-    type="audio/mpeg">
-
-</audio>
-
-
-<!-- ==========================================
-     BOTÃO SOM
-========================================== -->
-
-<button
-  id="botaoSom"
-  type="button"
-  aria-label="Ativar ou desativar música">
-
-  🔇
-
-</button>
-
-
-<!-- ==========================================
-     CABEÇALHO
-========================================== -->
-
-<header>
-
-  <h1>🎰 ApostaXBet</h1>
-
-  <p>Escolha seu jogo</p>
-
+<header class="header">
+    <div class="logo">⚡ ApostaXBet</div>
+
+    <div class="saldo">
+        💰 Saldo: <span id="saldo">R$ 0,00</span>
+    </div>
 </header>
-
-
-<!-- ==========================================
-     ÁREA DOS JOGOS
-========================================== -->
 
 <main class="container">
 
-
-  <h2 class="titulo">
-    Jogos
-  </h2>
-
-
-  <div class="jogos">
-
-
-    <!-- ROLETA -->
-
-    <a
-      class="jogo"
-      href="roleta.html">
-
-      <div class="icone">
-        🎰
-      </div>
-
-      <div class="nome">
-        Roleta
-      </div>
-
-      <div class="descricao">
-        Gire a roleta
-      </div>
-
-    </a>
-
-
-    <!-- ROLETA CASSINO -->
-
-    <a
-      class="jogo"
-      href="roleta-cassino.html">
-
-      <div class="icone">
-        🎰
-      </div>
-
-      <div class="nome">
-        Roleta Cassino
-      </div>
-
-      <div class="descricao">
-        Roleta automática
-      </div>
-
-    </a>
-
-
-    <!-- MINES -->
-
-    <a
-      class="jogo"
-      href="mines.html">
-
-      <div class="icone">
-        💣
-      </div>
-
-      <div class="nome">
-        Mines
-      </div>
-
-      <div class="descricao">
-        Encontre os diamantes
-      </div>
-
-    </a>
-
-
-    <!-- CRASH -->
-
-    <a
-      class="jogo"
-      href="crash.html">
-
-      <div class="icone">
-        🚀
-      </div>
-
-      <div class="nome">
-        Crash
-      </div>
-
-      <div class="descricao">
-        Multiplicador
-      </div>
-
-    </a>
-
-
-    <!-- PLINKO -->
-
-    <a
-      class="jogo"
-      href="plinko.html">
-
-      <div class="icone">
-        🎯
-      </div>
-
-      <div class="nome">
-        Plinko
-      </div>
-
-      <div class="descricao">
-        Solte a bola
-      </div>
-
-    </a>
-
-
-    <!-- DICE -->
-
-    <a
-      class="jogo"
-      href="dice.html">
-
-      <div class="icone">
-        🎲
-      </div>
-
-      <div class="nome">
-        Dice
-      </div>
-
-      <div class="descricao">
-        Jogue os dados
-      </div>
-
-    </a>
-
-
-    <!-- LOBBY -->
-
-    <a
-      class="jogo"
-      href="lobby.html">
-
-      <div class="icone">
-        🐺
-      </div>
-
-      <div class="nome">
-        Lobby
-      </div>
-
-      <div class="descricao">
-        Jogue Lobby
-      </div>
-
-    </a>
-
-
-    <!-- NIGHT MONSTERS -->
-
-    <a
-      class="jogo"
-      href="hotel-transylvania/index.html">
-
-      <div class="icone">
-        🧛
-      </div>
-
-      <div class="nome">
-        Night Monsters
-      </div>
-
-      <div class="descricao">
-        Hotel Transilvânia
-      </div>
-
-    </a>
-
-
-    <!-- FORTUNE SNAKE -->
-
-    <a
-      class="jogo"
-      href="fortune-snake.html">
-
-      <div class="icone">
-        🐍
-      </div>
-
-      <div class="nome">
-        Fortune Snake
-      </div>
-
-      <div class="descricao">
-        Tente sua sorte
-      </div>
-
-    </a>
-
-
-  </div>
-
-
-  <!-- VOLTAR -->
-
-  <a
-    class="voltar"
-    href="../index.html">
-
-    ← Voltar para o início
-
-  </a>
-
+    <h1 class="titulo">🎮 Escolha seu jogo</h1>
+
+    <p class="subtitulo">
+        Entre, jogue e divirta-se no universo ApostaXBet
+    </p>
+
+    <section class="banner">
+        <h2>🔥 Jogos em destaque</h2>
+        <p>
+            Experimente nossos jogos com visual neon,
+            animações e muita emoção.
+        </p>
+    </section>
+
+    <div class="secao">
+        <h2>🎰 Todos os jogos</h2>
+        <span>7 jogos disponíveis</span>
+    </div>
+
+    <section class="games">
+
+        <a href="roleta.html" class="game-card roleta">
+            <span class="badge">🔥 HOT</span>
+            <div class="game-icon">🎡</div>
+            <div class="game-name">Roleta da Sorte</div>
+            <div class="game-desc">
+                Vermelho • Verde • Preto
+            </div>
+        </a>
+
+        <a href="mines.html" class="game-card mines">
+            <span class="badge">💎 POPULAR</span>
+            <div class="game-icon">💣</div>
+            <div class="game-name">Mines</div>
+            <div class="game-desc">
+                Encontre os diamantes!
+            </div>
+        </a>
+
+        <a href="crash.html" class="game-card crash">
+            <span class="badge">🚀 NOVO</span>
+            <div class="game-icon">🚀</div>
+            <div class="game-name">Crash</div>
+            <div class="game-desc">
+                Até onde o foguete vai?
+            </div>
+        </a>
+
+        <a href="dice.html" class="game-card dice">
+            <span class="badge">🎲 CLÁSSICO</span>
+            <div class="game-icon">🎲</div>
+            <div class="game-name">Dice</div>
+            <div class="game-desc">
+                Lance os dados!
+            </div>
+        </a>
+
+        <a href="plinko.html" class="game-card plinko">
+            <span class="badge">⚡ RÁPIDO</span>
+            <div class="game-icon">🔵</div>
+            <div class="game-name">Plinko</div>
+            <div class="game-desc">
+                Solte a bola e descubra!
+            </div>
+        </a>
+
+        <a href="fortune-snake.html" class="game-card snake">
+            <span class="badge">🐍 JACKPOT</span>
+            <div class="game-icon">🐍</div>
+            <div class="game-name">Fortune Snake</div>
+            <div class="game-desc">
+                Gire e tente ganhar!
+            </div>
+        </a>
+
+        <a href="ninja-monster.html" class="game-card ninja">
+            <span class="badge">👹 AÇÃO</span>
+            <div class="game-icon">🥷</div>
+            <div class="game-name">Ninja Monster</div>
+            <div class="game-desc">
+                Enfrente os monstros!
+            </div>
+        </a>
+
+    </section>
 
 </main>
 
-
-<!-- ==========================================
-     MENU INFERIOR
-========================================== -->
-
-<nav>
-
-  <a
-    href="../index.html">
-
-    <span>🏠</span>
-
-    Início
-
-  </a>
-
-
-  <a
-    href="jogos.html">
-
-    <span>🎮</span>
-
-    Jogos
-
-  </a>
-
-
-  <a
-    href="../index.html">
-
-    <span>👤</span>
-
-    Conta
-
-  </a>
-
-</nav>
-
-
-<!-- ==========================================
-     CONTROLE DA MÚSICA
-========================================== -->
-
 <script>
+/*
+   Se o seu saldo.js já estiver funcionando,
+   este código tenta pegar o saldo do SistemaSaldo.
+*/
 
-const musica =
-  document.getElementById(
-    "musicaJogos"
-  );
-
-const botaoSom =
-  document.getElementById(
-    "botaoSom"
-  );
-
-
-musica.volume = 0.70;
-
-
-function atualizarBotao(){
-
-  if(musica.paused){
-
-    botaoSom.innerText =
-      "🔇";
-
-  }else{
-
-    botaoSom.innerText =
-      "🔊";
-
-  }
-
-}
-
-
-async function alternarMusica(){
-
-  if(musica.paused){
+function atualizarSaldo(){
+    const elemento = document.getElementById("saldo");
 
     try{
+        if(
+            window.SistemaSaldo &&
+            typeof window.SistemaSaldo.get === "function"
+        ){
+            const valor = Number(window.SistemaSaldo.get()) || 0;
 
-      await musica.play();
-
-      botaoSom.innerText =
-        "🔊";
-
-    }catch(erro){
-
-      console.log(
-        "Não foi possível iniciar a música:",
-        erro
-      );
-
-      botaoSom.innerText =
-        "🔇";
-
+            elemento.textContent =
+                valor.toLocaleString("pt-BR",{
+                    style:"currency",
+                    currency:"BRL"
+                });
+        }
+    }catch(e){
+        console.log("Saldo aguardando carregamento...");
     }
-
-  }else{
-
-    musica.pause();
-
-    musica.currentTime = 0;
-
-    botaoSom.innerText =
-      "🔇";
-
-  }
-
 }
 
+atualizarSaldo();
 
-botaoSom.addEventListener(
-  "click",
-  function(event){
-
-    event.preventDefault();
-
-    event.stopPropagation();
-
-    alternarMusica();
-
-  }
-);
-
-
-musica.addEventListener(
-  "pause",
-  atualizarBotao
-);
-
-
-musica.addEventListener(
-  "play",
-  atualizarBotao
-);
-
-
-window.addEventListener(
-  "pagehide",
-  function(){
-
-    musica.pause();
-
-    musica.currentTime = 0;
-
-  }
-);
-
-
-document.addEventListener(
-  "visibilitychange",
-  function(){
-
-    if(
-      document.visibilityState ===
-      "hidden"
-    ){
-
-      musica.pause();
-
-      musica.currentTime = 0;
-
-      botaoSom.innerText =
-        "🔇";
-
-    }
-
-  }
-);
-
-
-atualizarBotao();
-
+setInterval(atualizarSaldo,1000);
 </script>
-
 
 </body>
 </html>
