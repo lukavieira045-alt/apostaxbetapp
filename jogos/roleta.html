@@ -227,11 +227,6 @@ body{
     0 0 7px rgba(255,215,70,.9);
 }
 
-.numero.valor-normal .numero-conteudo{
-  font-size:14px;
-  color:#fff3a6;
-}
-
 .numero.perdeu .numero-conteudo{
   color:#ff7777;
   font-size:11px;
@@ -369,6 +364,7 @@ body{
   color:#ddd;
   font-size:18px;
   font-weight:900;
+
   text-shadow:0 0 10px currentColor;
   line-height:24px;
 }
@@ -464,6 +460,7 @@ body{
     linear-gradient(180deg,#332b12,#171306);
 
   color:#f5d76b;
+
   font-size:16px;
   font-weight:900;
   letter-spacing:2px;
@@ -505,13 +502,11 @@ body{
 
   width:52px;
   height:52px;
-
   border-radius:50%;
-  border:1px solid #777;
 
+  border:1px solid #777;
   background:#090b0c;
   color:#ddd;
-
   font-size:23px;
   z-index:40;
 }
@@ -563,7 +558,6 @@ body{
   position:absolute;
   width:5px;
   height:100vh;
-
   background:#fff;
 
   box-shadow:
@@ -614,10 +608,12 @@ body{
     transform:scale(.2);
     opacity:0;
   }
+
   60%{
     transform:scale(1.25);
     opacity:1;
   }
+
   100%{
     transform:scale(1);
   }
@@ -634,6 +630,7 @@ body{
     opacity:.2;
     transform:scaleY(.7);
   }
+
   to{
     opacity:1;
     transform:scaleY(1.1);
@@ -650,8 +647,10 @@ body{
   .numero{
     width:44px;
     height:130px;
+
     margin-left:-22px;
     margin-top:-130px;
+
     transform-origin:22px 130px;
   }
 
@@ -675,12 +674,7 @@ body{
 
 <body>
 
-<audio
-  id="musicaRoleta"
-  src="musica-roleta.mp3"
-  loop
-  preload="auto">
-</audio>
+<audio id="musicaRoleta" src="musica-roleta.mp3" loop preload="auto"></audio>
 
 <div id="carregando">
   🔐 VERIFICANDO CONTA...
@@ -694,7 +688,7 @@ body{
     ⚡ SUPER BÔNUS ⚡
   </div>
 
-  <div class="superbonus-valor" id="superBonusValor">
+  <div class="superbonus-valor">
     R$ 5,00
   </div>
 
@@ -722,7 +716,9 @@ body{
 
 <a href="../index.html" class="lobby">
 
-  <div class="lobby-icon">⌂</div>
+  <div class="lobby-icon">
+    ⌂
+  </div>
 
   Lobby
 
@@ -780,20 +776,17 @@ body{
 
     <div class="valores">
 
-      <button
-        class="btn-valor ativo"
+      <button class="btn-valor ativo"
         onclick="selecionarValor(1,this)">
         R$ 1
       </button>
 
-      <button
-        class="btn-valor"
+      <button class="btn-valor"
         onclick="selecionarValor(2,this)">
         R$ 2
       </button>
 
-      <button
-        class="btn-valor"
+      <button class="btn-valor"
         onclick="selecionarValor(5,this)">
         R$ 5
       </button>
@@ -805,7 +798,9 @@ body{
       class="btn-apostar"
       onclick="girarRoleta"
       disabled>
+
       CARREGANDO...
+
     </button>
 
     <div class="info">
@@ -834,15 +829,11 @@ body{
 
 </div>
 
-<button
-  class="repeat-btn"
-  onclick="repetirAposta()">
+<button class="repeat-btn" onclick="repetirAposta()">
   ↻
 </button>
 
-<button
-  class="menu-btn"
-  onclick="abrirMenu()">
+<button class="menu-btn" onclick="abrirMenu()">
   ☰
 </button>
 
@@ -884,11 +875,43 @@ let girando = false;
 
 
 /* =====================================================
-   ÁUDIO
+   ELEMENTOS
 ===================================================== */
+
+const roleta =
+document.getElementById("roleta");
+
+const resultado =
+document.getElementById("resultado");
+
+const btnApostar =
+document.getElementById("btnApostar");
+
+const saldoEl =
+document.getElementById("displaySaldo");
+
+const saldoPainel =
+document.getElementById("saldoPainel");
+
+const apostaInfo =
+document.getElementById("apostaInfo");
+
+const fichaDisplay =
+document.getElementById("fichaDisplay");
+
+const carregando =
+document.getElementById("carregando");
+
+const superBonusOverlay =
+document.getElementById("superBonusOverlay");
 
 const musicaRoleta =
 document.getElementById("musicaRoleta");
+
+
+/* =====================================================
+   ÁUDIO
+===================================================== */
 
 musicaRoleta.volume = 0.10;
 
@@ -900,19 +923,14 @@ let velocidadeSom = 45;
 
 function iniciarMusica(){
 
-  if(
-    musicaIniciada ||
-    !musicaRoleta
-  ){
-    return;
-  }
+  if(musicaIniciada) return;
 
-  const promessa =
+  const p =
     musicaRoleta.play();
 
-  if(promessa){
+  if(p){
 
-    promessa.then(()=>{
+    p.then(()=>{
       musicaIniciada = true;
     }).catch(()=>{});
 
@@ -936,10 +954,7 @@ function iniciarAudio(){
 
   }
 
-  if(
-    audioContext.state ===
-    "suspended"
-  ){
+  if(audioContext.state === "suspended"){
     audioContext.resume();
   }
 
@@ -957,62 +972,51 @@ function tocarClique(){
   const agora =
     audioContext.currentTime;
 
-  const oscilador =
+  const osc =
     audioContext.createOscillator();
 
   const ganho =
     audioContext.createGain();
 
-  oscilador.type =
-    "square";
+  osc.type = "square";
 
-  oscilador.frequency
-    .setValueAtTime(
-      180,
-      agora
-    );
+  osc.frequency.setValueAtTime(
+    180,
+    agora
+  );
 
-  oscilador.frequency
-    .exponentialRampToValueAtTime(
-      80,
-      agora + .08
-    );
-
-  ganho.gain
-    .setValueAtTime(
-      .5,
-      agora
-    );
-
-  ganho.gain
-    .exponentialRampToValueAtTime(
-      .001,
-      agora + .08
-    );
-
-  oscilador.connect(ganho);
-  ganho.connect(audioContext.destination);
-
-  oscilador.start(agora);
-
-  oscilador.stop(
+  osc.frequency.exponentialRampToValueAtTime(
+    80,
     agora + .08
   );
+
+  ganho.gain.setValueAtTime(
+    .5,
+    agora
+  );
+
+  ganho.gain.exponentialRampToValueAtTime(
+    .001,
+    agora + .08
+  );
+
+  osc.connect(ganho);
+  ganho.connect(audioContext.destination);
+
+  osc.start(agora);
+  osc.stop(agora + .08);
 
 }
 
 
-function iniciarSomRoleta(){
+function pararSomRoleta(){
 
-  iniciarAudio();
+  if(timerRoleta){
 
-  if(!audioContext) return;
+    clearTimeout(timerRoleta);
+    timerRoleta = null;
 
-  pararSomRoleta();
-
-  velocidadeSom = 45;
-
-  tocarTic();
+  }
 
 }
 
@@ -1024,53 +1028,43 @@ function tocarTic(){
   const agora =
     audioContext.currentTime;
 
-  const oscilador =
+  const osc =
     audioContext.createOscillator();
 
   const ganho =
     audioContext.createGain();
 
-  oscilador.type =
-    "square";
+  osc.type = "square";
 
-  oscilador.frequency
-    .setValueAtTime(
-      850,
-      agora
-    );
+  osc.frequency.setValueAtTime(
+    850,
+    agora
+  );
 
-  oscilador.frequency
-    .exponentialRampToValueAtTime(
-      420,
-      agora + .035
-    );
+  osc.frequency.exponentialRampToValueAtTime(
+    420,
+    agora + .035
+  );
 
-  ganho.gain
-    .setValueAtTime(
-      .45,
-      agora
-    );
+  ganho.gain.setValueAtTime(
+    .45,
+    agora
+  );
 
-  ganho.gain
-    .exponentialRampToValueAtTime(
-      .001,
-      agora + .055
-    );
+  ganho.gain.exponentialRampToValueAtTime(
+    .001,
+    agora + .055
+  );
 
-  oscilador.connect(ganho);
+  osc.connect(ganho);
   ganho.connect(audioContext.destination);
 
-  oscilador.start(agora);
-
-  oscilador.stop(
-    agora + .06
-  );
+  osc.start(agora);
+  osc.stop(agora + .06);
 
   velocidadeSom += 8;
 
-  if(
-    velocidadeSom > 280
-  ){
+  if(velocidadeSom > 280){
     velocidadeSom = 280;
   }
 
@@ -1083,15 +1077,15 @@ function tocarTic(){
 }
 
 
-function pararSomRoleta(){
+function iniciarSomRoleta(){
 
-  if(timerRoleta){
+  iniciarAudio();
 
-    clearTimeout(timerRoleta);
+  pararSomRoleta();
 
-    timerRoleta = null;
+  velocidadeSom = 45;
 
-  }
+  tocarTic();
 
 }
 
@@ -1111,9 +1105,9 @@ function tocarPremio(){
     783.99,
     1046.50
   ].forEach(
-    (frequencia,i)=>{
+    (freq,i)=>{
 
-      const oscilador =
+      const osc =
         audioContext.createOscillator();
 
       const ganho =
@@ -1122,35 +1116,28 @@ function tocarPremio(){
       const inicio =
         agora + i * .12;
 
-      oscilador.type =
-        "sine";
+      osc.type = "sine";
 
-      oscilador.frequency
-        .setValueAtTime(
-          frequencia,
-          inicio
-        );
+      osc.frequency.setValueAtTime(
+        freq,
+        inicio
+      );
 
-      ganho.gain
-        .setValueAtTime(
-          .8,
-          inicio
-        );
+      ganho.gain.setValueAtTime(
+        .8,
+        inicio
+      );
 
-      ganho.gain
-        .exponentialRampToValueAtTime(
-          .001,
-          inicio + .45
-        );
-
-      oscilador.connect(ganho);
-      ganho.connect(audioContext.destination);
-
-      oscilador.start(inicio);
-
-      oscilador.stop(
+      ganho.gain.exponentialRampToValueAtTime(
+        .001,
         inicio + .45
       );
+
+      osc.connect(ganho);
+      ganho.connect(audioContext.destination);
+
+      osc.start(inicio);
+      osc.stop(inicio + .45);
 
     }
   );
@@ -1178,7 +1165,7 @@ function tocarSuperBonus(){
   ].forEach(
     (frequencia,i)=>{
 
-      const oscilador =
+      const osc =
         audioContext.createOscillator();
 
       const ganho =
@@ -1187,41 +1174,33 @@ function tocarSuperBonus(){
       const inicio =
         agora + i * .10;
 
-      oscilador.type =
-        "sawtooth";
+      osc.type = "sawtooth";
 
-      oscilador.frequency
-        .setValueAtTime(
-          frequencia,
-          inicio
-        );
+      osc.frequency.setValueAtTime(
+        frequencia,
+        inicio
+      );
 
-      ganho.gain
-        .setValueAtTime(
-          .001,
-          inicio
-        );
+      ganho.gain.setValueAtTime(
+        .001,
+        inicio
+      );
 
-      ganho.gain
-        .linearRampToValueAtTime(
-          .7,
-          inicio + .03
-        );
+      ganho.gain.linearRampToValueAtTime(
+        .7,
+        inicio + .03
+      );
 
-      ganho.gain
-        .exponentialRampToValueAtTime(
-          .001,
-          inicio + .5
-        );
+      ganho.gain.exponentialRampToValueAtTime(
+        .001,
+        inicio + .5
+      );
 
-      oscilador.connect(ganho);
+      osc.connect(ganho);
       ganho.connect(audioContext.destination);
 
-      oscilador.start(inicio);
-
-      oscilador.stop(
-        inicio + .55
-      );
+      osc.start(inicio);
+      osc.stop(inicio + .55);
 
     }
   );
@@ -1260,41 +1239,6 @@ const premios = [
 
 
 /* =====================================================
-   ELEMENTOS
-===================================================== */
-
-const roleta =
-document.getElementById("roleta");
-
-const resultado =
-document.getElementById("resultado");
-
-const btnApostar =
-document.getElementById("btnApostar");
-
-const saldoEl =
-document.getElementById("displaySaldo");
-
-const saldoPainel =
-document.getElementById("saldoPainel");
-
-const apostaInfo =
-document.getElementById("apostaInfo");
-
-const fichaDisplay =
-document.getElementById("fichaDisplay");
-
-const carregando =
-document.getElementById("carregando");
-
-const superBonusOverlay =
-document.getElementById("superBonusOverlay");
-
-const superBonusValor =
-document.getElementById("superBonusValor");
-
-
-/* =====================================================
    DINHEIRO
 ===================================================== */
 
@@ -1304,49 +1248,6 @@ function dinheiro(valor){
     Number(valor || 0)
       .toFixed(2)
       .replace(".",",");
-
-}
-
-
-/* =====================================================
-   CÁLCULO DO PRÊMIO
-===================================================== */
-
-/*
-   IMPORTANTE:
-
-   Os valores da roleta são a referência
-   para uma aposta de R$ 0,50.
-
-   Portanto:
-
-   R$ 0,50 x 2 = R$ 1,00
-   R$ 0,40 x 2 = R$ 0,80
-   R$ 0,20 x 4 = R$ 0,80
-
-   Fórmula:
-
-   prêmio da casa × (aposta ÷ 0,50)
-*/
-
-function calcularPremio(
-  premioCasa,
-  aposta
-){
-
-  if(premioCasa <= 0){
-    return 0;
-  }
-
-  const multiplicador =
-    aposta / 0.50;
-
-  return Number(
-    (
-      premioCasa *
-      multiplicador
-    ).toFixed(2)
-  );
 
 }
 
@@ -1383,11 +1284,7 @@ async function obterUsuario(){
 
   if(error){
 
-    console.error(
-      "Erro de sessão:",
-      error
-    );
-
+    console.error(error);
     return null;
 
   }
@@ -1399,8 +1296,7 @@ async function obterUsuario(){
 
 async function carregarSaldo(){
 
-  if(!usuarioAtual)
-    return false;
+  if(!usuarioAtual) return false;
 
   const {
     data,
@@ -1417,10 +1313,7 @@ async function carregarSaldo(){
 
   if(error){
 
-    console.error(
-      "Erro ao carregar saldo:",
-      error
-    );
+    console.error(error);
 
     resultado.innerHTML =
       "❌ ERRO AO CARREGAR SALDO";
@@ -1433,9 +1326,7 @@ async function carregarSaldo(){
   }
 
   saldoReal =
-    Number(
-      data?.valor || 0
-    );
+    Number(data?.valor || 0);
 
   atualizarSaldo();
 
@@ -1470,10 +1361,7 @@ async function salvarSaldo(novoSaldo){
 
   if(error){
 
-    console.error(
-      "Erro ao salvar saldo:",
-      error
-    );
+    console.error(error);
 
     resultado.innerHTML =
       "❌ ERRO AO ATUALIZAR SALDO";
@@ -1502,20 +1390,14 @@ async function salvarSaldo(novoSaldo){
 function criarNumeros(){
 
   const area =
-    document.getElementById(
-      "numeros"
-    );
+    document.getElementById("numeros");
 
   area.innerHTML = "";
 
   const total =
     premios.length;
 
-  for(
-    let i=0;
-    i<total;
-    i++
-  ){
+  for(let i=0;i<total;i++){
 
     const numero =
       document.createElement("div");
@@ -1534,9 +1416,7 @@ function criarNumeros(){
 
     if(premio === 0){
 
-      numero.classList.add(
-        "perdeu"
-      );
+      numero.classList.add("perdeu");
 
       conteudo.innerHTML =
         "PERDEU";
@@ -1544,9 +1424,7 @@ function criarNumeros(){
     }
     else if(premio === 5){
 
-      numero.classList.add(
-        "super-bonus"
-      );
+      numero.classList.add("super-bonus");
 
       conteudo.innerHTML =
         "⚡<br>R$ 5,00<br>SUPER";
@@ -1554,18 +1432,12 @@ function criarNumeros(){
     }
     else{
 
-      numero.classList.add(
-        "valor-normal"
-      );
-
       conteudo.innerHTML =
         dinheiro(premio);
 
     }
 
-    numero.appendChild(
-      conteudo
-    );
+    numero.appendChild(conteudo);
 
     const angulo =
       i * (360 / total);
@@ -1576,9 +1448,7 @@ function criarNumeros(){
     numero.dataset.index =
       i;
 
-    area.appendChild(
-      numero
-    );
+    area.appendChild(numero);
 
   }
 
@@ -1590,13 +1460,9 @@ function criarNumeros(){
 ===================================================== */
 
 window.selecionarValor =
-function(
-  valor,
-  botao
-){
+function(valor,botao){
 
-  if(girando)
-    return;
+  if(girando) return;
 
   tocarClique();
 
@@ -1616,7 +1482,7 @@ function(
     dinheiro(valorAposta);
 
   fichaDisplay.innerText =
-    valorAposta
+    Number(valorAposta)
       .toFixed(2)
       .replace(".",",");
 
@@ -1633,8 +1499,7 @@ function atualizarBotao(){
 
   if(girando){
 
-    btnApostar.disabled =
-      true;
+    btnApostar.disabled = true;
 
     btnApostar.innerText =
       "ROLETA GIRANDO...";
@@ -1643,13 +1508,9 @@ function atualizarBotao(){
 
   }
 
-  if(
-    saldoReal <
-    valorAposta
-  ){
+  if(saldoReal < valorAposta){
 
-    btnApostar.disabled =
-      true;
+    btnApostar.disabled = true;
 
     btnApostar.innerText =
       "SALDO INSUFICIENTE";
@@ -1658,8 +1519,7 @@ function atualizarBotao(){
 
   }
 
-  btnApostar.disabled =
-    false;
+  btnApostar.disabled = false;
 
   btnApostar.innerText =
     "GIRAR ROLETA";
@@ -1671,12 +1531,7 @@ function atualizarBotao(){
    SUPER BÔNUS
 ===================================================== */
 
-function mostrarSuperBonus(
-  valorPremio
-){
-
-  superBonusValor.innerText =
-    dinheiro(valorPremio);
+function mostrarSuperBonus(){
 
   superBonusOverlay
     .classList
@@ -1685,14 +1540,17 @@ function mostrarSuperBonus(
   tocarSuperBonus();
 
   /*
-     Fica na tela por mais tempo.
+    Agora fica bastante tempo
+    na tela.
   */
 
   setTimeout(
     ()=>{
+
       superBonusOverlay
         .classList
         .remove("ativo");
+
     },
     4500
   );
@@ -1707,8 +1565,7 @@ function mostrarSuperBonus(
 window.girarRoleta =
 async function(){
 
-  if(girando)
-    return;
+  if(girando) return;
 
   iniciarAudio();
   tocarClique();
@@ -1725,10 +1582,7 @@ async function(){
 
   }
 
-  if(
-    saldoReal <
-    valorAposta
-  ){
+  if(saldoReal < valorAposta){
 
     resultado.innerHTML =
       "⚠️ SALDO INSUFICIENTE";
@@ -1752,7 +1606,7 @@ async function(){
   const saldoAntes =
     saldoReal;
 
-  const saldoDepoisAposta =
+  const saldoDepois =
     Number(
       (
         saldoAntes -
@@ -1762,7 +1616,7 @@ async function(){
 
   const debitado =
     await salvarSaldo(
-      saldoDepoisAposta
+      saldoDepois
     );
 
   if(!debitado){
@@ -1787,9 +1641,7 @@ async function(){
     .querySelectorAll(".numero")
     .forEach(
       n =>
-        n.classList.remove(
-          "destaque"
-        )
+        n.classList.remove("destaque")
     );
 
 
@@ -1797,7 +1649,7 @@ async function(){
 
 
   /* =================================================
-     RESULTADO
+     ESCOLHE A CASA
   ================================================= */
 
   const indice =
@@ -1806,21 +1658,19 @@ async function(){
       premios.length
     );
 
-  const premioCasa =
+  const valorCasa =
     premios[indice];
 
 
   /* =================================================
-     POSIÇÃO
+     CALCULA A ROTAÇÃO
   ================================================= */
 
   const tamanhoCasa =
-    360 /
-    premios.length;
+    360 / premios.length;
 
   const anguloPremio =
-    indice *
-    tamanhoCasa;
+    indice * tamanhoCasa;
 
   const voltas =
     360 * 8;
@@ -1837,13 +1687,18 @@ async function(){
     novaRotacao;
 
 
+  /* =================================================
+     ESPERA A ROLETA PARAR
+  ================================================= */
+
   setTimeout(
     ()=>{
+
       finalizarRodada(
         indice,
-        premioCasa,
-        valorAposta
+        valorCasa
       );
+
     },
     7500
   );
@@ -1852,13 +1707,12 @@ async function(){
 
 
 /* =====================================================
-   FINALIZAR RODADA
+   FINALIZAR
 ===================================================== */
 
 async function finalizarRodada(
   indice,
-  premioCasa,
-  aposta
+  valorCasa
 ){
 
   pararSomRoleta();
@@ -1868,7 +1722,6 @@ async function finalizarRodada(
     document.querySelector(
       `.numero[data-index="${indice}"]`
     );
-
 
   if(numero){
 
@@ -1883,7 +1736,7 @@ async function finalizarRodada(
      PERDEU
   ================================================= */
 
-  if(premioCasa === 0){
+  if(valorCasa === 0){
 
     resultado.innerHTML =
       "💥 PERDEU";
@@ -1901,31 +1754,87 @@ async function finalizarRodada(
 
 
   /* =================================================
-     CALCULA O PRÊMIO REAL
+     SUPER BÔNUS
+     
+     SUPER BÔNUS É R$ 5,00 FIXO
   ================================================= */
 
-  const premioFinal =
-    calcularPremio(
-      premioCasa,
-      aposta
+  if(valorCasa === 5){
+
+    const premioFinal =
+      5.00;
+
+    const saldoComPremio =
+      Number(
+        (
+          saldoReal +
+          premioFinal
+        ).toFixed(2)
+      );
+
+    const creditado =
+      await salvarSaldo(
+        saldoComPremio
+      );
+
+    if(!creditado){
+
+      girando = false;
+      atualizarBotao();
+      return;
+
+    }
+
+    resultado.innerHTML =
+      "⚡ SUPER BÔNUS ⚡<br>" +
+      "<span style='font-size:28px;color:#ffe36a'>" +
+      "R$ 5,00" +
+      "</span>";
+
+    resultado.style.color =
+      "#ffe36a";
+
+    mostrarSuperBonus();
+
+    setTimeout(
+      ()=>{
+
+        girando = false;
+        atualizarBotao();
+
+      },
+      4500
     );
 
+    return;
 
-  console.log(
-    "Aposta:",
-    aposta,
-    "Casa:",
-    premioCasa,
-    "Prêmio final:",
-    premioFinal
-  );
+  }
 
 
   /* =================================================
-     CREDITA O PRÊMIO
+     PRÊMIO NORMAL
+
+     REGRA:
+
+     APOSTA × VALOR DA CASA × 2
+
+     Exemplo:
+     1 × 0,50 × 2 = 1,00
+     2 × 0,40 × 2 = 0,80
+     2 × 0,20 × 2 = 0,40
   ================================================= */
 
-  const saldoDepoisPremio =
+  const premioFinal =
+    Number(
+      (
+        valorAposta *
+        valorCasa *
+        2
+      ).toFixed(2)
+    );
+
+
+  const saldoComPremio =
     Number(
       (
         saldoReal +
@@ -1936,14 +1845,13 @@ async function finalizarRodada(
 
   const creditado =
     await salvarSaldo(
-      saldoDepoisPremio
+      saldoComPremio
     );
 
 
   if(!creditado){
 
     girando = false;
-
     atualizarBotao();
 
     return;
@@ -1951,52 +1859,26 @@ async function finalizarRodada(
   }
 
 
-  /* =================================================
-     SUPER BÔNUS
-  ================================================= */
-
-  if(premioCasa === 5){
-
-    resultado.innerHTML =
-      "⚡ SUPER BÔNUS ⚡<br>" +
-      "<span style='font-size:28px;color:#ffe36a'>" +
-      dinheiro(premioFinal) +
-      "</span>";
-
-    resultado.style.color =
-      "#ffe36a";
-
-    mostrarSuperBonus(
-      premioFinal
-    );
-
-  }
+  tocarPremio();
 
 
-  /* =================================================
-     PRÊMIO NORMAL
-  ================================================= */
+  resultado.innerHTML =
+    "⚡ PRÊMIO<br>" +
+    "<span style='font-size:25px;color:#ffe36a'>" +
+    dinheiro(premioFinal) +
+    "</span>";
 
-  else{
-
-    tocarPremio();
-
-    resultado.innerHTML =
-      "⚡ PRÊMIO<br>" +
-      "<span style='font-size:25px;color:#ffe36a'>" +
-      dinheiro(premioFinal) +
-      "</span>";
-
-    resultado.style.color =
-      "#ffe36a";
-
-  }
+  resultado.style.color =
+    "#ffe36a";
 
 
   setTimeout(
     ()=>{
+
       girando = false;
+
       atualizarBotao();
+
     },
     1400
   );
@@ -2011,13 +1893,12 @@ async function finalizarRodada(
 window.repetirAposta =
 function(){
 
-  if(girando)
-    return;
+  if(girando) return;
 
   iniciarAudio();
   tocarClique();
 
-  girarRoleta();
+  window.girarRoleta();
 
 };
 
@@ -2039,6 +1920,42 @@ function(){
   );
 
 };
+
+
+/* =====================================================
+   AUTH
+===================================================== */
+
+supabase.auth
+.onAuthStateChange(
+  (event,session)=>{
+
+    if(!session){
+
+      window.location.href =
+        "../index.html";
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   MÚSICA
+===================================================== */
+
+document.addEventListener(
+  "touchstart",
+  iniciarMusica,
+  {once:true}
+);
+
+document.addEventListener(
+  "click",
+  iniciarMusica,
+  {once:true}
+);
 
 
 /* =====================================================
@@ -2068,6 +1985,7 @@ async function iniciar(){
 
     const carregou =
       await carregarSaldo();
+
 
     if(!carregou){
 
@@ -2107,49 +2025,6 @@ async function iniciar(){
 
 }
 
-
-/* =====================================================
-   AUTH
-===================================================== */
-
-supabase.auth
-.onAuthStateChange(
-  function(
-    event,
-    session
-  ){
-
-    if(!session){
-
-      window.location.href =
-        "../index.html";
-
-    }
-
-  }
-);
-
-
-/* =====================================================
-   MÚSICA
-===================================================== */
-
-document.addEventListener(
-  "touchstart",
-  iniciarMusica,
-  {once:true}
-);
-
-document.addEventListener(
-  "click",
-  iniciarMusica,
-  {once:true}
-);
-
-
-/* =====================================================
-   INICIAR
-===================================================== */
 
 iniciar();
 
