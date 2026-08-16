@@ -106,6 +106,11 @@ body{
     margin:5px 0 10px;
 }
 
+
+/* =====================================================
+   ROLETA
+===================================================== */
+
 .roleta-area{
     position:relative;
     width:100%;
@@ -116,10 +121,8 @@ body{
 }
 
 .roleta{
-
     width:min(92vw,390px);
     height:min(92vw,390px);
-
     border-radius:50%;
     position:relative;
 
@@ -140,11 +143,11 @@ body{
     inset 0 0 25px #000;
 
     /*
-       IMPORTANTE:
-       A roleta agora NÃO usa transition.
-       O giro é controlado pelo JavaScript
-       com aceleração e desaceleração.
+       A rotação agora é controlada pelo JavaScript.
+       A transição longa deixa a parada suave.
     */
+    transition:
+        transform 9s cubic-bezier(.12,.82,.18,1);
 
     overflow:hidden;
 }
@@ -195,75 +198,71 @@ body{
     inset 0 0 8px #ffe05b;
 }
 
+
 /* =====================================================
-   CASAS DOS NÚMEROS
+   NÚMEROS
+   SEM QUADRADOS
 ===================================================== */
 
 .numeros{
     position:absolute;
     inset:0;
     z-index:7;
+    pointer-events:none;
 }
 
-/*
-   Agora a casa é VERTICAL.
-   Não é mais um quadrado deitado.
-*/
-
 .numero{
-
     position:absolute;
 
     left:50%;
     top:50%;
 
-    width:52px;
-    height:76px;
+    /*
+       Nada de quadrado.
+       Nada de borda.
+       Nada de fundo.
+    */
 
-    margin-left:-26px;
-    margin-top:-38px;
+    width:72px;
+    height:105px;
+
+    margin-left:-36px;
+    margin-top:-52px;
 
     display:flex;
     align-items:center;
     justify-content:center;
 
-    color:#fff0a0;
+    color:#fff3a0;
 
     font-size:17px;
     font-weight:900;
 
-    background:
-    linear-gradient(
-        180deg,
-        rgba(8,12,12,.96),
-        rgba(24,45,40,.92)
-    );
-
-    border:2px solid rgba(255,220,90,.75);
-
-    border-radius:8px;
+    text-align:center;
 
     text-shadow:
-    0 2px 3px #000,
-    0 0 8px rgba(255,210,70,.8);
-
-    box-shadow:
-    0 0 8px rgba(255,210,70,.25),
-    inset 0 0 8px rgba(255,220,90,.08);
-
-    /*
-       Mantém a casa de pé.
-    */
+        0 2px 3px #000,
+        0 0 7px #000,
+        0 0 12px rgba(255,215,70,.75);
 
     transform-origin:center center;
 
-    overflow:hidden;
+    transition:
+        color .2s,
+        text-shadow .2s,
+        transform .2s;
+
+    /*
+       Não há:
+       background
+       border
+       border-radius
+       box-shadow
+    */
 }
 
 .numero-conteudo{
-
     display:flex;
-
     align-items:center;
     justify-content:center;
 
@@ -271,86 +270,107 @@ body{
     height:100%;
 
     /*
-       Números grandes e inteiros.
+       Texto em pé/radial.
     */
-
-    font-size:17px;
-    font-weight:900;
+    transform:
+        rotate(var(--texto-rotacao));
 
     white-space:nowrap;
-
-    transform:none !important;
 }
 
-.numero.super{
 
-    width:64px;
-    height:82px;
+/* =====================================================
+   PERDEU
+===================================================== */
 
-    margin-left:-32px;
-    margin-top:-41px;
+.numero.perdeu{
+    color:#ff6666;
 
-    border:2px solid #ffd83d;
+    font-size:18px;
 
-    background:
-    linear-gradient(
-        180deg,
-        #4b2c00,
-        #1b1000
-    );
-
-    box-shadow:
-    0 0 12px #ffd83d,
-    0 0 25px rgba(255,190,20,.7),
-    inset 0 0 12px rgba(255,220,70,.25);
+    text-shadow:
+        0 2px 3px #000,
+        0 0 8px #ff0000,
+        0 0 15px rgba(255,0,0,.7);
 }
 
-.numero.super .numero-conteudo{
 
-    white-space:normal;
+/* =====================================================
+   SUPER BÔNUS
+===================================================== */
 
-    text-align:center;
-
-    line-height:18px;
+.numero.superbonus{
+    color:#fff;
 
     font-size:13px;
-}
 
-.numero.girandoNumero{
+    text-shadow:
+        0 0 4px #fff,
+        0 0 10px #ffe36a,
+        0 0 18px #ffb300,
+        0 0 25px #ff8c00;
 
     animation:
-    brilhoNumero .45s infinite alternate;
+        brilhoBonus 1.2s infinite alternate;
 }
 
-@keyframes brilhoNumero{
+.numero.superbonus .numero-conteudo{
+    flex-direction:column;
+    line-height:16px;
+}
+
+@keyframes brilhoBonus{
 
     from{
+        transform:scale(1);
         filter:brightness(1);
     }
 
     to{
-        filter:brightness(1.8);
+        transform:scale(1.12);
+        filter:brightness(1.5);
     }
 
 }
 
+
+/* =====================================================
+   NÚMERO PREMIADO
+===================================================== */
+
 .numero.destaque{
+    color:#ffffff;
 
-    color:#fff;
+    text-shadow:
+        0 0 5px #fff,
+        0 0 12px #ffe36a,
+        0 0 22px #ffbd00,
+        0 0 35px #ff8c00;
 
-    border-color:#fff1a1;
+    animation:
+        numeroPremiado .7s infinite alternate;
+}
 
-    box-shadow:
-    0 0 15px #ffe36a,
-    0 0 30px rgba(255,220,70,.7);
+@keyframes numeroPremiado{
 
-    filter:brightness(1.5);
+    from{
+        transform:
+            translate(var(--x),var(--y))
+            scale(1);
+    }
+
+    to{
+        transform:
+            translate(var(--x),var(--y))
+            scale(1.18);
+    }
 
 }
 
-.numero.destaque .numero-conteudo{
-    transform:scale(1.08) !important;
-}
+
+/* =====================================================
+   CENTRO
+===================================================== */
 
 .centro{
     position:absolute;
@@ -393,11 +413,17 @@ body{
     letter-spacing:2px;
 }
 
+
+/* =====================================================
+   PONTEIRO
+===================================================== */
+
 .ponteiro{
     position:absolute;
     z-index:20;
     top:-3px;
     left:50%;
+
     transform:translateX(-50%);
 
     width:0;
@@ -411,6 +437,11 @@ body{
     drop-shadow(0 0 4px white)
     drop-shadow(0 0 9px #ffe66b);
 }
+
+
+/* =====================================================
+   RAIOS
+===================================================== */
 
 .raio{
     position:absolute;
@@ -458,161 +489,10 @@ body{
 
 }
 
+
 /* =====================================================
-   SUPER BÔNUS
+   RESULTADO
 ===================================================== */
-
-.super-bonus-overlay{
-
-    position:fixed;
-
-    inset:0;
-
-    background:
-    radial-gradient(
-        circle,
-        rgba(255,221,65,.28),
-        rgba(0,0,0,.94) 70%
-    );
-
-    z-index:1000;
-
-    display:flex;
-
-    align-items:center;
-    justify-content:center;
-
-    pointer-events:none;
-
-    opacity:0;
-
-}
-
-.super-bonus-overlay.ativo{
-
-    animation:
-    bonusTela 3.2s ease forwards;
-
-}
-
-.super-bonus-box{
-
-    text-align:center;
-
-    transform:scale(.2);
-
-}
-
-.super-bonus-overlay.ativo
-.super-bonus-box{
-
-    animation:
-    bonusEntrada 1s cubic-bezier(.2,1.6,.3,1) forwards;
-
-}
-
-.super-raio{
-
-    position:absolute;
-
-    width:180px;
-    height:5px;
-
-    background:#fff;
-
-    box-shadow:
-    0 0 10px #fff,
-    0 0 30px #ffe34f;
-
-    opacity:0;
-
-}
-
-.super-raio.r1{
-    transform:rotate(20deg);
-}
-
-.super-raio.r2{
-    transform:rotate(75deg);
-}
-
-.super-raio.r3{
-    transform:rotate(135deg);
-}
-
-.super-raio.r4{
-    transform:rotate(200deg);
-}
-
-.super-bonus-titulo{
-
-    color:#fff;
-
-    font-size:34px;
-
-    font-weight:1000;
-
-    letter-spacing:3px;
-
-    text-shadow:
-    0 0 10px #fff,
-    0 0 25px #ffe34f,
-    0 0 50px #ffb700;
-
-}
-
-.super-bonus-valor{
-
-    color:#ffe34f;
-
-    font-size:58px;
-
-    font-weight:1000;
-
-    margin-top:10px;
-
-    text-shadow:
-    0 0 15px #fff,
-    0 0 30px #ffe34f,
-    0 0 60px #ffae00;
-
-}
-
-@keyframes bonusTela{
-
-    0%{
-        opacity:0;
-    }
-
-    15%{
-        opacity:1;
-    }
-
-    75%{
-        opacity:1;
-    }
-
-    100%{
-        opacity:0;
-    }
-
-}
-
-@keyframes bonusEntrada{
-
-    0%{
-        transform:scale(.2) rotate(-10deg);
-    }
-
-    55%{
-        transform:scale(1.25) rotate(4deg);
-    }
-
-    100%{
-        transform:scale(1) rotate(0);
-    }
-
-}
 
 .resultado{
     min-height:52px;
@@ -620,9 +500,17 @@ body{
     color:#ddd;
     font-size:18px;
     font-weight:900;
-    text-shadow:0 0 10px currentColor;
+
+    text-shadow:
+        0 0 10px currentColor;
+
     line-height:24px;
 }
+
+
+/* =====================================================
+   PAINEL
+===================================================== */
 
 .painel{
     position:relative;
@@ -755,6 +643,11 @@ body{
     margin-top:8px;
 }
 
+
+/* =====================================================
+   BOTÕES FIXOS
+===================================================== */
+
 .repeat-btn,
 .menu-btn{
     position:fixed;
@@ -782,6 +675,111 @@ body{
     right:8px;
 }
 
+
+/* =====================================================
+   SUPER BÔNUS - EFEITO
+===================================================== */
+
+#efeitoBonus{
+    position:fixed;
+    inset:0;
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    z-index:1000;
+
+    pointer-events:none;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,215,50,.28),
+            rgba(0,0,0,.75)
+        );
+}
+
+#efeitoBonus.ativo{
+    display:flex;
+    animation:
+        fundoBonus 2.5s ease-out forwards;
+}
+
+.bonusTexto{
+    text-align:center;
+
+    font-size:32px;
+    font-weight:900;
+
+    color:#fff;
+
+    text-shadow:
+        0 0 5px #fff,
+        0 0 15px #ffe36a,
+        0 0 30px #ffb300,
+        0 0 50px #ff7b00;
+
+    animation:
+        textoBonus 2.5s ease-out forwards;
+}
+
+.bonusTexto small{
+    display:block;
+    font-size:20px;
+    margin-top:8px;
+}
+
+@keyframes fundoBonus{
+
+    0%{
+        opacity:0;
+    }
+
+    15%{
+        opacity:1;
+    }
+
+    75%{
+        opacity:1;
+    }
+
+    100%{
+        opacity:0;
+    }
+
+}
+
+@keyframes textoBonus{
+
+    0%{
+        transform:scale(.3);
+        opacity:0;
+    }
+
+    20%{
+        transform:scale(1.25);
+        opacity:1;
+    }
+
+    40%{
+        transform:scale(1);
+    }
+
+    80%{
+        transform:scale(1.08);
+        opacity:1;
+    }
+
+    100%{
+        transform:scale(1.4);
+        opacity:0;
+    }
+
+}
+
+
 #carregando{
     position:fixed;
     inset:0;
@@ -794,6 +792,7 @@ body{
     font-size:16px;
 }
 
+
 @media(max-width:360px){
 
     .roleta{
@@ -802,24 +801,16 @@ body{
     }
 
     .numero{
-        width:45px;
-        height:66px;
+        width:64px;
+        height:90px;
 
-        margin-left:-22.5px;
-        margin-top:-33px;
+        margin-left:-32px;
+        margin-top:-45px;
 
         font-size:14px;
     }
 
-    .numero.super{
-        width:54px;
-        height:72px;
-
-        margin-left:-27px;
-        margin-top:-36px;
-    }
-
-    .numero.super .numero-conteudo{
+    .numero.superbonus{
         font-size:11px;
     }
 
@@ -830,6 +821,7 @@ body{
 
 <body>
 
+
 <audio
     id="musicaRoleta"
     src="musica-roleta.mp3"
@@ -837,30 +829,26 @@ body{
     preload="auto">
 </audio>
 
-<div id="carregando">
-    🔐 VERIFICANDO CONTA...
-</div>
 
-<div class="super-bonus-overlay" id="superBonusOverlay">
+<div id="efeitoBonus">
 
-    <div class="super-raio r1"></div>
-    <div class="super-raio r2"></div>
-    <div class="super-raio r3"></div>
-    <div class="super-raio r4"></div>
+    <div class="bonusTexto">
 
-    <div class="super-bonus-box">
+        ⚡ SUPER BÔNUS ⚡
 
-        <div class="super-bonus-titulo">
-            ⚡ SUPER BÔNUS ⚡
-        </div>
-
-        <div class="super-bonus-valor">
+        <small>
             R$ 10,00
-        </div>
+        </small>
 
     </div>
 
 </div>
+
+
+<div id="carregando">
+    🔐 VERIFICANDO CONTA...
+</div>
+
 
 <div class="topo">
 
@@ -882,6 +870,7 @@ body{
 
 </div>
 
+
 <a href="../index.html" class="lobby">
 
     <div class="lobby-icon">
@@ -891,6 +880,7 @@ body{
     Lobby
 
 </a>
+
 
 <div class="container">
 
@@ -902,6 +892,7 @@ body{
         ESCOLHA O VALOR DA APOSTA
     </div>
 
+
     <div class="roleta-area">
 
         <div class="ponteiro"></div>
@@ -910,7 +901,10 @@ body{
         <div class="raio raio2"></div>
         <div class="raio raio3"></div>
 
-        <div class="roleta" id="roleta">
+
+        <div
+            class="roleta"
+            id="roleta">
 
             <div class="roleta-inner"></div>
 
@@ -935,6 +929,7 @@ body{
 
     </div>
 
+
     <div
         class="resultado"
         id="resultado">
@@ -942,6 +937,7 @@ body{
         ESCOLHA O VALOR DA APOSTA
 
     </div>
+
 
     <div class="painel">
 
@@ -956,6 +952,7 @@ body{
             </div>
 
         </div>
+
 
         <div class="valores">
 
@@ -985,6 +982,7 @@ body{
 
         </div>
 
+
         <button
             id="btnApostar"
             class="btn-apostar"
@@ -994,6 +992,7 @@ body{
             CARREGANDO...
 
         </button>
+
 
         <div class="info">
 
@@ -1019,6 +1018,7 @@ body{
 
         </div>
 
+
         <div class="mensagem">
             SALDO CONECTADO À SUA CONTA
         </div>
@@ -1026,6 +1026,7 @@ body{
     </div>
 
 </div>
+
 
 <button
     class="repeat-btn"
@@ -1035,6 +1036,7 @@ body{
 
 </button>
 
+
 <button
     class="menu-btn"
     onclick="abrirMenu()">
@@ -1042,6 +1044,7 @@ body{
     ☰
 
 </button>
+
 
 <script type="module">
 
@@ -1053,8 +1056,7 @@ from
 
 
 /* =====================================================
-   SUPABASE
-   NÃO ALTERADO
+   SUPABASE — MANTIDO COMO NO SEU CÓDIGO
 ===================================================== */
 
 const SUPABASE_URL =
@@ -1092,6 +1094,7 @@ musicaRoleta.volume = 0.10;
 
 let musicaIniciada = false;
 
+
 function iniciarMusica(){
 
     if(musicaIniciada)
@@ -1113,7 +1116,13 @@ function iniciarMusica(){
             musicaIniciada = true;
 
         })
-        .catch(function(){});
+        .catch(function(){
+
+            console.log(
+                "Aguardando interação..."
+            );
+
+        });
 
     }
 
@@ -1128,7 +1137,7 @@ let audioContext = null;
 
 let timerRoleta = null;
 
-let velocidadeSom = 70;
+let velocidadeSom = 45;
 
 
 function iniciarAudio(){
@@ -1160,6 +1169,10 @@ function iniciarAudio(){
 
 }
 
+
+/* =====================================================
+   CLIQUE
+===================================================== */
 
 function tocarClique(){
 
@@ -1200,13 +1213,17 @@ function tocarClique(){
         agora + 0.08
     );
 
-    oscilador.connect(ganho);
+    oscilador.connect(
+        ganho
+    );
 
     ganho.connect(
         audioContext.destination
     );
 
-    oscilador.start(agora);
+    oscilador.start(
+        agora
+    );
 
     oscilador.stop(
         agora + 0.08
@@ -1228,7 +1245,7 @@ function iniciarSomRoleta(){
 
     pararSomRoleta();
 
-    velocidadeSom = 70;
+    velocidadeSom = 45;
 
     tocarTic();
 
@@ -1272,25 +1289,27 @@ function tocarTic(){
         agora + 0.055
     );
 
-    oscilador.connect(ganho);
+    oscilador.connect(
+        ganho
+    );
 
     ganho.connect(
         audioContext.destination
     );
 
-    oscilador.start(agora);
+    oscilador.start(
+        agora
+    );
 
     oscilador.stop(
         agora + 0.06
     );
 
-    velocidadeSom += 7;
+    velocidadeSom += 8;
 
-    if(
-        velocidadeSom > 240
-    ){
+    if(velocidadeSom > 280){
 
-        velocidadeSom = 240;
+        velocidadeSom = 280;
 
     }
 
@@ -1319,7 +1338,7 @@ function pararSomRoleta(){
 
 
 /* =====================================================
-   SOM DE PRÊMIO
+   SOM DO PRÊMIO
 ===================================================== */
 
 function tocarPremio(){
@@ -1366,13 +1385,17 @@ function tocarPremio(){
                 inicio + 0.45
             );
 
-            oscilador.connect(ganho);
+            oscilador.connect(
+                ganho
+            );
 
             ganho.connect(
                 audioContext.destination
             );
 
-            oscilador.start(inicio);
+            oscilador.start(
+                inicio
+            );
 
             oscilador.stop(
                 inicio + 0.45
@@ -1385,80 +1408,7 @@ function tocarPremio(){
 
 
 /* =====================================================
-   SOM SUPER BÔNUS
-===================================================== */
-
-function tocarSuperBonus(){
-
-    iniciarAudio();
-
-    if(!audioContext)
-        return;
-
-    const agora =
-        audioContext.currentTime;
-
-    const notas =
-        [
-            523.25,
-            659.25,
-            783.99,
-            1046.50,
-            1318.51
-        ];
-
-    notas.forEach(
-        function(freq,i){
-
-            const osc =
-                audioContext.createOscillator();
-
-            const ganho =
-                audioContext.createGain();
-
-            const inicio =
-                agora +
-                i * 0.10;
-
-            osc.type =
-                "sine";
-
-            osc.frequency.setValueAtTime(
-                freq,
-                inicio
-            );
-
-            ganho.gain.setValueAtTime(
-                0.9,
-                inicio
-            );
-
-            ganho.gain.exponentialRampToValueAtTime(
-                0.001,
-                inicio + 0.8
-            );
-
-            osc.connect(ganho);
-
-            ganho.connect(
-                audioContext.destination
-            );
-
-            osc.start(inicio);
-
-            osc.stop(
-                inicio + 0.8
-            );
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   PRÊMIOS
-   SOMENTE OS VALORES DA ROLETA
+   RESULTADOS DA ROLETA
 ===================================================== */
 
 const premios = [
@@ -1468,26 +1418,63 @@ const premios = [
     0.80,
     1.00,
     5.00,
+    0.20,
+    0.50,
+    0.80,
+    1.00,
     8.00,
+
+    0.50,
+    0.20,
+    1.00,
+    0.80,
+    5.00,
+    0.50,
+    0.20,
+    8.00,
+
+    0.80,
     10.00,
-    0.20,
+
+    0.00,
     0.50,
-    0.80,
     1.00,
-    5.00,
-    8.00,
-    0.20,
-    0.50,
-    0.80,
-    1.00,
-    5.00,
-    8.00,
-    10.00
+    0.20
 
 ];
 
-const indiceSuperBonus =
-    6;
+
+const nomesPremios = [
+
+    "R$ 0,20",
+    "R$ 0,50",
+    "R$ 0,80",
+    "R$ 1,00",
+    "R$ 5,00",
+    "R$ 0,20",
+    "R$ 0,50",
+    "R$ 0,80",
+    "R$ 1,00",
+    "R$ 8,00",
+
+    "R$ 0,50",
+    "R$ 0,20",
+    "R$ 1,00",
+    "R$ 0,80",
+    "R$ 5,00",
+    "R$ 0,50",
+    "R$ 0,20",
+    "R$ 8,00",
+
+    "R$ 0,80",
+    "SUPER BÔNUS",
+
+    "PERDEU",
+    "R$ 0,50",
+    "R$ 1,00",
+    "R$ 0,20"
+
+];
 
 
 /* =====================================================
@@ -1518,14 +1505,12 @@ document.getElementById("fichaDisplay");
 const carregando =
 document.getElementById("carregando");
 
-const superBonusOverlay =
-document.getElementById(
-    "superBonusOverlay"
-);
+const efeitoBonus =
+document.getElementById("efeitoBonus");
 
 
 /* =====================================================
-   DINHEIRO
+   FORMATAÇÃO
 ===================================================== */
 
 function dinheiro(valor){
@@ -1539,8 +1524,7 @@ function dinheiro(valor){
 
 
 /* =====================================================
-   SALDO
-   MESMA ESTRUTURA DO SEU CÓDIGO
+   SALDO — NÃO ALTERADO
 ===================================================== */
 
 function atualizarSaldo(){
@@ -1695,20 +1679,21 @@ async function salvarSaldo(novoSaldo){
 
 
 /* =====================================================
-   CRIAR CASAS
+   CRIAR NÚMEROS
 ===================================================== */
 
 function criarNumeros(){
 
     const area =
-        document.getElementById(
-            "numeros"
-        );
+        document.getElementById("numeros");
 
     area.innerHTML = "";
 
     const total =
         premios.length;
+
+    const raio =
+        37;
 
     for(
         let i = 0;
@@ -1717,42 +1702,69 @@ function criarNumeros(){
     ){
 
         const numero =
-            document.createElement(
-                "div"
-            );
+            document.createElement("div");
 
         numero.className =
             "numero";
 
-        const conteudo =
-            document.createElement(
-                "span"
+        if(
+            premios[i] === 0
+        ){
+
+            numero.classList.add(
+                "perdeu"
             );
+
+        }
+
+        if(
+            premios[i] === 10
+        ){
+
+            numero.classList.add(
+                "superbonus"
+            );
+
+        }
+
+        const conteudo =
+            document.createElement("span");
 
         conteudo.className =
             "numero-conteudo";
 
-        if(i === indiceSuperBonus){
 
-            numero.classList.add(
-                "super"
-            );
+        if(
+            premios[i] === 10
+        ){
 
             conteudo.innerHTML =
-                "⚡<br>SUPER<br>R$ 10";
+                "SUPER<br>BÔNUS";
+
+        }else if(
+            premios[i] === 0
+        ){
+
+            conteudo.innerText =
+                "PERDEU";
 
         }else{
 
             conteudo.innerText =
-                dinheiro(
-                    premios[i]
-                );
+                dinheiro(premios[i]);
 
         }
+
 
         numero.appendChild(
             conteudo
         );
+
+
+        /*
+           Cada número fica em sua própria posição.
+           Não usamos quadrado nem borda.
+        */
 
         const angulo =
             (
@@ -1760,31 +1772,65 @@ function criarNumeros(){
                 (360 / total)
             ) - 90;
 
-        /*
-           Raio menor para deixar
-           as casas bem posicionadas
-           dentro da roleta.
-        */
-
-        const raio = 38;
+        const rad =
+            angulo *
+            Math.PI /
+            180;
 
         const x =
-            Math.cos(
-                angulo *
-                Math.PI / 180
-            ) * raio;
+            Math.cos(rad) *
+            raio;
 
         const y =
-            Math.sin(
-                angulo *
-                Math.PI / 180
-            ) * raio;
+            Math.sin(rad) *
+            raio;
+
+
+        numero.style.setProperty(
+            "--x",
+            x + "%"
+        );
+
+        numero.style.setProperty(
+            "--y",
+            y + "%"
+        );
+
 
         numero.style.transform =
-            `translate(${x}px,${y}px) rotate(${angulo + 90}deg)`;
+            `translate(${x}px,${y}px)`;
+
+
+        /*
+           Texto fica em pé/radial.
+        */
+
+        let rotacaoTexto =
+            angulo + 90;
+
+        /*
+           Mantém a leitura mais natural.
+        */
+
+        if(
+            rotacaoTexto > 90 &&
+            rotacaoTexto < 270
+        ){
+
+            rotacaoTexto += 180;
+
+        }
+
+
+        conteudo.style.setProperty(
+            "--texto-rotacao",
+            rotacaoTexto + "deg"
+        );
+
 
         numero.dataset.index =
             i;
+
 
         area.appendChild(
             numero
@@ -1796,7 +1842,7 @@ function criarNumeros(){
 
 
 /* =====================================================
-   VALOR DA APOSTA
+   ESCOLHER VALOR
 ===================================================== */
 
 window.selecionarValor =
@@ -1832,9 +1878,7 @@ function(
     );
 
     apostaInfo.innerText =
-        dinheiro(
-            valorAposta
-        );
+        dinheiro(valorAposta);
 
     fichaDisplay.innerText =
         Number(valorAposta)
@@ -1889,136 +1933,7 @@ function atualizarBotao(){
 
 
 /* =====================================================
-   ANIMAÇÃO DOS NÚMEROS
-===================================================== */
-
-function iniciarEfeitoNumeros(){
-
-    document
-    .querySelectorAll(
-        ".numero"
-    )
-    .forEach(
-        function(n){
-
-            n.classList.add(
-                "girandoNumero"
-            );
-
-        }
-    );
-
-}
-
-
-function pararEfeitoNumeros(){
-
-    document
-    .querySelectorAll(
-        ".numero"
-    )
-    .forEach(
-        function(n){
-
-            n.classList.remove(
-                "girandoNumero"
-            );
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   GIRO MANUAL
-   COMEÇA DEVAGAR
-   ACELERA
-   FICA MUITO TEMPO
-   PARA LENTAMENTE
-===================================================== */
-
-function animarRoleta(
-    rotacaoFinal,
-    duracao,
-    callback
-){
-
-    const inicio =
-        performance.now();
-
-    const rotacaoInicial =
-        rotacaoAtual;
-
-    function easeInOutCubic(t){
-
-        if(t < 0.5){
-
-            return 4 * t * t * t;
-
-        }
-
-        return 1 -
-            Math.pow(
-                -2 * t + 2,
-                3
-            ) / 2;
-
-    }
-
-    function animar(agora){
-
-        const tempo =
-            agora - inicio;
-
-        let progresso =
-            tempo / duracao;
-
-        if(progresso > 1)
-            progresso = 1;
-
-        const suavizado =
-            easeInOutCubic(
-                progresso
-            );
-
-        const rotacao =
-            rotacaoInicial +
-            (
-                rotacaoFinal -
-                rotacaoInicial
-            ) *
-            suavizado;
-
-        roleta.style.transform =
-            `rotate(${rotacao}deg)`;
-
-        if(progresso < 1){
-
-            requestAnimationFrame(
-                animar
-            );
-
-        }else{
-
-            rotacaoAtual =
-                rotacaoFinal;
-
-            callback();
-
-        }
-
-    }
-
-    requestAnimationFrame(
-        animar
-    );
-
-}
-
-
-/* =====================================================
-   GIRAR ROLETA
+   GIRAR
 ===================================================== */
 
 window.girarRoleta =
@@ -2031,6 +1946,7 @@ async function(){
 
     tocarClique();
 
+
     if(!usuarioAtual){
 
         resultado.innerHTML =
@@ -2042,6 +1958,7 @@ async function(){
         return;
 
     }
+
 
     if(
         saldoReal <
@@ -2058,9 +1975,16 @@ async function(){
 
     }
 
+
     girando = true;
 
     atualizarBotao();
+
+
+    /*
+       SALDO ORIGINAL:
+       continua usando exatamente o sistema real.
+    */
 
     const saldoAnterior =
         saldoReal;
@@ -2069,14 +1993,11 @@ async function(){
         saldoAnterior -
         valorAposta;
 
-    /*
-       MESMO DÉBITO DO SEU CÓDIGO.
-    */
-
     const debitado =
         await salvarSaldo(
             novoSaldo
         );
+
 
     if(!debitado){
 
@@ -2088,16 +2009,16 @@ async function(){
 
     }
 
+
     resultado.innerHTML =
         "⚡ GIRANDO...";
 
     resultado.style.color =
         "#ffe36a";
 
+
     document
-    .querySelectorAll(
-        ".numero"
-    )
+    .querySelectorAll(".numero")
     .forEach(
         function(n){
 
@@ -2108,9 +2029,13 @@ async function(){
         }
     );
 
+
     iniciarSomRoleta();
 
-    iniciarEfeitoNumeros();
+
+    /*
+       Escolhe o resultado.
+    */
 
     const indice =
         Math.floor(
@@ -2121,40 +2046,70 @@ async function(){
     const premio =
         premios[indice];
 
+
     const tamanhoCasa =
         360 /
         premios.length;
+
 
     const anguloPremio =
         indice *
         tamanhoCasa;
 
+
     /*
-       MAIS VOLTAS:
-       a roleta fica girando
-       por bastante tempo.
+       GIRO MAIS LONGO.
+
+       2 voltas iniciais suaves
+       + 7 voltas completas
+       + posição final.
+
+       A transição de 9 segundos
+       faz a parada desacelerar.
     */
 
     const voltas =
-        360 * 10;
+        360 * 9;
+
 
     const novaRotacao =
         rotacaoAtual +
         voltas +
         (360 - anguloPremio);
 
-    /*
-       9 segundos de animação.
 
-       A função começa lenta,
-       acelera no meio
-       e desacelera lentamente
-       no final.
+    /*
+       Começa com uma pequena pausa
+       para não parecer que dispara
+       instantaneamente.
     */
 
-    animarRoleta(
-        novaRotacao,
-        9000,
+    roleta.style.transition =
+        "transform 10s cubic-bezier(.15,.10,.18,1)";
+
+
+    /*
+       Força o navegador a reconhecer
+       a posição anterior antes de iniciar.
+    */
+
+    void roleta.offsetWidth;
+
+
+    roleta.style.transform =
+        `rotate(${novaRotacao}deg)`;
+
+
+    rotacaoAtual =
+        novaRotacao;
+
+
+    /*
+       O tempo precisa acompanhar
+       a transição acima.
+    */
+
+    setTimeout(
         function(){
 
             finalizarRodada(
@@ -2162,14 +2117,15 @@ async function(){
                 premio
             );
 
-        }
+        },
+        10000
     );
 
 };
 
 
 /* =====================================================
-   FINALIZAR RODADA
+   FINALIZAR
 ===================================================== */
 
 async function finalizarRodada(
@@ -2179,12 +2135,12 @@ async function finalizarRodada(
 
     pararSomRoleta();
 
-    pararEfeitoNumeros();
 
     const numero =
         document.querySelector(
             `.numero[data-index="${indice}"]`
         );
+
 
     if(numero){
 
@@ -2194,6 +2150,37 @@ async function finalizarRodada(
 
     }
 
+
+    /*
+       IMPORTANTE:
+       R$ 0,00 = perdeu.
+       Qualquer valor acima de zero = ganhou.
+    */
+
+    if(
+        premio === 0
+    ){
+
+        resultado.innerHTML =
+            "❌ PERDEU";
+
+        resultado.style.color =
+            "#ff5555";
+
+
+        girando = false;
+
+        atualizarBotao();
+
+        return;
+
+    }
+
+
+    /*
+       CRÉDITO REAL DO PRÊMIO.
+    */
+
     const saldoAtual =
         saldoReal;
 
@@ -2201,15 +2188,12 @@ async function finalizarRodada(
         saldoAtual +
         premio;
 
-    /*
-       MESMO CRÉDITO DO SEU CÓDIGO.
-       NÃO FOI CRIADO OUTRO SALDO.
-    */
 
     const creditado =
         await salvarSaldo(
             novoSaldo
         );
+
 
     if(!creditado){
 
@@ -2221,19 +2205,22 @@ async function finalizarRodada(
 
     }
 
-    /* =================================================
+
+    tocarPremio();
+
+
+    /*
        SUPER BÔNUS
-    ================================================= */
+    */
 
     if(
         premio === 10
     ){
 
-        tocarSuperBonus();
+        efeitoBonus.classList.add(
+            "ativo"
+        );
 
-        superBonusOverlay
-        .classList
-        .add("ativo");
 
         resultado.innerHTML =
             "⚡ SUPER BÔNUS ⚡<br>" +
@@ -2244,65 +2231,38 @@ async function finalizarRodada(
         resultado.style.color =
             "#ffe36a";
 
+
         setTimeout(
             function(){
 
-                superBonusOverlay
-                .classList
-                .remove("ativo");
+                efeitoBonus.classList.remove(
+                    "ativo"
+                );
 
             },
-            3300
+            2600
         );
 
-    }
 
-    /*
-       SOM NORMAL
-    */
-
-    else{
-
-        tocarPremio();
+    }else{
 
         /*
-           IMPORTANTE:
-           O resultado agora verifica
-           se o prêmio foi maior ou igual
-           à aposta.
-
-           Assim um prêmio de R$ 1,00,
-           com aposta de R$ 1,00,
-           NÃO aparece como "PERDEU".
+           GANHO NORMAL.
+           R$ 1,00 aparece corretamente
+           como prêmio.
         */
 
-        if(
-            premio >= valorAposta
-        ){
+        resultado.innerHTML =
+            "⚡ GANHOU<br>" +
+            "<span style='font-size:25px;color:#ffe36a'>" +
+            dinheiro(premio) +
+            "</span>";
 
-            resultado.innerHTML =
-                "⚡ VOCÊ GANHOU ⚡<br>" +
-                "<span style='font-size:25px;color:#ffe36a'>" +
-                dinheiro(premio) +
-                "</span>";
-
-            resultado.style.color =
-                "#ffe36a";
-
-        }else{
-
-            resultado.innerHTML =
-                "❌ VOCÊ PERDEU<br>" +
-                "<span style='font-size:25px;color:#ff5555'>" +
-                dinheiro(premio) +
-                "</span>";
-
-            resultado.style.color =
-                "#ff5555";
-
-        }
+        resultado.style.color =
+            "#ffe36a";
 
     }
+
 
     setTimeout(
         function(){
@@ -2312,7 +2272,7 @@ async function finalizarRodada(
             atualizarBotao();
 
         },
-        1800
+        1500
     );
 
 }
@@ -2368,6 +2328,7 @@ async function iniciar(){
         usuarioAtual =
             await obterUsuario();
 
+
         if(!usuarioAtual){
 
             alert(
@@ -2381,8 +2342,10 @@ async function iniciar(){
 
         }
 
+
         const carregou =
             await carregarSaldo();
+
 
         if(!carregou){
 
@@ -2393,12 +2356,15 @@ async function iniciar(){
 
         }
 
+
         criarNumeros();
 
         atualizarSaldo();
 
+
         carregando.style.display =
             "none";
+
 
     }catch(error){
 
