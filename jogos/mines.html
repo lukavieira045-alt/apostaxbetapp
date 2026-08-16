@@ -5,9 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mines - ApostaXBet</title>
 
-<!-- MESMO SISTEMA DE SALDO DOS OUTROS JOGOS -->
-<script src="../saldo.js"></script>
-<script type="module" src="../script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{
@@ -392,7 +390,8 @@ h1{
     font-weight:900;
     border-radius:14px;
     cursor:pointer;
-    box-shadow:0 0 20px rgba(0,255,136,.3);
+    box-shadow:
+        0 0 20px rgba(0,255,136,.3);
     text-transform:uppercase;
 }
 
@@ -488,6 +487,20 @@ h1{
     transform:scale(.96);
 }
 
+#erroInicial{
+    display:none;
+    width:92%;
+    max-width:400px;
+    padding:15px;
+    margin:10px auto;
+    border:1px solid #ff3333;
+    border-radius:12px;
+    background:rgba(255,0,0,.08);
+    color:#ff7777;
+    text-align:center;
+    font-size:13px;
+}
+
 @media(max-width:450px){
 
     h1{
@@ -530,11 +543,11 @@ h1{
     💰 Saldo: R$ 0,00
 </div>
 
+<div id="erroInicial"></div>
+
 <div class="painel">
 
-    <div id="tempo">
-        ⏱️ 10s
-    </div>
+    <div id="tempo">⏱️ 10s</div>
 
     <div id="premio">
         💎 Encontre os diamantes
@@ -546,9 +559,7 @@ h1{
 
     <br>
 
-    <button
-        id="btnNovoJogo"
-        type="button">
+    <button id="btnNovoJogo">
         💣 NOVO JOGO
     </button>
 
@@ -566,26 +577,15 @@ h1{
 
 </div>
 
-<div
-    class="resultado-overlay"
-    id="resultadoTela">
+<div class="resultado-overlay" id="resultadoTela">
 
     <div class="resultado-box">
 
-        <div
-            class="resultado-icon"
-            id="resultadoIcone">
-        </div>
+        <div class="resultado-icon" id="resultadoIcone"></div>
 
-        <div
-            class="resultado-text"
-            id="resultadoTexto">
-        </div>
+        <div class="resultado-text" id="resultadoTexto"></div>
 
-        <button
-            class="btn-fechar"
-            id="btnFecharResultado"
-            type="button">
+        <button class="btn-fechar" onclick="fecharResultado()">
             JOGAR NOVAMENTE
         </button>
 
@@ -593,11 +593,27 @@ h1{
 
 </div>
 
-
 <script>
 
 /* =====================================================
-CONFIGURAÇÃO
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+"https://jxbzjiwmajjzxgihfjgt.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ";
+
+const supabase =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+/* =====================================================
+   CONFIGURAÇÃO
 ===================================================== */
 
 const VALOR_APOSTA = 1.00;
@@ -607,69 +623,64 @@ const TEMPO_RODADA = 10;
 
 
 /* =====================================================
-ELEMENTOS
+   ELEMENTOS
 ===================================================== */
 
 const grid =
-    document.getElementById("grid");
+document.getElementById("grid");
 
 const saldoDisplay =
-    document.getElementById("saldo");
+document.getElementById("saldo");
 
 const premio =
-    document.getElementById("premio");
+document.getElementById("premio");
 
 const tempo =
-    document.getElementById("tempo");
+document.getElementById("tempo");
 
 const barra =
-    document.getElementById("barraProgresso");
+document.getElementById("barraProgresso");
 
 const botao =
-    document.getElementById("btnNovoJogo");
+document.getElementById("btnNovoJogo");
 
 const resultadoTela =
-    document.getElementById("resultadoTela");
+document.getElementById("resultadoTela");
 
 const resultadoIcone =
-    document.getElementById("resultadoIcone");
+document.getElementById("resultadoIcone");
 
 const resultadoTexto =
-    document.getElementById("resultadoTexto");
+document.getElementById("resultadoTexto");
 
-const btnFecharResultado =
-    document.getElementById(
-        "btnFecharResultado"
-    );
+const erroInicial =
+document.getElementById("erroInicial");
 
 
 /* =====================================================
-ESTADO
+   ESTADO
 ===================================================== */
 
+let usuarioAtual = null;
+let saldoReal = 0;
+
 let bombas = [];
-
 let jogando = false;
-
-let tempoRestante =
-    TEMPO_RODADA;
-
+let tempoRestante = TEMPO_RODADA;
 let intervaloTempo = null;
-
 let rodadaEncerrada = false;
-
 let diamantesEncontrados = 0;
-
-let iniciandoJogo = false;
+let processandoSaldo = false;
 
 
 /* =====================================================
-FORMATAÇÃO
+   DINHEIRO
 ===================================================== */
 
 function dinheiro(valor){
 
-    return Number(valor || 0)
+    return "R$ " +
+        Number(valor || 0)
         .toFixed(2)
         .replace(".",",");
 
@@ -677,119 +688,426 @@ function dinheiro(valor){
 
 
 /* =====================================================
-ESPERAR SISTEMA DE SALDO
+   MOSTRAR SALDO
 ===================================================== */
 
-async function esperarSistemaSaldo(){
+function atualizarTelaSaldo(){
 
-    for(
-        let i = 0;
-        i < 80;
-        i++
-    ){
-
-        if(
-            window.SistemaSaldo &&
-            typeof window.SistemaSaldo.get ===
-            "function" &&
-            typeof window.SistemaSaldo.debitar ===
-            "function"
-        ){
-
-            return true;
-
-        }
-
-        await new Promise(
-            resolve =>
-                setTimeout(
-                    resolve,
-                    100
-                )
-        );
-
-    }
-
-    return false;
+    saldoDisplay.textContent =
+        "💰 Saldo: " +
+        dinheiro(saldoReal);
 
 }
 
 
 /* =====================================================
-ATUALIZAR SALDO
+   PEGAR USUÁRIO LOGADO
 ===================================================== */
 
-async function atualizarSaldo(){
+async function obterUsuario(){
 
-    try{
+    const {
+        data,
+        error
+    } =
+    await supabase.auth.getSession();
 
-        const disponivel =
-            await esperarSistemaSaldo();
+    if(error){
 
-        if(!disponivel){
+        console.error(
+            "Erro sessão:",
+            error
+        );
 
-            saldoDisplay.textContent =
-                "💰 Saldo: R$ 0,00";
+        return null;
 
-            return 0;
+    }
 
-        }
+    return data?.session?.user || null;
 
-
-        /*
-        Usa exatamente o mesmo
-        SistemaSaldo dos outros jogos.
-        */
-
-        if(
-            typeof window.SistemaSaldo.atualizarTela ===
-            "function"
-        ){
-
-            await window.SistemaSaldo.atualizarTela();
-
-        }
+}
 
 
-        const valor =
-            await window.SistemaSaldo.get();
+/* =====================================================
+   CARREGAR SALDO REAL DA CONTA
+===================================================== */
 
-        const numero =
-            Number(valor);
+async function carregarSaldo(){
 
+    if(!usuarioAtual)
+        return false;
 
-        if(
-            Number.isFinite(numero)
-        ){
+    const {
+        data,
+        error
+    } =
+    await supabase
+        .from("saldos")
+        .select("valor")
+        .eq(
+            "user_id",
+            usuarioAtual.id
+        )
+        .maybeSingle();
 
-            saldoDisplay.textContent =
-                "💰 Saldo: R$ " +
-                dinheiro(numero);
-
-            return numero;
-
-        }
-
-    }catch(error){
+    if(error){
 
         console.error(
             "Erro ao carregar saldo:",
             error
         );
 
+        mostrarErro(
+            "❌ Não foi possível carregar o saldo."
+        );
+
+        return false;
+
     }
 
-    return 0;
+    /*
+      Se ainda não existir uma linha
+      para o usuário, cria com zero.
+    */
+
+    if(!data){
+
+        const {
+            error: erroCriar
+        } =
+        await supabase
+            .from("saldos")
+            .insert({
+                user_id:usuarioAtual.id,
+                valor:0
+            });
+
+        if(erroCriar){
+
+            console.error(
+                "Erro ao criar saldo:",
+                erroCriar
+            );
+
+            mostrarErro(
+                "❌ Não foi possível carregar sua conta."
+            );
+
+            return false;
+
+        }
+
+        saldoReal = 0;
+
+    }else{
+
+        saldoReal =
+            Number(data.valor || 0);
+
+    }
+
+    atualizarTelaSaldo();
+
+    return true;
 
 }
 
 
 /* =====================================================
-ÁUDIO
+   SALVAR SALDO
+===================================================== */
+
+async function salvarSaldo(novoSaldo){
+
+    if(!usuarioAtual)
+        return false;
+
+    const valorFinal =
+        Number(
+            Number(novoSaldo)
+            .toFixed(2)
+        );
+
+    const {
+        data,
+        error
+    } =
+    await supabase
+        .from("saldos")
+        .update({
+            valor:valorFinal
+        })
+        .eq(
+            "user_id",
+            usuarioAtual.id
+        )
+        .select("valor")
+        .maybeSingle();
+
+    if(error){
+
+        console.error(
+            "Erro ao salvar saldo:",
+            error
+        );
+
+        return false;
+
+    }
+
+    if(!data){
+
+        console.error(
+            "Saldo não foi atualizado."
+        );
+
+        return false;
+
+    }
+
+    saldoReal =
+        Number(data.valor || 0);
+
+    atualizarTelaSaldo();
+
+    return true;
+
+}
+
+
+/* =====================================================
+   DEBITAR APOSTA
+===================================================== */
+
+async function debitarAposta(){
+
+    if(processandoSaldo)
+        return false;
+
+    processandoSaldo = true;
+
+    try{
+
+        /*
+          Busca o saldo mais recente
+          diretamente no Supabase.
+        */
+
+        const {
+            data,
+            error
+        } =
+        await supabase
+            .from("saldos")
+            .select("valor")
+            .eq(
+                "user_id",
+                usuarioAtual.id
+            )
+            .single();
+
+        if(error){
+
+            console.error(
+                "Erro ao verificar saldo:",
+                error
+            );
+
+            return false;
+
+        }
+
+        const saldoAtual =
+            Number(data?.valor || 0);
+
+        saldoReal =
+            saldoAtual;
+
+        atualizarTelaSaldo();
+
+        if(
+            saldoAtual <
+            VALOR_APOSTA
+        ){
+
+            premio.textContent =
+                "💰 Saldo insuficiente.";
+
+            return false;
+
+        }
+
+        const novoSaldo =
+            Number(
+                (
+                    saldoAtual -
+                    VALOR_APOSTA
+                ).toFixed(2)
+            );
+
+        /*
+          O desconto acontece AQUI,
+          antes da rodada começar.
+        */
+
+        const {
+            data: atualizado,
+            error: erroUpdate
+        } =
+        await supabase
+            .from("saldos")
+            .update({
+                valor:novoSaldo
+            })
+            .eq(
+                "user_id",
+                usuarioAtual.id
+            )
+            .select("valor")
+            .single();
+
+        if(erroUpdate){
+
+            console.error(
+                "Erro ao debitar aposta:",
+                erroUpdate
+            );
+
+            return false;
+
+        }
+
+        saldoReal =
+            Number(
+                atualizado.valor
+            );
+
+        atualizarTelaSaldo();
+
+        return true;
+
+    }finally{
+
+        processandoSaldo = false;
+
+    }
+
+}
+
+
+/* =====================================================
+   CREDITAR PRÊMIO
+===================================================== */
+
+async function creditarPremio(valor){
+
+    if(processandoSaldo)
+        return false;
+
+    processandoSaldo = true;
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await supabase
+            .from("saldos")
+            .select("valor")
+            .eq(
+                "user_id",
+                usuarioAtual.id
+            )
+            .single();
+
+        if(error){
+
+            console.error(
+                "Erro ao buscar saldo:",
+                error
+            );
+
+            return false;
+
+        }
+
+        const saldoAtual =
+            Number(data?.valor || 0);
+
+        const novoSaldo =
+            Number(
+                (
+                    saldoAtual +
+                    Number(valor)
+                ).toFixed(2)
+            );
+
+        const {
+            data: atualizado,
+            error: erroUpdate
+        } =
+        await supabase
+            .from("saldos")
+            .update({
+                valor:novoSaldo
+            })
+            .eq(
+                "user_id",
+                usuarioAtual.id
+            )
+            .select("valor")
+            .single();
+
+        if(erroUpdate){
+
+            console.error(
+                "Erro ao creditar prêmio:",
+                erroUpdate
+            );
+
+            return false;
+
+        }
+
+        saldoReal =
+            Number(
+                atualizado.valor
+            );
+
+        atualizarTelaSaldo();
+
+        return true;
+
+    }finally{
+
+        processandoSaldo = false;
+
+    }
+
+}
+
+
+/* =====================================================
+   ERRO INICIAL
+===================================================== */
+
+function mostrarErro(texto){
+
+    erroInicial.textContent =
+        texto;
+
+    erroInicial.style.display =
+        "block";
+
+}
+
+
+/* =====================================================
+   ÁUDIO
 ===================================================== */
 
 let audioContext = null;
-
 
 function iniciarAudio(){
 
@@ -797,15 +1115,11 @@ function iniciarAudio(){
 
         if(!audioContext){
 
-            const AudioCtx =
-                window.AudioContext ||
-                window.webkitAudioContext;
-
-            if(!AudioCtx)
-                return;
-
             audioContext =
-                new AudioCtx();
+                new (
+                    window.AudioContext ||
+                    window.webkitAudioContext
+                )();
 
         }
 
@@ -818,7 +1132,14 @@ function iniciarAudio(){
 
         }
 
-    }catch(e){}
+    }catch(e){
+
+        console.warn(
+            "Áudio indisponível.",
+            e
+        );
+
+    }
 
 }
 
@@ -859,7 +1180,6 @@ function tocarSom(
         );
 
         oscilador.connect(ganho);
-
         ganho.connect(
             audioContext.destination
         );
@@ -967,7 +1287,7 @@ function somVitoria(){
 
 
 /* =====================================================
-BOMBAS
+   BOMBAS
 ===================================================== */
 
 function criarBombas(){
@@ -1002,7 +1322,7 @@ function criarBombas(){
 
 
 /* =====================================================
-TABULEIRO
+   TABULEIRO
 ===================================================== */
 
 function criarTabuleiro(){
@@ -1010,15 +1330,13 @@ function criarTabuleiro(){
     grid.innerHTML = "";
 
     for(
-        let i = 0;
-        i < 9;
+        let i=0;
+        i<9;
         i++
     ){
 
         const cell =
-            document.createElement(
-                "div"
-            );
+            document.createElement("div");
 
         cell.className =
             "cell";
@@ -1031,10 +1349,14 @@ function criarTabuleiro(){
 
         cell.addEventListener(
             "click",
-            () => abrirCasa(
-                cell,
-                i
-            )
+            function(){
+
+                abrirCasa(
+                    cell,
+                    i
+                );
+
+            }
         );
 
         grid.appendChild(
@@ -1047,8 +1369,51 @@ function criarTabuleiro(){
 
 
 /* =====================================================
-CONTAGEM
+   CONTAGEM
 ===================================================== */
+
+function iniciarContagem(){
+
+    clearInterval(
+        intervaloTempo
+    );
+
+    tempoRestante =
+        TEMPO_RODADA;
+
+    atualizarContagem();
+
+    intervaloTempo =
+        setInterval(
+        function(){
+
+            if(!jogando)
+                return;
+
+            tempoRestante--;
+
+            atualizarContagem();
+
+            somContagem();
+
+            if(
+                tempoRestante <= 0
+            ){
+
+                clearInterval(
+                    intervaloTempo
+                );
+
+                tempoEsgotado();
+
+            }
+
+        },
+        1000
+        );
+
+}
+
 
 function atualizarContagem(){
 
@@ -1088,211 +1453,87 @@ function atualizarContagem(){
 }
 
 
-function iniciarContagem(){
-
-    clearInterval(
-        intervaloTempo
-    );
-
-    tempoRestante =
-        TEMPO_RODADA;
-
-    atualizarContagem();
-
-    intervaloTempo =
-        setInterval(
-            () => {
-
-                if(!jogando)
-                    return;
-
-                tempoRestante--;
-
-                atualizarContagem();
-
-                somContagem();
-
-                if(
-                    tempoRestante <= 0
-                ){
-
-                    clearInterval(
-                        intervaloTempo
-                    );
-
-                    tempoEsgotado();
-
-                }
-
-            },
-            1000
-        );
-
-}
-
-
 /* =====================================================
-NOVO JOGO
+   NOVO JOGO
 ===================================================== */
 
 async function iniciarJogo(){
 
     iniciarAudio();
 
-    if(
-        iniciandoJogo ||
-        jogando
-    ){
+    if(jogando){
+
+        premio.textContent =
+            "⚠️ Termine a rodada atual.";
 
         return;
 
     }
 
-    iniciandoJogo = true;
+    if(!usuarioAtual){
+
+        premio.textContent =
+            "❌ Conta não encontrada.";
+
+        return;
+
+    }
 
     botao.disabled = true;
 
     premio.textContent =
         "💰 Verificando saldo...";
 
+    const debitado =
+        await debitarAposta();
 
-    try{
+    if(!debitado){
 
-        /*
-        Garante que o mesmo SistemaSaldo
-        dos outros jogos esteja disponível.
-        */
-
-        const sistemaOK =
-            await esperarSistemaSaldo();
-
-        if(!sistemaOK){
-
-            premio.textContent =
-                "❌ Sistema de saldo não carregou.";
-
-            botao.disabled = false;
-
-            return;
-
-        }
-
-
-        /*
-        Busca o saldo REAL antes da aposta.
-        */
-
-        const saldoAtual =
-            await atualizarSaldo();
-
+        botao.disabled = false;
 
         if(
-            saldoAtual < VALOR_APOSTA
+            saldoReal <
+            VALOR_APOSTA
         ){
 
             premio.textContent =
                 "💰 Saldo insuficiente.";
 
-            botao.disabled = false;
-
-            return;
-
-        }
-
-
-        /*
-        DEBITA R$ 1,00.
-        */
-
-        const debitado =
-            await window.SistemaSaldo.debitar(
-                VALOR_APOSTA
-            );
-
-
-        if(!debitado){
+        }else{
 
             premio.textContent =
-                "💰 Não foi possível realizar a aposta.";
-
-            botao.disabled = false;
-
-            await atualizarSaldo();
-
-            return;
+                "❌ Erro ao processar aposta.";
 
         }
 
-
-        /*
-        SALDO É ATUALIZADO IMEDIATAMENTE.
-        */
-
-        await atualizarSaldo();
-
-
-        /*
-        COMEÇA A RODADA.
-        */
-
-        jogando = true;
-
-        rodadaEncerrada = false;
-
-        diamantesEncontrados = 0;
-
-        criarBombas();
-
-        criarTabuleiro();
-
-        resultadoTela.classList.remove(
-            "mostrar"
-        );
-
-        tempo.classList.remove(
-            "perigo"
-        );
-
-        premio.textContent =
-            "💎 Encontre os diamantes!";
-
-        botao.textContent =
-            "🎯 RODADA EM ANDAMENTO";
-
-        iniciarContagem();
-
-    }catch(error){
-
-        console.error(
-            "Erro ao iniciar Mines:",
-            error
-        );
-
-        premio.textContent =
-            "❌ Erro ao iniciar o jogo.";
-
-        await atualizarSaldo();
-
-    }finally{
-
-        iniciandoJogo = false;
-
-        if(!jogando){
-
-            botao.disabled = false;
-
-            botao.textContent =
-                "💣 NOVO JOGO";
-
-        }
+        return;
 
     }
+
+    jogando = true;
+    rodadaEncerrada = false;
+    diamantesEncontrados = 0;
+
+    criarBombas();
+    criarTabuleiro();
+
+    resultadoTela.classList.remove(
+        "mostrar"
+    );
+
+    premio.textContent =
+        "💎 Encontre os diamantes!";
+
+    botao.textContent =
+        "🎯 RODADA EM ANDAMENTO";
+
+    iniciarContagem();
 
 }
 
 
 /* =====================================================
-ABRIR CASA
+   ABRIR CASA
 ===================================================== */
 
 function abrirCasa(
@@ -1313,15 +1554,9 @@ function abrirCasa(
     }
 
     if(
-        cell.classList.contains(
-            "revealed"
-        ) ||
-        cell.classList.contains(
-            "bomb"
-        ) ||
-        cell.classList.contains(
-            "bloqueada"
-        )
+        cell.classList.contains("revealed") ||
+        cell.classList.contains("bomb") ||
+        cell.classList.contains("bloqueada")
     ){
 
         return;
@@ -1332,144 +1567,110 @@ function abrirCasa(
         "abrindo"
     );
 
-
     setTimeout(
-        async () => {
+    async function(){
 
-            if(
-                !jogando ||
-                rodadaEncerrada
-            ){
-
-                cell.classList.remove(
-                    "abrindo"
-                );
-
-                return;
-
-            }
+        if(
+            !jogando ||
+            rodadaEncerrada
+        ){
 
             cell.classList.remove(
                 "abrindo"
             );
 
+            return;
 
-            /*
-            BOMBA
-            */
+        }
 
-            if(
-                bombas.includes(
-                    indice
-                )
-            ){
+        cell.classList.remove(
+            "abrindo"
+        );
 
-                cell.classList.add(
-                    "bomb"
-                );
-
-                cell.textContent =
-                    "💣";
-
-                somBomba();
-
-                perderRodada();
-
-                return;
-
-            }
-
-
-            /*
-            DIAMANTE
-            */
+        if(
+            bombas.includes(indice)
+        ){
 
             cell.classList.add(
-                "revealed"
+                "bomb"
             );
 
             cell.textContent =
-                "💎";
+                "💣";
 
-            diamantesEncontrados++;
+            somBomba();
 
-            somDiamante();
+            perderRodada();
 
+            return;
 
-            /*
-            CREDITA PELO MESMO
-            SISTEMA DOS OUTROS JOGOS.
-            */
+        }
 
-            try{
+        cell.classList.add(
+            "revealed"
+        );
 
-                if(
-                    window.SistemaSaldo &&
-                    typeof window.SistemaSaldo.creditar ===
-                    "function"
-                ){
+        cell.textContent =
+            "💎";
 
-                    await window.SistemaSaldo.creditar(
-                        PREMIO_DIAMANTE
-                    );
+        diamantesEncontrados++;
 
-                }
+        somDiamante();
 
-            }catch(error){
+        /*
+          Prêmio creditado imediatamente
+          na mesma conta.
+        */
 
-                console.error(
-                    "Erro ao creditar:",
-                    error
-                );
+        const creditado =
+            await creditarPremio(
+                PREMIO_DIAMANTE
+            );
 
-            }
+        if(!creditado){
 
-
-            await atualizarSaldo();
-
+            console.error(
+                "Não foi possível creditar o prêmio."
+            );
 
             premio.textContent =
-                "💎 + R$ " +
-                dinheiro(
-                    PREMIO_DIAMANTE
-                );
+                "❌ Erro ao creditar prêmio.";
 
+            return;
 
-            /*
-            VITÓRIA MÁXIMA
-            */
+        }
 
-            if(
-                diamantesEncontrados >= 6
-            ){
+        premio.textContent =
+            "💎 + " +
+            dinheiro(
+                PREMIO_DIAMANTE
+            );
 
-                ganharRodada();
+        if(
+            diamantesEncontrados >= 6
+        ){
 
-            }
+            ganharRodada();
 
-        },
-        180
+        }
+
+    },
+    180
     );
 
 }
 
 
 /* =====================================================
-PERDEU
+   PERDEU
 ===================================================== */
 
 function perderRodada(){
 
-    if(
-        rodadaEncerrada
-    ){
-
+    if(rodadaEncerrada)
         return;
 
-    }
-
     rodadaEncerrada = true;
-
     jogando = false;
 
     clearInterval(
@@ -1489,33 +1690,24 @@ function perderRodada(){
     premio.textContent =
         "💥 Você encontrou uma bomba!";
 
-    /*
-    A aposta já foi descontada
-    quando a rodada começou.
-    */
-
-    atualizarSaldo();
-
     revelarBombas();
 
-
     setTimeout(
-        () => {
+    function(){
 
-            resultadoIcone.textContent =
-                "💣";
+        resultadoIcone.textContent =
+            "💣";
 
-            resultadoTexto.textContent =
-                "Você perdeu!";
+        resultadoTexto.textContent =
+            "Você perdeu!";
 
-            resultadoTela.classList.add(
-                "mostrar"
-            );
+        resultadoTela.classList.add(
+            "mostrar"
+        );
 
-        },
-        900
+    },
+    900
     );
-
 
     botao.disabled = false;
 
@@ -1526,26 +1718,16 @@ function perderRodada(){
 
 
 /* =====================================================
-TEMPO ESGOTADO
+   TEMPO ESGOTADO
 ===================================================== */
 
 function tempoEsgotado(){
 
-    if(
-        rodadaEncerrada
-    ){
-
+    if(rodadaEncerrada)
         return;
 
-    }
-
     rodadaEncerrada = true;
-
     jogando = false;
-
-    clearInterval(
-        intervaloTempo
-    );
 
     tempo.textContent =
         "⏰ TEMPO ESGOTADO";
@@ -1564,26 +1746,22 @@ function tempoEsgotado(){
 
     revelarBombas();
 
-    atualizarSaldo();
-
-
     setTimeout(
-        () => {
+    function(){
 
-            resultadoIcone.textContent =
-                "⏰";
+        resultadoIcone.textContent =
+            "⏰";
 
-            resultadoTexto.textContent =
-                "Tempo esgotado!";
+        resultadoTexto.textContent =
+            "Tempo esgotado!";
 
-            resultadoTela.classList.add(
-                "mostrar"
-            );
+        resultadoTela.classList.add(
+            "mostrar"
+        );
 
-        },
-        900
+    },
+    900
     );
-
 
     botao.disabled = false;
 
@@ -1594,7 +1772,7 @@ function tempoEsgotado(){
 
 
 /* =====================================================
-REVELAR BOMBAS
+   REVELAR BOMBAS
 ===================================================== */
 
 function revelarBombas(){
@@ -1605,7 +1783,7 @@ function revelarBombas(){
         );
 
     cells.forEach(
-        cell => {
+        function(cell){
 
             cell.classList.add(
                 "bloqueada"
@@ -1614,9 +1792,8 @@ function revelarBombas(){
         }
     );
 
-
     bombas.forEach(
-        (indice, ordem) => {
+        function(indice,ordem){
 
             const cell =
                 cells[indice];
@@ -1625,33 +1802,32 @@ function revelarBombas(){
                 return;
 
             setTimeout(
-                () => {
+            function(){
 
-                    if(
-                        !cell.classList.contains(
-                            "bomb"
-                        )
-                    ){
+                if(
+                    !cell.classList.contains(
+                        "bomb"
+                    )
+                ){
 
-                        cell.classList.add(
-                            "bomb"
-                        );
+                    cell.classList.add(
+                        "bomb"
+                    );
 
-                        cell.textContent =
-                            "💣";
+                    cell.textContent =
+                        "💣";
 
-                        tocarSom(
-                            100 +
-                            ordem * 30,
-                            .18,
-                            "sawtooth",
-                            .06
-                        );
+                    tocarSom(
+                        100 + ordem * 30,
+                        .18,
+                        "sawtooth",
+                        .06
+                    );
 
-                    }
+                }
 
-                },
-                ordem * 220
+            },
+            ordem * 220
             );
 
         }
@@ -1661,21 +1837,15 @@ function revelarBombas(){
 
 
 /* =====================================================
-VITÓRIA
+   VITÓRIA
 ===================================================== */
 
 function ganharRodada(){
 
-    if(
-        rodadaEncerrada
-    ){
-
+    if(rodadaEncerrada)
         return;
 
-    }
-
     rodadaEncerrada = true;
-
     jogando = false;
 
     clearInterval(
@@ -1699,26 +1869,22 @@ function ganharRodada(){
 
     revelarBombas();
 
-    atualizarSaldo();
-
-
     setTimeout(
-        () => {
+    function(){
 
-            resultadoIcone.textContent =
-                "🏆";
+        resultadoIcone.textContent =
+            "🏆";
 
-            resultadoTexto.textContent =
-                "Vitória máxima!";
+        resultadoTexto.textContent =
+            "Vitória máxima!";
 
-            resultadoTela.classList.add(
-                "mostrar"
-            );
+        resultadoTela.classList.add(
+            "mostrar"
+        );
 
-        },
-        900
+    },
+    900
     );
-
 
     botao.disabled = false;
 
@@ -1729,7 +1895,7 @@ function ganharRodada(){
 
 
 /* =====================================================
-FECHAR RESULTADO
+   FECHAR RESULTADO
 ===================================================== */
 
 function fecharResultado(){
@@ -1747,106 +1913,136 @@ function fecharResultado(){
 
 }
 
-window.fecharResultado =
-    fecharResultado;
-
 
 /* =====================================================
-INICIALIZAÇÃO
+   LOGIN / SESSÃO
 ===================================================== */
 
-async function inicializar(){
+supabase.auth.onAuthStateChange(
+    function(event,session){
 
-    criarTabuleiro();
+        if(!session){
 
-    tempo.textContent =
-        "⏱️ 10s";
+            window.location.href =
+                "../index.html";
 
-    barra.style.transform =
-        "scaleX(1)";
-
-    botao.disabled = false;
-
-    botao.textContent =
-        "💣 NOVO JOGO";
-
-
-    /*
-    IMPORTANTE:
-    o clique fica registrado diretamente.
-    */
-
-    botao.addEventListener(
-        "click",
-        iniciarJogo
-    );
-
-
-    btnFecharResultado.addEventListener(
-        "click",
-        fecharResultado
-    );
-
-
-    /*
-    Espera o saldo compartilhado
-    e mostra o saldo da conta.
-    */
-
-    await atualizarSaldo();
-
-}
-
-
-if(
-    document.readyState ===
-    "loading"
-){
-
-    document.addEventListener(
-        "DOMContentLoaded",
-        inicializar,
-        {
-            once:true
         }
-    );
 
-}else{
-
-    inicializar();
-
-}
-
-
-/* =====================================================
-ÁUDIO NO PRIMEIRO TOQUE
-===================================================== */
-
-document.addEventListener(
-    "touchstart",
-    iniciarAudio,
-    {
-        once:true,
-        passive:true
     }
 );
+
+
+/* =====================================================
+   INICIALIZAÇÃO
+===================================================== */
+
+async function iniciarPagina(){
+
+    try{
+
+        botao.disabled = true;
+
+        premio.textContent =
+            "🔄 Carregando conta...";
+
+        criarTabuleiro();
+
+        usuarioAtual =
+            await obterUsuario();
+
+        if(!usuarioAtual){
+
+            mostrarErro(
+                "❌ Você precisa estar logado para jogar."
+            );
+
+            premio.textContent =
+                "❌ Faça login primeiro.";
+
+            botao.disabled = true;
+
+            return;
+
+        }
+
+        const carregou =
+            await carregarSaldo();
+
+        if(!carregou){
+
+            botao.disabled = true;
+
+            return;
+
+        }
+
+        erroInicial.style.display =
+            "none";
+
+        premio.textContent =
+            "💎 Encontre os diamantes";
+
+        botao.disabled = false;
+
+        botao.textContent =
+            "💣 NOVO JOGO";
+
+    }catch(error){
+
+        console.error(
+            "Erro ao iniciar Mines:",
+            error
+        );
+
+        mostrarErro(
+            "❌ Erro ao carregar o jogo."
+        );
+
+        premio.textContent =
+            "❌ Não foi possível carregar.";
+
+        botao.disabled = true;
+
+    }
+
+}
+
+
+/* =====================================================
+   BOTÃO
+===================================================== */
+
+botao.addEventListener(
+    "click",
+    iniciarJogo
+);
+
+
+/* =====================================================
+   ÁUDIO POR INTERAÇÃO
+===================================================== */
 
 document.addEventListener(
     "click",
     iniciarAudio,
-    {
-        once:true
-    }
+    {once:true}
 );
 
 
 /* =====================================================
-SEGURANÇA
+   INICIAR
+===================================================== */
+
+iniciarPagina();
+
+
+/* =====================================================
+   SEGURANÇA AO SAIR
 ===================================================== */
 
 window.addEventListener(
     "beforeunload",
-    () => {
+    function(){
 
         clearInterval(
             intervaloTempo
