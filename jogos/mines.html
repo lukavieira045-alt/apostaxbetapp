@@ -264,8 +264,15 @@ h1{
 }
 
 @keyframes respirar{
-    0%,100%{box-shadow:inset 0 0 20px rgba(0,0,0,.7);}
-    50%{box-shadow:inset 0 0 25px rgba(0,255,170,.08);}
+    0%,100%{
+        box-shadow:
+            inset 0 0 20px rgba(0,0,0,.7);
+    }
+
+    50%{
+        box-shadow:
+            inset 0 0 25px rgba(0,255,170,.08);
+    }
 }
 
 .cell.revealed{
@@ -292,9 +299,11 @@ h1{
         transform:scale(.65) rotate(-8deg);
         opacity:.2;
     }
+
     60%{
         transform:scale(1.12) rotate(3deg);
     }
+
     100%{
         transform:scale(1);
         opacity:1;
@@ -322,12 +331,15 @@ h1{
         transform:scale(.5);
         opacity:.3;
     }
+
     40%{
         transform:scale(1.18) rotate(-4deg);
     }
+
     70%{
         transform:scale(.95) rotate(4deg);
     }
+
     100%{
         transform:scale(1);
         opacity:1;
@@ -339,11 +351,15 @@ h1{
 }
 
 @keyframes abrindo{
-    from{transform:scale(1);}
+    from{
+        transform:scale(1);
+    }
+
     to{
         transform:scale(.92);
         border-color:#ffd700;
-        box-shadow:0 0 20px rgba(255,215,0,.5);
+        box-shadow:
+            0 0 20px rgba(255,215,0,.5);
     }
 }
 
@@ -366,7 +382,12 @@ h1{
 #barraProgresso{
     height:100%;
     width:100%;
-    background:linear-gradient(90deg,#00ff88,#ffd700);
+    background:
+        linear-gradient(
+            90deg,
+            #00ff88,
+            #ffd700
+        );
     transform-origin:left;
     transition:transform .1s linear;
 }
@@ -451,6 +472,7 @@ h1{
         transform:scale(.65);
         opacity:0;
     }
+
     to{
         transform:scale(1);
         opacity:1;
@@ -541,7 +563,7 @@ h1{
 
     <br>
 
-    <button id="btnNovoJogo">
+    <button id="btnNovoJogo" type="button">
         💣 NOVO JOGO
     </button>
 
@@ -559,7 +581,9 @@ h1{
 
 </div>
 
-<div class="resultado-overlay" id="resultadoTela">
+<div
+    class="resultado-overlay"
+    id="resultadoTela">
 
     <div class="resultado-box">
 
@@ -575,7 +599,8 @@ h1{
 
         <button
             class="btn-fechar"
-            onclick="fecharResultado()">
+            type="button"
+            id="btnFecharResultado">
             JOGAR NOVAMENTE
         </button>
 
@@ -587,20 +612,17 @@ h1{
 <script>
 
 /* =====================================================
-   CONFIGURAÇÃO
+CONFIGURAÇÃO
 ===================================================== */
 
 const VALOR_APOSTA = 1.00;
-
 const PREMIO_DIAMANTE = 0.50;
-
 const QUANTIDADE_BOMBAS = 3;
-
 const TEMPO_RODADA = 10;
 
 
 /* =====================================================
-   ELEMENTOS
+ELEMENTOS
 ===================================================== */
 
 const grid =
@@ -630,16 +652,22 @@ const resultadoIcone =
 const resultadoTexto =
     document.getElementById("resultadoTexto");
 
+const btnFecharResultado =
+    document.getElementById(
+        "btnFecharResultado"
+    );
+
 
 /* =====================================================
-   ESTADO
+ESTADO
 ===================================================== */
 
 let bombas = [];
 
 let jogando = false;
 
-let tempoRestante = TEMPO_RODADA;
+let tempoRestante =
+    TEMPO_RODADA;
 
 let intervaloTempo = null;
 
@@ -647,18 +675,15 @@ let rodadaEncerrada = false;
 
 let diamantesEncontrados = 0;
 
+let iniciandoJogo = false;
+
 
 /* =====================================================
-   ÁUDIO
+ÁUDIO
 ===================================================== */
 
 let audioContext = null;
 
-
-/*
-   O áudio só é iniciado depois
-   de uma interação do usuário.
-*/
 
 function iniciarAudio(){
 
@@ -666,16 +691,21 @@ function iniciarAudio(){
 
         if(!audioContext){
 
+            const AudioCtx =
+                window.AudioContext ||
+                window.webkitAudioContext;
+
+            if(!AudioCtx)
+                return;
+
             audioContext =
-                new (
-                    window.AudioContext ||
-                    window.webkitAudioContext
-                )();
+                new AudioCtx();
 
         }
 
         if(
-            audioContext.state === "suspended"
+            audioContext.state ===
+            "suspended"
         ){
 
             audioContext.resume();
@@ -693,10 +723,6 @@ function iniciarAudio(){
 
 }
 
-
-/* =====================================================
-   SOM GENÉRICO
-===================================================== */
 
 function tocarSom(
     frequencia,
@@ -733,7 +759,9 @@ function tocarSom(
             duracao
         );
 
-        oscilador.connect(ganho);
+        oscilador.connect(
+            ganho
+        );
 
         ganho.connect(
             audioContext.destination
@@ -751,10 +779,6 @@ function tocarSom(
 }
 
 
-/* =====================================================
-   SOM DA CONTAGEM
-===================================================== */
-
 function somContagem(){
 
     tocarSom(
@@ -768,10 +792,6 @@ function somContagem(){
 
 }
 
-
-/* =====================================================
-   SOM DO DIAMANTE
-===================================================== */
 
 function somDiamante(){
 
@@ -795,10 +815,6 @@ function somDiamante(){
 }
 
 
-/* =====================================================
-   SOM DA BOMBA
-===================================================== */
-
 function somBomba(){
 
     tocarSom(
@@ -820,10 +836,6 @@ function somBomba(){
 
 }
 
-
-/* =====================================================
-   SOM DE VITÓRIA
-===================================================== */
 
 function somVitoria(){
 
@@ -858,7 +870,7 @@ function somVitoria(){
 
 
 /* =====================================================
-   SALDO
+SALDO
 ===================================================== */
 
 async function atualizarSaldo(){
@@ -884,15 +896,16 @@ async function atualizarSaldo(){
             const valor =
                 await window.SistemaSaldo.get();
 
+            const numero =
+                Number(valor);
+
             if(
-                Number.isFinite(
-                    Number(valor)
-                )
+                Number.isFinite(numero)
             ){
 
                 saldoDisplay.textContent =
                     "💰 Saldo: R$ " +
-                    Number(valor)
+                    numero
                     .toFixed(2)
                     .replace(".",",");
 
@@ -903,7 +916,7 @@ async function atualizarSaldo(){
     }catch(e){
 
         console.warn(
-            "Não foi possível atualizar o saldo.",
+            "Erro ao atualizar saldo:",
             e
         );
 
@@ -913,7 +926,44 @@ async function atualizarSaldo(){
 
 
 /* =====================================================
-   CRIAR BOMBAS
+ESPERAR SISTEMA DE SALDO
+===================================================== */
+
+async function esperarSistemaSaldo(){
+
+    for(
+        let tentativa = 0;
+        tentativa < 50;
+        tentativa++
+    ){
+
+        if(
+            window.SistemaSaldo &&
+            typeof window.SistemaSaldo.debitar ===
+            "function"
+        ){
+
+            return true;
+
+        }
+
+        await new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    100
+                )
+        );
+
+    }
+
+    return false;
+
+}
+
+
+/* =====================================================
+CRIAR BOMBAS
 ===================================================== */
 
 function criarBombas(){
@@ -948,7 +998,7 @@ function criarBombas(){
 
 
 /* =====================================================
-   CRIAR TABULEIRO
+CRIAR TABULEIRO
 ===================================================== */
 
 function criarTabuleiro(){
@@ -956,13 +1006,15 @@ function criarTabuleiro(){
     grid.innerHTML = "";
 
     for(
-        let i=0;
-        i<9;
+        let i = 0;
+        i < 9;
         i++
     ){
 
         const cell =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         cell.className =
             "cell";
@@ -975,14 +1027,10 @@ function criarTabuleiro(){
 
         cell.addEventListener(
             "click",
-            function(){
-
-                abrirCasa(
-                    cell,
-                    i
-                );
-
-            }
+            () => abrirCasa(
+                cell,
+                i
+            )
         );
 
         grid.appendChild(
@@ -995,7 +1043,7 @@ function criarTabuleiro(){
 
 
 /* =====================================================
-   CONTAGEM
+CONTAGEM
 ===================================================== */
 
 function iniciarContagem(){
@@ -1011,39 +1059,35 @@ function iniciarContagem(){
 
     intervaloTempo =
         setInterval(
-        function(){
+            () => {
 
-            if(!jogando)
-                return;
+                if(!jogando)
+                    return;
 
-            tempoRestante--;
+                tempoRestante--;
 
-            atualizarContagem();
+                atualizarContagem();
 
-            somContagem();
+                somContagem();
 
-            if(
-                tempoRestante <= 0
-            ){
+                if(
+                    tempoRestante <= 0
+                ){
 
-                clearInterval(
-                    intervaloTempo
-                );
+                    clearInterval(
+                        intervaloTempo
+                    );
 
-                tempoEsgotado();
+                    tempoEsgotado();
 
-            }
+                }
 
-        },
-        1000
+            },
+            1000
         );
 
 }
 
-
-/* =====================================================
-   ATUALIZAR CONTAGEM
-===================================================== */
 
 function atualizarContagem(){
 
@@ -1084,46 +1128,30 @@ function atualizarContagem(){
 
 
 /* =====================================================
-   NOVO JOGO
+NOVO JOGO
 ===================================================== */
 
 async function iniciarJogo(){
 
     iniciarAudio();
 
-    if(jogando){
-
-        premio.textContent =
-            "⚠️ Termine a rodada atual.";
-
-        return;
-
-    }
-
-
-    /*
-      GARANTE QUE O SISTEMA
-      DE SALDO EXISTE
-    */
-
     if(
-        !window.SistemaSaldo ||
-        typeof window.SistemaSaldo.debitar !==
-        "function"
+        iniciandoJogo ||
+        jogando
     ){
 
-        alert(
-            "❌ Sistema de saldo não está disponível."
-        );
+        if(jogando){
+
+            premio.textContent =
+                "⚠️ Termine a rodada atual.";
+
+        }
 
         return;
 
     }
 
-
-    /*
-      DEBITA R$ 1,00
-    */
+    iniciandoJogo = true;
 
     botao.disabled = true;
 
@@ -1131,74 +1159,115 @@ async function iniciarJogo(){
         "💰 Verificando saldo...";
 
 
-    let debitado = false;
-
     try{
 
-        debitado =
-            await window.SistemaSaldo.debitar(
-                VALOR_APOSTA
+        const sistemaOK =
+            await esperarSistemaSaldo();
+
+        if(!sistemaOK){
+
+            premio.textContent =
+                "❌ Sistema de saldo indisponível.";
+
+            botao.disabled = false;
+
+            return;
+
+        }
+
+
+        let debitado = false;
+
+        try{
+
+            debitado =
+                await window.SistemaSaldo.debitar(
+                    VALOR_APOSTA
+                );
+
+        }catch(e){
+
+            console.error(
+                "Erro ao debitar aposta:",
+                e
             );
 
-    }catch(e){
+            debitado = false;
 
-        console.error(
-            "Erro ao debitar:",
-            e
+        }
+
+
+        if(!debitado){
+
+            premio.textContent =
+                "💰 Saldo insuficiente.";
+
+            botao.disabled = false;
+
+            await atualizarSaldo();
+
+            return;
+
+        }
+
+
+        /*
+        O R$ 1,00 já foi debitado
+        antes de a rodada começar.
+        */
+
+        jogando = true;
+
+        rodadaEncerrada = false;
+
+        diamantesEncontrados = 0;
+
+        tempoRestante =
+            TEMPO_RODADA;
+
+
+        criarBombas();
+
+        criarTabuleiro();
+
+        resultadoTela.classList.remove(
+            "mostrar"
         );
 
-        debitado = false;
-
-    }
-
-
-    if(!debitado){
-
-        botao.disabled = false;
+        tempo.classList.remove(
+            "perigo"
+        );
 
         premio.textContent =
-            "💰 Saldo insuficiente.";
+            "💎 Encontre os diamantes!";
+
+        botao.textContent =
+            "🎯 RODADA EM ANDAMENTO";
+
+        iniciarContagem();
 
         await atualizarSaldo();
 
-        return;
+    }finally{
+
+        iniciandoJogo = false;
+
+        if(!jogando){
+
+            botao.disabled = false;
+
+            botao.textContent =
+                "💣 NOVO JOGO";
+
+        }
 
     }
-
-
-    /*
-      COMEÇA RODADA
-    */
-
-    jogando = true;
-
-    rodadaEncerrada = false;
-
-    diamantesEncontrados = 0;
-
-    criarBombas();
-
-    criarTabuleiro();
-
-    resultadoTela.classList.remove(
-        "mostrar"
-    );
-
-    premio.textContent =
-        "💎 Encontre os diamantes!";
-
-    botao.textContent =
-        "🎯 RODADA EM ANDAMENTO";
-
-    iniciarContagem();
-
-    await atualizarSaldo();
 
 }
 
 
 /* =====================================================
-   ABRIR CASA
+ABRIR CASA
 ===================================================== */
 
 function abrirCasa(
@@ -1218,7 +1287,6 @@ function abrirCasa(
 
     }
 
-
     if(
         cell.classList.contains(
             "revealed"
@@ -1235,141 +1303,131 @@ function abrirCasa(
 
     }
 
-
-    /*
-      EFEITO DE ABERTURA
-    */
-
     cell.classList.add(
         "abrindo"
     );
 
-
     setTimeout(
-    async function(){
+        async () => {
 
-        if(
-            !jogando ||
-            rodadaEncerrada
-        ){
+            if(
+                !jogando ||
+                rodadaEncerrada
+            ){
+
+                cell.classList.remove(
+                    "abrindo"
+                );
+
+                return;
+
+            }
 
             cell.classList.remove(
                 "abrindo"
             );
 
-            return;
 
-        }
+            /*
+            BOMBA
+            */
+
+            if(
+                bombas.includes(
+                    indice
+                )
+            ){
+
+                cell.classList.add(
+                    "bomb"
+                );
+
+                cell.textContent =
+                    "💣";
+
+                somBomba();
+
+                perderRodada();
+
+                return;
+
+            }
 
 
-        cell.classList.remove(
-            "abrindo"
-        );
-
-
-        /*
-          BOMBA
-        */
-
-        if(
-            bombas.includes(
-                indice
-            )
-        ){
+            /*
+            DIAMANTE
+            */
 
             cell.classList.add(
-                "bomb"
+                "revealed"
             );
 
             cell.textContent =
-                "💣";
+                "💎";
 
-            somBomba();
+            diamantesEncontrados++;
 
-            perderRodada();
-
-            return;
-
-        }
+            somDiamante();
 
 
-        /*
-          DIAMANTE
-        */
+            /*
+            PRÊMIO DO DIAMANTE
+            */
 
-        cell.classList.add(
-            "revealed"
-        );
+            try{
 
-        cell.textContent =
-            "💎";
+                if(
+                    window.SistemaSaldo &&
+                    typeof window.SistemaSaldo.creditar ===
+                    "function"
+                ){
 
-        diamantesEncontrados++;
+                    await window.SistemaSaldo.creditar(
+                        PREMIO_DIAMANTE
+                    );
 
-        somDiamante();
+                }
 
+            }catch(e){
 
-        /*
-          CREDITA O PRÊMIO
-        */
-
-        try{
-
-            if(
-                window.SistemaSaldo &&
-                typeof window.SistemaSaldo.creditar ===
-                "function"
-            ){
-
-                await window.SistemaSaldo.creditar(
-                    PREMIO_DIAMANTE
+                console.error(
+                    "Erro ao creditar prêmio:",
+                    e
                 );
 
             }
 
-        }catch(e){
 
-            console.error(
-                "Erro ao creditar prêmio:",
-                e
-            );
+            premio.textContent =
+                "💎 + R$ " +
+                PREMIO_DIAMANTE
+                .toFixed(2)
+                .replace(".",",");
 
-        }
-
-
-        premio.textContent =
-            "💎 +" +
-            " R$ " +
-            PREMIO_DIAMANTE
-            .toFixed(2)
-            .replace(".",",");
+            await atualizarSaldo();
 
 
-        await atualizarSaldo();
+            /*
+            VITÓRIA MÁXIMA
+            */
 
+            if(
+                diamantesEncontrados >= 6
+            ){
 
-        /*
-          SE ENCONTROU 6 DIAMANTES,
-          VITÓRIA MÁXIMA
-        */
+                ganharRodada();
 
-        if(
-            diamantesEncontrados >= 6
-        ){
+            }
 
-            ganharRodada();
-
-        }
-
-    },
-    180
+        },
+        180
     );
 
 }
 
 
 /* =====================================================
-   PERDEU
+PERDEU
 ===================================================== */
 
 function perderRodada(){
@@ -1405,21 +1463,30 @@ function perderRodada(){
 
     revelarBombas();
 
+
+    /*
+    A aposta já foi debitada
+    quando o jogo começou.
+    */
+
+    atualizarSaldo();
+
+
     setTimeout(
-    function(){
+        () => {
 
-        resultadoIcone.textContent =
-            "💣";
+            resultadoIcone.textContent =
+                "💣";
 
-        resultadoTexto.textContent =
-            "Você perdeu!";
+            resultadoTexto.textContent =
+                "Você perdeu!";
 
-        resultadoTela.classList.add(
-            "mostrar"
-        );
+            resultadoTela.classList.add(
+                "mostrar"
+            );
 
-    },
-    900
+        },
+        900
     );
 
     botao.disabled = false;
@@ -1431,7 +1498,7 @@ function perderRodada(){
 
 
 /* =====================================================
-   TEMPO ESGOTADO
+TEMPO ESGOTADO
 ===================================================== */
 
 function tempoEsgotado(){
@@ -1448,6 +1515,10 @@ function tempoEsgotado(){
 
     jogando = false;
 
+    clearInterval(
+        intervaloTempo
+    );
+
     tempo.textContent =
         "⏰ TEMPO ESGOTADO";
 
@@ -1461,33 +1532,29 @@ function tempoEsgotado(){
     premio.textContent =
         "⏰ O tempo acabou!";
 
-
-    /*
-      TODAS AS BOMBAS EXPLODEM
-    */
-
     somBomba();
 
     revelarBombas();
 
+    atualizarSaldo();
+
 
     setTimeout(
-    function(){
+        () => {
 
-        resultadoIcone.textContent =
-            "⏰";
+            resultadoIcone.textContent =
+                "⏰";
 
-        resultadoTexto.textContent =
-            "Tempo esgotado!";
+            resultadoTexto.textContent =
+                "Tempo esgotado!";
 
-        resultadoTela.classList.add(
-            "mostrar"
-        );
+            resultadoTela.classList.add(
+                "mostrar"
+            );
 
-    },
-    900
+        },
+        900
     );
-
 
     botao.disabled = false;
 
@@ -1498,7 +1565,7 @@ function tempoEsgotado(){
 
 
 /* =====================================================
-   REVELAR BOMBAS
+REVELAR BOMBAS
 ===================================================== */
 
 function revelarBombas(){
@@ -1508,70 +1575,63 @@ function revelarBombas(){
             ".cell"
         );
 
-    /*
-      Bloqueia todas as casas
-    */
-
     cells.forEach(
-    function(cell){
+        cell => {
 
-        cell.classList.add(
-            "bloqueada"
-        );
+            cell.classList.add(
+                "bloqueada"
+            );
 
-    });
+        }
+    );
 
-
-    /*
-      Mostra todas as bombas
-    */
 
     bombas.forEach(
-    function(indice, ordem){
+        (indice, ordem) => {
 
-        const cell =
-            cells[indice];
+            const cell =
+                cells[indice];
 
-        if(!cell)
-            return;
+            if(!cell)
+                return;
 
+            setTimeout(
+                () => {
 
-        setTimeout(
-        function(){
+                    if(
+                        !cell.classList.contains(
+                            "bomb"
+                        )
+                    ){
 
-            if(
-                !cell.classList.contains(
-                    "bomb"
-                )
-            ){
+                        cell.classList.add(
+                            "bomb"
+                        );
 
-                cell.classList.add(
-                    "bomb"
-                );
+                        cell.textContent =
+                            "💣";
 
-                cell.textContent =
-                    "💣";
+                        tocarSom(
+                            100 + ordem * 30,
+                            .18,
+                            "sawtooth",
+                            .06
+                        );
 
-                tocarSom(
-                    100 + ordem * 30,
-                    .18,
-                    "sawtooth",
-                    .06
-                );
+                    }
 
-            }
+                },
+                ordem * 220
+            );
 
-        },
-        ordem * 220
-        );
-
-    });
+        }
+    );
 
 }
 
 
 /* =====================================================
-   VITÓRIA
+VITÓRIA
 ===================================================== */
 
 function ganharRodada(){
@@ -1607,31 +1667,27 @@ function ganharRodada(){
 
     somVitoria();
 
-
-    /*
-      Mostra as bombas restantes
-    */
-
     revelarBombas();
+
+    atualizarSaldo();
 
 
     setTimeout(
-    function(){
+        () => {
 
-        resultadoIcone.textContent =
-            "🏆";
+            resultadoIcone.textContent =
+                "🏆";
 
-        resultadoTexto.textContent =
-            "Vitória máxima!";
+            resultadoTexto.textContent =
+                "Vitória máxima!";
 
-        resultadoTela.classList.add(
-            "mostrar"
-        );
+            resultadoTela.classList.add(
+                "mostrar"
+            );
 
-    },
-    900
+        },
+        900
     );
-
 
     botao.disabled = false;
 
@@ -1642,7 +1698,7 @@ function ganharRodada(){
 
 
 /* =====================================================
-   FECHAR RESULTADO
+FECHAR RESULTADO
 ===================================================== */
 
 function fecharResultado(){
@@ -1653,11 +1709,6 @@ function fecharResultado(){
         "mostrar"
     );
 
-    /*
-      Não começa sozinho.
-      O jogador aperta NOVO JOGO.
-    */
-
     botao.disabled = false;
 
     botao.textContent =
@@ -1666,40 +1717,104 @@ function fecharResultado(){
 }
 
 
+/*
+Deixa a função disponível caso
+alguma outra parte do site chame.
+*/
+
+window.fecharResultado =
+    fecharResultado;
+
+
 /* =====================================================
-   INICIALIZAÇÃO
+INICIALIZAÇÃO
 ===================================================== */
 
-window.addEventListener(
-    "DOMContentLoaded",
-    async function(){
+async function inicializarMines(){
 
-        criarTabuleiro();
+    criarTabuleiro();
 
-        tempo.textContent =
-            "⏱️ 10s";
+    tempo.textContent =
+        "⏱️ 10s";
 
-        barra.style.transform =
-            "scaleX(1)";
+    barra.style.transform =
+        "scaleX(1)";
 
-        await atualizarSaldo();
+    botao.disabled = false;
 
-        botao.addEventListener(
-            "click",
-            iniciarJogo
-        );
+    botao.textContent =
+        "💣 NOVO JOGO";
 
+    /*
+    O listener é colocado diretamente
+    aqui, evitando depender de outro
+    DOMContentLoaded.
+    */
+
+    botao.onclick =
+        iniciarJogo;
+
+    btnFecharResultado.onclick =
+        fecharResultado;
+
+    await atualizarSaldo();
+
+}
+
+
+/* =====================================================
+INICIAR
+===================================================== */
+
+if(
+    document.readyState ===
+    "loading"
+){
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        inicializarMines,
+        {
+            once:true
+        }
+    );
+
+}else{
+
+    inicializarMines();
+
+}
+
+
+/* =====================================================
+ÁUDIO POR TOQUE
+===================================================== */
+
+document.addEventListener(
+    "touchstart",
+    iniciarAudio,
+    {
+        once:true,
+        passive:true
+    }
+);
+
+document.addEventListener(
+    "click",
+    iniciarAudio,
+    {
+        once:true
     }
 );
 
 
 /* =====================================================
-   SEGURANÇA AO SAIR
+SEGURANÇA AO SAIR
 ===================================================== */
 
 window.addEventListener(
     "beforeunload",
-    function(){
+    () => {
 
         clearInterval(
             intervaloTempo
