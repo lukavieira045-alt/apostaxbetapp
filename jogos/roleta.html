@@ -2,350 +2,604 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Roleta de Relâmpagos - ApostaXBet</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  -webkit-tap-highlight-color:transparent;
+}
 
 body{
-background:radial-gradient(circle at 50% 30%,#18231f,#070a0a 45%,#020303 85%);
-color:#fff;font-family:Arial,sans-serif;min-height:100vh;
-overflow-x:hidden;padding-bottom:30px
+  background:radial-gradient(circle at 50% 30%,#18231f,#070a0a 45%,#020303 85%);
+  color:white;
+  font-family:Arial,sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+  padding-bottom:30px;
 }
 
 .topo{
-height:58px;display:flex;align-items:center;justify-content:space-between;
-padding:0 14px;background:#050708;border-bottom:1px solid #292929
+  height:58px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 14px;
+  background:#050708;
+  border-bottom:1px solid #292929;
 }
 
-.logo{color:#f5d76e;font-weight:900;letter-spacing:1px}
-.saldo-topo{text-align:right}
-.saldo-label{font-size:9px;color:#777}
-#displaySaldo{color:#ffe34f;font-weight:bold;font-size:16px}
+.logo{
+  color:#f5d76e;
+  font-weight:900;
+  letter-spacing:1px;
+}
+
+.saldo-topo{
+  text-align:right;
+}
+
+.saldo-label{
+  font-size:9px;
+  color:#777;
+}
+
+#displaySaldo{
+  color:#ffe34f;
+  font-weight:bold;
+  font-size:16px;
+}
 
 .container{
-width:100%;max-width:520px;margin:auto;padding:10px 8px 40px
+  width:100%;
+  max-width:520px;
+  margin:auto;
+  padding:10px 8px 40px;
 }
 
 .lobby{
-position:absolute;top:68px;left:7px;width:60px;height:60px;
-border:1px solid #777;border-radius:10px;background:#090b0c;
-color:#fff;text-decoration:none;display:flex;flex-direction:column;
-align-items:center;justify-content:center;font-size:10px;z-index:30
+  position:absolute;
+  top:68px;
+  left:7px;
+  width:60px;
+  height:60px;
+  border:1px solid #777;
+  border-radius:10px;
+  background:#090b0c;
+  color:white;
+  text-decoration:none;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  font-size:10px;
+  z-index:30;
 }
 
-.lobby-icon{font-size:27px}
+.lobby-icon{
+  font-size:27px;
+}
 
 .titulo{
-text-align:center;margin-top:10px;color:#d8c36a;font-size:13px;
-letter-spacing:3px;font-weight:bold
+  text-align:center;
+  margin-top:10px;
+  color:#d8c36a;
+  font-size:13px;
+  letter-spacing:3px;
+  font-weight:bold;
 }
 
 .subtitulo{
-text-align:center;color:#555;font-size:9px;letter-spacing:2px;margin:5px 0 10px
+  text-align:center;
+  color:#555;
+  font-size:9px;
+  letter-spacing:2px;
+  margin:5px 0 10px;
 }
 
 /* ROLETA */
 
 .roleta-area{
-position:relative;width:100%;display:flex;justify-content:center;
-align-items:center;margin-bottom:10px
+  position:relative;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin-bottom:10px;
 }
 
 .roleta{
-width:min(92vw,390px);height:min(92vw,390px);
-border-radius:50%;position:relative;border:6px solid #d7ae31;
-background:radial-gradient(circle,#1b2925 0 15%,#060a09 16% 23%,transparent 24%);
-box-shadow:0 0 8px #ffd84a,0 0 25px rgba(255,205,45,.45),
-0 0 55px rgba(255,190,20,.2),inset 0 0 25px #000;
-transition:transform 7.5s cubic-bezier(.15,.65,.20,1);
-overflow:hidden
+  width:min(92vw,390px);
+  height:min(92vw,390px);
+  border-radius:50%;
+  position:relative;
+  border:6px solid #d7ae31;
+  background:radial-gradient(circle,#1b2925 0 15%,#060a09 16% 23%,transparent 24%);
+  box-shadow:
+    0 0 8px #ffd84a,
+    0 0 25px rgba(255,205,45,.45),
+    0 0 55px rgba(255,190,20,.2),
+    inset 0 0 25px #000;
+
+  transition:transform 7.5s cubic-bezier(.12,.72,.18,1);
+  overflow:hidden;
 }
 
 .roleta::before{
-content:"";position:absolute;inset:7px;border-radius:50%;
-border:12px solid #101a21;box-shadow:inset 0 0 8px #000,0 0 4px #000;
-z-index:3
+  content:"";
+  position:absolute;
+  inset:7px;
+  border-radius:50%;
+  border:12px solid #101a21;
+  box-shadow:inset 0 0 8px #000,0 0 4px #000;
+  z-index:3;
 }
 
 .roleta::after{
-content:"";position:absolute;inset:28px;border-radius:50%;
-background:repeating-conic-gradient(
-from 0deg,rgba(255,225,100,.7) 0deg 1deg,transparent 1deg 18deg);
-z-index:2
+  content:"";
+  position:absolute;
+  inset:28px;
+  border-radius:50%;
+  background:repeating-conic-gradient(
+    from 0deg,
+    rgba(255,225,100,.7) 0deg 1deg,
+    transparent 1deg 18deg
+  );
+  z-index:2;
 }
 
 .roleta-inner{
-position:absolute;inset:30px;border-radius:50%;
-background:repeating-conic-gradient(#28645b 0deg 9deg,#668c82 9deg 18deg);
-box-shadow:inset 0 0 35px rgba(0,0,0,.85),inset 0 0 8px #ffe05b;
-z-index:1
+  position:absolute;
+  inset:30px;
+  border-radius:50%;
+  background:repeating-conic-gradient(
+    #28645b 0deg 9deg,
+    #668c82 9deg 18deg
+  );
+  box-shadow:
+    inset 0 0 35px rgba(0,0,0,.85),
+    inset 0 0 8px #ffe05b;
+  z-index:1;
 }
 
 /* NÚMEROS */
 
 .numeros{
-position:absolute;inset:0;z-index:7;pointer-events:none
+  position:absolute;
+  inset:0;
+  z-index:7;
+  pointer-events:none;
 }
 
 .numero{
-position:absolute;left:50%;top:50%;
-width:54px;height:160px;
-margin-left:-27px;margin-top:-160px;
-transform-origin:27px 160px;
-display:flex;justify-content:center;align-items:flex-start;
-color:#fff3a6;font-size:14px;font-weight:900;
-text-align:center;z-index:8
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:54px;
+  height:160px;
+  margin-left:-27px;
+  margin-top:-160px;
+
+  transform-origin:27px 160px;
+
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+
+  color:#fff3a6;
+  font-size:14px;
+  font-weight:900;
+  text-align:center;
+  z-index:8;
 }
 
 .numero-conteudo{
-position:absolute;top:8px;min-width:48px;
-display:flex;flex-direction:column;align-items:center;
-justify-content:center;color:#fff3a6;
-line-height:15px;white-space:nowrap;
-text-shadow:0 2px 3px #000,0 0 7px rgba(255,215,70,.9)
+  position:absolute;
+  top:8px;
+  min-width:48px;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+
+  color:#fff3a6;
+  line-height:15px;
+  white-space:nowrap;
+
+  text-shadow:
+    0 2px 3px #000,
+    0 0 7px rgba(255,215,70,.9);
 }
 
 .numero.perdeu .numero-conteudo{
-color:#ff7777;font-size:11px;
-text-shadow:0 2px 3px #000,0 0 9px rgba(255,40,40,.8)
+  color:#ff7777;
+  font-size:11px;
+  text-shadow:
+    0 2px 3px #000,
+    0 0 9px rgba(255,40,40,.8);
 }
 
 .numero.super-bonus .numero-conteudo{
-color:#fff;font-size:10px;line-height:12px;
-text-shadow:0 0 5px #fff,0 0 12px #ffe33c,0 0 20px #ff9d00
+  color:#fff;
+  font-size:10px;
+  line-height:12px;
+  text-shadow:
+    0 0 5px #fff,
+    0 0 12px #ffe33c,
+    0 0 20px #ff9d00;
 }
 
 .numero.destaque .numero-conteudo{
-color:#fff;
-transform:scale(1.25);
-text-shadow:0 0 5px #fff,0 0 12px #ffe36a,0 0 25px #ffb300
+  color:#fff;
+  transform:scale(1.25);
+  text-shadow:
+    0 0 5px white,
+    0 0 12px #ffe36a,
+    0 0 25px #ffb300;
 }
 
 /* CENTRO */
 
 .centro{
-position:absolute;left:50%;top:50%;
-transform:translate(-50%,-50%);
-width:82px;height:82px;border-radius:50%;
-background:radial-gradient(circle,#283d38,#08100e 65%,#020303);
-border:4px solid #d5ad36;z-index:12;
-display:flex;flex-direction:column;
-align-items:center;justify-content:center;
-box-shadow:0 0 15px rgba(255,211,53,.55),inset 0 0 15px #000
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:82px;
+  height:82px;
+  border-radius:50%;
+  background:radial-gradient(circle,#283d38,#08100e 65%,#020303);
+  border:4px solid #d5ad36;
+  z-index:12;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+
+  box-shadow:
+    0 0 15px rgba(255,211,53,.55),
+    inset 0 0 15px #000;
 }
 
-.centro strong{color:#ffe36a;font-size:18px;letter-spacing:2px}
-.centro span{color:#777;font-size:8px;letter-spacing:2px}
+.centro strong{
+  color:#ffe36a;
+  font-size:18px;
+  letter-spacing:2px;
+}
+
+.centro span{
+  color:#777;
+  font-size:8px;
+  letter-spacing:2px;
+}
 
 /* PONTEIRO */
 
 .ponteiro{
-position:absolute;z-index:20;top:-3px;left:50%;
-transform:translateX(-50%);
-width:0;height:0;
-border-left:13px solid transparent;
-border-right:13px solid transparent;
-border-top:27px solid white;
-filter:drop-shadow(0 0 4px white) drop-shadow(0 0 9px #ffe66b)
+  position:absolute;
+  z-index:20;
+  top:-3px;
+  left:50%;
+  transform:translateX(-50%);
+  width:0;
+  height:0;
+  border-left:13px solid transparent;
+  border-right:13px solid transparent;
+  border-top:27px solid white;
+  filter:
+    drop-shadow(0 0 4px white)
+    drop-shadow(0 0 9px #ffe66b);
 }
 
 /* RAIOS */
 
 .raio{
-position:absolute;width:100px;height:4px;background:#fff;
-opacity:.7;z-index:18;
-box-shadow:0 0 5px white,0 0 15px #dfffca;
-animation:piscar .7s infinite alternate
+  position:absolute;
+  width:100px;
+  height:4px;
+  background:white;
+  opacity:.7;
+  z-index:18;
+  box-shadow:0 0 5px white,0 0 15px #dfffca;
+  animation:piscar .7s infinite alternate;
 }
 
-.raio1{left:4px;bottom:50px;transform:rotate(-35deg)}
-.raio2{right:4px;top:65px;transform:rotate(35deg)}
-.raio3{left:45px;top:20px;width:70px;transform:rotate(65deg)}
+.raio1{
+  left:4px;
+  bottom:50px;
+  transform:rotate(-35deg);
+}
+
+.raio2{
+  right:4px;
+  top:65px;
+  transform:rotate(35deg);
+}
+
+.raio3{
+  left:45px;
+  top:20px;
+  width:70px;
+  transform:rotate(65deg);
+}
 
 @keyframes piscar{
-from{opacity:.2}
-to{opacity:1}
+  from{opacity:.2}
+  to{opacity:1}
 }
 
 /* RESULTADO */
 
 .resultado{
-min-height:60px;text-align:center;color:#ddd;
-font-size:18px;font-weight:900;
-text-shadow:0 0 10px currentColor;
-line-height:24px
+  min-height:65px;
+  text-align:center;
+  color:#ddd;
+  font-size:18px;
+  font-weight:900;
+  text-shadow:0 0 10px currentColor;
+  line-height:24px;
 }
 
 /* PAINEL */
 
 .painel{
-position:relative;padding:16px 12px 13px;
-background:linear-gradient(145deg,#0d1113,#050708);
-border:1px solid #77642d;
-box-shadow:0 0 15px rgba(0,0,0,.9),
-inset 0 0 15px rgba(255,200,50,.05)
+  position:relative;
+  padding:16px 12px 13px;
+  background:linear-gradient(145deg,#0d1113,#050708);
+  border:1px solid #77642d;
+  box-shadow:
+    0 0 15px rgba(0,0,0,.9),
+    inset 0 0 15px rgba(255,200,50,.05);
 }
 
 .ficha-area{
-height:38px;display:flex;justify-content:center;
-align-items:center;margin-bottom:5px
+  height:38px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin-bottom:5px;
 }
 
 .ficha{
-width:40px;height:40px;border-radius:50%;
-background:radial-gradient(circle,#555 0 45%,#eee 46% 54%,#666 55% 70%,#eee 71% 74%,#333 75%);
-border:2px solid #eee;display:flex;
-align-items:center;justify-content:center;
-color:#fff;font-size:9px;font-weight:bold;
-text-shadow:0 1px 2px #000;
-box-shadow:0 0 8px rgba(255,255,255,.3),0 2px 4px #000
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:radial-gradient(
+    circle,
+    #555 0 45%,
+    #eee 46% 54%,
+    #666 55% 70%,
+    #eee 71% 74%,
+    #333 75%
+  );
+  border:2px solid #eee;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  font-size:9px;
+  font-weight:bold;
+  text-shadow:0 1px 2px #000;
+  box-shadow:
+    0 0 8px rgba(255,255,255,.3),
+    0 2px 4px #000;
 }
 
 .valores{
-display:grid;grid-template-columns:repeat(3,1fr);
-gap:5px;margin-bottom:8px
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:5px;
+  margin-bottom:8px;
 }
 
 .btn-valor{
-height:39px;border:1px solid #5c4d26;
-background:#090b0c;color:#aaa;
-border-radius:4px;font-size:12px;font-weight:bold
+  height:39px;
+  border:1px solid #5c4d26;
+  background:#090b0c;
+  color:#aaa;
+  border-radius:4px;
+  font-size:12px;
+  font-weight:bold;
 }
 
 .btn-valor.ativo{
-color:#ffe36a;border-color:#ffe36a;
-box-shadow:0 0 10px rgba(255,215,60,.35),
-inset 0 0 12px rgba(255,215,60,.1)
+  color:#ffe36a;
+  border-color:#ffe36a;
+  box-shadow:
+    0 0 10px rgba(255,215,60,.35),
+    inset 0 0 12px rgba(255,215,60,.1);
 }
 
 .btn-apostar{
-width:100%;height:54px;margin-top:9px;
-border:1px solid #d5af3d;
-background:linear-gradient(180deg,#332b12,#171306);
-color:#f5d76b;font-size:16px;font-weight:900;
-letter-spacing:2px;border-radius:4px;
-box-shadow:0 0 12px rgba(255,215,60,.18),inset 0 0 10px #000
+  width:100%;
+  height:54px;
+  margin-top:9px;
+  border:1px solid #d5af3d;
+  background:linear-gradient(180deg,#332b12,#171306);
+  color:#f5d76b;
+  font-size:16px;
+  font-weight:900;
+  letter-spacing:2px;
+  border-radius:4px;
+  box-shadow:
+    0 0 12px rgba(255,215,60,.18),
+    inset 0 0 10px #000;
 }
 
-.btn-apostar:disabled{opacity:.45;filter:none}
+.btn-apostar:disabled{
+  opacity:.45;
+}
 
 .info{
-display:flex;justify-content:space-between;
-margin-top:9px;color:#aaa;font-size:12px
+  display:flex;
+  justify-content:space-between;
+  margin-top:9px;
+  color:#aaa;
+  font-size:12px;
 }
 
-.info strong{color:#ffe04f}
+.info strong{
+  color:#ffe04f;
+}
 
 .mensagem{
-text-align:center;color:#555;font-size:9px;margin-top:8px
+  text-align:center;
+  color:#555;
+  font-size:9px;
+  margin-top:8px;
 }
 
-.repeat-btn,.menu-btn{
-position:fixed;bottom:15px;width:52px;height:52px;
-border-radius:50%;border:1px solid #777;
-background:#090b0c;color:#ddd;font-size:23px;z-index:40
+.repeat-btn,
+.menu-btn{
+  position:fixed;
+  bottom:15px;
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  border:1px solid #777;
+  background:#090b0c;
+  color:#ddd;
+  font-size:23px;
+  z-index:40;
 }
 
 .repeat-btn{left:8px}
 .menu-btn{right:8px}
 
-/* CARREGAMENTO */
+/* CARREGANDO */
 
 #carregando{
-position:fixed;inset:0;background:#020303;
-display:flex;align-items:center;justify-content:center;
-z-index:999;color:#ffe36a;font-size:16px
+  position:fixed;
+  inset:0;
+  background:#020303;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+  color:#ffe36a;
+  font-size:16px;
 }
 
 /* SUPER BÔNUS */
 
 .superbonus-overlay{
-position:fixed;inset:0;display:none;
-align-items:center;justify-content:center;
-flex-direction:column;
-background:radial-gradient(circle,
-rgba(255,220,60,.45),
-rgba(255,190,0,.18) 30%,
-rgba(0,0,0,.96) 75%);
-z-index:1000;pointer-events:none
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+
+  background:radial-gradient(
+    circle,
+    rgba(255,220,60,.45),
+    rgba(255,190,0,.18) 30%,
+    rgba(0,0,0,.96) 75%
+  );
+
+  z-index:1000;
+  pointer-events:none;
 }
 
 .superbonus-overlay.ativo{
-display:flex;
-animation:superBonusTela 5s ease forwards
+  display:flex;
+  animation:superBonusTela 5s ease forwards;
 }
 
 .superbonus-raio{
-position:absolute;width:5px;height:100vh;background:#fff;
-box-shadow:0 0 15px #fff,0 0 35px #ffe33c;
-animation:raioSuper .5s infinite alternate
+  position:absolute;
+  width:5px;
+  height:100vh;
+  background:#fff;
+  box-shadow:
+    0 0 15px #fff,
+    0 0 35px #ffe33c;
+  animation:raioSuper .5s infinite alternate;
 }
 
 .superbonus-titulo{
-color:#fff;font-size:34px;font-weight:1000;
-letter-spacing:3px;text-align:center;
-text-shadow:0 0 8px white,0 0 20px #ffe33c,0 0 40px #ff9d00;
-animation:superBonusTexto .8s ease-out
+  color:#fff;
+  font-size:34px;
+  font-weight:1000;
+  letter-spacing:3px;
+  text-align:center;
+  text-shadow:
+    0 0 8px white,
+    0 0 20px #ffe33c,
+    0 0 40px #ff9d00;
+  animation:superBonusTexto .8s ease-out;
 }
 
 .superbonus-valor{
-margin-top:10px;color:#ffe44f;font-size:48px;
-font-weight:1000;
-text-shadow:0 0 10px #fff,0 0 25px #ffe33c,0 0 50px #ff8c00;
-animation:superBonusValor 1s ease-out
+  margin-top:10px;
+  color:#ffe44f;
+  font-size:48px;
+  font-weight:1000;
+  text-shadow:
+    0 0 10px #fff,
+    0 0 25px #ffe33c,
+    0 0 50px #ff8c00;
+  animation:superBonusValor 1s ease-out;
 }
 
 @keyframes superBonusTela{
-0%{opacity:0}
-10%{opacity:1}
-85%{opacity:1}
-100%{opacity:0}
+  0%{opacity:0}
+  10%{opacity:1}
+  85%{opacity:1}
+  100%{opacity:0}
 }
 
 @keyframes superBonusTexto{
-0%{transform:scale(.2);opacity:0}
-60%{transform:scale(1.25);opacity:1}
-100%{transform:scale(1)}
+  0%{transform:scale(.2);opacity:0}
+  60%{transform:scale(1.25);opacity:1}
+  100%{transform:scale(1)}
 }
 
 @keyframes superBonusValor{
-0%{transform:scale(.2)}
-60%{transform:scale(1.35)}
-100%{transform:scale(1)}
+  0%{transform:scale(.2)}
+  60%{transform:scale(1.35)}
+  100%{transform:scale(1)}
 }
 
 @keyframes raioSuper{
-from{opacity:.2;transform:scaleY(.7)}
-to{opacity:1;transform:scaleY(1.1)}
+  from{opacity:.2;transform:scaleY(.7)}
+  to{opacity:1;transform:scaleY(1.1)}
 }
 
 @media(max-width:360px){
 
-.roleta{
-width:310px;
-height:310px
-}
+  .roleta{
+    width:310px;
+    height:310px;
+  }
 
-.numero{
-width:44px;height:130px;
-margin-left:-22px;margin-top:-130px;
-transform-origin:22px 130px
-}
+  .numero{
+    width:44px;
+    height:130px;
+    margin-left:-22px;
+    margin-top:-130px;
+    transform-origin:22px 130px;
+  }
 
-.numero-conteudo{
-top:7px;font-size:11px;line-height:12px
-}
+  .numero-conteudo{
+    top:7px;
+    font-size:11px;
+    line-height:12px;
+  }
 
-.numero.perdeu .numero-conteudo{
-font-size:9px
-}
+  .numero.perdeu .numero-conteudo{
+    font-size:9px;
+  }
 
-.numero.super-bonus .numero-conteudo{
-font-size:8px;line-height:9px
-}
-
+  .numero.super-bonus .numero-conteudo{
+    font-size:8px;
+    line-height:9px;
+  }
 }
 </style>
 </head>
@@ -359,6 +613,7 @@ font-size:8px;line-height:9px
 </div>
 
 <div class="superbonus-overlay" id="superBonusOverlay">
+
 <div class="superbonus-raio"></div>
 
 <div class="superbonus-titulo">
@@ -368,6 +623,7 @@ font-size:8px;line-height:9px
 <div class="superbonus-valor">
 R$ 5,00
 </div>
+
 </div>
 
 <div class="topo">
@@ -391,8 +647,13 @@ R$ 0,00
 </div>
 
 <a href="../index.html" class="lobby">
-<div class="lobby-icon">⌂</div>
+
+<div class="lobby-icon">
+⌂
+</div>
+
 Lobby
+
 </a>
 
 <div class="container">
@@ -420,8 +681,15 @@ ESCOLHA O VALOR DA APOSTA
 <div class="numeros" id="numeros"></div>
 
 <div class="centro">
-<strong>AX</strong>
-<span>PRÊMIO</span>
+
+<strong>
+AX
+</strong>
+
+<span>
+PRÊMIO
+</span>
+
 </div>
 
 </div>
@@ -435,7 +703,11 @@ ESCOLHA O VALOR DA APOSTA
 <div class="painel">
 
 <div class="ficha-area">
-<div class="ficha" id="fichaDisplay">1,00</div>
+
+<div class="ficha" id="fichaDisplay">
+1,00
+</div>
+
 </div>
 
 <div class="valores">
@@ -457,23 +729,30 @@ R$ 5
 
 </div>
 
-<button id="btnApostar"
+<button
+id="btnApostar"
 class="btn-apostar"
 onclick="girarRoleta()"
 disabled>
+
 CARREGANDO...
+
 </button>
 
 <div class="info">
 
 <span>
 Aposta:
-<strong id="apostaInfo">R$ 1,00</strong>
+<strong id="apostaInfo">
+R$ 1,00
+</strong>
 </span>
 
 <span>
 Saldo:
-<strong id="saldoPainel">R$ 0,00</strong>
+<strong id="saldoPainel">
+R$ 0,00
+</strong>
 </span>
 
 </div>
@@ -486,13 +765,23 @@ SALDO CONECTADO À SUA CONTA
 
 </div>
 
-<button class="repeat-btn" onclick="repetirAposta()">↻</button>
-<button class="menu-btn" onclick="abrirMenu()">☰</button>
+<button
+class="repeat-btn"
+onclick="repetirAposta()">
+↻
+</button>
+
+<button
+class="menu-btn"
+onclick="abrirMenu()">
+☰
+</button>
+
 
 <script type="module">
 
 import {
-createClient
+  createClient
 }
 from
 "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
@@ -510,8 +799,8 @@ const SUPABASE_KEY =
 
 const supabase =
 createClient(
-SUPABASE_URL,
-SUPABASE_KEY
+  SUPABASE_URL,
+  SUPABASE_KEY
 );
 
 
@@ -520,43 +809,49 @@ VARIÁVEIS
 ===================================================== */
 
 let usuarioAtual = null;
+
 let saldoReal = 0;
+
 let valorAposta = 1;
 
 let rotacaoAtual = 0;
+
 let girando = false;
 
-let audioContext = null;
-let timerRoleta = null;
-let velocidadeSom = 45;
-let musicaIniciada = false;
+let rodadaAtual = null;
 
 
 /* =====================================================
 PRÊMIOS
+
+O ÍNDICE É A IDENTIDADE DO RESULTADO.
+
+Nunca é escolhido outro número depois.
 ===================================================== */
 
 const premios = [
-0.20,
-0.40,
-0.50,
-0.80,
-1.00,
-0.20,
-0.50,
-0,
-0.80,
-1.00,
-0.40,
-0.50,
-0.20,
-0.80,
-5.00,
-0.40,
-0,
-0.50,
-1.00,
-0.20
+
+  0.20, // 0
+  0.40, // 1
+  0.50, // 2
+  0.80, // 3
+  1.00, // 4
+  0.20, // 5
+  0.50, // 6
+  0,    // 7
+  0.80, // 8
+  1.00, // 9
+  0.40, // 10
+  0.50, // 11
+  0.20, // 12
+  0.80, // 13
+  5.00, // 14
+  0.40, // 15
+  0,    // 16
+  0.50, // 17
+  1.00, // 18
+  0.20  // 19
+
 ];
 
 
@@ -601,32 +896,32 @@ DINHEIRO
 
 function dinheiro(valor){
 
-return "R$ " +
-Number(valor || 0)
-.toFixed(2)
-.replace(".",",");
+  return "R$ " +
+  Number(valor || 0)
+  .toFixed(2)
+  .replace(".",",");
 
 }
 
 
 /* =====================================================
-SALDO NA TELA
+SALDO
 ===================================================== */
 
 function atualizarSaldo(){
 
-saldoEl.innerText =
-dinheiro(saldoReal);
+  saldoEl.innerText =
+  dinheiro(saldoReal);
 
-saldoPainel.innerText =
-dinheiro(saldoReal);
+  saldoPainel.innerText =
+  dinheiro(saldoReal);
 
-saldoEl.style.color =
-saldoReal < valorAposta
-? "#ff4141"
-: "#ffe34f";
+  saldoEl.style.color =
+  saldoReal < valorAposta
+  ? "#ff4141"
+  : "#ffe34f";
 
-atualizarBotao();
+  atualizarBotao();
 
 }
 
@@ -637,36 +932,40 @@ BOTÃO
 
 function atualizarBotao(){
 
-if(girando){
+  if(girando){
 
-btnApostar.disabled = true;
-btnApostar.innerText =
-"ROLETA GIRANDO...";
+    btnApostar.disabled = true;
 
-return;
-}
+    btnApostar.innerText =
+    "ROLETA GIRANDO...";
 
-if(!usuarioAtual){
+    return;
+  }
 
-btnApostar.disabled = true;
-btnApostar.innerText =
-"AGUARDANDO CONTA";
+  if(!usuarioAtual){
 
-return;
-}
+    btnApostar.disabled = true;
 
-if(saldoReal < valorAposta){
+    btnApostar.innerText =
+    "AGUARDANDO CONTA";
 
-btnApostar.disabled = true;
-btnApostar.innerText =
-"SALDO INSUFICIENTE";
+    return;
+  }
 
-return;
-}
+  if(saldoReal < valorAposta){
 
-btnApostar.disabled = false;
-btnApostar.innerText =
-"GIRAR ROLETA";
+    btnApostar.disabled = true;
+
+    btnApostar.innerText =
+    "SALDO INSUFICIENTE";
+
+    return;
+  }
+
+  btnApostar.disabled = false;
+
+  btnApostar.innerText =
+  "GIRAR ROLETA";
 
 }
 
@@ -677,20 +976,20 @@ USUÁRIO
 
 async function obterUsuario(){
 
-const {
-data,
-error
-} =
-await supabase.auth.getSession();
+  const {
+    data,
+    error
+  } =
+  await supabase.auth.getSession();
 
-if(error){
+  if(error){
 
-console.error(error);
-return null;
+    console.error(error);
 
-}
+    return null;
+  }
 
-return data?.session?.user || null;
+  return data?.session?.user || null;
 
 }
 
@@ -701,39 +1000,38 @@ CARREGAR SALDO
 
 async function carregarSaldo(){
 
-if(!usuarioAtual)
-return false;
+  if(!usuarioAtual)
+  return false;
 
-const {
-data,
-error
-} =
-await supabase
-.from("saldos")
-.select("valor")
-.eq("user_id",usuarioAtual.id)
-.single();
+  const {
+    data,
+    error
+  } =
+  await supabase
+  .from("saldos")
+  .select("valor")
+  .eq("user_id",usuarioAtual.id)
+  .single();
 
-if(error){
+  if(error){
 
-console.error(error);
+    console.error(error);
 
-resultado.innerText =
-"❌ ERRO AO CARREGAR SALDO";
+    resultado.innerText =
+    "❌ ERRO AO CARREGAR SALDO";
 
-resultado.style.color =
-"#ff4141";
+    resultado.style.color =
+    "#ff4141";
 
-return false;
+    return false;
+  }
 
-}
+  saldoReal =
+  Number(data?.valor || 0);
 
-saldoReal =
-Number(data?.valor || 0);
+  atualizarSaldo();
 
-atualizarSaldo();
-
-return true;
+  return true;
 
 }
 
@@ -744,80 +1042,79 @@ SALVAR SALDO
 
 async function salvarSaldo(novoSaldo){
 
-if(!usuarioAtual)
-return false;
+  if(!usuarioAtual)
+  return false;
 
-const valorFinal =
-Number(
-Number(novoSaldo).toFixed(2)
-);
+  const valorFinal =
+  Number(
+    Number(novoSaldo).toFixed(2)
+  );
 
-const {
-error
-} =
-await supabase
-.from("saldos")
-.update({
-valor:valorFinal
-})
-.eq(
-"user_id",
-usuarioAtual.id
-);
+  const {
+    error
+  } =
+  await supabase
+  .from("saldos")
+  .update({
+    valor:valorFinal
+  })
+  .eq(
+    "user_id",
+    usuarioAtual.id
+  );
 
-if(error){
+  if(error){
 
-console.error(error);
+    console.error(error);
 
-resultado.innerText =
-"❌ ERRO AO ATUALIZAR SALDO";
+    resultado.innerText =
+    "❌ ERRO AO ATUALIZAR SALDO";
 
-resultado.style.color =
-"#ff4141";
+    resultado.style.color =
+    "#ff4141";
 
-return false;
+    return false;
+  }
 
-}
+  saldoReal =
+  valorFinal;
 
-saldoReal =
-valorFinal;
+  atualizarSaldo();
 
-atualizarSaldo();
-
-return true;
+  return true;
 
 }
 
 
 /* =====================================================
-LÓGICA DO PRÊMIO
+PAGAMENTO
 
-A roleta mostra o valor que caiu.
+IMPORTANTE:
 
-O pagamento é:
+O valor da aposta é debitado primeiro.
 
-R$ 0,20 → R$ 0,40
-R$ 0,40 → R$ 0,80
-R$ 0,50 → R$ 1,00
-R$ 0,80 → R$ 1,60
-R$ 1,00 → R$ 2,00
+Depois o valor que caiu na roleta
+é multiplicado por 2.
 
-O valor da aposta é debitado antes.
+Exemplos:
 
-O SUPER BÔNUS é fixo em R$ 5,00.
+Aposta 1 + 0,50 = recebe 1,00
+Aposta 2 + 0,40 = recebe 0,80
+Aposta 5 + 0,20 = recebe 0,40
 ===================================================== */
 
 function calcularPremio(valorRoleta){
 
-if(valorRoleta === 0)
-return 0;
+  if(valorRoleta === 0)
+  return 0;
 
-if(valorRoleta === 5)
-return 5;
+  if(valorRoleta === 5)
+  return 5;
 
-return Number(
-(valorRoleta * 2).toFixed(2)
-);
+  return Number(
+    (valorRoleta * 2)
+    .toFixed(2)
+  );
 
 }
 
@@ -828,83 +1125,85 @@ CRIAR NÚMEROS
 
 function criarNumeros(){
 
-const area =
-document.getElementById("numeros");
+  const area =
+  document.getElementById("numeros");
 
-area.innerHTML = "";
+  area.innerHTML = "";
 
-const quantidade =
-premios.length;
+  const tamanhoCasa =
+  360 / premios.length;
 
-const tamanhoCasa =
-360 / quantidade;
+  premios.forEach(
+    (premio,index)=>{
 
-premios.forEach(
-(premio,index)=>{
+      const numero =
+      document.createElement("div");
 
-const numero =
-document.createElement("div");
+      const conteudo =
+      document.createElement("div");
 
-const conteudo =
-document.createElement("div");
+      numero.className =
+      "numero";
 
-numero.className =
-"numero";
-
-conteudo.className =
-"numero-conteudo";
+      conteudo.className =
+      "numero-conteudo";
 
 
-if(premio === 0){
+      if(premio === 0){
 
-numero.classList.add("perdeu");
+        numero.classList.add(
+          "perdeu"
+        );
 
-conteudo.innerText =
-"PERDEU";
+        conteudo.innerText =
+        "PERDEU";
 
-}
+      }
 
-else if(premio === 5){
+      else if(premio === 5){
 
-numero.classList.add("super-bonus");
+        numero.classList.add(
+          "super-bonus"
+        );
 
-conteudo.innerHTML =
-"⚡<br>R$ 5,00<br>SUPER";
+        conteudo.innerHTML =
+        "⚡<br>R$ 5,00<br>SUPER";
 
-}
+      }
 
-else{
+      else{
 
-conteudo.innerText =
-dinheiro(premio);
+        conteudo.innerText =
+        dinheiro(premio);
 
-}
-
-
-numero.appendChild(conteudo);
-
-numero.dataset.index =
-index;
+      }
 
 
-/*
-IMPORTANTE:
+      numero.appendChild(
+        conteudo
+      );
 
-Cada número começa exatamente em
-uma posição conhecida.
+      numero.dataset.index =
+      String(index);
 
-ÍNDICE 0 = topo.
 
-Depois o cálculo da rotação coloca
-o índice sorteado novamente no topo.
-*/
+      /*
+      Cada resultado ocupa exatamente
+      18 graus.
 
-numero.style.transform =
-`rotate(${index * tamanhoCasa}deg)`;
+      O texto representa o CENTRO daquela casa.
+      */
 
-area.appendChild(numero);
+      numero.style.transform =
+      `rotate(${index * tamanhoCasa}deg)`;
 
-});
+
+      area.appendChild(
+        numero
+      );
+
+    }
+  );
 
 }
 
@@ -916,30 +1215,30 @@ ESCOLHER APOSTA
 window.selecionarValor =
 function(valor,botao){
 
-if(girando)
-return;
+  if(girando)
+  return;
 
-valorAposta =
-Number(valor);
+  valorAposta =
+  Number(valor);
 
-document
-.querySelectorAll(".btn-valor")
-.forEach(
-b =>
-b.classList.remove("ativo")
-);
+  document
+  .querySelectorAll(".btn-valor")
+  .forEach(
+    b =>
+    b.classList.remove("ativo")
+  );
 
-botao.classList.add("ativo");
+  botao.classList.add("ativo");
 
-apostaInfo.innerText =
-dinheiro(valorAposta);
+  apostaInfo.innerText =
+  dinheiro(valorAposta);
 
-fichaDisplay.innerText =
-valorAposta
-.toFixed(2)
-.replace(".",",");
+  fichaDisplay.innerText =
+  valorAposta
+  .toFixed(2)
+  .replace(".",",");
 
-atualizarSaldo();
+  atualizarSaldo();
 
 };
 
@@ -948,240 +1247,272 @@ atualizarSaldo();
 ÁUDIO
 ===================================================== */
 
+let audioContext = null;
+
+let timerRoleta = null;
+
+let velocidadeSom = 45;
+
+let musicaIniciada = false;
+
+
 function iniciarMusica(){
 
-if(musicaIniciada)
-return;
+  if(musicaIniciada)
+  return;
 
-const promessa =
-musicaRoleta.play();
+  const promessa =
+  musicaRoleta.play();
 
-if(promessa){
+  if(promessa){
 
-promessa.then(
-()=>{
-musicaIniciada = true;
-}
-).catch(
-()=>{}
-);
+    promessa.then(
+      ()=>{
+        musicaIniciada = true;
+      }
+    ).catch(
+      ()=>{}
+    );
 
-}
+  }
 
 }
 
 
 function iniciarAudio(){
 
-if(!audioContext){
+  if(!audioContext){
 
-const AudioCtx =
-window.AudioContext ||
-window.webkitAudioContext;
+    const AudioCtx =
+    window.AudioContext ||
+    window.webkitAudioContext;
 
-if(!AudioCtx)
-return;
+    if(!AudioCtx)
+    return;
 
-audioContext =
-new AudioCtx();
+    audioContext =
+    new AudioCtx();
 
-}
+  }
 
-if(
-audioContext.state ===
-"suspended"
-){
+  if(
+    audioContext.state ===
+    "suspended"
+  ){
 
-audioContext.resume();
+    audioContext.resume();
 
-}
+  }
 
-iniciarMusica();
+  iniciarMusica();
 
 }
 
 
 function tocarClique(){
 
-iniciarAudio();
+  iniciarAudio();
 
-if(!audioContext)
-return;
+  if(!audioContext)
+  return;
 
-const agora =
-audioContext.currentTime;
+  const agora =
+  audioContext.currentTime;
 
-const o =
-audioContext.createOscillator();
+  const o =
+  audioContext.createOscillator();
 
-const g =
-audioContext.createGain();
+  const g =
+  audioContext.createGain();
 
-o.type =
-"square";
+  o.type =
+  "square";
 
-o.frequency.setValueAtTime(
-180,
-agora
-);
+  o.frequency.setValueAtTime(
+    180,
+    agora
+  );
 
-o.frequency.exponentialRampToValueAtTime(
-80,
-agora + .08
-);
+  o.frequency.exponentialRampToValueAtTime(
+    80,
+    agora + .08
+  );
 
-g.gain.setValueAtTime(
-.5,
-agora
-);
+  g.gain.setValueAtTime(
+    .5,
+    agora
+  );
 
-g.gain.exponentialRampToValueAtTime(
-.001,
-agora + .08
-);
+  g.gain.exponentialRampToValueAtTime(
+    .001,
+    agora + .08
+  );
 
-o.connect(g);
-g.connect(audioContext.destination);
+  o.connect(g);
 
-o.start(agora);
-o.stop(agora + .08);
+  g.connect(
+    audioContext.destination
+  );
+
+  o.start(agora);
+
+  o.stop(
+    agora + .08
+  );
 
 }
 
 
 function iniciarSomRoleta(){
 
-iniciarAudio();
+  iniciarAudio();
 
-pararSomRoleta();
+  pararSomRoleta();
 
-velocidadeSom = 45;
+  velocidadeSom = 45;
 
-tocarTic();
+  tocarTic();
 
 }
 
 
 function tocarTic(){
 
-if(!audioContext)
-return;
+  if(!audioContext)
+  return;
 
-const agora =
-audioContext.currentTime;
+  const agora =
+  audioContext.currentTime;
 
-const o =
-audioContext.createOscillator();
+  const o =
+  audioContext.createOscillator();
 
-const g =
-audioContext.createGain();
+  const g =
+  audioContext.createGain();
 
-o.type =
-"square";
+  o.type =
+  "square";
 
-o.frequency.setValueAtTime(
-850,
-agora
-);
+  o.frequency.setValueAtTime(
+    850,
+    agora
+  );
 
-o.frequency.exponentialRampToValueAtTime(
-420,
-agora + .035
-);
+  o.frequency.exponentialRampToValueAtTime(
+    420,
+    agora + .035
+  );
 
-g.gain.setValueAtTime(
-.45,
-agora
-);
+  g.gain.setValueAtTime(
+    .45,
+    agora
+  );
 
-g.gain.exponentialRampToValueAtTime(
-.001,
-agora + .055
-);
+  g.gain.exponentialRampToValueAtTime(
+    .001,
+    agora + .055
+  );
 
-o.connect(g);
-g.connect(audioContext.destination);
+  o.connect(g);
 
-o.start(agora);
-o.stop(agora + .06);
+  g.connect(
+    audioContext.destination
+  );
 
-velocidadeSom += 8;
+  o.start(agora);
 
-if(velocidadeSom > 280)
-velocidadeSom = 280;
+  o.stop(
+    agora + .06
+  );
 
-timerRoleta =
-setTimeout(
-tocarTic,
-velocidadeSom
-);
+  velocidadeSom += 8;
+
+  if(velocidadeSom > 280)
+  velocidadeSom = 280;
+
+  timerRoleta =
+  setTimeout(
+    tocarTic,
+    velocidadeSom
+  );
 
 }
 
 
 function pararSomRoleta(){
 
-if(timerRoleta){
+  if(timerRoleta){
 
-clearTimeout(timerRoleta);
-timerRoleta = null;
+    clearTimeout(
+      timerRoleta
+    );
 
-}
+    timerRoleta =
+    null;
+
+  }
 
 }
 
 
 function tocarPremio(){
 
-iniciarAudio();
+  iniciarAudio();
 
-if(!audioContext)
-return;
+  if(!audioContext)
+  return;
 
-const agora =
-audioContext.currentTime;
+  const agora =
+  audioContext.currentTime;
 
-[
-523.25,
-659.25,
-783.99,
-1046.50
-]
-.forEach(
-(frequencia,i)=>{
+  [
+    523.25,
+    659.25,
+    783.99,
+    1046.50
+  ]
+  .forEach(
+    (frequencia,i)=>{
 
-const o =
-audioContext.createOscillator();
+      const o =
+      audioContext.createOscillator();
 
-const g =
-audioContext.createGain();
+      const g =
+      audioContext.createGain();
 
-const inicio =
-agora + i * .12;
+      const inicio =
+      agora + i * .12;
 
-o.type =
-"sine";
+      o.type =
+      "sine";
 
-o.frequency.value =
-frequencia;
+      o.frequency.value =
+      frequencia;
 
-g.gain.setValueAtTime(
-.8,
-inicio
-);
+      g.gain.setValueAtTime(
+        .8,
+        inicio
+      );
 
-g.gain.exponentialRampToValueAtTime(
-.001,
-inicio + .45
-);
+      g.gain.exponentialRampToValueAtTime(
+        .001,
+        inicio + .45
+      );
 
-o.connect(g);
-g.connect(audioContext.destination);
+      o.connect(g);
 
-o.start(inicio);
-o.stop(inicio + .45);
+      g.connect(
+        audioContext.destination
+      );
 
-});
+      o.start(inicio);
+
+      o.stop(
+        inicio + .45
+      );
+
+    }
+  );
 
 }
 
@@ -1192,18 +1523,20 @@ SUPER BÔNUS
 
 function mostrarSuperBonus(){
 
-superBonusOverlay.classList.add("ativo");
+  superBonusOverlay
+  .classList
+  .add("ativo");
 
-tocarPremio();
+  tocarPremio();
 
-setTimeout(
-()=>{
-
-superBonusOverlay.classList.remove("ativo");
-
-},
-5000
-);
+  setTimeout(
+    ()=>{
+      superBonusOverlay
+      .classList
+      .remove("ativo");
+    },
+    5000
+  );
 
 }
 
@@ -1215,346 +1548,420 @@ GIRAR ROLETA
 window.girarRoleta =
 async function(){
 
-if(girando)
-return;
+  if(girando)
+  return;
 
-iniciarAudio();
-tocarClique();
+  iniciarAudio();
 
-
-if(!usuarioAtual){
-
-resultado.innerText =
-"⚠️ USUÁRIO NÃO LOGADO";
-
-resultado.style.color =
-"#ff4141";
-
-return;
-
-}
+  tocarClique();
 
 
-if(saldoReal < valorAposta){
+  if(!usuarioAtual){
 
-resultado.innerText =
-"⚠️ SALDO INSUFICIENTE";
+    resultado.innerText =
+    "⚠️ USUÁRIO NÃO LOGADO";
 
-resultado.style.color =
-"#ff4141";
+    resultado.style.color =
+    "#ff4141";
 
-atualizarBotao();
-
-return;
-
-}
+    return;
+  }
 
 
-girando = true;
-atualizarBotao();
+  if(saldoReal < valorAposta){
+
+    resultado.innerText =
+    "⚠️ SALDO INSUFICIENTE";
+
+    resultado.style.color =
+    "#ff4141";
+
+    atualizarBotao();
+
+    return;
+  }
 
 
-/* =====================================================
-DEBITA APOSTA
-===================================================== */
+  /*
+  TRAVA A RODADA.
+  */
 
-const saldoAntes =
-Number(saldoReal);
+  girando = true;
 
-const saldoDepois =
-Number(
-(saldoAntes - valorAposta)
-.toFixed(2)
-);
-
-const debitado =
-await salvarSaldo(
-saldoDepois
-);
-
-if(!debitado){
-
-girando = false;
-atualizarBotao();
-
-return;
-
-}
+  atualizarBotao();
 
 
-resultado.innerText =
-"⚡ GIRANDO...";
+  /*
+  LIMPA DESTAQUES ANTIGOS.
+  */
 
-resultado.style.color =
-"#ffe36a";
-
-
-document
-.querySelectorAll(".numero")
-.forEach(
-n =>
-n.classList.remove("destaque")
-);
-
-
-iniciarSomRoleta();
+  document
+  .querySelectorAll(".numero")
+  .forEach(
+    n =>
+    n.classList.remove(
+      "destaque"
+    )
+  );
 
 
-/* =====================================================
-SORTEIA O ÍNDICE
-===================================================== */
+  /*
+  DEBITA APOSTA.
+  */
 
-const indice =
-Math.floor(
-Math.random() * premios.length
-);
-
-const valorRoleta =
-premios[indice];
-
-
-/* =====================================================
-CALCULA A POSIÇÃO EXATA
-
-O ponteiro fica no TOPO.
-
-Por isso o índice sorteado precisa terminar
-exatamente em 0 graus.
-
-Cada casa possui 18 graus.
-
-A rotação final é calculada a partir da
-rotação atual, então a roleta nunca perde
-a referência mesmo depois de várias rodadas.
-===================================================== */
-
-const tamanhoCasa =
-360 / premios.length;
-
-const anguloDoPremio =
-indice * tamanhoCasa;
+  const saldoDepoisAposta =
+  Number(
+    (
+      saldoReal -
+      valorAposta
+    ).toFixed(2)
+  );
 
 
-/*
-Queremos:
-
-anguloDoPremio + novaRotacao = múltiplo de 360
-
-Então:
-
-novaRotacao =
-rotacaoAtual
-+ 8 voltas completas
-- anguloDoPremio
-*/
-
-const voltas =
-360 * 8;
-
-const novaRotacao =
-rotacaoAtual +
-voltas -
-anguloDoPremio;
+  const debitado =
+  await salvarSaldo(
+    saldoDepoisAposta
+  );
 
 
-roleta.style.transform =
-`rotate(${novaRotacao}deg)`;
+  if(!debitado){
 
-rotacaoAtual =
-novaRotacao;
+    girando = false;
+
+    atualizarBotao();
+
+    return;
+  }
 
 
-/* =====================================================
-ESPERA A ANIMAÇÃO TERMINAR
-===================================================== */
+  resultado.innerHTML =
+  "⚡ GIRANDO...";
 
-setTimeout(
-()=>{
+  resultado.style.color =
+  "#ffe36a";
 
-finalizarRodada(
-indice,
-valorRoleta
-);
 
-},
-7600
-);
+  iniciarSomRoleta();
+
+
+  /*
+  =====================================================
+  AQUI É CRIADO O RESULTADO ÚNICO DA RODADA.
+  
+  NÃO É SORTEADO NOVAMENTE EM NENHUM OUTRO LUGAR.
+  =====================================================
+  */
+
+  const indiceSorteado =
+  Math.floor(
+    Math.random() *
+    premios.length
+  );
+
+  const valorSorteado =
+  premios[indiceSorteado];
+
+
+  /*
+  GUARDA TUDO NA RODADA.
+  */
+
+  rodadaAtual = {
+
+    indice:
+    indiceSorteado,
+
+    valor:
+    valorSorteado,
+
+    aposta:
+    valorAposta
+
+  };
+
+
+  /*
+  =====================================================
+  POSIÇÃO EXATA
+  =====================================================
+
+  O ponteiro está no topo.
+
+  O índice 0 também está no topo.
+
+  Cada posição vale 18 graus.
+
+  Portanto fazemos a rotação negativa do índice.
+  */
+
+  const tamanhoCasa =
+  360 / premios.length;
+
+  const anguloResultado =
+  indiceSorteado *
+  tamanhoCasa;
+
+
+  /*
+  Mantém a roleta girando para frente
+  e adiciona 8 voltas completas.
+
+  O resultado termina exatamente no topo.
+  */
+
+  const voltas =
+  360 * 8;
+
+
+  const alvo =
+  rotacaoAtual +
+  voltas -
+  anguloResultado;
+
+
+  roleta.style.transform =
+  `rotate(${alvo}deg)`;
+
+
+  rotacaoAtual =
+  alvo;
+
+
+  /*
+  Aguarda a MESMA animação CSS.
+  */
+
+  setTimeout(
+    ()=>{
+      finalizarRodada();
+    },
+    7600
+  );
 
 };
 
 
 /* =====================================================
 FINALIZAR RODADA
+
+IMPORTANTE:
+
+Não recebe índice ou prêmio por parâmetro.
+
+Busca exclusivamente rodadaAtual.
+
+Assim não existe possibilidade de:
+"caiu PERDEU mas mostrou prêmio".
+
 ===================================================== */
 
-async function finalizarRodada(
-indice,
-valorRoleta
-){
+async function finalizarRodada(){
 
-pararSomRoleta();
+  pararSomRoleta();
 
 
-/*
-GARANTE QUE O MESMO ÍNDICE SORTEADO
-SEJA O DESTACADO NA TELA.
-*/
+  if(!rodadaAtual){
 
-const numero =
-document.querySelector(
-`.numero[data-index="${indice}"]`
-);
+    girando = false;
 
-if(numero){
+    atualizarBotao();
 
-numero.classList.add("destaque");
+    return;
+  }
+
+
+  const indice =
+  rodadaAtual.indice;
+
+  const valorRoleta =
+  rodadaAtual.valor;
+
+
+  /*
+  DESTACA EXATAMENTE O ÍNDICE
+  QUE FOI SORTEADO.
+  */
+
+  const numero =
+  document.querySelector(
+    `.numero[data-index="${indice}"]`
+  );
+
+
+  if(numero){
+
+    numero.classList.add(
+      "destaque"
+    );
+
+  }
+
+
+  /*
+  =====================================================
+  PERDEU
+  =====================================================
+  */
+
+  if(valorRoleta === 0){
+
+    resultado.innerHTML =
+    "💥 PERDEU<br>" +
+    "<span style='font-size:14px;color:#ff7777'>" +
+    "A roleta caiu em PERDEU" +
+    "</span>";
+
+    resultado.style.color =
+    "#ff4141";
+
+
+    /*
+    NÃO ADICIONA NENHUM VALOR.
+    O saldo já está com a aposta descontada.
+    */
+
+    rodadaAtual =
+    null;
+
+    girando =
+    false;
+
+    atualizarBotao();
+
+    return;
+  }
+
+
+  /*
+  =====================================================
+  PRÊMIO
+  =====================================================
+  */
+
+  const premioFinal =
+  calcularPremio(
+    valorRoleta
+  );
+
+
+  const novoSaldo =
+  Number(
+    (
+      saldoReal +
+      premioFinal
+    ).toFixed(2)
+  );
+
+
+  const creditado =
+  await salvarSaldo(
+    novoSaldo
+  );
+
+
+  if(!creditado){
+
+    rodadaAtual =
+    null;
+
+    girando =
+    false;
+
+    atualizarBotao();
+
+    return;
+  }
+
+
+  /*
+  =====================================================
+  SUPER BÔNUS
+  =====================================================
+  */
+
+  if(valorRoleta === 5){
+
+    resultado.innerHTML =
+    "⚡ SUPER BÔNUS ⚡<br>" +
+    "<span style='font-size:15px;color:#fff'>" +
+    "CAIU R$ 5,00" +
+    "</span><br>" +
+    "<span style='font-size:28px;color:#ffe36a'>" +
+    "+ R$ 5,00" +
+    "</span>";
+
+    resultado.style.color =
+    "#ffe36a";
+
+    mostrarSuperBonus();
+
+  }
+
+  /*
+  =====================================================
+  PRÊMIO NORMAL
+  =====================================================
+  */
+
+  else{
+
+    tocarPremio();
+
+    resultado.innerHTML =
+    "⚡ PRÊMIO ⚡<br>" +
+    "<span style='font-size:15px;color:#fff'>" +
+    "CAIU " +
+    dinheiro(valorRoleta) +
+    "</span><br>" +
+    "<span style='font-size:27px;color:#ffe36a'>" +
+    "+ " +
+    dinheiro(premioFinal) +
+    "</span>";
+
+    resultado.style.color =
+    "#ffe36a";
+
+  }
+
+
+  /*
+  LIMPA A RODADA.
+  */
+
+  rodadaAtual =
+  null;
+
+
+  /*
+  LIBERA O BOTÃO.
+  */
+
+  setTimeout(
+    ()=>{
+
+      girando =
+      false;
+
+      atualizarBotao();
+
+    },
+    1400
+  );
 
 }
 
 
 /* =====================================================
-PERDEU
-===================================================== */
-
-if(valorRoleta === 0){
-
-resultado.innerHTML =
-"💥 PERDEU<br>" +
-"<span style='font-size:14px;color:#ff7777'>" +
-"Não houve prêmio nesta rodada." +
-"</span>";
-
-resultado.style.color =
-"#ff4141";
-
-girando = false;
-
-atualizarBotao();
-
-return;
-
-}
-
-
-/* =====================================================
-CALCULA PRÊMIO
-===================================================== */
-
-const premioFinal =
-calcularPremio(
-valorRoleta
-);
-
-
-/* =====================================================
-CRÉDITO
-
-saldoReal já está com a aposta descontada.
-
-Então adicionamos somente o prêmio.
-===================================================== */
-
-const saldoAtual =
-Number(saldoReal);
-
-const novoSaldo =
-Number(
-(saldoAtual + premioFinal)
-.toFixed(2)
-);
-
-const creditado =
-await salvarSaldo(
-novoSaldo
-);
-
-if(!creditado){
-
-girando = false;
-atualizarBotao();
-
-return;
-
-}
-
-
-/* =====================================================
-SUPER BÔNUS
-===================================================== */
-
-if(valorRoleta === 5){
-
-resultado.innerHTML =
-"⚡ SUPER BÔNUS ⚡<br>" +
-"<span style='font-size:16px;color:#fff'>" +
-"CAIU R$ 5,00" +
-"</span><br>" +
-"<span style='font-size:28px;color:#ffe36a'>" +
-"+ R$ 5,00" +
-"</span>";
-
-resultado.style.color =
-"#ffe36a";
-
-mostrarSuperBonus();
-
-}
-
-
-/* =====================================================
-PRÊMIO NORMAL
-===================================================== */
-
-else{
-
-tocarPremio();
-
-resultado.innerHTML =
-"⚡ PRÊMIO ⚡<br>" +
-"<span style='font-size:15px;color:#fff'>" +
-"CAIU " +
-dinheiro(valorRoleta) +
-"</span><br>" +
-"<span style='font-size:26px;color:#ffe36a'>" +
-"+ " +
-dinheiro(premioFinal) +
-"</span>";
-
-resultado.style.color =
-"#ffe36a";
-
-}
-
-
-/* =====================================================
-LIBERA BOTÃO
-===================================================== */
-
-setTimeout(
-()=>{
-
-girando = false;
-
-atualizarBotao();
-
-},
-1400
-);
-
-}
-
-
-/* =====================================================
-REPETIR APOSTA
+REPETIR
 ===================================================== */
 
 window.repetirAposta =
 function(){
 
-if(girando)
-return;
+  if(girando)
+  return;
 
-girarRoleta();
+  girarRoleta();
 
 };
 
@@ -1566,11 +1973,11 @@ MENU
 window.abrirMenu =
 function(){
 
-alert(
-"⚡ APOSTAXBET\n\n" +
-"ROLETA DE RELÂMPAGOS\n\n" +
-"Seu saldo está conectado à sua conta."
-);
+  alert(
+    "⚡ APOSTAXBET\n\n" +
+    "ROLETA DE RELÂMPAGOS\n\n" +
+    "Seu saldo está conectado à sua conta."
+  );
 
 };
 
@@ -1581,16 +1988,17 @@ AUTENTICAÇÃO
 
 supabase.auth
 .onAuthStateChange(
-(event,session)=>{
+  (event,session)=>{
 
-if(!session){
+    if(!session){
 
-window.location.href =
-"../index.html";
+      window.location.href =
+      "../index.html";
 
-}
+    }
 
-});
+  }
+);
 
 
 /* =====================================================
@@ -1598,15 +2006,15 @@ MÚSICA
 ===================================================== */
 
 document.addEventListener(
-"touchstart",
-iniciarMusica,
-{once:true}
+  "touchstart",
+  iniciarMusica,
+  {once:true}
 );
 
 document.addEventListener(
-"click",
-iniciarMusica,
-{once:true}
+  "click",
+  iniciarMusica,
+  {once:true}
 );
 
 
@@ -1616,67 +2024,60 @@ INICIAR
 
 async function iniciar(){
 
-try{
+  try{
 
-usuarioAtual =
-await obterUsuario();
-
-
-if(!usuarioAtual){
-
-alert(
-"Você precisa estar logado para jogar."
-);
-
-window.location.href =
-"../index.html";
-
-return;
-
-}
+    usuarioAtual =
+    await obterUsuario();
 
 
-const carregou =
-await carregarSaldo();
+    if(!usuarioAtual){
+
+      alert(
+        "Você precisa estar logado para jogar."
+      );
+
+      window.location.href =
+      "../index.html";
+
+      return;
+    }
 
 
-if(!carregou){
-
-carregando.style.display =
-"none";
-
-return;
-
-}
+    const carregou =
+    await carregarSaldo();
 
 
-/*
-PRIMEIRO CRIA OS NÚMEROS,
-DEPOIS LIBERA A TELA.
-*/
+    if(!carregou){
 
-criarNumeros();
+      carregando.style.display =
+      "none";
 
-atualizarSaldo();
-
-carregando.style.display =
-"none";
+      return;
+    }
 
 
-}catch(error){
+    criarNumeros();
 
-console.error(error);
+    atualizarSaldo();
 
-carregando.style.display =
-"none";
+    carregando.style.display =
+    "none";
 
-resultado.innerText =
-"❌ ERRO AO INICIAR ROLETA";
 
-resultado.style.color =
-"#ff4141";
+  }catch(error){
 
-}
+    console.error(error);
+
+    carregando.style.display =
+    "none";
+
+    resultado.innerText =
+    "❌ ERRO AO INICIAR ROLETA";
+
+    resultado.style.color =
+    "#ff4141";
+
+  }
 
 }
 
