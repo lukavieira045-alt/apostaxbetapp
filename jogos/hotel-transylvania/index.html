@@ -1,20 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>Night Monsters - ApostaXBet</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
 *{
     box-sizing:border-box;
     margin:0;
@@ -24,15 +18,8 @@
 
 body{
     min-height:100vh;
-
     background:
-        radial-gradient(
-            circle at 50% 25%,
-            #35154b 0,
-            #12091c 38%,
-            #050507 80%
-        );
-
+        radial-gradient(circle at 50% 25%,#35154b 0,#12091c 38%,#050507 80%);
     color:white;
     font-family:Arial,sans-serif;
     overflow-x:hidden;
@@ -41,13 +28,10 @@ body{
 .topo{
     height:60px;
     padding:0 15px;
-
     display:flex;
     align-items:center;
     justify-content:space-between;
-
     background:#08080b;
-
     border-bottom:1px solid #5c426c;
 }
 
@@ -76,358 +60,208 @@ body{
 .container{
     width:100%;
     max-width:500px;
-
     margin:auto;
-
     padding:12px 10px 35px;
 }
 
 .voltar{
     display:inline-block;
-
     color:#aaa;
     text-decoration:none;
-
     font-size:12px;
-
     margin-bottom:8px;
 }
 
 .titulo{
     text-align:center;
-
     color:#f4d35e;
-
     font-weight:900;
-
     font-size:20px;
-
     letter-spacing:2px;
-
-    text-shadow:
-        0 0 12px #a65cff;
+    text-shadow:0 0 12px #a65cff;
 }
 
 .subtitulo{
     text-align:center;
-
     color:#777;
-
     font-size:9px;
-
     letter-spacing:3px;
-
     margin-top:4px;
 }
 
 .jogo{
     margin-top:15px;
-
     padding:12px 9px 15px;
-
     border:1px solid #73517e;
-
     border-radius:12px;
-
-    background:
-        linear-gradient(
-            145deg,
-            #211226,
-            #09090c
-        );
-
+    background:linear-gradient(145deg,#211226,#09090c);
     box-shadow:
         0 0 25px rgba(148,60,200,.25),
         inset 0 0 20px rgba(0,0,0,.8);
-
     position:relative;
-
     overflow:hidden;
 }
 
 .raio{
     position:absolute;
-
     height:3px;
     width:120px;
-
     background:white;
-
-    box-shadow:
-        0 0 5px white,
-        0 0 15px #c56cff;
-
+    box-shadow:0 0 5px white,0 0 15px #c56cff;
     opacity:.6;
-
-    animation:
-        flash .8s infinite alternate;
+    animation:flash .8s infinite alternate;
 }
 
 .raio1{
     top:35px;
     left:-20px;
-
     transform:rotate(25deg);
 }
 
 .raio2{
     top:80px;
     right:-20px;
-
     transform:rotate(-28deg);
-
     animation-delay:.3s;
 }
 
 .raio3{
     bottom:45px;
     left:15px;
-
     transform:rotate(-20deg);
-
     animation-delay:.5s;
 }
 
 @keyframes flash{
-
-    from{
-        opacity:.15;
-    }
-
-    to{
-        opacity:1;
-    }
+    from{opacity:.15}
+    to{opacity:1}
 }
 
 .multiplicador{
     text-align:center;
-
     height:45px;
-
     display:flex;
-
     align-items:center;
     justify-content:center;
 }
 
 #multiplicador{
     color:#ffe25b;
-
     font-size:22px;
-
     font-weight:900;
-
-    text-shadow:
-        0 0 5px #ffbf00,
-        0 0 15px #a648ff;
+    text-shadow:0 0 5px #ffbf00,0 0 15px #a648ff;
 }
 
 .rolos{
     display:grid;
-
-    grid-template-columns:
-        repeat(3,1fr);
-
+    grid-template-columns:repeat(3,1fr);
     gap:7px;
-
     padding:10px;
-
     border:2px solid #b18b3a;
-
     border-radius:8px;
-
-    background:
-        linear-gradient(
-            180deg,
-            #180d20,
-            #050507
-        );
-
-    box-shadow:
-        0 0 20px rgba(183,112,255,.25),
-        inset 0 0 18px #000;
+    background:linear-gradient(180deg,#180d20,#050507);
+    box-shadow:0 0 20px rgba(183,112,255,.25),inset 0 0 18px #000;
 }
 
 .rolo{
     height:145px;
-
     overflow:hidden;
-
     position:relative;
-
     border:2px solid #6e4b7d;
-
     border-radius:7px;
-
     background:#09090c;
-
-    box-shadow:
-        inset 0 0 18px #000;
+    box-shadow:inset 0 0 18px #000;
 }
 
 .rolo::before,
 .rolo::after{
     content:"";
-
     position:absolute;
-
     left:0;
     right:0;
-
     height:35px;
-
     z-index:4;
-
     pointer-events:none;
 }
 
 .rolo::before{
     top:0;
-
-    background:
-        linear-gradient(
-            #08080b,
-            transparent
-        );
+    background:linear-gradient(#08080b,transparent);
 }
 
 .rolo::after{
     bottom:0;
-
-    background:
-        linear-gradient(
-            transparent,
-            #08080b
-        );
+    background:linear-gradient(transparent,#08080b);
 }
 
 .simbolos{
     position:absolute;
-
     top:0;
-
     width:100%;
-
-    transition:
-        transform .9s
-        cubic-bezier(.12,.75,.15,1);
 }
 
 .simbolo{
     height:70px;
-
     display:flex;
-
     align-items:center;
     justify-content:center;
-
     font-size:42px;
-
-    border-bottom:
-        1px solid #23172a;
-
-    background:
-        radial-gradient(
-            circle,
-            #281832,
-            #08080b 70%
-        );
+    border-bottom:1px solid #23172a;
+    background:radial-gradient(circle,#281832,#08080b 70%);
 }
 
 .simbolo.destaque{
-    text-shadow:
-        0 0 8px white,
-        0 0 20px #bf55ff;
+    text-shadow:0 0 8px white,0 0 20px #bf55ff;
 }
 
 .linha{
     height:4px;
-
     position:absolute;
-
     top:50%;
     left:9px;
     right:9px;
-
-    transform:
-        translateY(-50%);
-
+    transform:translateY(-50%);
     background:#ffe45c;
-
-    box-shadow:
-        0 0 10px #ffe45c;
-
+    box-shadow:0 0 10px #ffe45c;
     z-index:6;
-
     opacity:.75;
-
     pointer-events:none;
 }
 
 .valor-area{
     margin-top:12px;
-
     display:grid;
-
-    grid-template-columns:
-        repeat(4,1fr);
-
+    grid-template-columns:repeat(4,1fr);
     gap:5px;
 }
 
 .valor{
     height:40px;
-
     border:1px solid #624d29;
-
     background:#0a090b;
-
     color:#aaa;
-
     border-radius:5px;
-
     font-weight:bold;
 }
 
 .valor.ativo{
     color:#ffe45b;
-
     border-color:#ffe45b;
-
-    box-shadow:
-        0 0 10px
-        rgba(255,215,60,.3);
+    box-shadow:0 0 10px rgba(255,215,60,.3);
 }
 
 .apostar{
     width:100%;
-
     height:55px;
-
     margin-top:10px;
-
     border:1px solid #e1b93e;
-
     border-radius:6px;
-
-    background:
-        linear-gradient(
-            180deg,
-            #4b3510,
-            #171105
-        );
-
+    background:linear-gradient(180deg,#4b3510,#171105);
     color:#ffe36a;
-
     font-size:17px;
-
     font-weight:900;
-
     letter-spacing:2px;
-
-    box-shadow:
-        0 0 15px
-        rgba(255,210,50,.2);
+    box-shadow:0 0 15px rgba(255,210,50,.2);
 }
 
 .apostar:disabled{
@@ -436,38 +270,25 @@ body{
 
 .resultado{
     min-height:55px;
-
     margin-top:10px;
-
     text-align:center;
-
     color:#bbb;
-
     font-weight:900;
-
     font-size:16px;
-
     line-height:22px;
 }
 
 .premio{
     color:#ffe45b;
-
     font-size:22px;
-
-    text-shadow:
-        0 0 15px #ffbd00;
+    text-shadow:0 0 15px #ffbd00;
 }
 
 .info{
     display:flex;
-
     justify-content:space-between;
-
     color:#777;
-
     font-size:11px;
-
     margin-top:5px;
 }
 
@@ -476,64 +297,56 @@ body{
 }
 
 .jogando .rolos{
-
     box-shadow:
         0 0 20px #a94cff,
-        0 0 40px
-        rgba(176,65,255,.35),
+        0 0 40px rgba(176,65,255,.35),
         inset 0 0 18px #000;
 }
 
 @keyframes tremor{
-
-    0%,100%{
-        transform:translateX(0);
-    }
-
-    25%{
-        transform:translateX(-2px);
-    }
-
-    75%{
-        transform:translateX(2px);
-    }
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-2px)}
+    75%{transform:translateX(2px)}
 }
 
 .tremendo{
-    animation:
-        tremor .08s infinite;
+    animation:tremor .08s infinite;
 }
 
 @media(max-width:360px){
-
     .rolo{
         height:125px;
     }
 
     .simbolo{
         height:60px;
-
         font-size:34px;
     }
 }
-
 </style>
-
 </head>
 
 <body>
 
-<!-- =====================================================
-     MÚSICA DO NIGHT MONSTERS
-===================================================== -->
+<!--
+=========================================================
+MÚSICA
+O ARQUIVO ESTÁ EM:
+jogos/musica-night-monsters.mp3
+
+ESTE JOGO ESTÁ EM:
+jogos/hotel-transylvania/...
+
+POR ISSO O CAMINHO É ../
+=========================================================
+-->
 
 <audio
     id="musicaNightMonsters"
-    src="musica-night-monsters.mp3"
+    src="../musica-night-monsters.mp3"
     loop
     preload="auto"
 ></audio>
-
 
 <header class="topo">
 
@@ -542,95 +355,55 @@ body{
     </div>
 
     <div class="saldo">
-
-        <small>
-            SALDO
-        </small>
-
-        <div id="saldo">
-            R$ 0,00
-        </div>
-
+        <small>SALDO</small>
+        <div id="saldo">R$ 0,00</div>
     </div>
 
 </header>
 
-
 <div class="container">
 
-    <a
-        href="../index.html"
-        class="voltar"
-    >
+    <a href="../index.html" class="voltar">
         ← Voltar para Jogos
     </a>
-
 
     <div class="titulo">
         ⚡ NIGHT MONSTERS ⚡
     </div>
 
-
     <div class="subtitulo">
         SLOTS DE RELÂMPAGOS
     </div>
 
-
-    <div
-        class="jogo"
-        id="jogo"
-    >
+    <div class="jogo" id="jogo">
 
         <div class="raio raio1"></div>
         <div class="raio raio2"></div>
         <div class="raio raio3"></div>
 
-
         <div class="multiplicador">
-
             <div id="multiplicador">
                 PRÊMIO ATÉ 100x
             </div>
-
         </div>
-
 
         <div class="rolos">
 
             <div class="rolo">
-
-                <div
-                    class="simbolos"
-                    id="rolo1"
-                ></div>
-
+                <div class="simbolos" id="rolo1"></div>
             </div>
-
 
             <div class="rolo">
-
-                <div
-                    class="simbolos"
-                    id="rolo2"
-                ></div>
-
+                <div class="simbolos" id="rolo2"></div>
             </div>
-
 
             <div class="rolo">
-
-                <div
-                    class="simbolos"
-                    id="rolo3"
-                ></div>
-
+                <div class="simbolos" id="rolo3"></div>
             </div>
-
 
             <div class="linha"></div>
 
         </div>
-
 
         <div class="valor-area">
 
@@ -641,7 +414,6 @@ body{
                 R$ 0,50
             </button>
 
-
             <button
                 class="valor"
                 onclick="escolherValor(1,this)"
@@ -649,14 +421,12 @@ body{
                 R$ 1
             </button>
 
-
             <button
                 class="valor"
                 onclick="escolherValor(2,this)"
             >
                 R$ 2
             </button>
-
 
             <button
                 class="valor"
@@ -667,7 +437,6 @@ body{
 
         </div>
 
-
         <button
             class="apostar"
             id="btn"
@@ -676,44 +445,26 @@ body{
             GIRAR R$ 0,50
         </button>
 
-
-        <div
-            class="resultado"
-            id="resultado"
-        >
+        <div class="resultado" id="resultado">
             BOA SORTE!
         </div>
-
 
         <div class="info">
 
             <span>
-
                 Aposta:
-
-                <strong id="aposta">
-                    R$ 0,50
-                </strong>
-
+                <strong id="aposta">R$ 0,50</strong>
             </span>
 
-
             <span>
-
                 Saldo:
-
-                <strong id="saldo2">
-                    R$ 0,00
-                </strong>
-
+                <strong id="saldo2">R$ 0,00</strong>
             </span>
 
         </div>
 
     </div>
-
 </div>
-
 
 <script>
 
@@ -735,95 +486,331 @@ window.supabase.createClient(
 
 
 /* =========================================================
-   MÚSICA NIGHT MONSTERS
+   MÚSICA
 ========================================================= */
 
-const musicaNightMonsters =
+const musica =
     document.getElementById(
         "musicaNightMonsters"
     );
 
-musicaNightMonsters.volume = 0.35;
+musica.volume = 0.35;
 
-let musicaIniciada = false;
+let musicaLiberada = false;
 
+
+/*
+=========================================================
+INICIA O MP3 NO PRIMEIRO TOQUE
+=========================================================
+*/
 
 async function iniciarMusica(){
 
-    if(musicaIniciada)
+    if(musicaLiberada)
         return;
 
     try{
 
-        musicaNightMonsters.volume =
-            0.35;
+        musica.volume = 0.35;
 
-        await musicaNightMonsters.play();
+        await musica.play();
 
-        musicaIniciada = true;
+        musicaLiberada = true;
 
         console.log(
-            "🎵 Música Night Monsters iniciada"
+            "🎵 Night Monsters: música iniciada"
         );
 
-    }catch(error){
+    }catch(erro){
 
         console.log(
-            "Áudio aguardando interação:",
-            error
+            "MP3 aguardando interação do usuário:",
+            erro
         );
 
     }
-
 }
 
 
 /*
-   Primeiro toque na tela libera
-   o MP3 no celular.
+O Android bloqueia autoplay sem interação.
+O primeiro toque libera o MP3.
+*/
+
+document.addEventListener(
+    "pointerdown",
+    iniciarMusica,
+    {
+        once:true,
+        passive:true
+    }
+);
+
+
+/* =========================================================
+   SOM DA GIRADA
+========================================================= */
+
+let audioContext = null;
+
+
+/*
+Cria o AudioContext somente
+quando o usuário tocar.
+*/
+
+function iniciarAudioContext(){
+
+    if(audioContext)
+        return;
+
+    try{
+
+        const AudioContext =
+            window.AudioContext ||
+            window.webkitAudioContext;
+
+        if(!AudioContext)
+            return;
+
+        audioContext =
+            new AudioContext();
+
+        if(
+            audioContext.state ===
+            "suspended"
+        ){
+
+            audioContext.resume();
+
+        }
+
+    }catch(e){
+
+        console.log(
+            "AudioContext indisponível",
+            e
+        );
+
+    }
+}
+
+
+/*
+Som mecânico da máquina.
+*/
+
+function somGiro(){
+
+    if(!audioContext)
+        return;
+
+    if(
+        audioContext.state ===
+        "suspended"
+    ){
+
+        audioContext.resume();
+
+    }
+
+    const agora =
+        audioContext.currentTime;
+
+    const osc =
+        audioContext.createOscillator();
+
+    const ganho =
+        audioContext.createGain();
+
+    osc.type =
+        "square";
+
+    osc.frequency.setValueAtTime(
+        180,
+        agora
+    );
+
+    osc.frequency.exponentialRampToValueAtTime(
+        70,
+        agora + 0.9
+    );
+
+    ganho.gain.setValueAtTime(
+        0.0001,
+        agora
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+        0.045,
+        agora + 0.03
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+        0.0001,
+        agora + 1
+    );
+
+    osc.connect(ganho);
+    ganho.connect(
+        audioContext.destination
+    );
+
+    osc.start(agora);
+
+    osc.stop(
+        agora + 1.05
+    );
+}
+
+
+/*
+Som curto quando os rolos param.
+*/
+
+function somParada(){
+
+    if(!audioContext)
+        return;
+
+    const agora =
+        audioContext.currentTime;
+
+    const osc =
+        audioContext.createOscillator();
+
+    const ganho =
+        audioContext.createGain();
+
+    osc.type =
+        "triangle";
+
+    osc.frequency.setValueAtTime(
+        100,
+        agora
+    );
+
+    osc.frequency.exponentialRampToValueAtTime(
+        55,
+        agora + 0.18
+    );
+
+    ganho.gain.setValueAtTime(
+        0.05,
+        agora
+    );
+
+    ganho.gain.exponentialRampToValueAtTime(
+        0.0001,
+        agora + 0.25
+    );
+
+    osc.connect(ganho);
+    ganho.connect(
+        audioContext.destination
+    );
+
+    osc.start(agora);
+
+    osc.stop(
+        agora + 0.3
+    );
+}
+
+
+/*
+Som de vitória.
+*/
+
+function somPremio(){
+
+    if(!audioContext)
+        return;
+
+    const agora =
+        audioContext.currentTime;
+
+    const notas =
+        [523,659,784,1046];
+
+    notas.forEach(
+        function(freq,i){
+
+            const osc =
+                audioContext.createOscillator();
+
+            const ganho =
+                audioContext.createGain();
+
+            osc.type =
+                "sine";
+
+            osc.frequency.value =
+                freq;
+
+            const inicio =
+                agora + i * 0.12;
+
+            ganho.gain.setValueAtTime(
+                0.0001,
+                inicio
+            );
+
+            ganho.gain.exponentialRampToValueAtTime(
+                0.07,
+                inicio + 0.03
+            );
+
+            ganho.gain.exponentialRampToValueAtTime(
+                0.0001,
+                inicio + 0.4
+            );
+
+            osc.connect(ganho);
+
+            ganho.connect(
+                audioContext.destination
+            );
+
+            osc.start(inicio);
+
+            osc.stop(
+                inicio + 0.45
+            );
+
+        }
+    );
+}
+
+
+/*
+Libera áudio também no primeiro toque.
 */
 
 document.addEventListener(
     "pointerdown",
     function(){
 
-        iniciarMusica();
+        iniciarAudioContext();
 
     },
     {
+        once:true,
         passive:true
     }
 );
 
 
-/*
-   Também tenta iniciar quando
-   o usuário tocar em qualquer botão.
-*/
-
-document.addEventListener(
-    "click",
-    function(){
-
-        iniciarMusica();
-
-    }
-);
-
-
 /* =========================================================
-   CONFIGURAÇÃO
+   CONFIGURAÇÃO DO JOGO
 ========================================================= */
 
 let aposta = 0.50;
-
 let girando = false;
-
 let saldoAtual = 0;
 
-
 const simbolos = [
-
     "🦇",
     "👻",
     "💀",
@@ -832,12 +819,9 @@ const simbolos = [
     "🎃",
     "⚡",
     "💎"
-
 ];
 
-
 const premios = {
-
     "🦇":3,
     "👻":5,
     "💀":8,
@@ -846,7 +830,6 @@ const premios = {
     "🎃":20,
     "⚡":30,
     "💎":100
-
 };
 
 
@@ -870,26 +853,22 @@ function dinheiro(valor){
 
 async function getUsuario(){
 
-    const { data,error } =
+    const {data,error} =
         await supabaseClient
         .auth
         .getSession();
 
-
     if(error){
 
         console.error(
-            "Erro ao verificar sessão:",
+            "Erro na sessão:",
             error
         );
 
         return null;
-
     }
 
-
     return data?.session?.user || null;
-
 }
 
 
@@ -902,18 +881,15 @@ async function getSaldo(){
     const user =
         await getUsuario();
 
-
     if(!user)
         return 0;
 
-
-    const { data,error } =
+    const {data,error} =
         await supabaseClient
         .from("saldos")
         .select("valor")
         .eq("user_id",user.id)
         .single();
-
 
     if(error){
 
@@ -923,16 +899,12 @@ async function getSaldo(){
         );
 
         return 0;
-
     }
-
 
     saldoAtual =
         Number(data?.valor || 0);
 
-
     return saldoAtual;
-
 }
 
 
@@ -945,18 +917,15 @@ async function atualizarSaldo(){
     const saldo =
         await getSaldo();
 
+    document.getElementById(
+        "saldo"
+    ).innerText =
+        dinheiro(saldo);
 
-    document
-        .getElementById("saldo")
-        .innerText =
-            dinheiro(saldo);
-
-
-    document
-        .getElementById("saldo2")
-        .innerText =
-            dinheiro(saldo);
-
+    document.getElementById(
+        "saldo2"
+    ).innerText =
+        dinheiro(saldo);
 }
 
 
@@ -969,20 +938,16 @@ async function alterarSaldo(novoSaldo){
     const user =
         await getUsuario();
 
-
     if(!user){
 
         return {
             sucesso:false,
             erro:"Usuário não está logado."
         };
-
     }
-
 
     novoSaldo =
         Number(novoSaldo);
-
 
     if(!Number.isFinite(novoSaldo)){
 
@@ -990,9 +955,7 @@ async function alterarSaldo(novoSaldo){
             sucesso:false,
             erro:"Saldo inválido."
         };
-
     }
-
 
     novoSaldo =
         Math.max(
@@ -1002,8 +965,7 @@ async function alterarSaldo(novoSaldo){
             )
         );
 
-
-    const { error } =
+    const {error} =
         await supabaseClient
         .from("saldos")
         .update({
@@ -1011,11 +973,10 @@ async function alterarSaldo(novoSaldo){
         })
         .eq("user_id",user.id);
 
-
     if(error){
 
         console.error(
-            "Erro ao alterar saldo:",
+            "Erro ao atualizar saldo:",
             error
         );
 
@@ -1023,19 +984,15 @@ async function alterarSaldo(novoSaldo){
             sucesso:false,
             erro:error.message
         };
-
     }
-
 
     saldoAtual =
         novoSaldo;
-
 
     return {
         sucesso:true,
         saldo:novoSaldo
     };
-
 }
 
 
@@ -1051,7 +1008,6 @@ function escolherSimbolo(){
             simbolos.length
         )
     ];
-
 }
 
 
@@ -1064,9 +1020,7 @@ function criarRolo(id){
     const area =
         document.getElementById(id);
 
-
     area.innerHTML = "";
-
 
     for(
         let i=0;
@@ -1077,24 +1031,19 @@ function criarRolo(id){
         const div =
             document.createElement("div");
 
-
         div.className =
             "simbolo";
-
 
         div.innerText =
             escolherSimbolo();
 
-
         area.appendChild(div);
-
     }
-
 }
 
 
 /* =========================================================
-   ESCOLHER VALOR
+   ESCOLHER APOSTA
 ========================================================= */
 
 function escolherValor(
@@ -1105,39 +1054,35 @@ function escolherValor(
     if(girando)
         return;
 
-
     aposta =
         Number(valor);
-
 
     document
         .querySelectorAll(".valor")
         .forEach(
             function(b){
 
-                b.classList
-                    .remove("ativo");
+                b.classList.remove(
+                    "ativo"
+                );
 
             }
         );
 
+    botao.classList.add(
+        "ativo"
+    );
 
-    botao.classList
-        .add("ativo");
+    document.getElementById(
+        "aposta"
+    ).innerText =
+        dinheiro(aposta);
 
-
-    document
-        .getElementById("aposta")
-        .innerText =
-            dinheiro(aposta);
-
-
-    document
-        .getElementById("btn")
-        .innerText =
-            "GIRAR " +
-            dinheiro(aposta);
-
+    document.getElementById(
+        "btn"
+    ).innerText =
+        "GIRAR " +
+        dinheiro(aposta);
 }
 
 
@@ -1150,73 +1095,79 @@ async function girar(){
     if(girando)
         return;
 
+    /*
+    Primeiro toque libera tudo.
+    */
+
+    iniciarAudioContext();
 
     await iniciarMusica();
 
+    if(
+        audioContext &&
+        audioContext.state ===
+        "suspended"
+    ){
+
+        await audioContext.resume();
+
+    }
 
     const saldo =
         await getSaldo();
-
 
     if(saldo < aposta){
 
         alert(
             "Saldo insuficiente!\n\n" +
-
             "Saldo disponível: " +
-
             dinheiro(saldo) +
-
             "\n\nAposta: " +
-
             dinheiro(aposta)
         );
 
         return;
-
     }
-
 
     girando = true;
 
+    somGiro();
 
     const jogo =
-        document.getElementById("jogo");
-
+        document.getElementById(
+            "jogo"
+        );
 
     const btn =
-        document.getElementById("btn");
-
+        document.getElementById(
+            "btn"
+        );
 
     const resultado =
-        document.getElementById("resultado");
+        document.getElementById(
+            "resultado"
+        );
 
+    jogo.classList.add(
+        "jogando"
+    );
 
-    jogo.classList
-        .add("jogando");
+    jogo.classList.add(
+        "tremendo"
+    );
 
-
-    jogo.classList
-        .add("tremendo");
-
-
-    btn.disabled =
-        true;
-
+    btn.disabled = true;
 
     btn.innerText =
         "GIRANDO...";
 
-
     resultado.innerText =
         "⚡ OS MONSTROS ESTÃO GIRANDO...";
-
 
     resultado.style.color =
         "#ffe45b";
 
-
-    const saldoDepoisDaAposta =
+    const saldoDepois =
         Number(
             (
                 saldo -
@@ -1224,62 +1175,48 @@ async function girar(){
             ).toFixed(2)
         );
 
-
     const debito =
         await alterarSaldo(
-            saldoDepoisDaAposta
+            saldoDepois
         );
-
 
     if(!debito.sucesso){
 
         girando = false;
 
+        jogo.classList.remove(
+            "jogando"
+        );
 
-        jogo.classList
-            .remove("jogando");
+        jogo.classList.remove(
+            "tremendo"
+        );
 
-
-        jogo.classList
-            .remove("tremendo");
-
-
-        btn.disabled =
-            false;
-
+        btn.disabled = false;
 
         btn.innerText =
             "GIRAR " +
             dinheiro(aposta);
 
-
         resultado.innerText =
             "ERRO AO PROCESSAR A APOSTA";
-
 
         resultado.style.color =
             "#ff5555";
 
-
-        alert(
-            "Não foi possível atualizar o saldo."
-        );
-
-
         return;
-
     }
-
 
     await atualizarSaldo();
 
-
     let resultadoFinal;
-
 
     const sorteio =
         Math.random();
 
+    /*
+    Probabilidades do jogo.
+    */
 
     if(sorteio < 0.015){
 
@@ -1290,7 +1227,6 @@ async function girar(){
         ];
 
     }
-
     else if(sorteio < 0.06){
 
         resultadoFinal = [
@@ -1300,12 +1236,10 @@ async function girar(){
         ];
 
     }
-
     else if(sorteio < 0.15){
 
         const s =
             escolherSimbolo();
-
 
         resultadoFinal = [
             s,
@@ -1314,20 +1248,16 @@ async function girar(){
         ];
 
     }
-
     else{
 
         let a =
             escolherSimbolo();
 
-
         let b =
             escolherSimbolo();
 
-
         let c =
             escolherSimbolo();
-
 
         while(
             a === b &&
@@ -1336,18 +1266,14 @@ async function girar(){
 
             c =
                 escolherSimbolo();
-
         }
-
 
         resultadoFinal = [
             a,
             b,
             c
         ];
-
     }
-
 
     prepararRolo(
         "rolo1",
@@ -1355,20 +1281,17 @@ async function girar(){
         500
     );
 
-
     prepararRolo(
         "rolo2",
         resultadoFinal[1],
         1000
     );
 
-
     prepararRolo(
         "rolo3",
         resultadoFinal[2],
         1500
     );
-
 
     setTimeout(
         function(){
@@ -1380,7 +1303,6 @@ async function girar(){
         },
         2400
     );
-
 }
 
 
@@ -1397,9 +1319,7 @@ function prepararRolo(
     const area =
         document.getElementById(id);
 
-
     area.innerHTML = "";
-
 
     for(
         let i=0;
@@ -1410,66 +1330,53 @@ function prepararRolo(
         const div =
             document.createElement("div");
 
-
         div.className =
             "simbolo";
-
 
         div.innerText =
             escolherSimbolo();
 
-
         area.appendChild(div);
-
     }
-
 
     const finalDiv =
         document.createElement("div");
 
-
     finalDiv.className =
         "simbolo destaque";
-
 
     finalDiv.innerText =
         final;
 
-
     area.appendChild(finalDiv);
-
 
     area.style.transition =
         "none";
 
-
     area.style.transform =
         "translateY(0)";
 
-
     area.offsetHeight;
 
-
     area.style.transition =
-        `transform ${
-            tempo / 1000 + .8
-        }s cubic-bezier(.08,.75,.12,1)`;
-
+        "transform " +
+        (tempo / 1000 + .8) +
+        "s cubic-bezier(.08,.75,.12,1)";
 
     const distancia =
         -(15 * 70) + 37;
-
 
     setTimeout(
         function(){
 
             area.style.transform =
-                `translateY(${distancia}px)`;
+                "translateY(" +
+                distancia +
+                "px)";
 
         },
         50
     );
-
 }
 
 
@@ -1482,41 +1389,39 @@ async function finalizar(
 ){
 
     const jogo =
-        document.getElementById("jogo");
-
+        document.getElementById(
+            "jogo"
+        );
 
     const btn =
-        document.getElementById("btn");
-
+        document.getElementById(
+            "btn"
+        );
 
     const resultado =
-        document.getElementById("resultado");
+        document.getElementById(
+            "resultado"
+        );
 
+    jogo.classList.remove(
+        "tremendo"
+    );
 
-    jogo.classList
-        .remove("tremendo");
-
+    somParada();
 
     const iguais =
-
         resultadoFinal[0] ===
-        resultadoFinal[1]
-
-        &&
-
+        resultadoFinal[1] &&
         resultadoFinal[1] ===
         resultadoFinal[2];
-
 
     if(iguais){
 
         const simbolo =
             resultadoFinal[0];
 
-
         const multiplicador =
             premios[simbolo];
-
 
         const premio =
             Number(
@@ -1526,10 +1431,8 @@ async function finalizar(
                 ).toFixed(2)
             );
 
-
         const saldoAtualizado =
             await getSaldo();
-
 
         const novoSaldo =
             Number(
@@ -1539,93 +1442,65 @@ async function finalizar(
                 ).toFixed(2)
             );
 
-
         const credito =
             await alterarSaldo(
                 novoSaldo
             );
-
 
         if(!credito.sucesso){
 
             resultado.innerText =
                 "ERRO AO CREDITAR O PRÊMIO";
 
-
             resultado.style.color =
                 "#ff5555";
 
-
-            await atualizarSaldo();
-
         }
-
         else{
 
             await atualizarSaldo();
 
-
-            document
-                .getElementById(
-                    "multiplicador"
-                )
-                .innerText =
-                    multiplicador + "x";
-
+            document.getElementById(
+                "multiplicador"
+            ).innerText =
+                multiplicador + "x";
 
             resultado.innerHTML =
-
                 "⚡ COMBINAÇÃO PREMIADA!<br>" +
-
                 "<span class='premio'>" +
-
                 dinheiro(premio) +
-
                 "</span>";
-
 
             resultado.style.color =
                 "#ffe45b";
 
+            somPremio();
         }
 
     }
-
     else{
 
-        document
-            .getElementById(
-                "multiplicador"
-            )
-            .innerText =
-                "TENTE NOVAMENTE";
-
+        document.getElementById(
+            "multiplicador"
+        ).innerText =
+            "TENTE NOVAMENTE";
 
         resultado.innerText =
             "NÃO FOI DESSA VEZ";
 
-
         resultado.style.color =
             "#999";
 
-
         await atualizarSaldo();
-
     }
 
+    girando = false;
 
-    girando =
-        false;
-
-
-    btn.disabled =
-        false;
-
+    btn.disabled = false;
 
     btn.innerText =
         "GIRAR " +
         dinheiro(aposta);
-
 }
 
 
@@ -1634,16 +1509,14 @@ async function finalizar(
 ========================================================= */
 
 criarRolo("rolo1");
-
 criarRolo("rolo2");
-
 criarRolo("rolo3");
 
 atualizarSaldo();
 
 
 /* =========================================================
-   ATUALIZAÇÃO AUTOMÁTICA
+   ATUALIZAÇÃO AUTOMÁTICA DO SALDO
 ========================================================= */
 
 setInterval(
@@ -1679,23 +1552,19 @@ supabaseClient.auth.onAuthStateChange(
             );
 
         }
-
         else{
 
             saldoAtual = 0;
 
+            document.getElementById(
+                "saldo"
+            ).innerText =
+                "R$ 0,00";
 
-            document
-                .getElementById("saldo")
-                .innerText =
-                    "R$ 0,00";
-
-
-            document
-                .getElementById("saldo2")
-                .innerText =
-                    "R$ 0,00";
-
+            document.getElementById(
+                "saldo2"
+            ).innerText =
+                "R$ 0,00";
         }
 
     }
