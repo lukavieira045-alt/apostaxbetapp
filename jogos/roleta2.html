@@ -230,14 +230,22 @@ font-size:42px;font-weight:900;color:#fff2b0;
 text-shadow:0 2px 5px #000
 }
 
+/* BOLINHA INDEPENDENTE */
 .bola{
-position:absolute;width:19px;height:19px;border-radius:50%;
-background:#fff;box-shadow:0 0 10px #fff;
-left:50%;top:50%;
-transform:translate(-50%,-50%) translateY(-190px);
-z-index:7
+position:absolute;
+width:19px;
+height:19px;
+border-radius:50%;
+background:#fff;
+box-shadow:0 0 10px #fff,0 0 18px rgba(255,255,255,.7);
+left:50%;
+top:50%;
+transform:translate(-50%,-50%) translateY(-205px);
+z-index:7;
+will-change:transform
 }
 
+/* PONTEIRO - SOMENTE REFERÊNCIA */
 .roleta-area::before{
 content:"";
 position:absolute;
@@ -435,9 +443,10 @@ to{transform:scale(1);opacity:1}
 .btn-deposito{width:32px;height:32px}
 .roleta{width:82vw}
 .roleta-centro{width:85px;height:85px}
-.bola{transform:translate(-50%,-50%) translateY(-125px)}
+.bola{
+transform:translate(-50%,-50%) translateY(-125px)
+}
 .roleta-area::before{top:calc(50% - 225px)}
-.cores{grid-template-columns:1fr}
 .numero-grid{grid-template-columns:repeat(6,1fr)}
 .num.zero{grid-row:auto}
 .extras{grid-template-columns:repeat(2,1fr)}
@@ -510,7 +519,6 @@ to{transform:scale(1);opacity:1}
 
 <div class="roleta-area">
 
-<!-- CONTADOR -->
 <div id="contagemRoleta" class="contagem-roleta">10</div>
 
 <div class="roleta" id="roleta">
@@ -631,29 +639,45 @@ let girando=false;
 let auto=false;
 let rotacaoAtual=0;
 
+/* CONTROLE DA NOVA CONTAGEM */
+let contagemAtiva=false;
+let intervaloContagem=null;
+
 let audioContext=null;
 let somRoletaAtivo=false;
 let intervaloSomRoleta=null;
 
 function iniciarAudio(){
+
 try{
+
 if(!audioContext){
 audioContext=new(window.AudioContext||window.webkitAudioContext)();
 }
-if(audioContext.state==="suspended")audioContext.resume();
+
+if(audioContext.state==="suspended"){
+audioContext.resume();
+}
+
 }catch(e){}
+
 }
 
 function somFicha(){
+
 iniciarAudio();
+
 if(!audioContext)return;
 
 try{
+
 const agora=audioContext.currentTime;
+
 const osc=audioContext.createOscillator();
 const ganho=audioContext.createGain();
 
 osc.type="triangle";
+
 osc.frequency.setValueAtTime(850,agora);
 osc.frequency.exponentialRampToValueAtTime(1250,agora+.045);
 
@@ -663,23 +687,38 @@ ganho.gain.exponentialRampToValueAtTime(.0001,agora+.10);
 
 osc.connect(ganho);
 ganho.connect(audioContext.destination);
+
 osc.start(agora);
 osc.stop(agora+.11);
+
 }catch(e){}
+
 }
 
 function somPalheta(){
+
 iniciarAudio();
+
 if(!audioContext)return;
 
 try{
+
 const agora=audioContext.currentTime;
+
 const osc=audioContext.createOscillator();
 const ganho=audioContext.createGain();
 
 osc.type="square";
-osc.frequency.setValueAtTime(900+Math.random()*250,agora);
-osc.frequency.exponentialRampToValueAtTime(480,agora+.045);
+
+osc.frequency.setValueAtTime(
+900+Math.random()*250,
+agora
+);
+
+osc.frequency.exponentialRampToValueAtTime(
+480,
+agora+.045
+);
 
 ganho.gain.setValueAtTime(.0001,agora);
 ganho.gain.exponentialRampToValueAtTime(.055,agora+.003);
@@ -687,30 +726,45 @@ ganho.gain.exponentialRampToValueAtTime(.0001,agora+.065);
 
 osc.connect(ganho);
 ganho.connect(audioContext.destination);
+
 osc.start(agora);
 osc.stop(agora+.07);
+
 }catch(e){}
+
 }
 
 function iniciarSomRoleta(){
+
 iniciarAudio();
+
 if(somRoletaAtivo)return;
 
 somRoletaAtivo=true;
+
 somPalheta();
 
 intervaloSomRoleta=setInterval(()=>{
-if(somRoletaAtivo)somPalheta();
+
+if(somRoletaAtivo){
+somPalheta();
+}
+
 },145);
+
 }
 
 function pararSomRoleta(){
+
 somRoletaAtivo=false;
 
 if(intervaloSomRoleta){
+
 clearInterval(intervaloSomRoleta);
 intervaloSomRoleta=null;
+
 }
+
 }
 
 const roleta=document.getElementById("roleta");
@@ -724,20 +778,27 @@ const fichaContadorEl=document.getElementById("fichaContador");
 const contagemEl=document.getElementById("contagemRoleta");
 
 function moeda(valor){
+
 return new Intl.NumberFormat("pt-BR",{
 style:"currency",
 currency:"BRL"
 }).format(Number(valor)||0);
+
 }
 
 async function obterSaldo(){
 
 try{
 
-if(!window.SistemaSaldo||
-typeof window.SistemaSaldo.get!=="function")return null;
+if(
+!window.SistemaSaldo||
+typeof window.SistemaSaldo.get!=="function"
+){
+return null;
+}
 
 const valor=await window.SistemaSaldo.get();
+
 const saldo=Number(valor)||0;
 
 saldoEl.textContent=moeda(saldo);
@@ -747,56 +808,88 @@ return saldo;
 }catch(erro){
 
 console.error("Erro ao carregar saldo:",erro);
+
 return null;
 
 }
+
 }
 
 async function debitar(valor){
 
-if(!window.SistemaSaldo||
-typeof window.SistemaSaldo.debitar!=="function"){
-throw new Error("Sistema de saldo não carregado.");
+if(
+!window.SistemaSaldo||
+typeof window.SistemaSaldo.debitar!=="function"
+){
+
+throw new Error(
+"Sistema de saldo não carregado."
+);
+
 }
 
 const valorNumerico=Number(valor);
 
-if(!Number.isFinite(valorNumerico)||valorNumerico<=0)return false;
+if(
+!Number.isFinite(valorNumerico)||
+valorNumerico<=0
+){
+return false;
+}
 
-const resultado=await window.SistemaSaldo.debitar(valorNumerico);
+const resultado=
+await window.SistemaSaldo.debitar(valorNumerico);
 
 await obterSaldo();
 
 return resultado;
+
 }
 
 async function creditar(valor){
 
-if(!window.SistemaSaldo||
-typeof window.SistemaSaldo.creditar!=="function"){
-throw new Error("Sistema de saldo não carregado.");
+if(
+!window.SistemaSaldo||
+typeof window.SistemaSaldo.creditar!=="function"
+){
+
+throw new Error(
+"Sistema de saldo não carregado."
+);
+
 }
 
 const valorNumerico=Number(valor);
 
-if(!Number.isFinite(valorNumerico)||valorNumerico<=0)return false;
+if(
+!Number.isFinite(valorNumerico)||
+valorNumerico<=0
+){
+return false;
+}
 
-const resultado=await window.SistemaSaldo.creditar(valorNumerico);
+const resultado=
+await window.SistemaSaldo.creditar(valorNumerico);
 
 await obterSaldo();
 
 return resultado;
+
 }
 
 function criarNumerosRoleta(){
 
-const area=document.getElementById("numerosRoleta");
+const area=
+document.getElementById("numerosRoleta");
+
 area.innerHTML="";
 
 SEQUENCIA.forEach((numero,index)=>{
 
 const span=document.createElement("span");
-const angulo=index*(360/SEQUENCIA.length);
+
+const angulo=
+index*(360/SEQUENCIA.length);
 
 span.textContent=numero;
 
@@ -806,18 +899,24 @@ span.style.transform=
 area.appendChild(span);
 
 });
+
 }
 
 function criarTabela(){
 
-const grid=document.getElementById("numeroGrid");
+const grid=
+document.getElementById("numeroGrid");
+
 grid.innerHTML="";
 
 const zero=document.createElement("button");
 
 zero.className="num zero";
 zero.textContent="0";
-zero.onclick=()=>apostar("numero",0);
+
+zero.onclick=()=>{
+apostar("numero",0);
+};
 
 grid.appendChild(zero);
 
@@ -826,18 +925,30 @@ for(let linha=0;linha<3;linha++){
 for(let coluna=1;coluna<=12;coluna++){
 
 const numero=coluna*3-linha;
-const botao=document.createElement("button");
 
-botao.className="num "+
-(VERMELHOS.includes(numero)?"red":"black");
+const botao=
+document.createElement("button");
+
+botao.className=
+"num "+
+(
+VERMELHOS.includes(numero)
+?"red"
+:"black"
+);
 
 botao.textContent=numero;
-botao.onclick=()=>apostar("numero",numero);
+
+botao.onclick=()=>{
+apostar("numero",numero);
+};
 
 grid.appendChild(botao);
 
 }
+
 }
+
 }
 
 function classeFicha(valor){
@@ -850,37 +961,128 @@ if(valor===10)return"f10";
 if(valor===50)return"f50";
 
 return"f1";
+
 }
 
 function colocarFichaNoNumero(numero,valor){
 
-const botoes=document.querySelectorAll(".num");
+const botoes=
+document.querySelectorAll(".num");
 
 botoes.forEach(botao=>{
 
-const texto=botao.childNodes[0]?.nodeValue?.trim();
+const texto=
+botao.childNodes[0]?.nodeValue?.trim();
 
 if(Number(texto)===Number(numero)){
 
-const ficha=document.createElement("div");
-ficha.className="fichas-na-aposta";
+const ficha=
+document.createElement("div");
 
-const chip=document.createElement("div");
+ficha.className=
+"fichas-na-aposta";
 
-chip.className="ficha-mesa "+classeFicha(valor);
+const chip=
+document.createElement("div");
 
-chip.textContent=valor===.50?"0,50":valor;
+chip.className=
+"ficha-mesa "+
+classeFicha(valor);
+
+chip.textContent=
+valor===.50
+?"0,50"
+:valor;
 
 ficha.appendChild(chip);
+
 botao.appendChild(ficha);
 
 }
+
 });
+
 }
 
 function limparFichasVisuais(){
 
-document.querySelectorAll(".fichas-na-aposta").forEach(e=>e.remove());
+document
+.querySelectorAll(".fichas-na-aposta")
+.forEach(e=>e.remove());
+
+}
+
+/*
+=====================================================
+NOVA FUNÇÃO:
+A CONTAGEM COMEÇA QUANDO A PESSOA CLICA NA FICHA
+=====================================================
+*/
+
+function iniciarContagemAposta(){
+
+if(girando)return;
+
+if(contagemAtiva)return;
+
+contagemAtiva=true;
+
+let numero=10;
+
+contagemEl.textContent=numero;
+contagemEl.style.display="flex";
+
+mensagemEl.textContent=
+"⏱️ Você tem 10 segundos para fazer sua aposta.";
+
+mensagemEl.className="mensagem";
+
+intervaloContagem=setInterval(()=>{
+
+numero--;
+
+if(numero>0){
+
+contagemEl.textContent=numero;
+
+}else{
+
+clearInterval(intervaloContagem);
+
+intervaloContagem=null;
+
+contagemEl.textContent="GO!";
+
+setTimeout(()=>{
+
+contagemEl.style.display="none";
+
+contagemAtiva=false;
+
+/*
+   DEPOIS DOS 10 SEGUNDOS
+   A ROLETA GIRA SOZINHA
+*/
+
+if(apostas.length>0){
+
+girarRoleta();
+
+}else{
+
+mensagemEl.textContent=
+"Faça uma aposta para participar da rodada.";
+
+mensagemEl.className=
+"mensagem resultado-derrota";
+
+}
+
+},500);
+
+}
+
+},1000);
 
 }
 
@@ -901,15 +1103,21 @@ fichasDisponiveis=1;
 }else{
 
 valorPorFicha=1;
-fichasDisponiveis=Math.floor(fichaSelecionadaValor);
+fichasDisponiveis=
+Math.floor(fichaSelecionadaValor);
 
 }
 
-document.querySelectorAll(".ficha").forEach(x=>x.classList.remove("selecionada"));
+document
+.querySelectorAll(".ficha")
+.forEach(x=>
+x.classList.remove("selecionada")
+);
 
 elemento.classList.add("selecionada");
 
-fichaSelecionadaEl.textContent=moeda(fichaSelecionadaValor);
+fichaSelecionadaEl.textContent=
+moeda(fichaSelecionadaValor);
 
 atualizarContadorFichas();
 
@@ -917,12 +1125,20 @@ mensagemEl.textContent=
 `Você selecionou ${fichasDisponiveis} ficha(s).`;
 
 mensagemEl.className="mensagem";
+
+/*
+   AQUI COMEÇA A CONTAGEM DE 10 SEGUNDOS
+*/
+iniciarContagemAposta();
+
 }
 
 function atualizarContadorFichas(){
 
 fichaContadorEl.textContent=
-fichasDisponiveis===1?"1 ficha":`${fichasDisponiveis} fichas`;
+fichasDisponiveis===1
+?"1 ficha"
+:`${fichasDisponiveis} fichas`;
 
 }
 
@@ -930,14 +1146,28 @@ function apostar(tipo,valor){
 
 if(girando)return;
 
+if(!contagemAtiva){
+
+mensagemEl.textContent=
+"Clique em uma ficha para iniciar a rodada.";
+
+mensagemEl.className=
+"mensagem resultado-derrota";
+
+return;
+
+}
+
 if(fichasDisponiveis<=0){
 
 mensagemEl.textContent=
 "❌ Você já usou todas as fichas selecionadas.";
 
-mensagemEl.className="mensagem resultado-derrota";
+mensagemEl.className=
+"mensagem resultado-derrota";
 
 return;
+
 }
 
 iniciarAudio();
@@ -955,75 +1185,43 @@ atualizarContadorFichas();
 atualizarAposta();
 
 if(tipo==="numero"){
-colocarFichaNoNumero(valor,valorPorFicha);
+
+colocarFichaNoNumero(
+valor,
+valorPorFicha
+);
+
 }
 
 mensagemEl.textContent=
 `Ficha adicionada: ${moeda(valorPorFicha)}`;
 
 mensagemEl.className="mensagem";
+
 }
 
 function totalApostas(){
 
 return apostas.reduce(
-(total,aposta)=>total+Number(aposta.quantia),0
+(total,aposta)=>
+total+Number(aposta.quantia),
+0
 );
 
 }
 
 function atualizarAposta(){
 
-valorApostaEl.textContent=moeda(totalApostas());
+valorApostaEl.textContent=
+moeda(totalApostas());
 
 }
 
-/* =====================================================
-   NOVA CONTAGEM REGRESSIVA DE 10 SEGUNDOS
-===================================================== */
-
-function contagemRegressiva(){
-
-return new Promise(resolve=>{
-
-let numero=10;
-
-contagemEl.textContent=numero;
-contagemEl.style.display="flex";
-
-const intervalo=setInterval(()=>{
-
-numero--;
-
-if(numero>0){
-
-contagemEl.textContent=numero;
-
-}else{
-
-clearInterval(intervalo);
-
-contagemEl.textContent="GO!";
-
-setTimeout(()=>{
-
-contagemEl.style.display="none";
-
-resolve();
-
-},500);
-
-}
-
-},1000);
-
-});
-
-}
-
-/* =====================================================
-   GIRAR ROLETA
-===================================================== */
+/*
+=====================================================
+GIRAR ROLETA
+=====================================================
+*/
 
 async function girarRoleta(){
 
@@ -1034,19 +1232,25 @@ if(apostas.length===0){
 mensagemEl.textContent=
 "Faça pelo menos uma aposta antes de girar.";
 
-mensagemEl.className="mensagem resultado-derrota";
+mensagemEl.className=
+"mensagem resultado-derrota";
 
 return;
+
 }
 
 const total=totalApostas();
 
 if(total<=0){
 
-mensagemEl.textContent="Valor de aposta inválido.";
-mensagemEl.className="mensagem resultado-derrota";
+mensagemEl.textContent=
+"Valor de aposta inválido.";
+
+mensagemEl.className=
+"mensagem resultado-derrota";
 
 return;
+
 }
 
 try{
@@ -1056,53 +1260,90 @@ iniciarAudio();
 girando=true;
 btnGirar.disabled=true;
 
-mensagemEl.textContent="⏳ Prepare-se...";
-
-mensagemEl.className="mensagem";
-
-ultimaAposta=apostas.map(a=>({...a}));
-
 /*
-   CONTAGEM DE 10 SEGUNDOS
-   ANTES DO DÉBITO E DO GIRO
+   GARANTE QUE A CONTAGEM SUMIU
 */
 
-await contagemRegressiva();
+if(intervaloContagem){
+
+clearInterval(intervaloContagem);
+intervaloContagem=null;
+
+}
+
+contagemAtiva=false;
+contagemEl.style.display="none";
+
+mensagemEl.textContent=
+"🎰 A roleta vai girar!";
+
+mensagemEl.className=
+"mensagem";
+
+ultimaAposta=
+apostas.map(a=>({...a}));
 
 /*
-   DESCONTA DO SALDO REAL
+=====================================================
+DESCONTA DO SALDO REAL
+=====================================================
 */
 
-const debito=await debitar(total);
+const debito=
+await debitar(total);
 
 if(debito===false){
 
-throw new Error("❌ Saldo insuficiente.");
+throw new Error(
+"❌ Saldo insuficiente."
+);
 
 }
 
 /*
-   SORTEIO
+=====================================================
+RESULTADO DA BOLINHA
+=====================================================
+
+O resultado é escolhido para a BOLINHA.
+O ponteiro não escolhe o resultado.
+=====================================================
 */
 
-const indice=Math.floor(
+const indiceBola=
+Math.floor(
 Math.random()*SEQUENCIA.length
 );
 
-const numeroFinal=SEQUENCIA[indice];
+const numeroFinal=
+SEQUENCIA[indiceBola];
 
 /*
-   ROTAÇÃO
+=====================================================
+ROLETA GIRA INDEPENDENTE
+=====================================================
 */
 
-const voltas=7;
-const anguloPorNumero=360/SEQUENCIA.length;
+const voltasRoleta=7;
 
-const destino=
-360-(indice*anguloPorNumero);
+const anguloPorNumero=
+360/SEQUENCIA.length;
+
+/*
+A roleta é posicionada de maneira que
+a casa correspondente ao resultado fique
+na região do ponteiro.
+
+O resultado continua sendo o da BOLINHA.
+*/
+
+const destinoRoleta=
+360-
+(indiceBola*anguloPorNumero);
 
 rotacaoAtual+=
-voltas*360+destino;
+voltasRoleta*360+
+destinoRoleta;
 
 iniciarSomRoleta();
 
@@ -1110,32 +1351,95 @@ roleta.style.transform=
 `rotate(${rotacaoAtual}deg)`;
 
 /*
-   BOLA
+=====================================================
+BOLINHA INDEPENDENTE
+=====================================================
+
+A bolinha faz uma trajetória própria,
+gira rapidamente e depois desacelera.
+
+Ela termina na posição correspondente
+ao número sorteado.
+=====================================================
 */
 
+const raioGrande=205;
+const raioFinal=170;
+
+const anguloBolaInicial=0;
+
+/*
+Posição final da bolinha.
+
+A bola termina na direção do número sorteado.
+*/
+
+const anguloFinal=
+-indiceBola*
+anguloPorNumero;
+
+const xFinal=
+Math.sin(
+anguloFinal*Math.PI/180
+)*raioFinal;
+
+const yFinal=
+-Math.cos(
+anguloFinal*Math.PI/180
+)*raioFinal;
+
 bola.animate(
+
 [
 {
 transform:
-"translate(-50%,-50%) translateY(-185px) rotate(0deg)"
+`translate(-50%,-50%)
+translateY(-${raioGrande}px)
+rotate(0deg)`
 },
+
 {
 transform:
-"translate(-50%,-50%) translateY(-185px) rotate(1080deg)"
+`translate(-50%,-50%)
+translateY(-${raioGrande}px)
+rotate(900deg)`
 },
+
 {
 transform:
-"translate(-50%,-50%) translateY(-150px) rotate(1800deg)"
+`translate(-50%,-50%)
+translateY(-${raioGrande-25}px)
+rotate(1800deg)`
+},
+
+{
+transform:
+`translate(-50%,-50%)
+translate(${xFinal}px,${yFinal}px)
+rotate(2520deg)`
 }
+
 ],
+
 {
-duration:5000,
-easing:"cubic-bezier(.12,.75,.16,1)"
+duration:5200,
+easing:"cubic-bezier(.12,.75,.16,1)",
+fill:"forwards"
 }
+
 );
 
-mensagemEl.textContent="🎰 A roleta está girando...";
-mensagemEl.className="mensagem";
+mensagemEl.textContent=
+"🎰 A bolinha está girando...";
+
+mensagemEl.className=
+"mensagem";
+
+/*
+=====================================================
+FINAL DA RODADA
+=====================================================
+*/
 
 setTimeout(async()=>{
 
@@ -1164,19 +1468,27 @@ await obterSaldo();
 
 if(auto&&apostas.length>0){
 
-setTimeout(girarRoleta,1200);
+setTimeout(
+girarRoleta,
+1200
+);
 
 }
 
-},5100);
+},5300);
 
 }catch(erro){
 
 pararSomRoleta();
 
-console.error("Erro ao girar:",erro);
+console.error(
+"Erro ao girar:",
+erro
+);
 
 contagemEl.style.display="none";
+
+contagemAtiva=false;
 
 girando=false;
 btnGirar.disabled=false;
@@ -1198,11 +1510,14 @@ async function finalizarRodada(numero){
 
 resultados.unshift(numero);
 
-resultados=resultados.slice(0,8);
+resultados=
+resultados.slice(0,8);
 
 atualizarResultados();
 
-document.getElementById("ultimoResultado").textContent=numero;
+document
+.getElementById("ultimoResultado")
+.textContent=numero;
 
 let premio=0;
 
@@ -1211,7 +1526,10 @@ apostas.forEach(aposta=>{
 if(aposta.tipo==="numero"){
 
 if(aposta.valor===numero){
-premio+=aposta.quantia*36;
+
+premio+=
+aposta.quantia*36;
+
 }
 
 }else if(aposta.tipo==="cor"){
@@ -1219,17 +1537,26 @@ premio+=aposta.quantia*36;
 const cor=corNumero(numero);
 
 if(cor===aposta.valor){
-premio+=aposta.quantia*2;
+
+premio+=
+aposta.quantia*2;
+
 }
 
 }else if(aposta.tipo==="par"){
 
 if(numero!==0){
 
-const par=numero%2===0?"par":"impar";
+const par=
+numero%2===0
+?"par"
+:"impar";
 
 if(par===aposta.valor){
-premio+=aposta.quantia*2;
+
+premio+=
+aposta.quantia*2;
+
 }
 
 }
@@ -1237,30 +1564,52 @@ premio+=aposta.quantia*2;
 }else if(aposta.tipo==="baixo"){
 
 if(numero>=1&&numero<=18){
-premio+=aposta.quantia*2;
+
+premio+=
+aposta.quantia*2;
+
 }
 
 }else if(aposta.tipo==="alto"){
 
 if(numero>=19&&numero<=36){
-premio+=aposta.quantia*2;
+
+premio+=
+aposta.quantia*2;
+
 }
 
 }else if(aposta.tipo==="dozen"){
 
-if(aposta.valor===1&&numero>=1&&numero<=12){
-premio+=aposta.quantia*3;
+if(
+aposta.valor===1&&
+numero>=1&&
+numero<=12
+){
+
+premio+=
+aposta.quantia*3;
+
 }
 
 }else if(aposta.tipo==="doze"){
 
 const grupo=
-numero>=1&&numero<=12?1:
-numero>=13&&numero<=24?2:
-numero>=25&&numero<=36?3:0;
+numero>=1&&numero<=12
+?1
+:
+numero>=13&&numero<=24
+?2
+:
+numero>=25&&numero<=36
+?3
+:0;
 
 if(grupo===aposta.valor){
-premio+=aposta.quantia*3;
+
+premio+=
+aposta.quantia*3;
+
 }
 
 }
@@ -1292,8 +1641,11 @@ mensagemEl.className=
 atualizarEstatisticas();
 
 apostas=[];
+
 atualizarAposta();
+
 restaurarFichas();
+
 limparFichasVisuais();
 
 await obterSaldo();
@@ -1310,8 +1662,11 @@ fichasDisponiveis=1;
 }else{
 
 valorPorFicha=1;
+
 fichasDisponiveis=
-Math.floor(fichaSelecionadaValor);
+Math.floor(
+fichaSelecionadaValor
+);
 
 }
 
@@ -1331,7 +1686,10 @@ return VERMELHOS.includes(numero)
 
 function atualizarResultados(){
 
-const box=document.getElementById("ultimosResultados");
+const box=
+document.getElementById(
+"ultimosResultados"
+);
 
 box.innerHTML="";
 
@@ -1346,10 +1704,12 @@ return;
 
 resultados.forEach(numero=>{
 
-const span=document.createElement("span");
+const span=
+document.createElement("span");
 
 span.className=
-"resultado "+corNumero(numero);
+"resultado "+
+corNumero(numero);
 
 span.textContent=numero;
 
@@ -1369,7 +1729,8 @@ let green=0;
 
 resultados.forEach(numero=>{
 
-const cor=corNumero(numero);
+const cor=
+corNumero(numero);
 
 if(cor==="vermelho")red++;
 if(cor==="preto")black++;
@@ -1377,15 +1738,22 @@ if(cor==="verde")green++;
 
 });
 
-const total=resultados.length;
+const total=
+resultados.length;
 
-document.getElementById("estatRed").textContent=
+document.getElementById(
+"estatRed"
+).textContent=
 Math.round(red/total*100)+"%";
 
-document.getElementById("estatBlack").textContent=
+document.getElementById(
+"estatBlack"
+).textContent=
 Math.round(black/total*100)+"%";
 
-document.getElementById("estatGreen").textContent=
+document.getElementById(
+"estatGreen"
+).textContent=
 Math.round(green/total*100)+"%";
 
 }
@@ -1395,12 +1763,18 @@ function limparApostas(){
 if(girando)return;
 
 apostas=[];
+
 atualizarAposta();
+
 restaurarFichas();
+
 limparFichasVisuais();
 
-mensagemEl.textContent="Apostas limpas.";
-mensagemEl.className="mensagem";
+mensagemEl.textContent=
+"Apostas limpas.";
+
+mensagemEl.className=
+"mensagem";
 
 }
 
@@ -1413,12 +1787,28 @@ if(ultimaAposta.length===0){
 mensagemEl.textContent=
 "Ainda não existe uma aposta anterior.";
 
-mensagemEl.className="mensagem";
+mensagemEl.className=
+"mensagem";
 
 return;
+
 }
 
-apostas=ultimaAposta.map(a=>({...a}));
+/*
+Se repetir uma aposta,
+também inicia a janela de 10 segundos.
+*/
+
+if(!contagemAtiva){
+
+iniciarContagemAposta();
+
+}
+
+apostas=
+ultimaAposta.map(
+a=>({...a})
+);
 
 limparFichasVisuais();
 
@@ -1435,28 +1825,37 @@ aposta.quantia
 
 });
 
-const totalNecessario=apostas.length;
+const totalNecessario=
+apostas.length;
 
 if(fichaSelecionadaValor===.50){
 
 fichasDisponiveis=
-Math.max(0,1-totalNecessario);
+Math.max(
+0,
+1-totalNecessario
+);
 
 }else{
 
 fichasDisponiveis=
 Math.max(
 0,
-Math.floor(fichaSelecionadaValor)-totalNecessario
+Math.floor(fichaSelecionadaValor)
+-totalNecessario
 );
 
 }
 
 atualizarAposta();
+
 atualizarContadorFichas();
 
-mensagemEl.textContent="Aposta anterior repetida.";
-mensagemEl.className="mensagem";
+mensagemEl.textContent=
+"Aposta anterior repetida.";
+
+mensagemEl.className=
+"mensagem";
 
 }
 
@@ -1464,28 +1863,41 @@ function toggleAuto(){
 
 auto=!auto;
 
-document.getElementById("switchAuto")
-.classList.toggle("ativo",auto);
+document
+.getElementById("switchAuto")
+.classList.toggle(
+"ativo",
+auto
+);
 
 }
 
 function irDeposito(){
 
-window.location.href="../deposito.html";
+window.location.href=
+"../deposito.html";
 
 }
 
-document.addEventListener("DOMContentLoaded",async()=>{
+document.addEventListener(
+"DOMContentLoaded",
+async()=>{
 
 criarNumerosRoleta();
+
 criarTabela();
+
 restaurarFichas();
 
 let tentativas=0;
 
-while(!window.SistemaSaldo&&tentativas<50){
+while(
+!window.SistemaSaldo&&
+tentativas<50
+){
 
-await new Promise(resolve=>
+await new Promise(
+resolve=>
 setTimeout(resolve,100)
 );
 
@@ -1495,9 +1907,12 @@ tentativas++;
 
 if(!window.SistemaSaldo){
 
-console.error("SistemaSaldo não foi carregado.");
+console.error(
+"SistemaSaldo não foi carregado."
+);
 
-saldoEl.textContent="R$ 0,00";
+saldoEl.textContent=
+"R$ 0,00";
 
 return;
 
@@ -1505,15 +1920,21 @@ return;
 
 await obterSaldo();
 
-setInterval(async()=>{
+setInterval(
+async()=>{
 
 if(!girando){
+
 await obterSaldo();
+
 }
 
-},5000);
+},
+5000
+);
 
-});
+}
+);
 
 </script>
 
