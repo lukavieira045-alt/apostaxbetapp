@@ -694,6 +694,10 @@ h1{
 <script>
 "use strict";
 
+/* ==================================================
+   SUPABASE
+================================================== */
+
 const SUPABASE_URL =
 "https://jxbzjiwmajjzxgihfjgt.supabase.co";
 
@@ -705,6 +709,10 @@ window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
+
+/* ==================================================
+   ELEMENTOS
+================================================== */
 
 const carregando =
 document.getElementById("carregando");
@@ -757,14 +765,30 @@ document.getElementById("resultadoPremio");
 const fecharResultado =
 document.getElementById("fecharResultado");
 
+/* ==================================================
+   ESTADO
+================================================== */
+
 let usuarioAtual = null;
+
 let saldoReal = 0;
+
 let valorAposta = 0;
+
 let numeroEscolhido = null;
+
 let jogando = false;
+
 let fichaSelecionada = false;
+
 let timer = null;
+
 let segundos = 0;
+
+/*
+   Três casas PERDEU espalhadas.
+   Não existe mais tratamento especial de bônus.
+*/
 
 const premios = [
     0.5,
@@ -778,6 +802,10 @@ const premios = [
     0.5
 ];
 
+/* ==================================================
+   DINHEIRO
+================================================== */
+
 function dinheiro(valor){
 
     return "R$ " +
@@ -787,12 +815,20 @@ function dinheiro(valor){
 
 }
 
+/* ==================================================
+   SALDO
+================================================== */
+
 function atualizarSaldo(){
 
     saldoEl.innerText =
     dinheiro(saldoReal);
 
 }
+
+/* ==================================================
+   SESSÃO
+================================================== */
 
 async function obterUsuario(){
 
@@ -803,7 +839,9 @@ async function obterUsuario(){
 
         if(resposta.error){
 
-            console.error(resposta.error);
+            console.error(
+                resposta.error
+            );
 
             return null;
         }
@@ -818,6 +856,10 @@ async function obterUsuario(){
     }
 
 }
+
+/* ==================================================
+   CARREGAR SALDO REAL
+================================================== */
 
 async function carregarSaldo(){
 
@@ -840,7 +882,9 @@ async function carregarSaldo(){
 
         if(resposta.error){
 
-            console.error(resposta.error);
+            console.error(
+                resposta.error
+            );
 
             return false;
         }
@@ -862,6 +906,10 @@ async function carregarSaldo(){
     }
 
 }
+
+/* ==================================================
+   ATUALIZAR SALDO NO SUPABASE
+================================================== */
 
 async function salvarSaldo(novoSaldo){
 
@@ -909,6 +957,10 @@ async function salvarSaldo(novoSaldo){
 
 }
 
+/* ==================================================
+   DEBITAR APOSTA REAL
+================================================== */
+
 async function debitarAposta(){
 
     if(valorAposta <= 0){
@@ -921,7 +973,9 @@ async function debitarAposta(){
         mensagem.innerText =
         "❌ SALDO INSUFICIENTE";
 
-        mensagem.classList.add("erro");
+        mensagem.classList.add(
+            "erro"
+        );
 
         return false;
     }
@@ -936,7 +990,9 @@ async function debitarAposta(){
     );
 
     const salvo =
-    await salvarSaldo(novoSaldo);
+    await salvarSaldo(
+        novoSaldo
+    );
 
     if(!salvo){
 
@@ -948,13 +1004,19 @@ async function debitarAposta(){
         mensagem.innerText =
         "❌ NÃO FOI POSSÍVEL DEBITAR A APOSTA";
 
-        mensagem.classList.add("erro");
+        mensagem.classList.add(
+            "erro"
+        );
 
         return false;
     }
 
     return true;
 }
+
+/* ==================================================
+   CREDITAR PRÊMIO REAL
+================================================== */
 
 async function creditarPremio(valor){
 
@@ -969,9 +1031,15 @@ async function creditarPremio(valor){
         .toFixed(2)
     );
 
-    return await salvarSaldo(novoSaldo);
+    return await salvarSaldo(
+        novoSaldo
+    );
 
 }
+
+/* ==================================================
+   PINOS
+================================================== */
 
 function criarPinos(){
 
@@ -1014,7 +1082,9 @@ function criarPinos(){
         ){
 
             const p =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
             p.className =
             "pino";
@@ -1035,6 +1105,10 @@ function criarPinos(){
     }
 }
 
+/* ==================================================
+   CASAS
+================================================== */
+
 function criarCasas(){
 
     casas.innerHTML = "";
@@ -1043,7 +1117,9 @@ function criarCasas(){
         function(valor,index){
 
             const casa =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
             casa.className =
             "casa";
@@ -1053,7 +1129,9 @@ function criarCasas(){
 
             if(valor === "PERDEU"){
 
-                casa.classList.add("perdeu");
+                casa.classList.add(
+                    "perdeu"
+                );
 
                 casa.innerHTML =
                 "<div class='casaNumero'>✖</div>" +
@@ -1066,9 +1144,8 @@ function criarCasas(){
                 (index + 1) +
                 "</div>" +
                 "<div class='casaMult'>" +
-                (valor === 10
-                    ? "⚡ SUPER"
-                    : valor + "x") +
+                valor +
+                "x" +
                 "</div>";
             }
 
@@ -1081,10 +1158,16 @@ function criarCasas(){
                 }
             );
 
-            casas.appendChild(casa);
+            casas.appendChild(
+                casa
+            );
         }
     );
 }
+
+/* ==================================================
+   FICHAS
+================================================== */
 
 fichas.forEach(
     function(item){
@@ -1096,24 +1179,32 @@ fichas.forEach(
                 if(jogando)return;
 
                 const valor =
-                Number(item.dataset.valor);
+                Number(
+                    item.dataset.valor
+                );
 
                 if(valor > saldoReal){
 
                     mensagem.innerText =
                     "❌ SALDO INSUFICIENTE";
 
-                    mensagem.classList.add("erro");
+                    mensagem.classList.add(
+                        "erro"
+                    );
 
                     return;
                 }
 
                 fichas.forEach(
                     f =>
-                    f.classList.remove("selecionada")
+                    f.classList.remove(
+                        "selecionada"
+                    )
                 );
 
-                item.classList.add("selecionada");
+                item.classList.add(
+                    "selecionada"
+                );
 
                 valorAposta =
                 valor;
@@ -1128,7 +1219,9 @@ fichas.forEach(
                 .querySelectorAll(".casa")
                 .forEach(
                     c =>
-                    c.classList.remove("escolhida")
+                    c.classList.remove(
+                        "escolhida"
+                    )
                 );
 
                 valorSelecionadoEl.innerText =
@@ -1138,7 +1231,9 @@ fichas.forEach(
                 apostaTexto.innerText =
                 dinheiro(valorAposta);
 
-                mensagem.classList.remove("erro");
+                mensagem.classList.remove(
+                    "erro"
+                );
 
                 mensagem.innerText =
                 "🎯 Agora escolha a casa";
@@ -1154,6 +1249,10 @@ fichas.forEach(
         );
     }
 );
+
+/* ==================================================
+   CONTAGEM DE 10 SEGUNDOS
+================================================== */
 
 function iniciarContagem(){
 
@@ -1198,6 +1297,10 @@ function iniciarContagem(){
     );
 }
 
+/* ==================================================
+   ESCOLHER CASA
+================================================== */
+
 function escolherCasa(index){
 
     if(jogando)return;
@@ -1220,7 +1323,9 @@ function escolherCasa(index){
     .querySelectorAll(".casa")
     .forEach(
         c =>
-        c.classList.remove("escolhida")
+        c.classList.remove(
+            "escolhida"
+        )
     );
 
     const casa =
@@ -1230,16 +1335,22 @@ function escolherCasa(index){
 
     if(casa){
 
-        casa.classList.add("escolhida");
+        casa.classList.add(
+            "escolhida"
+        );
 
         document
-        .querySelectorAll(".fichaNaCasa")
+        .querySelectorAll(
+            ".fichaNaCasa"
+        )
         .forEach(
             f => f.remove()
         );
 
         const fichaVisual =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
         fichaVisual.className =
         "fichaNaCasa";
@@ -1248,12 +1359,16 @@ function escolherCasa(index){
         dinheiro(valorAposta)
         .replace("R$ ","");
 
-        casa.appendChild(fichaVisual);
+        casa.appendChild(
+            fichaVisual
+        );
     }
 
     fichas.forEach(
         f =>
-        f.classList.remove("selecionada")
+        f.classList.remove(
+            "selecionada"
+        )
     );
 
     mensagem.innerHTML =
@@ -1268,6 +1383,10 @@ function escolherCasa(index){
     botao.innerText =
     "🎯 JOGAR";
 }
+
+/* ==================================================
+   ÁUDIO
+================================================== */
 
 let audioContext = null;
 
@@ -1292,6 +1411,7 @@ function iniciarAudio(){
 
         audioContext.resume();
     }
+
 }
 
 function tocarSom(
@@ -1330,13 +1450,17 @@ function tocarSom(
         agora + duracao
     );
 
-    osc.connect(ganho);
+    osc.connect(
+        ganho
+    );
 
     ganho.connect(
         audioContext.destination
     );
 
-    osc.start(agora);
+    osc.start(
+        agora
+    );
 
     osc.stop(
         agora + duracao
@@ -1353,7 +1477,10 @@ function somPremio(){
 
             setTimeout(
                 ()=>{
-                    tocarSom(freq,.3);
+                    tocarSom(
+                        freq,
+                        .3
+                    );
                 },
                 i * 100
             );
@@ -1371,7 +1498,10 @@ function somPerdeu(){
 
             setTimeout(
                 ()=>{
-                    tocarSom(freq,.3);
+                    tocarSom(
+                        freq,
+                        .3
+                    );
                 },
                 i * 130
             );
@@ -1379,28 +1509,16 @@ function somPerdeu(){
     );
 }
 
-function somSuperBonus(){
-
-    iniciarAudio();
-
-    [523,659,784,1047,1319]
-    .forEach(
-        (freq,i)=>{
-
-            setTimeout(
-                ()=>{
-                    tocarSom(freq,.45);
-                },
-                i * 110
-            );
-        }
-    );
-}
+/* ==================================================
+   TRILHA
+================================================== */
 
 function criarTrilha(x,y){
 
     const ponto =
-    document.createElement("div");
+    document.createElement(
+        "div"
+    );
 
     ponto.className =
     "trilha";
@@ -1411,7 +1529,9 @@ function criarTrilha(x,y){
     ponto.style.top =
     y + "px";
 
-    jogo.appendChild(ponto);
+    jogo.appendChild(
+        ponto
+    );
 
     setTimeout(
         ()=>{
@@ -1420,6 +1540,10 @@ function criarTrilha(x,y){
         350
     );
 }
+
+/* ==================================================
+   BOTÃO JOGAR
+================================================== */
 
 botao.addEventListener(
     "click",
@@ -1439,6 +1563,10 @@ botao.addEventListener(
 
     }
 );
+
+/* ==================================================
+   INICIAR JOGO
+================================================== */
 
 async function iniciarJogo(){
 
@@ -1505,7 +1633,9 @@ async function iniciarJogo(){
     const apostaAtual =
     valorAposta;
 
-    bola.classList.add("caindo");
+    bola.classList.add(
+        "caindo"
+    );
 
     let x =
     jogo.clientWidth / 2;
@@ -1608,12 +1738,19 @@ async function iniciarJogo(){
             Math.random() > .55
         ){
 
-            criarTrilha(x,y);
+            criarTrilha(
+                x,
+                y
+            );
         }
 
-        if(progresso < 1){
+        if(
+            progresso < 1
+        ){
 
-            requestAnimationFrame(animar);
+            requestAnimationFrame(
+                animar
+            );
 
         }else{
 
@@ -1624,13 +1761,13 @@ async function iniciarJogo(){
         }
     }
 
-    requestAnimationFrame(animar);
+    requestAnimationFrame(
+        animar
+    );
 }
 
 /* ==================================================
    FINALIZAR BOLA
-   REGRA CORRIGIDA:
-   SÓ GANHA SE A BOLINHA CAIR NA CASA APOSTADA.
 ================================================== */
 
 async function finalizarBola(
@@ -1639,13 +1776,19 @@ async function finalizarBola(
 ){
 
     const lista =
-    document.querySelectorAll(".casa");
+    document.querySelectorAll(
+        ".casa"
+    );
 
     const casaResultado =
     lista[indiceResultado];
 
-    const acertou =
-    indiceResultado === numeroEscolhido;
+    if(casaResultado){
+
+        casaResultado.classList.add(
+            "vencedora"
+        );
+    }
 
     const valor =
     premios[indiceResultado];
@@ -1653,18 +1796,30 @@ async function finalizarBola(
     let premioReal =
     0;
 
-    /* -----------------------------------------------
-       ACERTOU A CASA ESCOLHIDA
-    ------------------------------------------------ */
+    /* ==============================================
+       PERDEU
+    ============================================== */
 
-    if(acertou && valor !== "PERDEU"){
+    if(valor === "PERDEU"){
 
-        if(casaResultado){
+        somPerdeu();
 
-            casaResultado.classList.add(
-                "vencedora"
-            );
-        }
+        premio.innerHTML =
+        "💥 VOCÊ PERDEU " +
+        dinheiro(apostaAtual);
+
+        mensagem.innerHTML =
+        "💥 VOCÊ PERDEU " +
+        dinheiro(apostaAtual);
+
+        mensagem.style.color =
+        "#ff5555";
+
+    }else{
+
+        /* ==========================================
+           PRÊMIO NORMAL
+        ========================================== */
 
         premioReal =
         Number(
@@ -1674,102 +1829,67 @@ async function finalizarBola(
             ).toFixed(2)
         );
 
-        if(valor === 10){
+        /*
+           Não existe mais SUPER BÔNUS.
+           Todos os multiplicadores funcionam
+           normalmente.
+        */
 
-            somSuperBonus();
-
-            premio.innerHTML =
-            "⚡ SUPER BÔNUS — " +
-            dinheiro(premioReal);
-
-        }else{
-
-            somPremio();
-
-            premio.innerHTML =
-            "🎯 " +
-            valor +
-            "x — " +
-            dinheiro(premioReal);
-        }
-
-        mensagem.innerHTML =
-        "🎉 VOCÊ ACERTOU A CASA " +
-        (indiceResultado + 1) +
-        "!";
-
-        mensagem.style.color =
-        "#00ff88";
-
-        if(premioReal > 0){
-
-            const creditado =
-            await creditarPremio(
-                premioReal
-            );
-
-            if(!creditado){
-
-                mensagem.innerText =
-                "⚠️ PRÊMIO GERADO, MAS HOUVE ERRO AO ATUALIZAR O SALDO";
-
-                mensagem.classList.add(
-                    "erro"
-                );
-            }
-        }
-
-    }
-
-    /* -----------------------------------------------
-       ERROU A CASA:
-       QUALQUER OUTRA CASA = PERDE A APOSTA.
-       MESMO QUE TENHA MULTIPLICADOR.
-    ------------------------------------------------ */
-
-    else{
-
-        if(casaResultado){
-
-            casaResultado.classList.add(
-                "vencedora",
-                "perdeu"
-            );
-        }
-
-        somPerdeu();
+        somPremio();
 
         premio.innerHTML =
-        "💥 PERDEU — " +
-        dinheiro(apostaAtual);
+        "🎯 " +
+        valor +
+        "x — " +
+        dinheiro(premioReal);
 
-        if(valor === "PERDEU"){
+        if(
+            indiceResultado ===
+            numeroEscolhido
+        ){
 
             mensagem.innerHTML =
-            "💥 A BOLINHA CAIU EM PERDEU!";
+            "🎉 VOCÊ ACERTOU!";
+
+            mensagem.style.color =
+            "#00ff88";
 
         }else{
 
             mensagem.innerHTML =
-            "💥 VOCÊ APOSTOU NA CASA " +
-            (numeroEscolhido + 1) +
-            " E CAIU NA CASA " +
-            (indiceResultado + 1) +
-            ". VOCÊ PERDEU!";
+            "🎯 A BOLINHA CAIU NA CASA " +
+            (indiceResultado + 1);
 
+            mensagem.style.color =
+            "#ffe36a";
         }
-
-        mensagem.style.color =
-        "#ff5555";
-
-        /*
-        IMPORTANTE:
-        Nenhum prêmio é creditado aqui.
-        A aposta já foi descontada
-        no início da rodada.
-        */
-        premioReal = 0;
     }
+
+    /* ==============================================
+       CREDITAR PRÊMIO REAL
+    ============================================== */
+
+    if(premioReal > 0){
+
+        const creditado =
+        await creditarPremio(
+            premioReal
+        );
+
+        if(!creditado){
+
+            mensagem.innerText =
+            "⚠️ PRÊMIO GERADO, MAS HOUVE ERRO AO ATUALIZAR O SALDO";
+
+            mensagem.classList.add(
+                "erro"
+            );
+        }
+    }
+
+    /* ==============================================
+       RESULTADO NA TELA
+    ============================================== */
 
     setTimeout(
         function(){
@@ -1777,20 +1897,21 @@ async function finalizarBola(
             resultadoNumero.innerText =
             indiceResultado + 1;
 
-            if(acertou && valor !== "PERDEU"){
+            if(valor === "PERDEU"){
 
                 resultadoPremio.innerText =
-                "🎉 GANHOU " +
-                dinheiro(premioReal) +
-                " (" +
-                valor +
-                "x)";
+                "💥 VOCÊ PERDEU " +
+                dinheiro(apostaAtual);
 
             }else{
 
                 resultadoPremio.innerText =
-                "💥 PERDEU — " +
-                dinheiro(apostaAtual);
+                dinheiro(
+                    premioReal
+                ) +
+                " (" +
+                valor +
+                "x)";
             }
 
             resultadoTela.classList.add(
@@ -1821,6 +1942,10 @@ async function finalizarBola(
         400
     );
 }
+
+/* ==================================================
+   FECHAR RESULTADO
+================================================== */
 
 fecharResultado.addEventListener(
     "click",
@@ -1890,12 +2015,17 @@ fecharResultado.addEventListener(
     }
 );
 
+/* ==================================================
+   AUTENTICAÇÃO
+================================================== */
+
 supabaseClient.auth.onAuthStateChange(
     function(event,session){
 
         if(
             !session &&
-            event !== "INITIAL_SESSION"
+            event !==
+            "INITIAL_SESSION"
         ){
 
             window.location.href =
@@ -1903,6 +2033,10 @@ supabaseClient.auth.onAuthStateChange(
         }
     }
 );
+
+/* ==================================================
+   INICIAR
+================================================== */
 
 async function iniciar(){
 
@@ -1987,6 +2121,10 @@ async function iniciar(){
         );
     }
 }
+
+/* ==================================================
+   RESPONSIVIDADE
+================================================== */
 
 window.addEventListener(
     "resize",
