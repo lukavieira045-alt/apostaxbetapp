@@ -6,7 +6,7 @@
 
 <title>Roleta da Sorte - ApostaXBet</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../saldo.js"></script>
 
 <style>
 *{
@@ -212,6 +212,11 @@ body::before{
         0 0 0 5px #d29a38,
         0 0 35px rgba(0,0,0,.9),
         inset 0 0 30px #000;
+
+    /*
+       IMPORTANTE:
+       a animação fica somente na roleta.
+    */
     transition:transform 5s cubic-bezier(.12,.75,.16,1);
 }
 
@@ -260,7 +265,7 @@ body::before{
             #d52c23 340.55deg 350.28deg,
             #050505 350.28deg 360deg
         );
-        box-shadow:inset 0 0 25px #000;
+    box-shadow:inset 0 0 25px #000;
 }
 
 .numero-roleta{
@@ -718,10 +723,15 @@ body::before{
 
     <div style="display:flex;align-items:center;gap:10px;">
         <button class="voltar" onclick="history.back()">‹</button>
-        <div class="logo">Aposta<span>XBet</span></div>
+
+        <div class="logo">
+            Aposta<span>XBet</span>
+        </div>
     </div>
 
-    <div class="titulo">ROLETA DA SORTE</div>
+    <div class="titulo">
+        ROLETA DA SORTE
+    </div>
 
     <div class="acoes-topo">
 
@@ -733,7 +743,9 @@ body::before{
             <div id="saldo">R$ 0,00</div>
         </div>
 
-        <button class="btn-deposito" onclick="irDeposito()">+</button>
+        <button class="btn-deposito" onclick="irDeposito()">
+            +
+        </button>
 
     </div>
 
@@ -741,218 +753,274 @@ body::before{
 
 <main class="container">
 
-    <section class="painel-superior">
+<section class="painel-superior">
 
-        <div class="card">
+<div class="card">
 
-            <h3>ÚLTIMOS RESULTADOS</h3>
+    <h3>ÚLTIMOS RESULTADOS</h3>
 
-            <div class="resultados" id="ultimosResultados">
-                <span style="opacity:.7;">Nenhum resultado</span>
-            </div>
+    <div class="resultados" id="ultimosResultados">
+        <span style="opacity:.7;">Nenhum resultado</span>
+    </div>
 
-            <hr style="margin:20px 0;border-color:#333;">
+    <hr style="margin:20px 0;border-color:#333;">
 
-            <h3>ESTATÍSTICAS</h3>
+    <h3>ESTATÍSTICAS</h3>
 
-            <div class="estatistica">
-                <span><i class="bolinha vermelho"></i>VERMELHO</span>
-                <span id="estatRed">0%</span>
-            </div>
+    <div class="estatistica">
+        <span>
+            <i class="bolinha vermelho"></i>
+            VERMELHO
+        </span>
+        <span id="estatRed">0%</span>
+    </div>
 
-            <div class="estatistica">
-                <span><i class="bolinha preto"></i>PRETO</span>
-                <span id="estatBlack">0%</span>
-            </div>
+    <div class="estatistica">
+        <span>
+            <i class="bolinha preto"></i>
+            PRETO
+        </span>
+        <span id="estatBlack">0%</span>
+    </div>
 
-            <div class="estatistica">
-                <span><i class="bolinha verde"></i>VERDE</span>
-                <span id="estatGreen">0%</span>
-            </div>
+    <div class="estatistica">
+        <span>
+            <i class="bolinha verde"></i>
+            VERDE
+        </span>
+        <span id="estatGreen">0%</span>
+    </div>
 
+</div>
+
+
+<div class="roleta-area">
+
+    <div class="roleta" id="roleta">
+
+        <div class="numero-roleta" id="numerosRoleta"></div>
+
+        <div class="bola" id="bola"></div>
+
+        <div class="roleta-centro"></div>
+
+    </div>
+
+</div>
+
+
+<div class="card aposta-atual">
+
+    <h3>APOSTA ATUAL</h3>
+
+    <div class="valor-aposta" id="valorAposta">
+        R$ 0,00
+    </div>
+
+    <hr style="border-color:#333;">
+
+    <h3 style="margin-top:20px;">
+        ÚLTIMO RESULTADO
+    </h3>
+
+    <div class="ultimo" id="ultimoResultado">
+        -
+    </div>
+
+    <button
+        class="btn-girar"
+        id="btnGirar"
+        onclick="girarRoleta()">
+
+        GIRAR ROLETA ⟳
+
+    </button>
+
+    <div class="auto">
+
+        <span>GIRAR AUTOMÁTICO</span>
+
+        <div
+            class="switch"
+            id="switchAuto"
+            onclick="toggleAuto()">
         </div>
 
-        <div class="roleta-area">
+    </div>
 
-            <div class="roleta" id="roleta">
+</div>
 
-                <div class="numero-roleta" id="numerosRoleta"></div>
+</section>
 
-                <div class="bola" id="bola"></div>
 
-                <div class="roleta-centro"></div>
+<section class="mesa">
 
-            </div>
+<div class="cores">
 
-        </div>
+    <button
+        class="btn-cor vermelho-btn"
+        onclick="apostar('cor','vermelho')">
 
-        <div class="card aposta-atual">
+        🎰 0,50<br>
+        VERMELHO
 
-            <h3>APOSTA ATUAL</h3>
+    </button>
 
-            <div class="valor-aposta" id="valorAposta">
-                R$ 0,00
-            </div>
+    <button
+        class="btn-cor verde-btn"
+        onclick="apostar('numero',0)">
 
-            <hr style="border-color:#333;">
+        🎰 0,50<br>
+        VERDE (0)
 
-            <h3 style="margin-top:20px;">ÚLTIMO RESULTADO</h3>
+    </button>
 
-            <div class="ultimo" id="ultimoResultado">
-                -
-            </div>
+    <button
+        class="btn-cor preto-btn"
+        onclick="apostar('cor','preto')">
 
-            <button class="btn-girar" id="btnGirar" onclick="girarRoleta">
-                GIRAR ROLETA ⟳
-            </button>
+        🎰 0,50<br>
+        PRETO
 
-            <div class="auto">
-                <span>GIRAR AUTOMÁTICO</span>
-                <div class="switch" id="switchAuto" onclick="toggleAuto()"></div>
-            </div>
+    </button>
 
-        </div>
+</div>
 
-    </section>
 
-    <section class="mesa">
+<div class="ficha-atual">
 
-        <div class="cores">
+    FICHA SELECIONADA:
 
-            <button class="btn-cor vermelho-btn"
-                    onclick="apostar('cor','vermelho')">
-                🎰 0,50<br>VERMELHO
-            </button>
+    <strong id="fichaSelecionada">
+        R$ 0,50
+    </strong>
 
-            <button class="btn-cor verde-btn"
-                    onclick="apostar('numero',0)">
-                🎰 0,50<br>VERDE (0)
-            </button>
+</div>
 
-            <button class="btn-cor preto-btn"
-                    onclick="apostar('cor','preto')">
-                🎰 0,50<br>PRETO
-            </button>
 
-        </div>
+<div class="numero-grid" id="numeroGrid"></div>
 
-        <div class="ficha-atual">
-            FICHA SELECIONADA:
-            <strong id="fichaSelecionada">R$ 0,50</strong>
-        </div>
 
-        <div class="numero-grid" id="numeroGrid"></div>
+<div class="extras">
 
-        <div class="extras">
+    <button
+        class="aposta-extra"
+        onclick="apostar('doze',1)">
+        1 - 12
+    </button>
 
-            <button class="aposta-extra" onclick="apostar('doze',1)">
-                1 - 12
-            </button>
+    <button
+        class="aposta-extra"
+        onclick="apostar('doze',2)">
+        13 - 24
+    </button>
 
-            <button class="aposta-extra" onclick="apostar('doze',2)">
-                13 - 24
-            </button>
+    <button
+        class="aposta-extra"
+        onclick="apostar('doze',3)">
+        25 - 36
+    </button>
 
-            <button class="aposta-extra" onclick="apostar('doze',3)">
-                25 - 36
-            </button>
+    <button
+        class="aposta-extra"
+        onclick="apostar('dozen',1)">
+        1º 12
+    </button>
 
-            <button class="aposta-extra" onclick="apostar('dozen',1)">
-                1º 12
-            </button>
+    <button
+        class="aposta-extra"
+        onclick="apostar('par','par')">
+        PAR
+    </button>
 
-            <button class="aposta-extra" onclick="apostar('par','par')">
-                PAR
-            </button>
+    <button
+        class="aposta-extra"
+        onclick="apostar('par','impar')">
+        ÍMPAR
+    </button>
 
-            <button class="aposta-extra" onclick="apostar('par','impar')">
-                ÍMPAR
-            </button>
+    <button
+        class="aposta-extra"
+        onclick="apostar('baixo',true)">
+        1 - 18
+    </button>
 
-            <button class="aposta-extra" onclick="apostar('baixo',true)">
-                1 - 18
-            </button>
+    <button
+        class="aposta-extra"
+        onclick="apostar('alto',true)">
+        19 - 36
+    </button>
 
-            <button class="aposta-extra" onclick="apostar('alto',true)">
-                19 - 36
-            </button>
+</div>
 
-        </div>
 
-        <div class="fichas">
+<div class="fichas">
 
-            <div class="ficha f05 selecionada"
-                 onclick="selecionarFicha(.50,this)">
-                0,50
-            </div>
+    <div
+        class="ficha f05 selecionada"
+        onclick="selecionarFicha(.50,this)">
+        0,50
+    </div>
 
-            <div class="ficha f1"
-                 onclick="selecionarFicha(1,this)">
-                1
-            </div>
+    <div
+        class="ficha f1"
+        onclick="selecionarFicha(1,this)">
+        1
+    </div>
 
-            <div class="ficha f2"
-                 onclick="selecionarFicha(2,this)">
-                2
-            </div>
+    <div
+        class="ficha f2"
+        onclick="selecionarFicha(2,this)">
+        2
+    </div>
 
-            <div class="ficha f5"
-                 onclick="selecionarFicha(5,this)">
-                5
-            </div>
+    <div
+        class="ficha f5"
+        onclick="selecionarFicha(5,this)">
+        5
+    </div>
 
-            <div class="ficha f10"
-                 onclick="selecionarFicha(10,this)">
-                10
-            </div>
+    <div
+        class="ficha f10"
+        onclick="selecionarFicha(10,this)">
+        10
+    </div>
 
-            <div class="ficha f50"
-                 onclick="selecionarFicha(50,this)">
-                50
-            </div>
+    <div
+        class="ficha f50"
+        onclick="selecionarFicha(50,this)">
+        50
+    </div>
 
-            <div class="botoes-final">
+    <div class="botoes-final">
 
-                <button class="btn-final" onclick="limparApostas()">
-                    ↩ LIMPAR
-                </button>
+        <button
+            class="btn-final"
+            onclick="limparApostas()">
+            ↩ LIMPAR
+        </button>
 
-                <button class="btn-final" onclick="repetirAposta()">
-                    ⟳ REPETIR APOSTA
-                </button>
+        <button
+            class="btn-final"
+            onclick="repetirAposta()">
+            ⟳ REPETIR APOSTA
+        </button>
 
-            </div>
+    </div>
 
-        </div>
+</div>
 
-        <div class="mensagem" id="mensagem"></div>
+<div
+    class="mensagem"
+    id="mensagem">
+</div>
 
-    </section>
+</section>
 
 </main>
 
+
 <script>
-
-/* =====================================================
-   CONFIGURAÇÃO SUPABASE
-===================================================== */
-
-const SUPABASE_URL =
-"https://jxbzjiwmajjzxgihfjgt.supabase.co";
-
-const SUPABASE_KEY =
-"sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ";
-
-const supabase =
-window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
-
-
-/* =====================================================
-   ROLETA
-===================================================== */
 
 const SEQUENCIA = [
     0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,
@@ -963,10 +1031,6 @@ const VERMELHOS = [
     1,3,5,7,9,12,14,16,18,
     19,21,23,25,27,30,32,34,36
 ];
-
-let usuarioAtual = null;
-
-let saldoReal = 0;
 
 let ficha = 0.50;
 
@@ -983,27 +1047,29 @@ let auto = false;
 let rotacaoAtual = 0;
 
 const roleta =
-document.getElementById("roleta");
+    document.getElementById("roleta");
 
 const bola =
-document.getElementById("bola");
+    document.getElementById("bola");
 
 const saldoEl =
-document.getElementById("saldo");
+    document.getElementById("saldo");
 
 const valorApostaEl =
-document.getElementById("valorAposta");
+    document.getElementById("valorAposta");
 
 const mensagemEl =
-document.getElementById("mensagem");
+    document.getElementById("mensagem");
 
 const btnGirar =
-document.getElementById("btnGirar");
+    document.getElementById("btnGirar");
 
 
-/* =====================================================
-   MOEDA
-===================================================== */
+/*
+====================================================
+MOEDA
+====================================================
+*/
 
 function moeda(valor){
 
@@ -1018,202 +1084,205 @@ function moeda(valor){
 }
 
 
-/* =====================================================
-   SALDO
-===================================================== */
+/*
+====================================================
+ATUALIZAR SALDO
+====================================================
+*/
 
-function atualizarSaldo(){
+async function obterSaldo(){
 
-    saldoEl.textContent =
-        moeda(saldoReal);
+    try{
 
-}
+        if(!window.SistemaSaldo){
+            console.error(
+                "SistemaSaldo ainda não carregado."
+            );
+            return;
+        }
 
+        /*
+         * Usa exatamente o sistema de saldo
+         * existente do ApostaXBet.
+         */
 
-/* =====================================================
-   USUÁRIO
-===================================================== */
+        let valor = null;
 
-async function obterUsuario(){
+        if(
+            typeof SistemaSaldo.get ===
+            "function"
+        ){
 
-    const {data,error} =
-        await supabase.auth.getSession();
+            valor =
+                await SistemaSaldo.get();
 
-    if(error){
+        }
+
+        if(
+            typeof valor === "number"
+        ){
+
+            saldoEl.textContent =
+                moeda(valor);
+
+        }
+
+        /*
+         * Alguns jogos usam atualizarTela()
+         * para sincronizar a tela.
+         */
+
+        if(
+            typeof SistemaSaldo.atualizarTela ===
+            "function"
+        ){
+
+            await SistemaSaldo.atualizarTela();
+
+            /*
+             * Depois da sincronização,
+             * pegamos novamente o valor.
+             */
+
+            if(
+                typeof SistemaSaldo.get ===
+                "function"
+            ){
+
+                const novoValor =
+                    await SistemaSaldo.get();
+
+                if(
+                    typeof novoValor === "number"
+                ){
+
+                    saldoEl.textContent =
+                        moeda(novoValor);
+
+                }
+
+            }
+
+        }
+
+    }catch(erro){
 
         console.error(
-            "Erro sessão:",
-            error
+            "Erro ao obter saldo:",
+            erro
         );
 
-        return null;
     }
-
-    return data?.session?.user || null;
 
 }
 
 
-/* =====================================================
-   CARREGAR SALDO
-===================================================== */
+/*
+====================================================
+DEBITAR
+====================================================
+*/
 
-async function carregarSaldo(){
+async function debitar(valor){
 
-    if(!usuarioAtual){
-        return false;
-    }
-
-    const {data,error} =
-        await supabase
-        .from("saldos")
-        .select("valor")
-        .eq("user_id",usuarioAtual.id)
-        .maybeSingle();
-
-    if(error){
-
-        console.error(
-            "Erro ao carregar saldo:",
-            error
-        );
-
-        mensagemEl.textContent =
-            "❌ Erro ao carregar saldo.";
-
-        mensagemEl.className =
-            "mensagem resultado-derrota";
-
-        return false;
-    }
-
-    saldoReal =
-        Number(data?.valor || 0);
-
-    atualizarSaldo();
-
-    return true;
-
-}
-
-
-/* =====================================================
-   DEBITAR SALDO REAL
-===================================================== */
-
-async function debitarAposta(valor){
-
-    if(!usuarioAtual){
-        return false;
-    }
-
-    const valorAposta =
-        Number(Number(valor).toFixed(2));
-
-    if(saldoReal < valorAposta){
+    if(!window.SistemaSaldo){
 
         throw new Error(
-            "Saldo insuficiente."
+            "Sistema de saldo não carregado."
         );
 
     }
 
-    const novoSaldo =
-        Number(
-            (saldoReal - valorAposta)
-            .toFixed(2)
-        );
-
-    const {error} =
-        await supabase
-        .from("saldos")
-        .update({
-            valor:novoSaldo
-        })
-        .eq(
-            "user_id",
-            usuarioAtual.id
-        );
-
-    if(error){
-
-        console.error(
-            "Erro ao debitar:",
-            error
-        );
+    if(
+        typeof SistemaSaldo.debitar !==
+        "function"
+    ){
 
         throw new Error(
-            "Não foi possível descontar a aposta."
+            "Função de débito não encontrada."
         );
 
     }
 
-    saldoReal =
-        novoSaldo;
+    const resultado =
+        await SistemaSaldo.debitar(
+            Number(valor)
+        );
 
-    atualizarSaldo();
+    /*
+     * Atualiza imediatamente a tela
+     * depois do débito.
+     */
 
-    return true;
+    await obterSaldo();
+
+    return resultado;
 
 }
 
 
-/* =====================================================
-   CREDITAR PRÊMIO
-===================================================== */
+/*
+====================================================
+CREDITAR
+====================================================
+*/
 
-async function creditarPremio(valor){
+async function creditar(valor){
 
-    if(!usuarioAtual){
-        return false;
-    }
-
-    const premio =
-        Number(Number(valor).toFixed(2));
-
-    const novoSaldo =
-        Number(
-            (saldoReal + premio)
-            .toFixed(2)
-        );
-
-    const {error} =
-        await supabase
-        .from("saldos")
-        .update({
-            valor:novoSaldo
-        })
-        .eq(
-            "user_id",
-            usuarioAtual.id
-        );
-
-    if(error){
-
-        console.error(
-            "Erro ao creditar prêmio:",
-            error
-        );
+    if(!window.SistemaSaldo){
 
         throw new Error(
-            "Não foi possível creditar o prêmio."
+            "Sistema de saldo não carregado."
         );
 
     }
 
-    saldoReal =
-        novoSaldo;
+    let resultado;
 
-    atualizarSaldo();
+    if(
+        typeof SistemaSaldo.creditar ===
+        "function"
+    ){
 
-    return true;
+        resultado =
+            await SistemaSaldo.creditar(
+                Number(valor)
+            );
+
+    }
+
+    else if(
+        typeof SistemaSaldo.adicionar ===
+        "function"
+    ){
+
+        resultado =
+            await SistemaSaldo.adicionar(
+                Number(valor)
+            );
+
+    }
+
+    else{
+
+        throw new Error(
+            "Função de crédito não encontrada."
+        );
+
+    }
+
+    await obterSaldo();
+
+    return resultado;
 
 }
 
 
-/* =====================================================
-   NÚMEROS
-===================================================== */
+/*
+====================================================
+CRIAR NÚMEROS DA ROLETA
+====================================================
+*/
 
 function criarNumerosRoleta(){
 
@@ -1228,7 +1297,9 @@ function criarNumerosRoleta(){
         (numero,index)=>{
 
             const span =
-                document.createElement("span");
+                document.createElement(
+                    "span"
+                );
 
             const angulo =
                 index *
@@ -1250,9 +1321,11 @@ function criarNumerosRoleta(){
 }
 
 
-/* =====================================================
-   TABELA
-===================================================== */
+/*
+====================================================
+CRIAR TABELA DE NÚMEROS
+====================================================
+*/
 
 function criarTabela(){
 
@@ -1264,7 +1337,9 @@ function criarTabela(){
     grid.innerHTML = "";
 
     const zero =
-        document.createElement("button");
+        document.createElement(
+            "button"
+        );
 
     zero.className =
         "num zero";
@@ -1279,7 +1354,6 @@ function criarTabela(){
         );
 
     grid.appendChild(zero);
-
 
     for(
         let linha = 0;
@@ -1296,12 +1370,12 @@ function criarTabela(){
             const numero =
                 coluna * 3 - linha;
 
-            const b =
+            const botao =
                 document.createElement(
                     "button"
                 );
 
-            b.className =
+            botao.className =
                 "num " +
                 (
                     VERMELHOS.includes(numero)
@@ -1309,16 +1383,18 @@ function criarTabela(){
                     : "black"
                 );
 
-            b.textContent =
+            botao.textContent =
                 numero;
 
-            b.onclick =
+            botao.onclick =
                 () => apostar(
                     "numero",
                     numero
                 );
 
-            grid.appendChild(b);
+            grid.appendChild(
+                botao
+            );
 
         }
 
@@ -1327,9 +1403,11 @@ function criarTabela(){
 }
 
 
-/* =====================================================
-   FICHA
-===================================================== */
+/*
+====================================================
+SELECIONAR FICHA
+====================================================
+*/
 
 function selecionarFicha(
     valor,
@@ -1345,28 +1423,28 @@ function selecionarFicha(
         .querySelectorAll(".ficha")
         .forEach(
             x =>
-            x.classList.remove(
-                "selecionada"
-            )
+                x.classList.remove(
+                    "selecionada"
+                )
         );
 
     elemento.classList.add(
         "selecionada"
     );
 
-    document
-        .getElementById(
-            "fichaSelecionada"
-        )
-        .textContent =
-        moeda(valor);
+    document.getElementById(
+        "fichaSelecionada"
+    ).textContent =
+        moeda(ficha);
 
 }
 
 
-/* =====================================================
-   APOSTAR
-===================================================== */
+/*
+====================================================
+ADICIONAR APOSTA
+====================================================
+*/
 
 function apostar(
     tipo,
@@ -1376,9 +1454,13 @@ function apostar(
     if(girando) return;
 
     apostas.push({
+
         tipo:tipo,
+
         valor:valor,
+
         quantia:ficha
+
     });
 
     atualizarAposta();
@@ -1392,17 +1474,16 @@ function apostar(
 }
 
 
-/* =====================================================
-   TOTAL
-===================================================== */
+/*
+====================================================
+TOTAL DAS APOSTAS
+====================================================
+*/
 
 function totalApostas(){
 
     return apostas.reduce(
-        (
-            total,
-            aposta
-        ) =>
+        (total, aposta) =>
             total +
             Number(aposta.quantia),
         0
@@ -1411,36 +1492,31 @@ function totalApostas(){
 }
 
 
-/* =====================================================
-   ATUALIZAR APOSTA
-===================================================== */
+/*
+====================================================
+ATUALIZAR APOSTA
+====================================================
+*/
 
 function atualizarAposta(){
 
     valorApostaEl.textContent =
-        moeda(totalApostas());
+        moeda(
+            totalApostas()
+        );
 
 }
 
 
-/* =====================================================
-   GIRAR ROLETA
-===================================================== */
+/*
+====================================================
+GIRAR ROLETA
+====================================================
+*/
 
 async function girarRoleta(){
 
     if(girando) return;
-
-    if(!usuarioAtual){
-
-        mensagemEl.textContent =
-            "⚠️ Usuário não está logado.";
-
-        mensagemEl.className =
-            "mensagem resultado-derrota";
-
-        return;
-    }
 
     if(apostas.length === 0){
 
@@ -1451,34 +1527,32 @@ async function girarRoleta(){
             "mensagem resultado-derrota";
 
         return;
+
     }
 
     const total =
-        Number(
-            totalApostas()
-            .toFixed(2)
-        );
+        totalApostas();
 
     if(total <= 0){
 
         mensagemEl.textContent =
-            "Valor da aposta inválido.";
-
-        return;
-    }
-
-
-    if(saldoReal < total){
-
-        mensagemEl.textContent =
-            `⚠️ Saldo insuficiente. Saldo atual: ${moeda(saldoReal)}`;
+            "Valor de aposta inválido.";
 
         mensagemEl.className =
             "mensagem resultado-derrota";
 
         return;
+
     }
 
+    /*
+     * Guarda a aposta antes de limpar.
+     */
+
+    ultimaAposta =
+        apostas.map(
+            a => ({...a})
+        );
 
     try{
 
@@ -1487,31 +1561,37 @@ async function girarRoleta(){
         btnGirar.disabled = true;
 
         mensagemEl.textContent =
-            "🎰 Boa sorte! A roleta está girando...";
+            "🎰 A roleta está girando...";
 
         mensagemEl.className =
             "mensagem";
 
-
         /*
-         * GUARDA A APOSTA PARA O BOTÃO REPETIR
+         * =================================================
+         * PRIMEIRO DESCONTA DO SALDO REAL.
+         * =================================================
          */
 
-        ultimaAposta =
-            apostas.map(
-                a => ({...a})
+        const debito =
+            await debitar(total);
+
+        /*
+         * Se o SistemaSaldo retornar false,
+         * não inicia a roleta.
+         */
+
+        if(debito === false){
+
+            throw new Error(
+                "Saldo insuficiente."
             );
 
+        }
 
         /*
-         * PRIMEIRO DESCONTA DO SALDO REAL.
-         */
-
-        await debitarAposta(total);
-
-
-        /*
+         * =================================================
          * SORTEIO
+         * =================================================
          */
 
         const indice =
@@ -1523,34 +1603,36 @@ async function girarRoleta(){
         const numeroFinal =
             SEQUENCIA[indice];
 
-
         /*
-         * ANIMAÇÃO DA ROLETA
+         * =================================================
+         * ROTAÇÃO
+         * =================================================
          */
 
         const voltas = 7;
 
         const anguloPorNumero =
-            360 /
-            SEQUENCIA.length;
+            360 / SEQUENCIA.length;
 
         const destino =
             360 -
-            (
-                indice *
-                anguloPorNumero
-            );
+            (indice * anguloPorNumero);
 
         rotacaoAtual +=
             voltas * 360 +
             destino;
 
+        /*
+         * ESTA LINHA É A QUE FAZ A ROLETA GIRAR.
+         */
+
         roleta.style.transform =
             `rotate(${rotacaoAtual}deg)`;
 
-
         /*
-         * ANIMAÇÃO DA BOLA
+         * =================================================
+         * BOLA
+         * =================================================
          */
 
         bola.animate(
@@ -1570,17 +1652,18 @@ async function girarRoleta(){
             ],
             {
                 duration:5000,
-                easing:"cubic-bezier(.12,.75,.16,1)"
+
+                easing:
+                "cubic-bezier(.12,.75,.16,1)"
             }
         );
 
-
         /*
-         * FINALIZA APÓS A ANIMAÇÃO
+         * Aguarda a animação terminar.
          */
 
         setTimeout(
-            async ()=>{
+            async () => {
 
                 try{
 
@@ -1588,12 +1671,13 @@ async function girarRoleta(){
                         numeroFinal
                     );
 
-                }catch(error){
+                }catch(erro){
 
-                    console.error(error);
+                    console.error(
+                        erro
+                    );
 
                     mensagemEl.textContent =
-                        error.message ||
                         "Erro ao finalizar a rodada.";
 
                     mensagemEl.className =
@@ -1603,9 +1687,15 @@ async function girarRoleta(){
 
                 girando = false;
 
-                btnGirar.disabled = false;
+                btnGirar.disabled =
+                    false;
 
-                await carregarSaldo();
+                await obterSaldo();
+
+                /*
+                 * Se automático estiver ligado,
+                 * repete somente se existir nova aposta.
+                 */
 
                 if(
                     auto &&
@@ -1623,31 +1713,37 @@ async function girarRoleta(){
             5100
         );
 
-    }catch(error){
+    }catch(erro){
 
-        console.error(error);
+        console.error(
+            "Erro ao girar:",
+            erro
+        );
 
         girando = false;
 
-        btnGirar.disabled = false;
+        btnGirar.disabled =
+            false;
 
         mensagemEl.textContent =
-            error.message ||
+            erro.message ||
             "Não foi possível realizar a aposta.";
 
         mensagemEl.className =
             "mensagem resultado-derrota";
 
-        await carregarSaldo();
+        await obterSaldo();
 
     }
 
 }
 
 
-/* =====================================================
-   FINALIZAR RODADA
-===================================================== */
+/*
+====================================================
+FINALIZAR RODADA
+====================================================
+*/
 
 async function finalizarRodada(
     numero
@@ -1665,19 +1761,23 @@ async function finalizarRodada(
 
     atualizarResultados();
 
-    document
-        .getElementById(
-            "ultimoResultado"
-        )
-        .textContent =
+    document.getElementById(
+        "ultimoResultado"
+    ).textContent =
         numero;
-
 
     let premio = 0;
 
+    /*
+     * Analisa TODAS as apostas feitas.
+     */
 
     apostas.forEach(
         aposta => {
+
+            /*
+             * NÚMERO
+             */
 
             if(
                 aposta.tipo ===
@@ -1697,15 +1797,17 @@ async function finalizarRodada(
 
             }
 
+            /*
+             * COR
+             */
+
             else if(
                 aposta.tipo ===
                 "cor"
             ){
 
                 const cor =
-                    corNumero(
-                        numero
-                    );
+                    corNumero(numero);
 
                 if(
                     cor ===
@@ -1719,6 +1821,10 @@ async function finalizarRodada(
                 }
 
             }
+
+            /*
+             * PAR / ÍMPAR
+             */
 
             else if(
                 aposta.tipo ===
@@ -1747,6 +1853,10 @@ async function finalizarRodada(
 
             }
 
+            /*
+             * 1 - 18
+             */
+
             else if(
                 aposta.tipo ===
                 "baixo"
@@ -1764,6 +1874,10 @@ async function finalizarRodada(
                 }
 
             }
+
+            /*
+             * 19 - 36
+             */
 
             else if(
                 aposta.tipo ===
@@ -1783,6 +1897,10 @@ async function finalizarRodada(
 
             }
 
+            /*
+             * 1ª DÚZIA
+             */
+
             else if(
                 aposta.tipo ===
                 "dozen"
@@ -1801,6 +1919,10 @@ async function finalizarRodada(
                 }
 
             }
+
+            /*
+             * DÚZIAS
+             */
 
             else if(
                 aposta.tipo ===
@@ -1838,20 +1960,18 @@ async function finalizarRodada(
         }
     );
 
-
     const cor =
-        corNumero(
-            numero
-        );
-
+        corNumero(numero);
 
     /*
-     * HOUVE PRÊMIO
+     * =================================================
+     * GANHOU
+     * =================================================
      */
 
     if(premio > 0){
 
-        await creditarPremio(
+        await creditar(
             premio
         );
 
@@ -1864,7 +1984,9 @@ async function finalizarRodada(
     }
 
     /*
+     * =================================================
      * PERDEU
+     * =================================================
      */
 
     else{
@@ -1877,49 +1999,56 @@ async function finalizarRodada(
 
     }
 
-
     atualizarEstatisticas();
 
+    /*
+     * Guarda a última aposta para REPETIR.
+     */
+
+    ultimaAposta =
+        apostas.map(
+            a => ({...a})
+        );
 
     /*
-     * LIMPA APOSTAS DA RODADA.
+     * Limpa a rodada atual.
      */
 
     apostas = [];
 
     atualizarAposta();
 
+    await obterSaldo();
+
 }
 
 
-/* =====================================================
-   COR
-===================================================== */
+/*
+====================================================
+COR DO NÚMERO
+====================================================
+*/
 
-function corNumero(
-    numero
-){
+function corNumero(numero){
 
-    if(
-        numero === 0
-    ){
+    if(numero === 0){
 
         return "verde";
 
     }
 
-    return VERMELHOS.includes(
-        numero
-    )
-    ? "vermelho"
-    : "preto";
+    return VERMELHOS.includes(numero)
+        ? "vermelho"
+        : "preto";
 
 }
 
 
-/* =====================================================
-   RESULTADOS
-===================================================== */
+/*
+====================================================
+RESULTADOS
+====================================================
+*/
 
 function atualizarResultados(){
 
@@ -1938,6 +2067,7 @@ function atualizarResultados(){
             "<span style='opacity:.7;'>Nenhum resultado</span>";
 
         return;
+
     }
 
     resultados.forEach(
@@ -1950,9 +2080,7 @@ function atualizarResultados(){
 
             span.className =
                 "resultado " +
-                corNumero(
-                    numero
-                );
+                corNumero(numero);
 
             span.textContent =
                 numero;
@@ -1967,15 +2095,21 @@ function atualizarResultados(){
 }
 
 
-/* =====================================================
-   ESTATÍSTICAS
-===================================================== */
+/*
+====================================================
+ESTATÍSTICAS
+====================================================
+*/
 
 function atualizarEstatisticas(){
 
     if(
         resultados.length === 0
-    ) return;
+    ){
+
+        return;
+
+    }
 
     let red = 0;
 
@@ -1983,60 +2117,62 @@ function atualizarEstatisticas(){
 
     let green = 0;
 
-
     resultados.forEach(
         numero => {
 
             const cor =
-                corNumero(
-                    numero
-                );
+                corNumero(numero);
 
             if(
-                cor === "vermelho"
-            ) red++;
+                cor ===
+                "vermelho"
+            ){
+
+                red++;
+
+            }
 
             if(
-                cor === "preto"
-            ) black++;
+                cor ===
+                "preto"
+            ){
+
+                black++;
+
+            }
 
             if(
-                cor === "verde"
-            ) green++;
+                cor ===
+                "verde"
+            ){
+
+                green++;
+
+            }
 
         }
     );
 
-
     const total =
         resultados.length;
 
-
-    document
-        .getElementById(
-            "estatRed"
-        )
-        .textContent =
+    document.getElementById(
+        "estatRed"
+    ).textContent =
         Math.round(
             red / total * 100
         ) + "%";
 
-
-    document
-        .getElementById(
-            "estatBlack"
-        )
-        .textContent =
+    document.getElementById(
+        "estatBlack"
+    ).textContent =
         Math.round(
             black / total * 100
         ) + "%";
 
-
-    document
-        .getElementById(
-            "estatGreen"
-        )
-        .textContent =
+    document.getElementById(
+        "estatGreen"
+    ).textContent =
         Math.round(
             green / total * 100
         ) + "%";
@@ -2044,9 +2180,11 @@ function atualizarEstatisticas(){
 }
 
 
-/* =====================================================
-   LIMPAR
-===================================================== */
+/*
+====================================================
+LIMPAR
+====================================================
+*/
 
 function limparApostas(){
 
@@ -2065,9 +2203,11 @@ function limparApostas(){
 }
 
 
-/* =====================================================
-   REPETIR APOSTA
-===================================================== */
+/*
+====================================================
+REPETIR
+====================================================
+*/
 
 function repetirAposta(){
 
@@ -2084,8 +2224,8 @@ function repetirAposta(){
             "mensagem";
 
         return;
-    }
 
+    }
 
     apostas =
         ultimaAposta.map(
@@ -2095,7 +2235,7 @@ function repetirAposta(){
     atualizarAposta();
 
     mensagemEl.textContent =
-        `Aposta repetida: ${moeda(totalApostas())}`;
+        "Aposta anterior repetida.";
 
     mensagemEl.className =
         "mensagem";
@@ -2103,14 +2243,15 @@ function repetirAposta(){
 }
 
 
-/* =====================================================
-   AUTOMÁTICO
-===================================================== */
+/*
+====================================================
+AUTOMÁTICO
+====================================================
+*/
 
 function toggleAuto(){
 
-    auto =
-        !auto;
+    auto = !auto;
 
     document
         .getElementById(
@@ -2124,9 +2265,11 @@ function toggleAuto(){
 }
 
 
-/* =====================================================
-   DEPÓSITO
-===================================================== */
+/*
+====================================================
+DEPÓSITO
+====================================================
+*/
 
 function irDeposito(){
 
@@ -2136,103 +2279,31 @@ function irDeposito(){
 }
 
 
-/* =====================================================
-   AUTENTICAÇÃO
-===================================================== */
+/*
+====================================================
+INICIALIZAÇÃO
+====================================================
+*/
 
-supabase.auth.onAuthStateChange(
-    (event,session)=>{
+criarNumerosRoleta();
 
-        if(!session){
+criarTabela();
 
-            window.location.href =
-                "../index.html";
+/*
+ * Primeiro tenta carregar o saldo.
+ */
 
-        }
+obterSaldo();
 
-    }
+/*
+ * Mantém o saldo sincronizado,
+ * igual ao funcionamento dos outros jogos.
+ */
+
+setInterval(
+    obterSaldo,
+    5000
 );
-
-
-/* =====================================================
-   INICIAR
-===================================================== */
-
-async function iniciar(){
-
-    try{
-
-        usuarioAtual =
-            await obterUsuario();
-
-
-        if(!usuarioAtual){
-
-            window.location.href =
-                "../index.html";
-
-            return;
-
-        }
-
-
-        criarNumerosRoleta();
-
-        criarTabela();
-
-
-        const carregou =
-            await carregarSaldo();
-
-
-        if(!carregou){
-
-            btnGirar.disabled =
-                true;
-
-            return;
-
-        }
-
-
-        atualizarSaldo();
-
-
-        /*
-         * ATUALIZA O SALDO PERIODICAMENTE,
-         * COMO NOS OUTROS JOGOS.
-         */
-
-        setInterval(
-            async ()=>{
-                if(!girando){
-                    await carregarSaldo();
-                }
-            },
-            5000
-        );
-
-
-    }catch(error){
-
-        console.error(error);
-
-        mensagemEl.textContent =
-            "❌ Erro ao iniciar a roleta.";
-
-        mensagemEl.className =
-            "mensagem resultado-derrota";
-
-    }
-
-}
-
-
-/* =====================================================
-   INICIAR AGORA
-===================================================== */
-
-iniciar();
 
 </script>
 
