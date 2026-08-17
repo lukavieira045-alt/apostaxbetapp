@@ -301,6 +301,26 @@ text-shadow:0 0 10px currentColor;
 line-height:24px;
 }
 
+/* CONTAGEM DOS 10 SEGUNDOS */
+.contagem{
+text-align:center;
+margin:0 0 8px;
+font-size:14px;
+font-weight:900;
+color:#ffe36a;
+text-shadow:0 0 8px rgba(255,220,60,.7);
+}
+
+.contagem strong{
+font-size:24px;
+color:#fff;
+}
+
+.contagem.encerrada{
+color:#ff4141;
+text-shadow:0 0 8px rgba(255,40,40,.7);
+}
+
 .painel{
 position:relative;
 padding:16px 12px 13px;
@@ -357,7 +377,9 @@ z-index:50;
 pointer-events:none;
 }
 
-.ficha-roleta.visivel{display:flex}
+.ficha-roleta.visivel{
+display:flex;
+}
 
 .valores{
 display:grid;
@@ -396,7 +418,9 @@ border-radius:4px;
 box-shadow:0 0 12px rgba(255,215,60,.18),inset 0 0 10px #000;
 }
 
-.btn-apostar:disabled{opacity:.45}
+.btn-apostar:disabled{
+opacity:.45;
+}
 
 .info{
 display:flex;
@@ -406,7 +430,9 @@ color:#aaa;
 font-size:12px;
 }
 
-.info strong{color:#ffe04f}
+.info strong{
+color:#ffe04f;
+}
 
 .mensagem{
 text-align:center;
@@ -542,6 +568,7 @@ font-size:9px;
 font-size:8px;
 line-height:9px;
 }
+
 }
 </style>
 </head>
@@ -550,21 +577,36 @@ line-height:9px;
 
 <audio id="musicaRoleta" src="musica-roleta.mp3" loop preload="auto"></audio>
 
-<div id="carregando">🔐 VERIFICANDO CONTA...</div>
+<div id="carregando">
+🔐 VERIFICANDO CONTA...
+</div>
 
 <div class="superbonus-overlay" id="superBonusOverlay">
 <div class="superbonus-raio"></div>
-<div class="superbonus-titulo">⚡ SUPER BÔNUS ⚡</div>
-<div class="superbonus-valor" id="superBonusValor">R$ 5,00</div>
+<div class="superbonus-titulo">
+⚡ SUPER BÔNUS ⚡
+</div>
+<div class="superbonus-valor" id="superBonusValor">
+R$ 5,00
+</div>
 </div>
 
 <div class="topo">
-<div class="logo">⚡ APOSTAXBET</div>
+
+<div class="logo">
+⚡ APOSTAXBET
+</div>
 
 <div class="saldo-topo">
-<div class="saldo-label">SALDO</div>
-<div id="displaySaldo">R$ 0,00</div>
+<div class="saldo-label">
+SALDO
 </div>
+
+<div id="displaySaldo">
+R$ 0,00
+</div>
+</div>
+
 </div>
 
 <a href="../index.html" class="lobby">
@@ -574,7 +616,9 @@ Lobby
 
 <div class="container">
 
-<div class="titulo">ROLETA DE RELÂMPAGOS</div>
+<div class="titulo">
+ROLETA DE RELÂMPAGOS
+</div>
 
 <div class="subtitulo">
 ESCOLHA O VALOR DA APOSTA
@@ -606,6 +650,11 @@ ESCOLHA O VALOR DA APOSTA
 ESCOLHA O VALOR DA APOSTA
 </div>
 
+<div class="contagem" id="contagem">
+⏱️ APOSTAS ABERTAS:
+<strong>10</strong>s
+</div>
+
 <div class="painel">
 
 <div class="ficha-area">
@@ -618,17 +667,20 @@ ESCOLHA O VALOR DA APOSTA
 
 <div class="valores">
 
-<button class="btn-valor ativo"
+<button
+class="btn-valor ativo"
 onclick="selecionarValor(1,this)">
 R$ 1
 </button>
 
-<button class="btn-valor"
+<button
+class="btn-valor"
 onclick="selecionarValor(2,this)">
 R$ 2
 </button>
 
-<button class="btn-valor"
+<button
+class="btn-valor"
 onclick="selecionarValor(5,this)">
 R$ 5
 </button>
@@ -649,12 +701,16 @@ CARREGANDO...
 
 <span>
 Aposta:
-<strong id="apostaInfo">R$ 1,00</strong>
+<strong id="apostaInfo">
+R$ 1,00
+</strong>
 </span>
 
 <span>
 Saldo:
-<strong id="saldoPainel">R$ 0,00</strong>
+<strong id="saldoPainel">
+R$ 0,00
+</strong>
 </span>
 
 </div>
@@ -666,12 +722,14 @@ SALDO CONECTADO À SUA CONTA
 </div>
 </div>
 
-<button class="repeat-btn"
+<button
+class="repeat-btn"
 onclick="repetirAposta()">
 ↻
 </button>
 
-<button class="menu-btn"
+<button
+class="menu-btn"
 onclick="abrirMenu()">
 ☰
 </button>
@@ -701,22 +759,17 @@ let valorAposta=1;
 let rotacaoAtual=0;
 let girando=false;
 
-/*
-=====================================================
-NOVO SISTEMA DE FICHAS
-=====================================================
-*/
-
 let numeroEscolhido=null;
 let fichaSelecionada=false;
 let fichasNaRoleta=[];
 
-/*
-Cada item será:
-{
-    index: número da casa
-}
-*/
+/* ================================
+   CONTROLE DOS 10 SEGUNDOS
+================================ */
+
+let rodadaAberta=true;
+let tempoRestante=10;
+let intervaloContagem=null;
 
 const premios=[
 0.20,0.40,0.50,0.80,1.00,
@@ -755,8 +808,8 @@ document.getElementById("superBonusOverlay");
 const superBonusValor=
 document.getElementById("superBonusValor");
 
-const musicaRoleta=
-document.getElementById("musicaRoleta");
+const contagem=
+document.getElementById("contagem");
 
 function dinheiro(valor){
 
@@ -767,11 +820,109 @@ Number(valor||0)
 
 }
 
+/* ================================
+   CONTAGEM DE 10 SEGUNDOS
+================================ */
+
+function iniciarContagem(){
+
+if(intervaloContagem){
+clearInterval(intervaloContagem);
+intervaloContagem=null;
+}
+
+rodadaAberta=true;
+tempoRestante=10;
+
+contagem.classList.remove("encerrada");
+
+contagem.innerHTML=
+'⏱️ APOSTAS ABERTAS: <strong>10</strong>s';
+
+atualizarBotao();
+
+intervaloContagem=setInterval(function(){
+
+tempoRestante--;
+
+if(tempoRestante>0){
+
+contagem.innerHTML=
+'⏱️ APOSTAS ABERTAS: <strong>'+
+tempoRestante+
+'</strong>s';
+
+return;
+
+}
+
+clearInterval(intervaloContagem);
+intervaloContagem=null;
+
+rodadaAberta=false;
+
+contagem.classList.add("encerrada");
+
+contagem.innerHTML=
+'⛔ APOSTAS ENCERRADAS';
+
+fichaSelecionada=false;
+
+fichaDisplay.classList.remove(
+"selecionada"
+);
+
+if(fichasNaRoleta.length>0){
+
+resultado.innerHTML=
+"⚡ TEMPO ENCERRADO"+
+"<br>"+
+"<span style='font-size:13px;color:#aaa'>"+
+"Suas fichas estão prontas. Clique em GIRAR ROLETA."+
+"</span>";
+
+resultado.style.color="#ffe36a";
+
+atualizarBotao();
+
+}else{
+
+resultado.innerHTML=
+"⛔ TEMPO ENCERRADO"+
+"<br>"+
+"<span style='font-size:13px;color:#aaa'>"+
+"Nenhuma ficha foi colocada."
++"</span>";
+
+resultado.style.color="#ff4141";
+
+atualizarBotao();
+
 /*
-=====================================================
-QUANTIDADE DE FICHAS DISPONÍVEIS
-=====================================================
+Se ninguém colocou ficha,
+abre uma nova janela de 10 segundos
+automaticamente.
 */
+
+setTimeout(function(){
+
+if(!girando && fichasNaRoleta.length===0){
+
+iniciarContagem();
+
+}
+
+},1000);
+
+}
+
+},1000);
+
+}
+
+/* ================================
+   QUANTIDADE DE FICHAS
+================================ */
 
 function quantidadeMaximaFichas(){
 
@@ -781,11 +932,9 @@ saldoReal/valorAposta
 
 }
 
-/*
-=====================================================
-ATUALIZAR SALDO
-=====================================================
-*/
+/* ================================
+   ATUALIZAR SALDO
+================================ */
 
 function atualizarSaldo(){
 
@@ -804,11 +953,9 @@ atualizarBotao();
 
 }
 
-/*
-=====================================================
-ATUALIZAR BOTÃO
-=====================================================
-*/
+/* ================================
+   ATUALIZAR BOTÃO
+================================ */
 
 function atualizarBotao(){
 
@@ -820,6 +967,7 @@ btnApostar.innerText=
 "ROLETA GIRANDO...";
 
 return;
+
 }
 
 if(!usuarioAtual){
@@ -830,16 +978,43 @@ btnApostar.innerText=
 "AGUARDANDO CONTA";
 
 return;
+
 }
 
 if(fichasNaRoleta.length===0){
 
 btnApostar.disabled=true;
 
+if(rodadaAberta){
+
 btnApostar.innerText=
 "COLOQUE A FICHA";
 
+}else{
+
+btnApostar.innerText=
+"AGUARDANDO FICHAS";
+
+}
+
 return;
+
+}
+
+/*
+Depois que os 10 segundos acabarem,
+o botão pode girar.
+*/
+
+if(rodadaAberta){
+
+btnApostar.disabled=true;
+
+btnApostar.innerText=
+"AGUARDE "+tempoRestante+"s";
+
+return;
+
 }
 
 const valorTotal=
@@ -858,6 +1033,7 @@ btnApostar.innerText=
 "SALDO INSUFICIENTE";
 
 return;
+
 }
 
 btnApostar.disabled=false;
@@ -867,11 +1043,9 @@ btnApostar.innerText=
 
 }
 
-/*
-=====================================================
-USUÁRIO
-=====================================================
-*/
+/* ================================
+   USUÁRIO
+================================ */
 
 async function obterUsuario(){
 
@@ -890,11 +1064,9 @@ return data?.session?.user||null;
 
 }
 
-/*
-=====================================================
-CARREGAR SALDO
-=====================================================
-*/
+/* ================================
+   CARREGAR SALDO
+================================ */
 
 async function carregarSaldo(){
 
@@ -930,11 +1102,9 @@ return true;
 
 }
 
-/*
-=====================================================
-SALVAR SALDO
-=====================================================
-*/
+/* ================================
+   SALVAR SALDO
+================================ */
 
 async function salvarSaldo(novoSaldo){
 
@@ -977,11 +1147,9 @@ return true;
 
 }
 
-/*
-=====================================================
-DEBITAR TODAS AS FICHAS
-=====================================================
-*/
+/* ================================
+   DEBITAR FICHAS
+================================ */
 
 async function debitarAposta(){
 
@@ -1046,11 +1214,9 @@ return true;
 
 }
 
-/*
-=====================================================
-CALCULAR PRÊMIO
-=====================================================
-*/
+/* ================================
+   CALCULAR PRÊMIO
+================================ */
 
 function calcularPremio(valorRoleta){
 
@@ -1068,11 +1234,9 @@ valorRoleta*2
 
 }
 
-/*
-=====================================================
-CRIAR NÚMEROS
-=====================================================
-*/
+/* ================================
+   CRIAR NÚMEROS
+================================ */
 
 function criarNumeros(){
 
@@ -1135,7 +1299,6 @@ numero.addEventListener(
 function(e){
 
 e.preventDefault();
-
 e.stopPropagation();
 
 colocarFichaNoNumero(index);
@@ -1150,19 +1313,29 @@ area.appendChild(numero);
 
 }
 
-/*
-=====================================================
-COLOCAR UMA FICHA
-=====================================================
-*/
+/* ================================
+   COLOCAR FICHA
+================================ */
 
 function colocarFichaNoNumero(index){
 
 if(girando)return;
 
-/*
-Precisa tocar na ficha primeiro.
-*/
+if(!rodadaAberta){
+
+resultado.innerHTML=
+"⛔ TEMPO ENCERRADO"+
+"<br>"+
+"<span style='font-size:12px;color:#aaa'>"+
+"Aguarde a próxima rodada."
++"</span>";
+
+resultado.style.color=
+"#ff4141";
+
+return;
+
+}
 
 if(!fichaSelecionada){
 
@@ -1182,10 +1355,6 @@ return;
 
 const quantidadeMaxima=
 quantidadeMaximaFichas();
-
-/*
-Verifica se ainda existem fichas.
-*/
 
 if(
 fichasNaRoleta.length>=
@@ -1214,10 +1383,6 @@ return;
 
 }
 
-/*
-Cria a ficha lógica.
-*/
-
 const ficha={
 index:index
 };
@@ -1225,10 +1390,6 @@ index:index
 fichasNaRoleta.push(
 ficha
 );
-
-/*
-Cria a ficha visual.
-*/
 
 const novaFicha=
 document.createElement("div");
@@ -1243,10 +1404,6 @@ valorAposta
 
 novaFicha.dataset.fichaIndex=
 fichasNaRoleta.length-1;
-
-/*
-Posição da ficha.
-*/
 
 const quantidade=
 premios.length;
@@ -1280,27 +1437,15 @@ x+"px";
 novaFicha.style.top=
 y+"px";
 
-/*
-Coloca a ficha dentro da roleta.
-*/
-
 roleta.appendChild(
 novaFicha
 );
-
-/*
-Consome a ficha selecionada.
-*/
 
 fichaSelecionada=false;
 
 fichaDisplay.classList.remove(
 "selecionada"
 );
-
-/*
-Atualiza informação.
-*/
 
 const restantes=
 quantidadeMaxima-
@@ -1326,11 +1471,9 @@ atualizarBotao();
 
 }
 
-/*
-=====================================================
-SELECIONAR VALOR
-=====================================================
-*/
+/* ================================
+   SELECIONAR VALOR
+================================ */
 
 window.selecionarValor=
 function(valor,botao){
@@ -1358,11 +1501,6 @@ valorAposta
 .toFixed(2)
 .replace(".",",");
 
-/*
-Se ainda houver fichas na roleta,
-mantém o valor visual delas atualizado.
-*/
-
 document
 .querySelectorAll(".ficha-roleta")
 .forEach(
@@ -1378,21 +1516,34 @@ atualizarSaldo();
 
 };
 
-/*
-=====================================================
-CLIQUE NA FICHA
-=====================================================
-*/
+/* ================================
+   CLIQUE NA FICHA
+================================ */
 
 fichaDisplay.addEventListener(
 "click",
 function(e){
 
 e.preventDefault();
-
 e.stopPropagation();
 
 if(girando)return;
+
+if(!rodadaAberta){
+
+resultado.innerHTML=
+"⛔ TEMPO ENCERRADO"+
+"<br>"+
+"<span style='font-size:12px;color:#aaa'>"+
+"Aguarde a próxima rodada."
++"</span>";
+
+resultado.style.color=
+"#ff4141";
+
+return;
+
+}
 
 const quantidadeMaxima=
 quantidadeMaximaFichas();
@@ -1443,11 +1594,9 @@ resultado.style.color=
 {passive:false}
 );
 
-/*
-=====================================================
-ÁUDIO
-=====================================================
-*/
+/* ================================
+   ÁUDIO
+================================ */
 
 let audioContext=null;
 let timerRoleta=null;
@@ -1541,13 +1690,11 @@ agora+.08
 );
 
 o.connect(g);
-
 g.connect(
 audioContext.destination
 );
 
 o.start(agora);
-
 o.stop(
 agora+.08
 );
@@ -1602,7 +1749,6 @@ agora+.055
 );
 
 o.connect(g);
-
 g.connect(
 audioContext.destination
 );
@@ -1682,7 +1828,6 @@ inicio+.45
 );
 
 o.connect(g);
-
 g.connect(
 audioContext.destination
 );
@@ -1720,11 +1865,9 @@ superBonusOverlay.classList.remove(
 
 }
 
-/*
-=====================================================
-ROTAÇÃO
-=====================================================
-*/
+/* ================================
+   ROTAÇÃO
+================================ */
 
 function calcularRotacaoCorreta(indice){
 
@@ -1755,16 +1898,32 @@ deslocamento;
 
 }
 
-/*
-=====================================================
-GIRAR ROLETA
-=====================================================
-*/
+/* ================================
+   GIRAR ROLETA
+================================ */
 
 window.girarRoleta=
 async function(){
 
 if(girando)return;
+
+if(rodadaAberta){
+
+resultado.innerHTML=
+"⏱️ AGUARDE O FIM DA CONTAGEM"+
+"<br>"+
+"<span style='font-size:13px;color:#aaa'>"+
+"Restam "+
+tempoRestante+
+" segundo(s)."+
+"</span>";
+
+resultado.style.color=
+"#ffe36a";
+
+return;
+
+}
 
 if(fichasNaRoleta.length===0){
 
@@ -1828,11 +1987,6 @@ tocarClique();
 girando=true;
 
 atualizarBotao();
-
-/*
-Debita todas as fichas
-antes de iniciar a rodada.
-*/
 
 const debitado=
 await debitarAposta();
@@ -1903,11 +2057,9 @@ premio
 
 };
 
-/*
-=====================================================
-FINALIZAR RODADA
-=====================================================
-*/
+/* ================================
+   FINALIZAR RODADA
+================================ */
 
 async function finalizarRodada(
 indice,
@@ -1929,12 +2081,6 @@ numero.classList.add(
 
 }
 
-/*
-=====================================================
-VERIFICAR TODAS AS FICHAS
-=====================================================
-*/
-
 const fichasVencedoras=
 fichasNaRoleta.filter(
 ficha=>
@@ -1943,12 +2089,6 @@ ficha.index===indice
 
 const quantidadeVencedoras=
 fichasVencedoras.length;
-
-/*
-=====================================================
-NENHUMA FICHA ACERTOU
-=====================================================
-*/
 
 if(
 quantidadeVencedoras===0
@@ -1996,15 +2136,11 @@ fichaDisplay.classList.remove(
 
 atualizarBotao();
 
+iniciarContagem();
+
 return;
 
 }
-
-/*
-=====================================================
-CASA PERDEU
-=====================================================
-*/
 
 if(valorRoleta===0){
 
@@ -2041,15 +2177,11 @@ fichaDisplay.classList.remove(
 
 atualizarBotao();
 
+iniciarContagem();
+
 return;
 
 }
-
-/*
-=====================================================
-PRÊMIO POR FICHA
-=====================================================
-*/
 
 const premioPorFicha=
 calcularPremio(
@@ -2063,12 +2195,6 @@ premioPorFicha*
 quantidadeVencedoras
 ).toFixed(2)
 );
-
-/*
-=====================================================
-CREDITAR PRÊMIO
-=====================================================
-*/
 
 const saldoAtual=
 Number(saldoReal);
@@ -2101,12 +2227,6 @@ resultado.style.color=
 return;
 
 }
-
-/*
-=====================================================
-SUPER BÔNUS
-=====================================================
-*/
 
 if(valorRoleta===5){
 
@@ -2150,12 +2270,6 @@ resultado.style.color=
 
 }
 
-/*
-=====================================================
-LIMPAR FICHAS
-=====================================================
-*/
-
 setTimeout(
 ()=>{
 
@@ -2179,22 +2293,40 @@ fichaDisplay.classList.remove(
 
 atualizarBotao();
 
+iniciarContagem();
+
 },
 700
 );
 
 }
 
-/*
-=====================================================
-REPETIR
-=====================================================
-*/
+/* ================================
+   REPETIR
+================================ */
 
 window.repetirAposta=
 function(){
 
 if(girando)return;
+
+if(rodadaAberta){
+
+resultado.innerHTML=
+"⏱️ A RODADA AINDA ESTÁ ABERTA"+
+"<br>"+
+"<span style='font-size:13px;color:#aaa'>"+
+"Restam "+
+tempoRestante+
+" segundo(s)."+
+"</span>";
+
+resultado.style.color=
+"#ffe36a";
+
+return;
+
+}
 
 if(fichasNaRoleta.length===0){
 
@@ -2212,11 +2344,9 @@ girarRoleta();
 
 };
 
-/*
-=====================================================
-MENU
-=====================================================
-*/
+/* ================================
+   MENU
+================================ */
 
 window.abrirMenu=
 function(){
@@ -2229,11 +2359,9 @@ alert(
 
 };
 
-/*
-=====================================================
-AUTENTICAÇÃO
-=====================================================
-*/
+/* ================================
+   AUTENTICAÇÃO
+================================ */
 
 supabase.auth.onAuthStateChange(
 (event,session)=>{
@@ -2247,11 +2375,9 @@ window.location.href=
 
 });
 
-/*
-=====================================================
-MÚSICA
-=====================================================
-*/
+/* ================================
+   MÚSICA
+================================ */
 
 document.addEventListener(
 "touchstart",
@@ -2265,11 +2391,9 @@ iniciarMusica,
 {once:true}
 );
 
-/*
-=====================================================
-INICIAR
-=====================================================
-*/
+/* ================================
+   INICIAR
+================================ */
 
 async function iniciar(){
 
@@ -2309,6 +2433,13 @@ atualizarSaldo();
 
 carregando.style.display=
 "none";
+
+/*
+Começa a contagem de 10 segundos
+assim que a roleta estiver carregada.
+*/
+
+iniciarContagem();
 
 }catch(error){
 
