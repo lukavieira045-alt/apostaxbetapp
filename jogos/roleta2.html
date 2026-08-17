@@ -2,795 +2,449 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Roleta 2 - ApostaXBet</title>
-
 <script type="module" src="../saldo.js"></script>
 
 <style>
-
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
+*{box-sizing:border-box;margin:0;padding:0}
 
 body{
-    font-family:Arial,Helvetica,sans-serif;
-    min-height:100vh;
-    background:
-        radial-gradient(circle at center,#123d25 0%,#06140d 48%,#020604 100%);
-    color:#fff;
-    overflow-x:hidden;
+font-family:Arial,Helvetica,sans-serif;
+min-height:100vh;
+background:radial-gradient(circle at center,#123d25 0%,#06140d 48%,#020604 100%);
+color:#fff;
+overflow-x:hidden
 }
 
 body::before{
-    content:"";
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    background:
-        radial-gradient(circle at 50% 35%,rgba(0,255,120,.10),transparent 35%),
-        linear-gradient(115deg,transparent 40%,rgba(255,255,255,.025),transparent 60%);
+content:"";
+position:fixed;
+inset:0;
+pointer-events:none;
+background:radial-gradient(circle at 50% 35%,rgba(0,255,120,.10),transparent 35%),linear-gradient(115deg,transparent 40%,rgba(255,255,255,.025),transparent 60%)
 }
 
 .topo{
-    height:72px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 18px;
-    background:rgba(2,8,6,.96);
-    border-bottom:1px solid rgba(255,255,255,.15);
-    position:relative;
-    z-index:10;
+height:72px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 18px;
+background:rgba(2,8,6,.96);
+border-bottom:1px solid rgba(255,255,255,.15);
+position:relative;
+z-index:10
 }
 
-.logo{
-    font-size:27px;
-    font-weight:900;
-}
-
-.logo span{
-    color:#00e875;
-}
+.logo{font-size:27px;font-weight:900}
+.logo span{color:#00e875}
 
 .voltar{
-    width:48px;
-    height:48px;
-    border-radius:50%;
-    border:1px solid #555;
-    background:#101714;
-    color:white;
-    font-size:30px;
-    cursor:pointer;
+width:48px;height:48px;border-radius:50%;
+border:1px solid #555;background:#101714;color:#fff;
+font-size:30px;cursor:pointer
 }
 
-.titulo{
-    font-size:29px;
-    font-weight:900;
-    letter-spacing:1px;
-}
+.titulo{font-size:29px;font-weight:900;letter-spacing:1px}
+.titulo::before,.titulo::after{content:"☘";color:#20d96f;margin:0 12px}
 
-.titulo::before,
-.titulo::after{
-    content:"☘";
-    color:#20d96f;
-    margin:0 12px;
-}
-
-.acoes-topo{
-    display:flex;
-    align-items:center;
-    gap:18px;
-}
-
-.icone{
-    font-size:29px;
-}
+.acoes-topo{display:flex;align-items:center;gap:18px}
+.icone{font-size:29px}
 
 .saldo-box{
-    min-width:165px;
-    border:1px solid #777;
-    border-radius:12px;
-    padding:7px 12px;
-    background:#0d1511;
-    text-align:center;
+min-width:165px;border:1px solid #777;border-radius:12px;
+padding:7px 12px;background:#0d1511;text-align:center
 }
 
-.saldo-label{
-    font-size:13px;
-    font-weight:bold;
-}
-
-#saldo{
-    color:#d9ff00;
-    font-size:21px;
-    font-weight:900;
-}
+.saldo-label{font-size:13px;font-weight:bold}
+#saldo{color:#d9ff00;font-size:21px;font-weight:900}
 
 .btn-deposito{
-    border:0;
-    width:38px;
-    height:38px;
-    border-radius:8px;
-    background:#20c94f;
-    color:white;
-    font-size:28px;
-    font-weight:bold;
-    cursor:pointer;
+border:0;width:38px;height:38px;border-radius:8px;
+background:#20c94f;color:#fff;font-size:28px;font-weight:bold;cursor:pointer
 }
 
-.container{
-    width:min(1450px,96%);
-    margin:18px auto 35px;
-}
+.container{width:min(1450px,96%);margin:18px auto 35px}
 
 .painel-superior{
-    display:grid;
-    grid-template-columns:280px 1fr 280px;
-    gap:18px;
-    align-items:center;
+display:grid;
+grid-template-columns:280px 1fr 280px;
+gap:18px;
+align-items:center
 }
 
 .card{
-    border:1px solid rgba(255,255,255,.35);
-    border-radius:14px;
-    background:rgba(2,10,7,.78);
-    box-shadow:0 0 18px rgba(0,0,0,.4);
-    padding:18px;
+border:1px solid rgba(255,255,255,.35);
+border-radius:14px;
+background:rgba(2,10,7,.78);
+box-shadow:0 0 18px rgba(0,0,0,.4);
+padding:18px
 }
 
-.card h3{
-    text-align:center;
-    margin-bottom:18px;
-    font-size:17px;
-}
+.card h3{text-align:center;margin-bottom:18px;font-size:17px}
 
 .resultados{
-    display:flex;
-    flex-wrap:wrap;
-    gap:7px;
-    justify-content:center;
+display:flex;
+flex-wrap:wrap;
+gap:7px;
+justify-content:center
 }
 
 .resultado{
-    width:38px;
-    height:38px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:8px;
-    font-weight:bold;
-    font-size:17px;
+width:38px;height:38px;
+display:flex;align-items:center;justify-content:center;
+border-radius:8px;font-weight:bold;font-size:17px
 }
 
-.vermelho{
-    background:#d52c23;
-}
-
-.preto{
-    background:#050505;
-    border:1px solid #444;
-}
-
-.verde{
-    background:#0a9b46;
-}
+.vermelho{background:#d52c23}
+.preto{background:#050505;border:1px solid #444}
+.verde{background:#0a9b46}
 
 .estatistica{
-    display:flex;
-    justify-content:space-between;
-    margin:15px 0;
-    font-weight:bold;
+display:flex;
+justify-content:space-between;
+margin:15px 0;
+font-weight:bold
 }
 
 .bolinha{
-    display:inline-block;
-    width:13px;
-    height:13px;
-    border-radius:50%;
-    margin-right:7px;
+display:inline-block;width:13px;height:13px;
+border-radius:50%;margin-right:7px
 }
 
 .roleta-area{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-height:520px;
-    position:relative;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:520px;
+position:relative
+}
+
+/* CONTAGEM DE 10 SEGUNDOS */
+.contagem-roleta{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+z-index:30;
+width:110px;
+height:110px;
+border-radius:50%;
+display:none;
+align-items:center;
+justify-content:center;
+background:rgba(0,0,0,.88);
+border:4px solid #ffd400;
+box-shadow:0 0 25px rgba(255,212,0,.65);
+color:#fff;
+font-size:48px;
+font-weight:900;
+text-shadow:0 0 12px #ffd400
 }
 
 .roleta{
-    width:min(520px,75vw);
-    aspect-ratio:1;
-    border-radius:50%;
-    position:relative;
-    background:#22150a;
-    border:16px solid #5f3915;
-    box-shadow:
-        0 0 0 5px #d29a38,
-        0 0 35px rgba(0,0,0,.9),
-        inset 0 0 30px #000;
-    transition:transform 5s cubic-bezier(.12,.75,.16,1);
+width:min(520px,75vw);
+aspect-ratio:1;
+border-radius:50%;
+position:relative;
+background:#22150a;
+border:16px solid #5f3915;
+box-shadow:0 0 0 5px #d29a38,0 0 35px rgba(0,0,0,.9),inset 0 0 30px #000;
+transition:transform 5s cubic-bezier(.12,.75,.16,1)
 }
 
 .roleta::before{
-    content:"";
-    position:absolute;
-    inset:12px;
-    border-radius:50%;
-    background:
-        conic-gradient(
-            #0a9b46 0deg 9.73deg,
-            #d52c23 9.73deg 19.46deg,
-            #050505 19.46deg 29.19deg,
-            #d52c23 29.19deg 38.92deg,
-            #050505 38.92deg 48.65deg,
-            #d52c23 48.65deg 58.38deg,
-            #050505 58.38deg 68.11deg,
-            #d52c23 68.11deg 77.84deg,
-            #050505 77.84deg 87.57deg,
-            #d52c23 87.57deg 97.30deg,
-            #050505 97.30deg 107.03deg,
-            #d52c23 107.03deg 116.76deg,
-            #050505 116.76deg 126.49deg,
-            #d52c23 126.49deg 136.22deg,
-            #050505 136.22deg 145.95deg,
-            #d52c23 145.95deg 155.68deg,
-            #050505 155.68deg 165.41deg,
-            #d52c23 165.41deg 175.14deg,
-            #050505 175.14deg 184.87deg,
-            #d52c23 184.87deg 194.60deg,
-            #050505 194.60deg 204.33deg,
-            #d52c23 204.33deg 214.06deg,
-            #050505 214.06deg 223.79deg,
-            #d52c23 223.79deg 233.52deg,
-            #050505 233.52deg 243.25deg,
-            #d52c23 243.25deg 252.98deg,
-            #050505 252.98deg 262.71deg,
-            #d52c23 262.71deg 272.44deg,
-            #050505 272.44deg 282.17deg,
-            #d52c23 282.17deg 291.90deg,
-            #050505 291.90deg 301.63deg,
-            #d52c23 301.63deg 311.36deg,
-            #050505 311.36deg 321.09deg,
-            #d52c23 321.09deg 330.82deg,
-            #050505 330.82deg 340.55deg,
-            #d52c23 340.55deg 350.28deg,
-            #050505 350.28deg 360deg
-        );
-    box-shadow:inset 0 0 25px #000;
+content:"";
+position:absolute;
+inset:12px;
+border-radius:50%;
+background:conic-gradient(
+#0a9b46 0deg 9.73deg,
+#d52c23 9.73deg 19.46deg,
+#050505 19.46deg 29.19deg,
+#d52c23 29.19deg 38.92deg,
+#050505 38.92deg 48.65deg,
+#d52c23 48.65deg 58.38deg,
+#050505 58.38deg 68.11deg,
+#d52c23 68.11deg 77.84deg,
+#050505 77.84deg 87.57deg,
+#d52c23 87.57deg 97.30deg,
+#050505 97.30deg 107.03deg,
+#d52c23 107.03deg 116.76deg,
+#050505 116.76deg 126.49deg,
+#d52c23 126.49deg 136.22deg,
+#050505 136.22deg 145.95deg,
+#d52c23 145.95deg 155.68deg,
+#050505 155.68deg 165.41deg,
+#d52c23 165.41deg 175.14deg,
+#050505 175.14deg 184.87deg,
+#d52c23 184.87deg 194.60deg,
+#050505 194.60deg 204.33deg,
+#d52c23 204.33deg 214.06deg,
+#050505 214.06deg 223.79deg,
+#d52c23 223.79deg 233.52deg,
+#050505 233.52deg 243.25deg,
+#d52c23 243.25deg 252.98deg,
+#050505 252.98deg 262.71deg,
+#d52c23 262.71deg 272.44deg,
+#050505 272.44deg 282.17deg,
+#d52c23 282.17deg 291.90deg,
+#050505 291.90deg 301.63deg,
+#d52c23 301.63deg 311.36deg,
+#050505 311.36deg 321.09deg,
+#d52c23 321.09deg 330.82deg,
+#050505 330.82deg 340.55deg,
+#d52c23 340.55deg 350.28deg,
+#050505 350.28deg 360deg);
+box-shadow:inset 0 0 25px #000
 }
 
 .numero-roleta{
-    position:absolute;
-    left:50%;
-    top:50%;
-    width:100%;
-    height:100%;
-    transform:translate(-50%,-50%);
-    z-index:2;
+position:absolute;left:50%;top:50%;width:100%;height:100%;
+transform:translate(-50%,-50%);z-index:2
 }
 
 .numero-roleta span{
-    position:absolute;
-    left:50%;
-    top:50%;
-    width:34px;
-    height:34px;
-    margin-left:-17px;
-    margin-top:-17px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-weight:bold;
-    font-size:14px;
-    color:#fff;
-    text-shadow:0 1px 2px #000;
+position:absolute;left:50%;top:50%;
+width:34px;height:34px;margin-left:-17px;margin-top:-17px;
+display:flex;justify-content:center;align-items:center;
+font-weight:bold;font-size:14px;color:#fff;
+text-shadow:0 1px 2px #000
 }
 
 .roleta-centro{
-    position:absolute;
-    width:125px;
-    height:125px;
-    border-radius:50%;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%);
-    background:
-        radial-gradient(circle at 35% 30%,#ffe39a,#b87917 45%,#6a3808 70%,#2b1604);
-    border:8px solid #c58b2c;
-    box-shadow:
-        inset 0 0 15px #3b1d00,
-        0 0 12px #000;
-    z-index:5;
+position:absolute;width:125px;height:125px;border-radius:50%;
+left:50%;top:50%;transform:translate(-50%,-50%);
+background:radial-gradient(circle at 35% 30%,#ffe39a,#b87917 45%,#6a3808 70%,#2b1604);
+border:8px solid #c58b2c;
+box-shadow:inset 0 0 15px #3b1d00,0 0 12px #000;
+z-index:5
 }
 
 .roleta-centro::after{
-    content:"A";
-    position:absolute;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%);
-    font-size:42px;
-    font-weight:900;
-    color:#fff2b0;
-    text-shadow:0 2px 5px #000;
+content:"A";
+position:absolute;left:50%;top:50%;
+transform:translate(-50%,-50%);
+font-size:42px;font-weight:900;color:#fff2b0;
+text-shadow:0 2px 5px #000
 }
 
 .bola{
-    position:absolute;
-    width:19px;
-    height:19px;
-    border-radius:50%;
-    background:#fff;
-    box-shadow:0 0 10px #fff;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%) translateY(-190px);
-    z-index:7;
+position:absolute;width:19px;height:19px;border-radius:50%;
+background:#fff;box-shadow:0 0 10px #fff;
+left:50%;top:50%;
+transform:translate(-50%,-50%) translateY(-190px);
+z-index:7
 }
 
 .roleta-area::before{
-    content:"";
-    position:absolute;
-    top:calc(50% - 285px);
-    left:50%;
-    transform:translateX(-50%);
-    width:0;
-    height:0;
-    border-left:14px solid transparent;
-    border-right:14px solid transparent;
-    border-top:30px solid #ffd400;
-    z-index:20;
-    filter:drop-shadow(0 2px 4px #000);
+content:"";
+position:absolute;
+top:calc(50% - 285px);
+left:50%;
+transform:translateX(-50%);
+width:0;height:0;
+border-left:14px solid transparent;
+border-right:14px solid transparent;
+border-top:30px solid #ffd400;
+z-index:20;
+filter:drop-shadow(0 2px 4px #000)
 }
 
-.aposta-atual{
-    text-align:center;
-}
+.aposta-atual{text-align:center}
 
 .valor-aposta{
-    color:#ffe500;
-    font-size:28px;
-    font-weight:900;
-    margin:15px 0 25px;
+color:#ffe500;font-size:28px;font-weight:900;
+margin:15px 0 25px
 }
 
-.ultimo{
-    font-size:38px;
-    font-weight:900;
-    margin-top:20px;
-}
+.ultimo{font-size:38px;font-weight:900;margin-top:20px}
 
 .btn-girar{
-    width:100%;
-    padding:20px 10px;
-    margin-top:20px;
-    border:0;
-    border-radius:12px;
-    background:linear-gradient(#22d95c,#08a53e);
-    color:white;
-    font-size:20px;
-    font-weight:900;
-    cursor:pointer;
-    box-shadow:0 0 20px rgba(0,255,90,.22);
+width:100%;padding:20px 10px;margin-top:20px;
+border:0;border-radius:12px;
+background:linear-gradient(#22d95c,#08a53e);
+color:#fff;font-size:20px;font-weight:900;
+cursor:pointer;box-shadow:0 0 20px rgba(0,255,90,.22)
 }
 
-.btn-girar:hover{
-    filter:brightness(1.15);
-}
-
-.btn-girar:disabled{
-    opacity:.5;
-    cursor:not-allowed;
-}
+.btn-girar:hover{filter:brightness(1.15)}
+.btn-girar:disabled{opacity:.5;cursor:not-allowed}
 
 .auto{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-top:15px;
-    padding:14px;
-    border:1px solid #555;
-    border-radius:10px;
+display:flex;justify-content:space-between;align-items:center;
+margin-top:15px;padding:14px;border:1px solid #555;border-radius:10px
 }
 
 .switch{
-    width:48px;
-    height:25px;
-    border-radius:20px;
-    background:#555;
-    position:relative;
-    cursor:pointer;
+width:48px;height:25px;border-radius:20px;background:#555;
+position:relative;cursor:pointer
 }
 
 .switch::after{
-    content:"";
-    position:absolute;
-    width:21px;
-    height:21px;
-    border-radius:50%;
-    background:#fff;
-    left:2px;
-    top:2px;
-    transition:.2s;
+content:"";position:absolute;width:21px;height:21px;
+border-radius:50%;background:#fff;left:2px;top:2px;transition:.2s
 }
 
-.switch.ativo{
-    background:#15b94b;
-}
-
-.switch.ativo::after{
-    left:25px;
-}
+.switch.ativo{background:#15b94b}
+.switch.ativo::after{left:25px}
 
 .mesa{
-    margin-top:15px;
-    border:2px solid #b7db27;
-    border-radius:17px;
-    padding:15px;
-    background:rgba(0,15,7,.75);
-    box-shadow:0 0 18px rgba(200,255,0,.08);
+margin-top:15px;border:2px solid #b7db27;border-radius:17px;
+padding:15px;background:rgba(0,15,7,.75);
+box-shadow:0 0 18px rgba(200,255,0,.08)
 }
 
-.cores{
-    display:grid;
-    grid-template-columns:1fr 1fr 1fr;
-    gap:12px;
-}
+.cores{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 
 .btn-cor{
-    min-height:75px;
-    border:2px solid #b7db27;
-    border-radius:10px;
-    color:#fff;
-    font-size:18px;
-    font-weight:bold;
-    cursor:pointer;
+min-height:75px;border:2px solid #b7db27;border-radius:10px;
+color:#fff;font-size:18px;font-weight:bold;cursor:pointer
 }
 
-.btn-cor.vermelho-btn{
-    background:linear-gradient(#a92b20,#4d0b07);
-}
+.btn-cor.vermelho-btn{background:linear-gradient(#a92b20,#4d0b07)}
+.btn-cor.verde-btn{background:linear-gradient(#159d45,#063d19)}
+.btn-cor.preto-btn{background:linear-gradient(#181818,#020202)}
 
-.btn-cor.verde-btn{
-    background:linear-gradient(#159d45,#063d19);
-}
-
-.btn-cor.preto-btn{
-    background:linear-gradient(#181818,#020202);
-}
-
-.ficha-atual{
-    text-align:center;
-    margin:15px 0;
-    font-size:17px;
-}
-
-.ficha-contador{
-    color:#ffe500;
-    font-weight:900;
-    margin-left:8px;
-}
+.ficha-atual{text-align:center;margin:15px 0;font-size:17px}
+.ficha-contador{color:#ffe500;font-weight:900;margin-left:8px}
 
 .numero-grid{
-    display:grid;
-    grid-template-columns:repeat(12,1fr);
-    gap:4px;
+display:grid;
+grid-template-columns:repeat(12,1fr);
+gap:4px
 }
 
 .num{
-    min-height:55px;
-    border:1px solid #80951d;
-    border-radius:4px;
-    color:#fff;
-    font-size:17px;
-    font-weight:bold;
-    cursor:pointer;
-    position:relative;
+min-height:55px;border:1px solid #80951d;border-radius:4px;
+color:#fff;font-size:17px;font-weight:bold;cursor:pointer;
+position:relative;overflow:visible
 }
 
-.num.red{
-    background:#a51f19;
-}
+.num.red{background:#a51f19}
+.num.black{background:#060606}
+.num.zero{background:#07863b;grid-row:span 3}
 
-.num.black{
-    background:#060606;
-}
-
-.num.zero{
-    background:#07863b;
-    grid-row:span 3;
-}
-
-.num:hover,
-.aposta-extra:hover,
-.btn-cor:hover{
-    filter:brightness(1.3);
-    transform:translateY(-1px);
+.num:hover,.aposta-extra:hover,.btn-cor:hover{
+filter:brightness(1.3);transform:translateY(-1px)
 }
 
 .extras{
-    display:grid;
-    grid-template-columns:repeat(6,1fr);
-    margin-top:5px;
+display:grid;
+grid-template-columns:repeat(6,1fr);
+margin-top:5px
 }
 
 .aposta-extra{
-    min-height:55px;
-    background:#06180d;
-    color:white;
-    border:1px solid #80951d;
-    font-weight:bold;
-    cursor:pointer;
-    font-size:16px;
+min-height:55px;background:#06180d;color:#fff;
+border:1px solid #80951d;font-weight:bold;
+cursor:pointer;font-size:16px
 }
 
 .fichas{
-    display:flex;
-    align-items:center;
-    gap:13px;
-    margin-top:20px;
-    flex-wrap:wrap;
+display:flex;align-items:center;gap:13px;
+margin-top:20px;flex-wrap:wrap
 }
 
 .ficha{
-    width:62px;
-    height:62px;
-    border-radius:50%;
-    border:6px dashed #fff;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-size:15px;
-    font-weight:900;
-    cursor:pointer;
-    box-shadow:0 4px 10px #000;
+width:62px;height:62px;border-radius:50%;
+border:6px dashed #fff;display:flex;
+justify-content:center;align-items:center;
+font-size:15px;font-weight:900;cursor:pointer;
+box-shadow:0 4px 10px #000
 }
 
-.ficha:hover{
-    transform:scale(1.08);
-}
+.ficha:hover{transform:scale(1.08)}
+.ficha.selecionada{outline:4px solid #ffe900;transform:scale(1.08)}
 
-.ficha.selecionada{
-    outline:4px solid #ffe900;
-    transform:scale(1.08);
-}
-
-.f05{background:#7253a5;}
-.f1{background:#bd3029;}
-.f2{background:#0b9e48;}
-.f5{background:#333;}
-.f10{background:#2464b5;}
-.f50{background:#b56b18;}
+.f05{background:#7253a5}
+.f1{background:#bd3029}
+.f2{background:#0b9e48}
+.f5{background:#333}
+.f10{background:#2464b5}
+.f50{background:#b56b18}
 
 .botoes-final{
-    margin-left:auto;
-    display:flex;
-    gap:10px;
+margin-left:auto;display:flex;gap:10px
 }
 
 .btn-final{
-    padding:15px 22px;
-    border:1px solid #3e9259;
-    border-radius:9px;
-    background:#07140d;
-    color:#fff;
-    font-size:16px;
-    font-weight:bold;
-    cursor:pointer;
+padding:15px 22px;border:1px solid #3e9259;border-radius:9px;
+background:#07140d;color:#fff;font-size:16px;
+font-weight:bold;cursor:pointer
 }
 
-.btn-final:hover{
-    background:#102b1b;
-}
+.btn-final:hover{background:#102b1b}
 
 .mensagem{
-    text-align:center;
-    min-height:32px;
-    margin-top:15px;
-    font-size:20px;
-    font-weight:bold;
+text-align:center;min-height:32px;margin-top:15px;
+font-size:20px;font-weight:bold
 }
 
-.resultado-vitoria{
-    color:#28ff78;
-}
-
-.resultado-derrota{
-    color:#ff6666;
-}
-
-/* FICHAS SOBRE OS NÚMEROS */
-
-.num{
-    overflow:visible;
-}
+.resultado-vitoria{color:#28ff78}
+.resultado-derrota{color:#ff6666}
 
 .fichas-na-aposta{
-    position:absolute;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%);
-    z-index:10;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    pointer-events:none;
+position:absolute;left:50%;top:50%;
+transform:translate(-50%,-50%);
+z-index:10;display:flex;
+justify-content:center;align-items:center;
+pointer-events:none
 }
 
 .ficha-mesa{
-    width:38px;
-    height:38px;
-    border-radius:50%;
-    border:4px dashed #fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:#fff;
-    font-size:10px;
-    font-weight:900;
-    text-shadow:0 1px 2px #000;
-    box-shadow:
-        0 2px 6px #000,
-        inset 0 0 5px rgba(255,255,255,.35);
-    animation:entradaFicha .18s ease-out;
+width:38px;height:38px;border-radius:50%;
+border:4px dashed #fff;
+display:flex;align-items:center;justify-content:center;
+color:#fff;font-size:10px;font-weight:900;
+text-shadow:0 1px 2px #000;
+box-shadow:0 2px 6px #000,inset 0 0 5px rgba(255,255,255,.35);
+animation:entradaFicha .18s ease-out
 }
 
 @keyframes entradaFicha{
-    from{
-        transform:scale(.2);
-        opacity:0;
-    }
-
-    to{
-        transform:scale(1);
-        opacity:1;
-    }
+from{transform:scale(.2);opacity:0}
+to{transform:scale(1);opacity:1}
 }
 
-.ficha-mesa.f05{
-    background:#7253a5;
-}
-
-.ficha-mesa.f1{
-    background:#bd3029;
-}
-
-.ficha-mesa.f2{
-    background:#0b9e48;
-}
-
-.ficha-mesa.f5{
-    background:#333;
-}
-
-.ficha-mesa.f10{
-    background:#2464b5;
-}
-
-.ficha-mesa.f50{
-    background:#b56b18;
-}
+.ficha-mesa.f05{background:#7253a5}
+.ficha-mesa.f1{background:#bd3029}
+.ficha-mesa.f2{background:#0b9e48}
+.ficha-mesa.f5{background:#333}
+.ficha-mesa.f10{background:#2464b5}
+.ficha-mesa.f50{background:#b56b18}
 
 @media(max-width:1050px){
-
-    .painel-superior{
-        grid-template-columns:1fr;
-    }
-
-    .roleta-area{
-        min-height:470px;
-    }
-
-    .card{
-        width:100%;
-    }
-
-    .numero-grid{
-        grid-template-columns:repeat(12,1fr);
-    }
+.painel-superior{grid-template-columns:1fr}
+.roleta-area{min-height:470px}
+.card{width:100%}
+.numero-grid{grid-template-columns:repeat(12,1fr)}
 }
 
 @media(max-width:650px){
-
-    .topo{
-        height:auto;
-        min-height:62px;
-        padding:8px;
-        gap:5px;
-    }
-
-    .logo{
-        font-size:18px;
-    }
-
-    .titulo{
-        font-size:16px;
-    }
-
-    .titulo::before,
-    .titulo::after{
-        margin:0 3px;
-    }
-
-    .voltar{
-        width:40px;
-        height:40px;
-    }
-
-    .acoes-topo{
-        gap:5px;
-    }
-
-    .icone{
-        display:none;
-    }
-
-    .saldo-box{
-        min-width:105px;
-    }
-
-    #saldo{
-        font-size:16px;
-    }
-
-    .btn-deposito{
-        width:32px;
-        height:32px;
-    }
-
-    .roleta{
-        width:82vw;
-    }
-
-    .roleta-centro{
-        width:85px;
-        height:85px;
-    }
-
-    .bola{
-        transform:translate(-50%,-50%) translateY(-125px);
-    }
-
-    .roleta-area::before{
-        top:calc(50% - 225px);
-    }
-
-    .cores{
-        grid-template-columns:1fr;
-    }
-
-    .numero-grid{
-        grid-template-columns:repeat(6,1fr);
-    }
-
-    .num.zero{
-        grid-row:auto;
-    }
-
-    .extras{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .fichas{
-        justify-content:center;
-    }
-
-    .botoes-final{
-        width:100%;
-        margin-left:0;
-    }
-
-    .btn-final{
-        flex:1;
-    }
-
+.topo{height:auto;min-height:62px;padding:8px;gap:5px}
+.logo{font-size:18px}
+.titulo{font-size:16px}
+.titulo::before,.titulo::after{margin:0 3px}
+.voltar{width:40px;height:40px}
+.acoes-topo{gap:5px}
+.icone{display:none}
+.saldo-box{min-width:105px}
+#saldo{font-size:16px}
+.btn-deposito{width:32px;height:32px}
+.roleta{width:82vw}
+.roleta-centro{width:85px;height:85px}
+.bola{transform:translate(-50%,-50%) translateY(-125px)}
+.roleta-area::before{top:calc(50% - 225px)}
+.cores{grid-template-columns:1fr}
+.numero-grid{grid-template-columns:repeat(6,1fr)}
+.num.zero{grid-row:auto}
+.extras{grid-template-columns:repeat(2,1fr)}
+.fichas{justify-content:center}
+.botoes-final{width:100%;margin-left:0}
+.btn-final{flex:1}
 }
-
 </style>
 </head>
 
@@ -798,1307 +452,574 @@ body::before{
 
 <header class="topo">
 
-    <div style="display:flex;align-items:center;gap:10px;">
+<div style="display:flex;align-items:center;gap:10px;">
+<button class="voltar" onclick="history.back()">‹</button>
 
-        <button
-            class="voltar"
-            onclick="history.back()">
-            ‹
-        </button>
+<div class="logo">Aposta<span>XBet</span></div>
+</div>
 
-        <div class="logo">
-            Aposta<span>XBet</span>
-        </div>
+<div class="titulo">ROLETA 2</div>
 
-    </div>
+<div class="acoes-topo">
 
-    <div class="titulo">
-        ROLETA 2
-    </div>
+<div class="icone">♫</div>
+<div class="icone">🔊</div>
 
-    <div class="acoes-topo">
+<div class="saldo-box">
+<div class="saldo-label">💰 SALDO</div>
+<div id="saldo">R$ 0,00</div>
+</div>
 
-        <div class="icone">♫</div>
+<button class="btn-deposito" onclick="irDeposito()">+</button>
 
-        <div class="icone">🔊</div>
-
-        <div class="saldo-box">
-
-            <div class="saldo-label">
-                💰 SALDO
-            </div>
-
-            <div id="saldo">
-                R$ 0,00
-            </div>
-
-        </div>
-
-        <button
-            class="btn-deposito"
-            onclick="irDeposito()">
-            +
-        </button>
-
-    </div>
-
+</div>
 </header>
-
 
 <main class="container">
 
 <section class="painel-superior">
 
-
 <div class="card">
 
-    <h3>
-        ÚLTIMOS RESULTADOS
-    </h3>
+<h3>ÚLTIMOS RESULTADOS</h3>
 
-    <div
-        class="resultados"
-        id="ultimosResultados">
-
-        <span style="opacity:.7;">
-            Nenhum resultado
-        </span>
-
-    </div>
-
-    <hr
-        style="margin:20px 0;border-color:#333;">
-
-    <h3>
-        ESTATÍSTICAS
-    </h3>
-
-    <div class="estatistica">
-
-        <span>
-            <i class="bolinha vermelho"></i>
-            VERMELHO
-        </span>
-
-        <span id="estatRed">
-            0%
-        </span>
-
-    </div>
-
-    <div class="estatistica">
-
-        <span>
-            <i class="bolinha preto"></i>
-            PRETO
-        </span>
-
-        <span id="estatBlack">
-            0%
-        </span>
-
-    </div>
-
-    <div class="estatistica">
-
-        <span>
-            <i class="bolinha verde"></i>
-            VERDE
-        </span>
-
-        <span id="estatGreen">
-            0%
-        </span>
-
-    </div>
-
+<div class="resultados" id="ultimosResultados">
+<span style="opacity:.7;">Nenhum resultado</span>
 </div>
 
+<hr style="margin:20px 0;border-color:#333;">
+
+<h3>ESTATÍSTICAS</h3>
+
+<div class="estatistica">
+<span><i class="bolinha vermelho"></i>VERMELHO</span>
+<span id="estatRed">0%</span>
+</div>
+
+<div class="estatistica">
+<span><i class="bolinha preto"></i>PRETO</span>
+<span id="estatBlack">0%</span>
+</div>
+
+<div class="estatistica">
+<span><i class="bolinha verde"></i>VERDE</span>
+<span id="estatGreen">0%</span>
+</div>
+
+</div>
 
 <div class="roleta-area">
 
-    <div
-        class="roleta"
-        id="roleta">
+<!-- CONTADOR -->
+<div id="contagemRoleta" class="contagem-roleta">10</div>
 
-        <div
-            class="numero-roleta"
-            id="numerosRoleta">
-        </div>
+<div class="roleta" id="roleta">
 
-        <div
-            class="bola"
-            id="bola">
-        </div>
-
-        <div class="roleta-centro"></div>
-
-    </div>
+<div class="numero-roleta" id="numerosRoleta"></div>
+<div class="bola" id="bola"></div>
+<div class="roleta-centro"></div>
 
 </div>
-
+</div>
 
 <div class="card aposta-atual">
 
-    <h3>
-        APOSTA ATUAL
-    </h3>
+<h3>APOSTA ATUAL</h3>
 
-    <div
-        class="valor-aposta"
-        id="valorAposta">
+<div class="valor-aposta" id="valorAposta">R$ 0,00</div>
 
-        R$ 0,00
+<hr style="border-color:#333;">
 
-    </div>
+<h3 style="margin-top:20px;">ÚLTIMO RESULTADO</h3>
 
-    <hr style="border-color:#333;">
+<div class="ultimo" id="ultimoResultado">-</div>
 
-    <h3 style="margin-top:20px;">
+<button class="btn-girar" id="btnGirar" onclick="girarRoleta()">
+GIRAR ROLETA ⟳
+</button>
 
-        ÚLTIMO RESULTADO
-
-    </h3>
-
-    <div
-        class="ultimo"
-        id="ultimoResultado">
-
-        -
-
-    </div>
-
-    <button
-        class="btn-girar"
-        id="btnGirar"
-        onclick="girarRoleta()">
-
-        GIRAR ROLETA ⟳
-
-    </button>
-
-    <div class="auto">
-
-        <span>
-            GIRAR AUTOMÁTICO
-        </span>
-
-        <div
-            class="switch"
-            id="switchAuto"
-            onclick="toggleAuto()">
-        </div>
-
-    </div>
+<div class="auto">
+<span>GIRAR AUTOMÁTICO</span>
+<div class="switch" id="switchAuto" onclick="toggleAuto()"></div>
+</div>
 
 </div>
 
 </section>
-
 
 <section class="mesa">
 
-
 <div class="cores">
 
-    <button
-        class="btn-cor vermelho-btn"
-        onclick="apostar('cor','vermelho')">
+<button class="btn-cor vermelho-btn" onclick="apostar('cor','vermelho')">
+🎰 0,50<br>VERMELHO
+</button>
 
-        🎰 0,50<br>
-        VERMELHO
+<button class="btn-cor verde-btn" onclick="apostar('numero',0)">
+🎰 0,50<br>VERDE (0)
+</button>
 
-    </button>
-
-    <button
-        class="btn-cor verde-btn"
-        onclick="apostar('numero',0)">
-
-        🎰 0,50<br>
-        VERDE (0)
-
-    </button>
-
-    <button
-        class="btn-cor preto-btn"
-        onclick="apostar('cor','preto')">
-
-        🎰 0,50<br>
-        PRETO
-
-    </button>
+<button class="btn-cor preto-btn" onclick="apostar('cor','preto')">
+🎰 0,50<br>PRETO
+</button>
 
 </div>
-
 
 <div class="ficha-atual">
-
-    FICHA SELECIONADA:
-
-    <strong id="fichaSelecionada">
-        R$ 0,50
-    </strong>
-
-    <span
-        class="ficha-contador"
-        id="fichaContador">
-
-        1 ficha
-
-    </span>
-
+FICHA SELECIONADA:
+<strong id="fichaSelecionada">R$ 0,50</strong>
+<span class="ficha-contador" id="fichaContador">1 ficha</span>
 </div>
 
-
-<div
-    class="numero-grid"
-    id="numeroGrid">
-</div>
-
+<div class="numero-grid" id="numeroGrid"></div>
 
 <div class="extras">
 
-    <button
-        class="aposta-extra"
-        onclick="apostar('doze',1)">
-
-        1 - 12
-
-    </button>
-
-    <button
-        class="aposta-extra"
-        onclick="apostar('doze',2)">
-
-        13 - 24
-
-    </button>
-
-    <button
-        class="aposta-extra"
-        onclick="apostar('doze',3)">
-
-        25 - 36
-
-    </button>
-
-    <button
-        class="aposta-extra"
-        onclick="apostar('dozen',1)">
-
-        1º 12
-
-    </button>
-
-    <button
-        class="aposta-extra"
-        onclick="apostar('par','par')">
-
-        PAR
-
-    </button>
-
-    <button
-        class="aposta-extra"
-        onclick="apostar('par','impar')">
-
-        ÍMPAR
-
-    </button>
-
-    <button
-        class="aposta-extra"
-        onclick="apostar('baixo',true)">
-
-        1 - 18
-
-    </button>
-
-    <button
-        class="aposta-extra"
-        onclick="apostar('alto',true)">
-
-        19 - 36
-
-    </button>
+<button class="aposta-extra" onclick="apostar('doze',1)">1 - 12</button>
+<button class="aposta-extra" onclick="apostar('doze',2)">13 - 24</button>
+<button class="aposta-extra" onclick="apostar('doze',3)">25 - 36</button>
+<button class="aposta-extra" onclick="apostar('dozen',1)">1º 12</button>
+<button class="aposta-extra" onclick="apostar('par','par')">PAR</button>
+<button class="aposta-extra" onclick="apostar('par','impar')">ÍMPAR</button>
+<button class="aposta-extra" onclick="apostar('baixo',true)">1 - 18</button>
+<button class="aposta-extra" onclick="apostar('alto',true)">19 - 36</button>
 
 </div>
-
 
 <div class="fichas">
 
+<div class="ficha f05 selecionada" onclick="selecionarFicha(.50,this)">0,50</div>
+<div class="ficha f1" onclick="selecionarFicha(1,this)">1</div>
+<div class="ficha f2" onclick="selecionarFicha(2,this)">2</div>
+<div class="ficha f5" onclick="selecionarFicha(5,this)">5</div>
+<div class="ficha f10" onclick="selecionarFicha(10,this)">10</div>
+<div class="ficha f50" onclick="selecionarFicha(50,this)">50</div>
 
-    <div
-        class="ficha f05 selecionada"
-        onclick="selecionarFicha(.50,this)">
+<div class="botoes-final">
 
-        0,50
-
-    </div>
-
-
-    <div
-        class="ficha f1"
-        onclick="selecionarFicha(1,this)">
-
-        1
-
-    </div>
-
-
-    <div
-        class="ficha f2"
-        onclick="selecionarFicha(2,this)">
-
-        2
-
-    </div>
-
-
-    <div
-        class="ficha f5"
-        onclick="selecionarFicha(5,this)">
-
-        5
-
-    </div>
-
-
-    <div
-        class="ficha f10"
-        onclick="selecionarFicha(10,this)">
-
-        10
-
-    </div>
-
-
-    <div
-        class="ficha f50"
-        onclick="selecionarFicha(50,this)">
-
-        50
-
-    </div>
-
-
-    <div class="botoes-final">
-
-        <button
-            class="btn-final"
-            onclick="limparApostas()">
-
-            ↩ LIMPAR
-
-        </button>
-
-        <button
-            class="btn-final"
-            onclick="repetirAposta()">
-
-            ⟳ REPETIR APOSTA
-
-        </button>
-
-    </div>
+<button class="btn-final" onclick="limparApostas()">↩ LIMPAR</button>
+<button class="btn-final" onclick="repetirAposta()">⟳ REPETIR APOSTA</button>
 
 </div>
-
-
-<div
-    class="mensagem"
-    id="mensagem">
 </div>
 
+<div class="mensagem" id="mensagem"></div>
 
 </section>
-
 </main>
-
 
 <script>
 
-/* =====================================================
-   ROLETA 2
-===================================================== */
-
-const SEQUENCIA = [
-
-    0,32,15,19,4,21,2,25,17,34,6,27,
-    13,36,11,30,8,23,10,5,24,16,33,1,
-    20,14,31,9,22,18,29,7,28,12,35,3,26
-
+const SEQUENCIA=[
+0,32,15,19,4,21,2,25,17,34,6,27,
+13,36,11,30,8,23,10,5,24,16,33,1,
+20,14,31,9,22,18,29,7,28,12,35,3,26
 ];
 
-
-const VERMELHOS = [
-
-    1,3,5,7,9,12,14,16,18,
-    19,21,23,25,27,30,32,34,36
-
+const VERMELHOS=[
+1,3,5,7,9,12,14,16,18,
+19,21,23,25,27,30,32,34,36
 ];
 
+let fichaSelecionadaValor=.50;
+let fichasDisponiveis=1;
+let valorPorFicha=.50;
+let apostas=[];
+let ultimaAposta=[];
+let resultados=[];
+let girando=false;
+let auto=false;
+let rotacaoAtual=0;
 
-let fichaSelecionadaValor = 0.50;
-
-let fichasDisponiveis = 1;
-
-let valorPorFicha = 0.50;
-
-let apostas = [];
-
-let ultimaAposta = [];
-
-let resultados = [];
-
-let girando = false;
-
-let auto = false;
-
-let rotacaoAtual = 0;
-
-
-/* =====================================================
-   ÁUDIO
-===================================================== */
-
-let audioContext = null;
-let somRoletaAtivo = false;
-let intervaloSomRoleta = null;
+let audioContext=null;
+let somRoletaAtivo=false;
+let intervaloSomRoleta=null;
 
 function iniciarAudio(){
-
-    try{
-
-        if(!audioContext){
-
-            audioContext =
-                new (
-                    window.AudioContext ||
-                    window.webkitAudioContext
-                )();
-
-        }
-
-        if(
-            audioContext.state === "suspended"
-        ){
-
-            audioContext.resume();
-
-        }
-
-    }catch(e){
-
-        console.log(
-            "Áudio indisponível:",
-            e
-        );
-
-    }
-
+try{
+if(!audioContext){
+audioContext=new(window.AudioContext||window.webkitAudioContext)();
 }
-
-
-/* SOM DE FICHA */
+if(audioContext.state==="suspended")audioContext.resume();
+}catch(e){}
+}
 
 function somFicha(){
+iniciarAudio();
+if(!audioContext)return;
 
-    iniciarAudio();
+try{
+const agora=audioContext.currentTime;
+const osc=audioContext.createOscillator();
+const ganho=audioContext.createGain();
 
-    if(!audioContext){
-        return;
-    }
+osc.type="triangle";
+osc.frequency.setValueAtTime(850,agora);
+osc.frequency.exponentialRampToValueAtTime(1250,agora+.045);
 
-    try{
+ganho.gain.setValueAtTime(.0001,agora);
+ganho.gain.exponentialRampToValueAtTime(.20,agora+.005);
+ganho.gain.exponentialRampToValueAtTime(.0001,agora+.10);
 
-        const agora =
-            audioContext.currentTime;
-
-        const osc =
-            audioContext.createOscillator();
-
-        const ganho =
-            audioContext.createGain();
-
-        osc.type = "triangle";
-
-        osc.frequency.setValueAtTime(
-            850,
-            agora
-        );
-
-        osc.frequency.exponentialRampToValueAtTime(
-            1250,
-            agora + 0.045
-        );
-
-        ganho.gain.setValueAtTime(
-            0.0001,
-            agora
-        );
-
-        ganho.gain.exponentialRampToValueAtTime(
-            0.20,
-            agora + 0.005
-        );
-
-        ganho.gain.exponentialRampToValueAtTime(
-            0.0001,
-            agora + 0.10
-        );
-
-        osc.connect(ganho);
-
-        ganho.connect(
-            audioContext.destination
-        );
-
-        osc.start(agora);
-
-        osc.stop(
-            agora + 0.11
-        );
-
-    }catch(e){}
-
+osc.connect(ganho);
+ganho.connect(audioContext.destination);
+osc.start(agora);
+osc.stop(agora+.11);
+}catch(e){}
 }
-
-
-/* SOM DE PALHETA */
 
 function somPalheta(){
+iniciarAudio();
+if(!audioContext)return;
 
-    iniciarAudio();
+try{
+const agora=audioContext.currentTime;
+const osc=audioContext.createOscillator();
+const ganho=audioContext.createGain();
 
-    if(!audioContext){
-        return;
-    }
+osc.type="square";
+osc.frequency.setValueAtTime(900+Math.random()*250,agora);
+osc.frequency.exponentialRampToValueAtTime(480,agora+.045);
 
-    try{
+ganho.gain.setValueAtTime(.0001,agora);
+ganho.gain.exponentialRampToValueAtTime(.055,agora+.003);
+ganho.gain.exponentialRampToValueAtTime(.0001,agora+.065);
 
-        const agora =
-            audioContext.currentTime;
-
-        const osc =
-            audioContext.createOscillator();
-
-        const ganho =
-            audioContext.createGain();
-
-        osc.type = "square";
-
-        osc.frequency.setValueAtTime(
-            900 + Math.random() * 250,
-            agora
-        );
-
-        osc.frequency.exponentialRampToValueAtTime(
-            480,
-            agora + 0.045
-        );
-
-        ganho.gain.setValueAtTime(
-            0.0001,
-            agora
-        );
-
-        ganho.gain.exponentialRampToValueAtTime(
-            0.055,
-            agora + 0.003
-        );
-
-        ganho.gain.exponentialRampToValueAtTime(
-            0.0001,
-            agora + 0.065
-        );
-
-        osc.connect(ganho);
-
-        ganho.connect(
-            audioContext.destination
-        );
-
-        osc.start(agora);
-
-        osc.stop(
-            agora + 0.07
-        );
-
-    }catch(e){}
-
+osc.connect(ganho);
+ganho.connect(audioContext.destination);
+osc.start(agora);
+osc.stop(agora+.07);
+}catch(e){}
 }
-
-
-/* COMEÇA SOM DA ROLETA */
 
 function iniciarSomRoleta(){
+iniciarAudio();
+if(somRoletaAtivo)return;
 
-    iniciarAudio();
+somRoletaAtivo=true;
+somPalheta();
 
-    if(
-        somRoletaAtivo
-    ){
-        return;
-    }
-
-    somRoletaAtivo = true;
-
-    somPalheta();
-
-    intervaloSomRoleta =
-        setInterval(
-            () => {
-
-                if(
-                    somRoletaAtivo
-                ){
-
-                    somPalheta();
-
-                }
-
-            },
-            145
-        );
-
+intervaloSomRoleta=setInterval(()=>{
+if(somRoletaAtivo)somPalheta();
+},145);
 }
-
-
-/* PARA SOM DA ROLETA */
 
 function pararSomRoleta(){
+somRoletaAtivo=false;
 
-    somRoletaAtivo = false;
-
-    if(
-        intervaloSomRoleta
-    ){
-
-        clearInterval(
-            intervaloSomRoleta
-        );
-
-        intervaloSomRoleta = null;
-
-    }
-
+if(intervaloSomRoleta){
+clearInterval(intervaloSomRoleta);
+intervaloSomRoleta=null;
+}
 }
 
-
-/* =====================================================
-   ELEMENTOS
-===================================================== */
-
-const roleta =
-    document.getElementById("roleta");
-
-const bola =
-    document.getElementById("bola");
-
-const saldoEl =
-    document.getElementById("saldo");
-
-const valorApostaEl =
-    document.getElementById("valorAposta");
-
-const mensagemEl =
-    document.getElementById("mensagem");
-
-const btnGirar =
-    document.getElementById("btnGirar");
-
-const fichaSelecionadaEl =
-    document.getElementById("fichaSelecionada");
-
-const fichaContadorEl =
-    document.getElementById("fichaContador");
-
-
-/* =====================================================
-   MOEDA
-===================================================== */
+const roleta=document.getElementById("roleta");
+const bola=document.getElementById("bola");
+const saldoEl=document.getElementById("saldo");
+const valorApostaEl=document.getElementById("valorAposta");
+const mensagemEl=document.getElementById("mensagem");
+const btnGirar=document.getElementById("btnGirar");
+const fichaSelecionadaEl=document.getElementById("fichaSelecionada");
+const fichaContadorEl=document.getElementById("fichaContador");
+const contagemEl=document.getElementById("contagemRoleta");
 
 function moeda(valor){
-
-    return new Intl.NumberFormat(
-        "pt-BR",
-        {
-            style:"currency",
-            currency:"BRL"
-        }
-    ).format(
-        Number(valor) || 0
-    );
-
+return new Intl.NumberFormat("pt-BR",{
+style:"currency",
+currency:"BRL"
+}).format(Number(valor)||0);
 }
-
-
-/* =====================================================
-   SALDO REAL
-===================================================== */
 
 async function obterSaldo(){
 
-    try{
+try{
 
-        if(
-            !window.SistemaSaldo ||
-            typeof window.SistemaSaldo.get !== "function"
-        ){
+if(!window.SistemaSaldo||
+typeof window.SistemaSaldo.get!=="function")return null;
 
-            return null;
+const valor=await window.SistemaSaldo.get();
+const saldo=Number(valor)||0;
 
-        }
+saldoEl.textContent=moeda(saldo);
 
-        const valor =
-            await window.SistemaSaldo.get();
+return saldo;
 
-        const saldo =
-            Number(valor) || 0;
+}catch(erro){
 
-        saldoEl.textContent =
-            moeda(saldo);
-
-        return saldo;
-
-    }catch(erro){
-
-        console.error(
-            "Erro ao carregar saldo:",
-            erro
-        );
-
-        return null;
-
-    }
+console.error("Erro ao carregar saldo:",erro);
+return null;
 
 }
-
-
-/* =====================================================
-   DEBITAR
-===================================================== */
+}
 
 async function debitar(valor){
 
-    if(
-        !window.SistemaSaldo ||
-        typeof window.SistemaSaldo.debitar !== "function"
-    ){
-
-        throw new Error(
-            "Sistema de saldo não carregado."
-        );
-
-    }
-
-    const valorNumerico =
-        Number(valor);
-
-    if(
-        !Number.isFinite(valorNumerico) ||
-        valorNumerico <= 0
-    ){
-
-        return false;
-
-    }
-
-    const resultado =
-        await window.SistemaSaldo.debitar(
-            valorNumerico
-        );
-
-    await obterSaldo();
-
-    return resultado;
-
+if(!window.SistemaSaldo||
+typeof window.SistemaSaldo.debitar!=="function"){
+throw new Error("Sistema de saldo não carregado.");
 }
 
+const valorNumerico=Number(valor);
 
-/* =====================================================
-   CREDITAR
-===================================================== */
+if(!Number.isFinite(valorNumerico)||valorNumerico<=0)return false;
+
+const resultado=await window.SistemaSaldo.debitar(valorNumerico);
+
+await obterSaldo();
+
+return resultado;
+}
 
 async function creditar(valor){
 
-    if(
-        !window.SistemaSaldo ||
-        typeof window.SistemaSaldo.creditar !== "function"
-    ){
-
-        throw new Error(
-            "Sistema de saldo não carregado."
-        );
-
-    }
-
-    const valorNumerico =
-        Number(valor);
-
-    if(
-        !Number.isFinite(valorNumerico) ||
-        valorNumerico <= 0
-    ){
-
-        return false;
-
-    }
-
-    const resultado =
-        await window.SistemaSaldo.creditar(
-            valorNumerico
-        );
-
-    await obterSaldo();
-
-    return resultado;
-
+if(!window.SistemaSaldo||
+typeof window.SistemaSaldo.creditar!=="function"){
+throw new Error("Sistema de saldo não carregado.");
 }
 
+const valorNumerico=Number(valor);
 
-/* =====================================================
-   NÚMEROS DA ROLETA
-===================================================== */
+if(!Number.isFinite(valorNumerico)||valorNumerico<=0)return false;
+
+const resultado=await window.SistemaSaldo.creditar(valorNumerico);
+
+await obterSaldo();
+
+return resultado;
+}
 
 function criarNumerosRoleta(){
 
-    const area =
-        document.getElementById(
-            "numerosRoleta"
-        );
+const area=document.getElementById("numerosRoleta");
+area.innerHTML="";
 
-    area.innerHTML = "";
+SEQUENCIA.forEach((numero,index)=>{
 
-    SEQUENCIA.forEach(
-        (numero,index)=>{
+const span=document.createElement("span");
+const angulo=index*(360/SEQUENCIA.length);
 
-            const span =
-                document.createElement(
-                    "span"
-                );
+span.textContent=numero;
 
-            const angulo =
-                index *
-                (360 / SEQUENCIA.length);
+span.style.transform=
+`rotate(${angulo}deg) translateY(-205px) rotate(-${angulo}deg)`;
 
-            span.textContent =
-                numero;
+area.appendChild(span);
 
-            span.style.transform =
-                `rotate(${angulo}deg)
-                 translateY(-205px)
-                 rotate(-${angulo}deg)`;
-
-            area.appendChild(
-                span
-            );
-
-        }
-    );
-
+});
 }
-
-
-/* =====================================================
-   TABELA
-===================================================== */
 
 function criarTabela(){
 
-    const grid =
-        document.getElementById(
-            "numeroGrid"
-        );
+const grid=document.getElementById("numeroGrid");
+grid.innerHTML="";
 
-    grid.innerHTML = "";
+const zero=document.createElement("button");
 
+zero.className="num zero";
+zero.textContent="0";
+zero.onclick=()=>apostar("numero",0);
 
-    const zero =
-        document.createElement(
-            "button"
-        );
+grid.appendChild(zero);
 
-    zero.className =
-        "num zero";
+for(let linha=0;linha<3;linha++){
 
-    zero.textContent =
-        "0";
+for(let coluna=1;coluna<=12;coluna++){
 
-    zero.onclick =
-        () => apostar(
-            "numero",
-            0
-        );
+const numero=coluna*3-linha;
+const botao=document.createElement("button");
 
-    grid.appendChild(
-        zero
-    );
+botao.className="num "+
+(VERMELHOS.includes(numero)?"red":"black");
 
+botao.textContent=numero;
+botao.onclick=()=>apostar("numero",numero);
 
-    for(
-        let linha = 0;
-        linha < 3;
-        linha++
-    ){
-
-        for(
-            let coluna = 1;
-            coluna <= 12;
-            coluna++
-        ){
-
-            const numero =
-                coluna * 3 - linha;
-
-            const botao =
-                document.createElement(
-                    "button"
-                );
-
-            botao.className =
-                "num " +
-                (
-                    VERMELHOS.includes(numero)
-                    ? "red"
-                    : "black"
-                );
-
-            botao.textContent =
-                numero;
-
-            botao.onclick =
-                () => apostar(
-                    "numero",
-                    numero
-                );
-
-            grid.appendChild(
-                botao
-            );
-
-        }
-
-    }
+grid.appendChild(botao);
 
 }
-
-
-/* =====================================================
-   FICHA VISUAL SOBRE O NÚMERO
-===================================================== */
+}
+}
 
 function classeFicha(valor){
 
-    if(valor === 0.50){
-        return "f05";
-    }
+if(valor===.50)return"f05";
+if(valor===1)return"f1";
+if(valor===2)return"f2";
+if(valor===5)return"f5";
+if(valor===10)return"f10";
+if(valor===50)return"f50";
 
-    if(valor === 1){
-        return "f1";
-    }
-
-    if(valor === 2){
-        return "f2";
-    }
-
-    if(valor === 5){
-        return "f5";
-    }
-
-    if(valor === 10){
-        return "f10";
-    }
-
-    if(valor === 50){
-        return "f50";
-    }
-
-    return "f1";
-
+return"f1";
 }
 
+function colocarFichaNoNumero(numero,valor){
 
-function colocarFichaNoNumero(
-    numero,
-    valor
-){
+const botoes=document.querySelectorAll(".num");
 
-    const botoes =
-        document.querySelectorAll(
-            ".num"
-        );
+botoes.forEach(botao=>{
 
-    botoes.forEach(
-        botao => {
+const texto=botao.childNodes[0]?.nodeValue?.trim();
 
-            const texto =
-                botao.childNodes[0]?.nodeValue?.trim();
+if(Number(texto)===Number(numero)){
 
-            if(
-                Number(texto) ===
-                Number(numero)
-            ){
+const ficha=document.createElement("div");
+ficha.className="fichas-na-aposta";
 
-                const ficha =
-                    document.createElement(
-                        "div"
-                    );
+const chip=document.createElement("div");
 
-                ficha.className =
-                    "fichas-na-aposta";
+chip.className="ficha-mesa "+classeFicha(valor);
 
-                const chip =
-                    document.createElement(
-                        "div"
-                    );
+chip.textContent=valor===.50?"0,50":valor;
 
-                chip.className =
-                    "ficha-mesa " +
-                    classeFicha(valor);
-
-                chip.textContent =
-                    valor === 0.50
-                    ? "0,50"
-                    : valor;
-
-                ficha.appendChild(
-                    chip
-                );
-
-                botao.appendChild(
-                    ficha
-                );
-
-            }
-
-        }
-    );
+ficha.appendChild(chip);
+botao.appendChild(ficha);
 
 }
-
-
-/* =====================================================
-   LIMPAR FICHAS VISUAIS
-===================================================== */
+});
+}
 
 function limparFichasVisuais(){
 
-    document
-        .querySelectorAll(
-            ".fichas-na-aposta"
-        )
-        .forEach(
-            elemento =>
-                elemento.remove()
-        );
+document.querySelectorAll(".fichas-na-aposta").forEach(e=>e.remove());
 
 }
 
+function selecionarFicha(valor,elemento){
 
-/* =====================================================
-   SELECIONAR FICHA
-===================================================== */
+if(girando)return;
 
-function selecionarFicha(
-    valor,
-    elemento
-){
+iniciarAudio();
+somFicha();
 
-    if(girando){
+fichaSelecionadaValor=Number(valor);
 
-        return;
+if(fichaSelecionadaValor===.50){
 
-    }
+valorPorFicha=.50;
+fichasDisponiveis=1;
 
-    iniciarAudio();
+}else{
 
-    somFicha();
-
-
-    fichaSelecionadaValor =
-        Number(valor);
-
-
-    if(
-        fichaSelecionadaValor === 0.50
-    ){
-
-        valorPorFicha = 0.50;
-
-        fichasDisponiveis = 1;
-
-    }else{
-
-        valorPorFicha = 1;
-
-        fichasDisponiveis =
-            Math.floor(
-                fichaSelecionadaValor
-            );
-
-    }
-
-
-    document
-        .querySelectorAll(".ficha")
-        .forEach(
-            x =>
-                x.classList.remove(
-                    "selecionada"
-                )
-        );
-
-
-    elemento.classList.add(
-        "selecionada"
-    );
-
-
-    fichaSelecionadaEl.textContent =
-        moeda(
-            fichaSelecionadaValor
-        );
-
-
-    atualizarContadorFichas();
-
-
-    mensagemEl.textContent =
-        `Você selecionou ${fichasDisponiveis} ficha(s).`;
-
-    mensagemEl.className =
-        "mensagem";
+valorPorFicha=1;
+fichasDisponiveis=Math.floor(fichaSelecionadaValor);
 
 }
 
+document.querySelectorAll(".ficha").forEach(x=>x.classList.remove("selecionada"));
 
-/* =====================================================
-   CONTADOR
-===================================================== */
+elemento.classList.add("selecionada");
+
+fichaSelecionadaEl.textContent=moeda(fichaSelecionadaValor);
+
+atualizarContadorFichas();
+
+mensagemEl.textContent=
+`Você selecionou ${fichasDisponiveis} ficha(s).`;
+
+mensagemEl.className="mensagem";
+}
 
 function atualizarContadorFichas(){
 
-    const texto =
-        fichasDisponiveis === 1
-        ? "1 ficha"
-        : `${fichasDisponiveis} fichas`;
-
-    fichaContadorEl.textContent =
-        texto;
+fichaContadorEl.textContent=
+fichasDisponiveis===1?"1 ficha":`${fichasDisponiveis} fichas`;
 
 }
 
+function apostar(tipo,valor){
 
-/* =====================================================
-   APOSTAR
-===================================================== */
+if(girando)return;
 
-function apostar(
-    tipo,
-    valor
-){
+if(fichasDisponiveis<=0){
 
-    if(girando){
+mensagemEl.textContent=
+"❌ Você já usou todas as fichas selecionadas.";
 
-        return;
+mensagemEl.className="mensagem resultado-derrota";
 
-    }
-
-
-    if(
-        fichasDisponiveis <= 0
-    ){
-
-        mensagemEl.textContent =
-            "❌ Você já usou todas as fichas selecionadas.";
-
-        mensagemEl.className =
-            "mensagem resultado-derrota";
-
-        return;
-
-    }
-
-
-    iniciarAudio();
-
-    somFicha();
-
-
-    apostas.push({
-
-        tipo:tipo,
-
-        valor:valor,
-
-        quantia:valorPorFicha
-
-    });
-
-
-    fichasDisponiveis--;
-
-    atualizarContadorFichas();
-
-    atualizarAposta();
-
-
-    /*
-     * FICHA FICA SOBRE O NÚMERO
-     */
-
-    if(
-        tipo === "numero"
-    ){
-
-        colocarFichaNoNumero(
-            valor,
-            valorPorFicha
-        );
-
-    }
-
-
-    mensagemEl.textContent =
-        `Ficha adicionada: ${moeda(valorPorFicha)}`;
-
-    mensagemEl.className =
-        "mensagem";
-
+return;
 }
 
+iniciarAudio();
+somFicha();
 
-/* =====================================================
-   TOTAL
-===================================================== */
+apostas.push({
+tipo:tipo,
+valor:valor,
+quantia:valorPorFicha
+});
+
+fichasDisponiveis--;
+
+atualizarContadorFichas();
+atualizarAposta();
+
+if(tipo==="numero"){
+colocarFichaNoNumero(valor,valorPorFicha);
+}
+
+mensagemEl.textContent=
+`Ficha adicionada: ${moeda(valorPorFicha)}`;
+
+mensagemEl.className="mensagem";
+}
 
 function totalApostas(){
 
-    return apostas.reduce(
-        (total, aposta) =>
-            total +
-            Number(aposta.quantia),
-        0
-    );
+return apostas.reduce(
+(total,aposta)=>total+Number(aposta.quantia),0
+);
 
 }
-
-
-/* =====================================================
-   ATUALIZAR APOSTA
-===================================================== */
 
 function atualizarAposta(){
 
-    valorApostaEl.textContent =
-        moeda(
-            totalApostas()
-        );
+valorApostaEl.textContent=moeda(totalApostas());
 
 }
 
+/* =====================================================
+   NOVA CONTAGEM REGRESSIVA DE 10 SEGUNDOS
+===================================================== */
+
+function contagemRegressiva(){
+
+return new Promise(resolve=>{
+
+let numero=10;
+
+contagemEl.textContent=numero;
+contagemEl.style.display="flex";
+
+const intervalo=setInterval(()=>{
+
+numero--;
+
+if(numero>0){
+
+contagemEl.textContent=numero;
+
+}else{
+
+clearInterval(intervalo);
+
+contagemEl.textContent="GO!";
+
+setTimeout(()=>{
+
+contagemEl.style.display="none";
+
+resolve();
+
+},500);
+
+}
+
+},1000);
+
+});
+
+}
 
 /* =====================================================
    GIRAR ROLETA
@@ -2106,932 +1027,493 @@ function atualizarAposta(){
 
 async function girarRoleta(){
 
-    if(girando){
+if(girando)return;
 
-        return;
+if(apostas.length===0){
 
-    }
+mensagemEl.textContent=
+"Faça pelo menos uma aposta antes de girar.";
 
+mensagemEl.className="mensagem resultado-derrota";
 
-    if(
-        apostas.length === 0
-    ){
+return;
+}
 
-        mensagemEl.textContent =
-            "Faça pelo menos uma aposta antes de girar.";
+const total=totalApostas();
 
-        mensagemEl.className =
-            "mensagem resultado-derrota";
+if(total<=0){
 
-        return;
+mensagemEl.textContent="Valor de aposta inválido.";
+mensagemEl.className="mensagem resultado-derrota";
 
-    }
+return;
+}
 
+try{
 
-    const total =
-        totalApostas();
+iniciarAudio();
 
+girando=true;
+btnGirar.disabled=true;
 
-    if(total <= 0){
+mensagemEl.textContent="⏳ Prepare-se...";
 
-        mensagemEl.textContent =
-            "Valor de aposta inválido.";
+mensagemEl.className="mensagem";
 
-        mensagemEl.className =
-            "mensagem resultado-derrota";
+ultimaAposta=apostas.map(a=>({...a}));
 
-        return;
+/*
+   CONTAGEM DE 10 SEGUNDOS
+   ANTES DO DÉBITO E DO GIRO
+*/
 
-    }
+await contagemRegressiva();
 
+/*
+   DESCONTA DO SALDO REAL
+*/
 
-    try{
+const debito=await debitar(total);
 
-        iniciarAudio();
+if(debito===false){
 
-        girando = true;
-
-        btnGirar.disabled = true;
-
-
-        mensagemEl.textContent =
-            "🎰 A roleta está girando...";
-
-        mensagemEl.className =
-            "mensagem";
-
-
-        ultimaAposta =
-            apostas.map(
-                a => ({...a})
-            );
-
-
-        /*
-         * DESCONTA DO SALDO REAL
-         */
-
-        const debito =
-            await debitar(total);
-
-
-        if(
-            debito === false
-        ){
-
-            throw new Error(
-                "❌ Saldo insuficiente."
-            );
-
-        }
-
-
-        /*
-         * SORTEIO
-         */
-
-        const indice =
-            Math.floor(
-                Math.random() *
-                SEQUENCIA.length
-            );
-
-
-        const numeroFinal =
-            SEQUENCIA[indice];
-
-
-        /*
-         * ROTAÇÃO
-         */
-
-        const voltas = 7;
-
-        const anguloPorNumero =
-            360 / SEQUENCIA.length;
-
-        const destino =
-            360 -
-            (
-                indice *
-                anguloPorNumero
-            );
-
-        rotacaoAtual +=
-            voltas * 360 +
-            destino;
-
-
-        /*
-         * SOM DA PALHETA
-         */
-
-        iniciarSomRoleta();
-
-
-        roleta.style.transform =
-            `rotate(${rotacaoAtual}deg)`;
-
-
-        /*
-         * BOLA
-         */
-
-        bola.animate(
-            [
-                {
-                    transform:
-                    "translate(-50%,-50%) translateY(-185px) rotate(0deg)"
-                },
-
-                {
-                    transform:
-                    "translate(-50%,-50%) translateY(-185px) rotate(1080deg)"
-                },
-
-                {
-                    transform:
-                    "translate(-50%,-50%) translateY(-150px) rotate(1800deg)"
-                }
-            ],
-            {
-                duration:5000,
-
-                easing:
-                "cubic-bezier(.12,.75,.16,1)"
-            }
-        );
-
-
-        setTimeout(
-            async () => {
-
-                pararSomRoleta();
-
-                try{
-
-                    await finalizarRodada(
-                        numeroFinal
-                    );
-
-                }catch(erro){
-
-                    console.error(
-                        erro
-                    );
-
-                    mensagemEl.textContent =
-                        "Erro ao finalizar a rodada.";
-
-                    mensagemEl.className =
-                        "mensagem resultado-derrota";
-
-                }
-
-
-                girando = false;
-
-                btnGirar.disabled =
-                    false;
-
-
-                await obterSaldo();
-
-
-                if(
-                    auto &&
-                    apostas.length > 0
-                ){
-
-                    setTimeout(
-                        girarRoleta,
-                        1200
-                    );
-
-                }
-
-            },
-            5100
-        );
-
-
-    }catch(erro){
-
-        pararSomRoleta();
-
-        console.error(
-            "Erro ao girar:",
-            erro
-        );
-
-
-        girando = false;
-
-        btnGirar.disabled =
-            false;
-
-
-        mensagemEl.textContent =
-            erro.message ||
-            "Não foi possível realizar a aposta.";
-
-        mensagemEl.className =
-            "mensagem resultado-derrota";
-
-
-        await obterSaldo();
-
-    }
+throw new Error("❌ Saldo insuficiente.");
 
 }
 
+/*
+   SORTEIO
+*/
 
-/* =====================================================
-   FINALIZAR RODADA
-===================================================== */
+const indice=Math.floor(
+Math.random()*SEQUENCIA.length
+);
 
-async function finalizarRodada(
-    numero
-){
+const numeroFinal=SEQUENCIA[indice];
 
-    resultados.unshift(
-        numero
-    );
+/*
+   ROTAÇÃO
+*/
 
-    resultados =
-        resultados.slice(
-            0,
-            8
-        );
+const voltas=7;
+const anguloPorNumero=360/SEQUENCIA.length;
 
+const destino=
+360-(indice*anguloPorNumero);
 
-    atualizarResultados();
+rotacaoAtual+=
+voltas*360+destino;
 
+iniciarSomRoleta();
 
-    document.getElementById(
-        "ultimoResultado"
-    ).textContent =
-        numero;
+roleta.style.transform=
+`rotate(${rotacaoAtual}deg)`;
 
+/*
+   BOLA
+*/
 
-    let premio = 0;
+bola.animate(
+[
+{
+transform:
+"translate(-50%,-50%) translateY(-185px) rotate(0deg)"
+},
+{
+transform:
+"translate(-50%,-50%) translateY(-185px) rotate(1080deg)"
+},
+{
+transform:
+"translate(-50%,-50%) translateY(-150px) rotate(1800deg)"
+}
+],
+{
+duration:5000,
+easing:"cubic-bezier(.12,.75,.16,1)"
+}
+);
 
+mensagemEl.textContent="🎰 A roleta está girando...";
+mensagemEl.className="mensagem";
 
-    apostas.forEach(
-        aposta => {
+setTimeout(async()=>{
 
-            if(
-                aposta.tipo ===
-                "numero"
-            ){
+pararSomRoleta();
 
-                if(
-                    aposta.valor ===
-                    numero
-                ){
+try{
 
-                    premio +=
-                        aposta.quantia *
-                        36;
+await finalizarRodada(numeroFinal);
 
-                }
+}catch(erro){
 
-            }
+console.error(erro);
 
-            else if(
-                aposta.tipo ===
-                "cor"
-            ){
+mensagemEl.textContent=
+"Erro ao finalizar a rodada.";
 
-                const cor =
-                    corNumero(numero);
-
-                if(
-                    cor ===
-                    aposta.valor
-                ){
-
-                    premio +=
-                        aposta.quantia *
-                        2;
-
-                }
-
-            }
-
-            else if(
-                aposta.tipo ===
-                "par"
-            ){
-
-                if(
-                    numero !== 0
-                ){
-
-                    const par =
-                        numero % 2 === 0
-                        ? "par"
-                        : "impar";
-
-
-                    if(
-                        par ===
-                        aposta.valor
-                    ){
-
-                        premio +=
-                            aposta.quantia *
-                            2;
-
-                    }
-
-                }
-
-            }
-
-            else if(
-                aposta.tipo ===
-                "baixo"
-            ){
-
-                if(
-                    numero >= 1 &&
-                    numero <= 18
-                ){
-
-                    premio +=
-                        aposta.quantia *
-                        2;
-
-                }
-
-            }
-
-            else if(
-                aposta.tipo ===
-                "alto"
-            ){
-
-                if(
-                    numero >= 19 &&
-                    numero <= 36
-                ){
-
-                    premio +=
-                        aposta.quantia *
-                        2;
-
-                }
-
-            }
-
-            else if(
-                aposta.tipo ===
-                "dozen"
-            ){
-
-                if(
-                    aposta.valor === 1 &&
-                    numero >= 1 &&
-                    numero <= 12
-                ){
-
-                    premio +=
-                        aposta.quantia *
-                        3;
-
-                }
-
-            }
-
-            else if(
-                aposta.tipo ===
-                "doze"
-            ){
-
-                const grupo =
-                    numero >= 1 &&
-                    numero <= 12
-                    ? 1
-                    :
-                    numero >= 13 &&
-                    numero <= 24
-                    ? 2
-                    :
-                    numero >= 25 &&
-                    numero <= 36
-                    ? 3
-                    :
-                    0;
-
-
-                if(
-                    grupo ===
-                    aposta.valor
-                ){
-
-                    premio +=
-                        aposta.quantia *
-                        3;
-
-                }
-
-            }
-
-        }
-    );
-
-
-    const cor =
-        corNumero(numero);
-
-
-    if(
-        premio > 0
-    ){
-
-        await creditar(
-            premio
-        );
-
-
-        mensagemEl.textContent =
-            `🎉 Saiu ${numero} (${cor.toUpperCase()}) — prêmio ${moeda(premio)}!`;
-
-        mensagemEl.className =
-            "mensagem resultado-vitoria";
-
-    }else{
-
-        mensagemEl.textContent =
-            `Saiu ${numero} (${cor.toUpperCase()}). Boa sorte na próxima!`;
-
-        mensagemEl.className =
-            "mensagem resultado-derrota";
-
-    }
-
-
-    atualizarEstatisticas();
-
-
-    apostas = [];
-
-    atualizarAposta();
-
-
-    restaurarFichas();
-
-
-    /*
-     * LIMPA AS FICHAS DA MESA
-     * somente depois que a rodada terminou
-     */
-
-    limparFichasVisuais();
-
-
-    await obterSaldo();
+mensagemEl.className=
+"mensagem resultado-derrota";
 
 }
 
+girando=false;
+btnGirar.disabled=false;
 
-/* =====================================================
-   RESTAURAR FICHAS
-===================================================== */
+await obterSaldo();
+
+if(auto&&apostas.length>0){
+
+setTimeout(girarRoleta,1200);
+
+}
+
+},5100);
+
+}catch(erro){
+
+pararSomRoleta();
+
+console.error("Erro ao girar:",erro);
+
+contagemEl.style.display="none";
+
+girando=false;
+btnGirar.disabled=false;
+
+mensagemEl.textContent=
+erro.message||
+"Não foi possível realizar a aposta.";
+
+mensagemEl.className=
+"mensagem resultado-derrota";
+
+await obterSaldo();
+
+}
+
+}
+
+async function finalizarRodada(numero){
+
+resultados.unshift(numero);
+
+resultados=resultados.slice(0,8);
+
+atualizarResultados();
+
+document.getElementById("ultimoResultado").textContent=numero;
+
+let premio=0;
+
+apostas.forEach(aposta=>{
+
+if(aposta.tipo==="numero"){
+
+if(aposta.valor===numero){
+premio+=aposta.quantia*36;
+}
+
+}else if(aposta.tipo==="cor"){
+
+const cor=corNumero(numero);
+
+if(cor===aposta.valor){
+premio+=aposta.quantia*2;
+}
+
+}else if(aposta.tipo==="par"){
+
+if(numero!==0){
+
+const par=numero%2===0?"par":"impar";
+
+if(par===aposta.valor){
+premio+=aposta.quantia*2;
+}
+
+}
+
+}else if(aposta.tipo==="baixo"){
+
+if(numero>=1&&numero<=18){
+premio+=aposta.quantia*2;
+}
+
+}else if(aposta.tipo==="alto"){
+
+if(numero>=19&&numero<=36){
+premio+=aposta.quantia*2;
+}
+
+}else if(aposta.tipo==="dozen"){
+
+if(aposta.valor===1&&numero>=1&&numero<=12){
+premio+=aposta.quantia*3;
+}
+
+}else if(aposta.tipo==="doze"){
+
+const grupo=
+numero>=1&&numero<=12?1:
+numero>=13&&numero<=24?2:
+numero>=25&&numero<=36?3:0;
+
+if(grupo===aposta.valor){
+premio+=aposta.quantia*3;
+}
+
+}
+
+});
+
+const cor=corNumero(numero);
+
+if(premio>0){
+
+await creditar(premio);
+
+mensagemEl.textContent=
+`🎉 Saiu ${numero} (${cor.toUpperCase()}) — prêmio ${moeda(premio)}!`;
+
+mensagemEl.className=
+"mensagem resultado-vitoria";
+
+}else{
+
+mensagemEl.textContent=
+`Saiu ${numero} (${cor.toUpperCase()}). Boa sorte na próxima!`;
+
+mensagemEl.className=
+"mensagem resultado-derrota";
+
+}
+
+atualizarEstatisticas();
+
+apostas=[];
+atualizarAposta();
+restaurarFichas();
+limparFichasVisuais();
+
+await obterSaldo();
+
+}
 
 function restaurarFichas(){
 
-    if(
-        fichaSelecionadaValor === 0.50
-    ){
+if(fichaSelecionadaValor===.50){
 
-        valorPorFicha = 0.50;
+valorPorFicha=.50;
+fichasDisponiveis=1;
 
-        fichasDisponiveis = 1;
+}else{
 
-    }else{
-
-        valorPorFicha = 1;
-
-        fichasDisponiveis =
-            Math.floor(
-                fichaSelecionadaValor
-            );
-
-    }
-
-    atualizarContadorFichas();
+valorPorFicha=1;
+fichasDisponiveis=
+Math.floor(fichaSelecionadaValor);
 
 }
 
+atualizarContadorFichas();
 
-/* =====================================================
-   COR
-===================================================== */
+}
 
 function corNumero(numero){
 
-    if(
-        numero === 0
-    ){
+if(numero===0)return"verde";
 
-        return "verde";
-
-    }
-
-    return VERMELHOS.includes(numero)
-        ? "vermelho"
-        : "preto";
+return VERMELHOS.includes(numero)
+?"vermelho"
+:"preto";
 
 }
-
-
-/* =====================================================
-   RESULTADOS
-===================================================== */
 
 function atualizarResultados(){
 
-    const box =
-        document.getElementById(
-            "ultimosResultados"
-        );
+const box=document.getElementById("ultimosResultados");
 
+box.innerHTML="";
 
-    box.innerHTML = "";
+if(resultados.length===0){
 
+box.innerHTML=
+"<span style='opacity:.7;'>Nenhum resultado</span>";
 
-    if(
-        resultados.length === 0
-    ){
-
-        box.innerHTML =
-            "<span style='opacity:.7;'>Nenhum resultado</span>";
-
-        return;
-
-    }
-
-
-    resultados.forEach(
-        numero => {
-
-            const span =
-                document.createElement(
-                    "span"
-                );
-
-
-            span.className =
-                "resultado " +
-                corNumero(numero);
-
-
-            span.textContent =
-                numero;
-
-
-            box.appendChild(
-                span
-            );
-
-        }
-    );
+return;
 
 }
 
+resultados.forEach(numero=>{
 
-/* =====================================================
-   ESTATÍSTICAS
-===================================================== */
+const span=document.createElement("span");
+
+span.className=
+"resultado "+corNumero(numero);
+
+span.textContent=numero;
+
+box.appendChild(span);
+
+});
+
+}
 
 function atualizarEstatisticas(){
 
-    if(
-        resultados.length === 0
-    ){
+if(resultados.length===0)return;
 
-        return;
+let red=0;
+let black=0;
+let green=0;
 
-    }
+resultados.forEach(numero=>{
 
+const cor=corNumero(numero);
 
-    let red = 0;
+if(cor==="vermelho")red++;
+if(cor==="preto")black++;
+if(cor==="verde")green++;
 
-    let black = 0;
+});
 
-    let green = 0;
+const total=resultados.length;
 
+document.getElementById("estatRed").textContent=
+Math.round(red/total*100)+"%";
 
-    resultados.forEach(
-        numero => {
+document.getElementById("estatBlack").textContent=
+Math.round(black/total*100)+"%";
 
-            const cor =
-                corNumero(numero);
-
-
-            if(
-                cor ===
-                "vermelho"
-            ){
-
-                red++;
-
-            }
-
-
-            if(
-                cor ===
-                "preto"
-            ){
-
-                black++;
-
-            }
-
-
-            if(
-                cor ===
-                "verde"
-            ){
-
-                green++;
-
-            }
-
-        }
-    );
-
-
-    const total =
-        resultados.length;
-
-
-    document.getElementById(
-        "estatRed"
-    ).textContent =
-        Math.round(
-            red / total * 100
-        ) + "%";
-
-
-    document.getElementById(
-        "estatBlack"
-    ).textContent =
-        Math.round(
-            black / total * 100
-        ) + "%";
-
-
-    document.getElementById(
-        "estatGreen"
-    ).textContent =
-        Math.round(
-            green / total * 100
-        ) + "%";
+document.getElementById("estatGreen").textContent=
+Math.round(green/total*100)+"%";
 
 }
-
-
-/* =====================================================
-   LIMPAR
-===================================================== */
 
 function limparApostas(){
 
-    if(girando){
+if(girando)return;
 
-        return;
+apostas=[];
+atualizarAposta();
+restaurarFichas();
+limparFichasVisuais();
 
-    }
-
-
-    apostas = [];
-
-    atualizarAposta();
-
-    restaurarFichas();
-
-    limparFichasVisuais();
-
-
-    mensagemEl.textContent =
-        "Apostas limpas.";
-
-    mensagemEl.className =
-        "mensagem";
+mensagemEl.textContent="Apostas limpas.";
+mensagemEl.className="mensagem";
 
 }
-
-
-/* =====================================================
-   REPETIR
-===================================================== */
 
 function repetirAposta(){
 
-    if(girando){
+if(girando)return;
 
-        return;
+if(ultimaAposta.length===0){
 
-    }
+mensagemEl.textContent=
+"Ainda não existe uma aposta anterior.";
 
+mensagemEl.className="mensagem";
 
-    if(
-        ultimaAposta.length === 0
-    ){
+return;
+}
 
-        mensagemEl.textContent =
-            "Ainda não existe uma aposta anterior.";
+apostas=ultimaAposta.map(a=>({...a}));
 
-        mensagemEl.className =
-            "mensagem";
+limparFichasVisuais();
 
-        return;
+apostas.forEach(aposta=>{
 
-    }
+if(aposta.tipo==="numero"){
 
-
-    apostas =
-        ultimaAposta.map(
-            a => ({...a})
-        );
-
-
-    limparFichasVisuais();
-
-
-    /*
-     * Mostra novamente as fichas
-     * nos números da aposta anterior.
-     */
-
-    apostas.forEach(
-        aposta => {
-
-            if(
-                aposta.tipo === "numero"
-            ){
-
-                colocarFichaNoNumero(
-                    aposta.valor,
-                    aposta.quantia
-                );
-
-            }
-
-        }
-    );
-
-
-    const totalNecessario =
-        apostas.length;
-
-
-    if(
-        fichaSelecionadaValor === 0.50
-    ){
-
-        fichasDisponiveis =
-            Math.max(
-                0,
-                1 - totalNecessario
-            );
-
-    }else{
-
-        fichasDisponiveis =
-            Math.max(
-                0,
-                Math.floor(
-                    fichaSelecionadaValor
-                ) -
-                totalNecessario
-            );
-
-    }
-
-
-    atualizarAposta();
-
-    atualizarContadorFichas();
-
-
-    mensagemEl.textContent =
-        "Aposta anterior repetida.";
-
-    mensagemEl.className =
-        "mensagem";
+colocarFichaNoNumero(
+aposta.valor,
+aposta.quantia
+);
 
 }
 
+});
 
-/* =====================================================
-   AUTOMÁTICO
-===================================================== */
+const totalNecessario=apostas.length;
+
+if(fichaSelecionadaValor===.50){
+
+fichasDisponiveis=
+Math.max(0,1-totalNecessario);
+
+}else{
+
+fichasDisponiveis=
+Math.max(
+0,
+Math.floor(fichaSelecionadaValor)-totalNecessario
+);
+
+}
+
+atualizarAposta();
+atualizarContadorFichas();
+
+mensagemEl.textContent="Aposta anterior repetida.";
+mensagemEl.className="mensagem";
+
+}
 
 function toggleAuto(){
 
-    auto = !auto;
+auto=!auto;
 
-
-    document
-        .getElementById(
-            "switchAuto"
-        )
-        .classList.toggle(
-            "ativo",
-            auto
-        );
+document.getElementById("switchAuto")
+.classList.toggle("ativo",auto);
 
 }
-
-
-/* =====================================================
-   DEPÓSITO
-===================================================== */
 
 function irDeposito(){
 
-    window.location.href =
-        "../deposito.html";
+window.location.href="../deposito.html";
 
 }
 
+document.addEventListener("DOMContentLoaded",async()=>{
 
-/* =====================================================
-   INICIALIZAÇÃO
-===================================================== */
+criarNumerosRoleta();
+criarTabela();
+restaurarFichas();
 
-document.addEventListener(
-    "DOMContentLoaded",
-    async () => {
+let tentativas=0;
 
-        criarNumerosRoleta();
+while(!window.SistemaSaldo&&tentativas<50){
 
-        criarTabela();
-
-        restaurarFichas();
-
-
-        let tentativas = 0;
-
-
-        while(
-            !window.SistemaSaldo &&
-            tentativas < 50
-        ){
-
-            await new Promise(
-                resolve =>
-                    setTimeout(
-                        resolve,
-                        100
-                    )
-            );
-
-            tentativas++;
-
-        }
-
-
-        if(
-            !window.SistemaSaldo
-        ){
-
-            console.error(
-                "SistemaSaldo não foi carregado."
-            );
-
-            saldoEl.textContent =
-                "R$ 0,00";
-
-            return;
-
-        }
-
-
-        await obterSaldo();
-
-
-        setInterval(
-            async () => {
-
-                if(
-                    !girando
-                ){
-
-                    await obterSaldo();
-
-                }
-
-            },
-            5000
-        );
-
-    }
+await new Promise(resolve=>
+setTimeout(resolve,100)
 );
+
+tentativas++;
+
+}
+
+if(!window.SistemaSaldo){
+
+console.error("SistemaSaldo não foi carregado.");
+
+saldoEl.textContent="R$ 0,00";
+
+return;
+
+}
+
+await obterSaldo();
+
+setInterval(async()=>{
+
+if(!girando){
+await obterSaldo();
+}
+
+},5000);
+
+});
 
 </script>
 
