@@ -159,14 +159,7 @@ background:#22150a;
 border:16px solid #5f3915;
 box-shadow:0 0 0 5px #d29a38,0 0 35px rgba(0,0,0,.9),inset 0 0 30px #000;
 transition:none;
-transform:none;
-overflow:visible;
-
-/*
-   O JavaScript calcula o raio real da bolinha
-   de acordo com o tamanho da roleta.
-*/
---raio-bola:190px;
+transform:none
 }
 
 .roleta::before{
@@ -269,8 +262,8 @@ text-shadow:0 2px 5px #000
 }
 
 /* =====================================================
-   BOLINHA
-   AGORA O RAIO É CALCULADO PELA ROLETA
+   BOLINHA — ÚNICA PARTE ALTERADA
+   FICA DENTRO DA ROLETA
 ===================================================== */
 
 .bola{
@@ -286,15 +279,17 @@ left:50%;
 top:50%;
 
 /*
-   IMPORTANTE:
-   a bolinha usa o raio calculado pelo JavaScript.
-   Isso impede que ela saia para fora da roleta
-   em telas grandes ou pequenas.
+   O centro da roleta tem 125px.
+   A área interna da roleta possui raio aproximado
+   de 228px no tamanho máximo.
+
+   178px mantém a bolinha dentro da área colorida,
+   sem ultrapassar a borda externa.
 */
 transform:
 translate(-50%,-50%)
 rotate(0deg)
-translateY(calc(-1 * var(--raio-bola)));
+translateY(-178px);
 
 transform-origin:center center;
 z-index:7;
@@ -639,14 +634,18 @@ height:32px
 width:82vw
 }
 
-/*
-   Não colocamos mais um raio fixo aqui.
-   O JavaScript calcula automaticamente.
-*/
-
 .roleta-centro{
 width:85px;
 height:85px
+}
+
+/* SOMENTE O RAIO DA BOLINHA MUDA NO CELULAR */
+
+.bola{
+transform:
+translate(-50%,-50%)
+rotate(0deg)
+translateY(-125px)
 }
 
 .roleta-area::before{
@@ -782,6 +781,7 @@ VERDE
 
 <div class="numero-roleta" id="numerosRoleta"></div>
 
+<!-- SOMENTE A BOLINHA GIRA -->
 <div class="bola" id="bola"></div>
 
 <div class="roleta-centro"></div>
@@ -811,7 +811,7 @@ R$ 0,00
 <button
 class="btn-girar"
 id="btnGirar"
-onclick="girarRoleta">
+onclick="girarRoleta()">
 
 GIRAR ROLETA ⟳
 
@@ -1208,91 +1208,6 @@ document.getElementById("fichaContador");
 
 const contagemEl=
 document.getElementById("contagemRoleta");
-
-/* =====================================================
-   NOVO SISTEMA DA BOLINHA
-   CALCULA O RAIO REAL DA ROLETA
-===================================================== */
-
-function atualizarRaioBola(){
-
-if(!roleta)return;
-
-const largura=
-roleta.getBoundingClientRect().width;
-
-const raioRoleta=
-largura/2;
-
-/*
-   Retira a borda da roleta e deixa uma margem
-   de segurança para a bolinha nunca sair.
-*/
-
-const borda=
-16;
-
-const tamanhoBola=
-19;
-
-const margemSeguranca=
-12;
-
-let raio=
-raioRoleta-
-borda-
-tamanhoBola/2-
-margemSeguranca;
-
-/*
-   Garante que a bolinha também fique afastada
-   da região central.
-*/
-
-const raioMinimo=
-90;
-
-const raioMaximo=
-raioRoleta-
-borda-
-tamanhoBola/2-
-8;
-
-raio=
-Math.max(
-raioMinimo,
-Math.min(
-raio,
-raioMaximo
-)
-);
-
-roleta.style.setProperty(
-"--raio-bola",
-`${raio}px`
-);
-
-}
-
-/*
-   Atualiza quando a tela muda de tamanho.
-*/
-
-window.addEventListener(
-"resize",
-()=>{
-
-atualizarRaioBola();
-
-if(!girando){
-
-bola.style.transform=
-"translate(-50%,-50%) rotate(0deg) translateY(calc(-1 * var(--raio-bola)))";
-
-}
-
-}
-);
 
 function moeda(valor){
 
@@ -1699,6 +1614,10 @@ moeda(totalApostas());
 
 }
 
+/* =====================================================
+   CONTAGEM REGRESSIVA — ORIGINAL
+===================================================== */
+
 function contagemRegressiva(){
 
 return new Promise(resolve=>{
@@ -1799,7 +1718,15 @@ apostas.map(
 a=>({...a})
 );
 
+/*
+   CONTAGEM DE 10 SEGUNDOS
+*/
+
 await contagemRegressiva();
+
+/*
+   DESCONTA DO SALDO REAL
+*/
 
 const debito=
 await debitar(total);
@@ -1811,6 +1738,10 @@ throw new Error(
 );
 
 }
+
+/*
+   SORTEIO
+*/
 
 const indice=
 Math.floor(
@@ -1826,20 +1757,17 @@ const anguloPorNumero=
 const anguloFinal=
 indice*anguloPorNumero;
 
+/*
+   A bolinha dá várias voltas.
+*/
+
 const voltas=10;
 
 const grausFinais=
 (voltas*360)+anguloFinal;
 
 /*
-   Recalcula o raio imediatamente antes do giro.
-   Assim a bolinha usa o tamanho REAL da roleta.
-*/
-
-atualizarRaioBola();
-
-/*
-   Posição inicial.
+   Reinicia somente a bolinha.
 */
 
 bola.getAnimations().forEach(
@@ -1847,7 +1775,7 @@ animacao=>animacao.cancel()
 );
 
 bola.style.transform=
-"translate(-50%,-50%) rotate(0deg) translateY(calc(-1 * var(--raio-bola)))";
+"translate(-50%,-50%) rotate(0deg) translateY(-178px)";
 
 await new Promise(
 resolve=>requestAnimationFrame(resolve)
@@ -1856,8 +1784,8 @@ resolve=>requestAnimationFrame(resolve)
 iniciarSomRoleta();
 
 /*
-   SOMENTE A BOLINHA É ANIMADA.
-   A ROLETA NÃO RECEBE TRANSFORM.
+   SOMENTE A BOLINHA GIRA.
+   A ROLETA CONTINUA PARADA.
 */
 
 const animacaoBola=
@@ -1866,32 +1794,32 @@ bola.animate(
 [
 {
 transform:
-"translate(-50%,-50%) rotate(0deg) translateY(calc(-1 * var(--raio-bola)))"
+"translate(-50%,-50%) rotate(0deg) translateY(-178px)"
 },
 
 {
 transform:
-`translate(-50%,-50%) rotate(${grausFinais*0.08}deg) translateY(calc(-1 * var(--raio-bola)))`
+`translate(-50%,-50%) rotate(${grausFinais*0.08}deg) translateY(-178px)`
 },
 
 {
 transform:
-`translate(-50%,-50%) rotate(${grausFinais*0.35}deg) translateY(calc(-1 * var(--raio-bola)))`
+`translate(-50%,-50%) rotate(${grausFinais*0.35}deg) translateY(-178px)`
 },
 
 {
 transform:
-`translate(-50%,-50%) rotate(${grausFinais*0.72}deg) translateY(calc(-1 * var(--raio-bola)))`
+`translate(-50%,-50%) rotate(${grausFinais*0.72}deg) translateY(-178px)`
 },
 
 {
 transform:
-`translate(-50%,-50%) rotate(${grausFinais*0.92}deg) translateY(calc(-1 * var(--raio-bola)))`
+`translate(-50%,-50%) rotate(${grausFinais*0.92}deg) translateY(-178px)`
 },
 
 {
 transform:
-`translate(-50%,-50%) rotate(${grausFinais}deg) translateY(calc(-1 * var(--raio-bola)))`
+`translate(-50%,-50%) rotate(${grausFinais}deg) translateY(-178px)`
 }
 
 ],
@@ -1913,7 +1841,7 @@ mensagemEl.className=
 await animacaoBola.finished;
 
 bola.style.transform=
-`translate(-50%,-50%) rotate(${grausFinais}deg) translateY(calc(-1 * var(--raio-bola)))`;
+`translate(-50%,-50%) rotate(${grausFinais}deg) translateY(-178px)`;
 
 pararSomRoleta();
 
@@ -2392,13 +2320,6 @@ async()=>{
 criarNumerosRoleta();
 
 criarTabela();
-
-/*
-   Calcula a posição correta da bolinha
-   assim que a roleta estiver pronta.
-*/
-
-atualizarRaioBola();
 
 restaurarFichas();
 
