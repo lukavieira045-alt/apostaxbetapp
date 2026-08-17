@@ -669,8 +669,8 @@ h1{
 
     <div class="resultadoCard">
 
-        <div class="resultadoTitulo">
-            🎯 RESULTADO
+        <div class="resultadoTitulo" id="resultadoTitulo">
+            🎉 RESULTADO
         </div>
 
         <div class="resultadoNumero" id="resultadoNumero">
@@ -756,6 +756,9 @@ document.getElementById("botao");
 const resultadoTela =
 document.getElementById("resultadoTela");
 
+const resultadoTitulo =
+document.getElementById("resultadoTitulo");
+
 const resultadoNumero =
 document.getElementById("resultadoNumero");
 
@@ -770,23 +773,23 @@ document.getElementById("fecharResultado");
 ================================================== */
 
 let usuarioAtual = null;
-
 let saldoReal = 0;
-
 let valorAposta = 0;
-
 let numeroEscolhido = null;
-
 let jogando = false;
-
 let fichaSelecionada = false;
-
 let timer = null;
-
 let segundos = 0;
 
 /*
-   Três casas PERDEU espalhadas.
+   Os multiplicadores continuam apenas como
+   referência visual das casas.
+
+   IMPORTANTE:
+   multiplicador NÃO significa vitória automática.
+
+   A vitória depende EXCLUSIVAMENTE de:
+   indiceResultado === numeroEscolhido
 */
 
 const premios = [
@@ -907,7 +910,7 @@ async function carregarSaldo(){
 }
 
 /* ==================================================
-   ATUALIZAR SALDO NO SUPABASE
+   SALVAR SALDO REAL
 ================================================== */
 
 async function salvarSaldo(novoSaldo){
@@ -957,7 +960,7 @@ async function salvarSaldo(novoSaldo){
 }
 
 /* ==================================================
-   DEBITAR APOSTA REAL
+   DEBITAR APOSTA
 ================================================== */
 
 async function debitarAposta(){
@@ -984,8 +987,10 @@ async function debitarAposta(){
 
     const novoSaldo =
     Number(
-        (saldoAntes - valorAposta)
-        .toFixed(2)
+        (
+            saldoAntes -
+            valorAposta
+        ).toFixed(2)
     );
 
     const salvo =
@@ -1014,7 +1019,7 @@ async function debitarAposta(){
 }
 
 /* ==================================================
-   CREDITAR PRÊMIO REAL
+   CREDITAR PRÊMIO
 ================================================== */
 
 async function creditarPremio(valor){
@@ -1026,14 +1031,15 @@ async function creditarPremio(valor){
 
     const novoSaldo =
     Number(
-        (saldoReal + valor)
-        .toFixed(2)
+        (
+            saldoReal +
+            valor
+        ).toFixed(2)
     );
 
     return await salvarSaldo(
         novoSaldo
     );
-
 }
 
 /* ==================================================
@@ -1067,8 +1073,9 @@ function criarPinos(){
         35;
 
         const larguraLinha =
-        (quantidade - 1) *
-        espacamento;
+        (
+            quantidade - 1
+        ) * espacamento;
 
         const inicio =
         centro -
@@ -1089,8 +1096,10 @@ function criarPinos(){
             "pino";
 
             p.style.top =
-            (38 + linha * 38) +
-            "px";
+            (
+                38 +
+                linha * 38
+            ) + "px";
 
             p.style.left =
             (
@@ -1143,7 +1152,8 @@ function criarCasas(){
                 (index + 1) +
                 "</div>" +
                 "<div class='casaMult'>" +
-                valor + "x" +
+                valor +
+                "x" +
                 "</div>";
             }
 
@@ -1164,7 +1174,7 @@ function criarCasas(){
 }
 
 /* ==================================================
-   FICHAS
+   ESCOLHER FICHA
 ================================================== */
 
 fichas.forEach(
@@ -1257,7 +1267,7 @@ fichas.forEach(
 );
 
 /* ==================================================
-   CONTAGEM DE 10 SEGUNDOS
+   CONTAGEM
 ================================================== */
 
 function iniciarContagem(){
@@ -1267,7 +1277,9 @@ function iniciarContagem(){
     segundos = 10;
 
     contagem.innerText =
-    "⏱️ " + segundos + "s";
+    "⏱️ " +
+    segundos +
+    "s";
 
     timer =
     setInterval(
@@ -1284,11 +1296,21 @@ function iniciarContagem(){
                 contagem.innerText =
                 "🔥 VALENDO!";
 
+                if(
+                    numeroEscolhido !== null &&
+                    !jogando
+                ){
+
+                    iniciarJogo();
+                }
+
                 return;
             }
 
             contagem.innerText =
-            "⏱️ " + segundos + "s";
+            "⏱️ " +
+            segundos +
+            "s";
 
         },
         1000
@@ -1355,7 +1377,10 @@ function escolherCasa(index){
 
         fichaVisual.innerText =
         dinheiro(valorAposta)
-        .replace("R$ ","");
+        .replace(
+            "R$ ",
+            ""
+        );
 
         casa.appendChild(
             fichaVisual
@@ -1557,7 +1582,6 @@ botao.addEventListener(
         }
 
         iniciarJogo();
-
     }
 );
 
@@ -1584,12 +1608,23 @@ async function iniciarJogo(){
 
     timer = null;
 
+    /*
+       Guardamos a casa escolhida ANTES
+       de iniciar a animação.
+    */
+
+    const casaEscolhidaDuranteAposta =
+    numeroEscolhido;
+
+    const apostaAtual =
+    valorAposta;
+
     contagem.innerText =
     "🎯 PREPARANDO...";
 
     /*
-       O valor é descontado do saldo REAL
-       antes da bolinha começar.
+       O valor é descontado do saldo
+       real antes da rodada.
     */
 
     const debitou =
@@ -1632,21 +1667,6 @@ async function iniciarJogo(){
     mensagem.innerText =
     "⚡ PLINKO EM ANDAMENTO...";
 
-    /*
-       Guarda a aposta escolhida para não
-       ser alterada durante a animação.
-    */
-
-    const apostaAtual =
-    valorAposta;
-
-    /*
-       Guarda a casa escolhida.
-    */
-
-    const casaEscolhidaAtual =
-    numeroEscolhido;
-
     bola.classList.add(
         "caindo"
     );
@@ -1664,7 +1684,8 @@ async function iniciarJogo(){
     y + "px";
 
     /*
-       Sorteia onde a bolinha realmente vai cair.
+       Sorteia somente a CASA onde a
+       bolinha realmente vai terminar.
     */
 
     const indiceResultado =
@@ -1678,8 +1699,10 @@ async function iniciarJogo(){
     premios.length;
 
     const destinoX =
-    (indiceResultado + .5) *
-    larguraCasa;
+    (
+        indiceResultado +
+        .5
+    ) * larguraCasa;
 
     const inicioX =
     x;
@@ -1688,7 +1711,8 @@ async function iniciarJogo(){
     y;
 
     const fimY =
-    jogo.clientHeight - 82;
+    jogo.clientHeight -
+    82;
 
     const duracao =
     3000;
@@ -1702,15 +1726,20 @@ async function iniciarJogo(){
 
         const progresso =
         Math.min(
-            (agora - inicio) /
-            duracao,
+            (
+                agora -
+                inicio
+            ) / duracao,
             1
         );
 
         const suave =
         progresso *
         progresso *
-        (3 - 2 * progresso);
+        (
+            3 -
+            2 * progresso
+        );
 
         const ondas =
         Math.sin(
@@ -1718,19 +1747,26 @@ async function iniciarJogo(){
             Math.PI *
             15
         ) *
-        (1 - progresso) *
+        (
+            1 -
+            progresso
+        ) *
         22;
 
         x =
         inicioX +
-        (destinoX - inicioX) *
-        suave +
+        (
+            destinoX -
+            inicioX
+        ) * suave +
         ondas;
 
         y =
         inicioY +
-        (fimY - inicioY) *
-        suave;
+        (
+            fimY -
+            inicioY
+        ) * suave;
 
         bola.style.left =
         x + "px";
@@ -1739,12 +1775,15 @@ async function iniciarJogo(){
         y + "px";
 
         if(
-            agora - ultimoSom > 180
+            agora -
+            ultimoSom >
+            180
         ){
 
             tocarSom(
                 700 +
-                Math.random()*250,
+                Math.random() *
+                250,
                 .05
             );
 
@@ -1753,7 +1792,8 @@ async function iniciarJogo(){
         }
 
         if(
-            Math.random() > .55
+            Math.random() >
+            .55
         ){
 
             criarTrilha(
@@ -1774,8 +1814,8 @@ async function iniciarJogo(){
 
             finalizarBola(
                 indiceResultado,
-                apostaAtual,
-                casaEscolhidaAtual
+                casaEscolhidaDuranteAposta,
+                apostaAtual
             );
         }
     }
@@ -1791,8 +1831,8 @@ async function iniciarJogo(){
 
 async function finalizarBola(
     indiceResultado,
-    apostaAtual,
-    casaEscolhidaAtual
+    casaEscolhida,
+    apostaAtual
 ){
 
     const lista =
@@ -1805,41 +1845,32 @@ async function finalizarBola(
 
     /*
        =================================================
-       REGRA PRINCIPAL:
-
-       SÓ GANHA SE:
-
-       indiceResultado === casaEscolhidaAtual
-
-       Se escolheu CASA 1 e caiu CASA 3:
-       PERDE.
-
-       Se escolheu CASA 1 e caiu CASA 1:
-       GANHA.
-
-       Se caiu em PERDEU:
-       PERDE.
-
-       O multiplicador da casa só é usado
-       quando a casa escolhida foi acertada.
+       REGRA PRINCIPAL DO PLINKO
        =================================================
+
+       Só ganha se:
+
+       CASA ONDE CAIU === CASA ESCOLHIDA
+
+       Qualquer outra casa = PERDE.
+
+       O multiplicador da casa onde caiu NÃO
+       transforma a rodada em vitória.
     */
 
     const acertou =
-    indiceResultado ===
-    casaEscolhidaAtual;
+    Number(indiceResultado) ===
+    Number(casaEscolhida);
 
-    const valor =
-    premios[indiceResultado];
+    let premioReal = 0;
 
-    let premioReal =
-    0;
+    if(acertou){
 
-    /* ================================================
-       CASO 1 — ERROU A CASA
-       ================================================ */
-
-    if(!acertou){
+        /*
+           ACERTOU A CASA.
+           Agora sim o multiplicador da casa
+           escolhida pode ser utilizado.
+        */
 
         if(casaResultado){
 
@@ -1848,123 +1879,151 @@ async function finalizarBola(
             );
         }
 
+        const multiplicador =
+        premios[indiceResultado];
+
+        /*
+           Caso a casa escolhida seja uma
+           casa marcada como PERDEU, ela
+           continua sendo perda.
+        */
+
+        if(
+            multiplicador ===
+            "PERDEU"
+        ){
+
+            somPerdeu();
+
+            premioReal = 0;
+
+            mensagem.innerHTML =
+            "💥 VOCÊ PERDEU " +
+            dinheiro(apostaAtual);
+
+            premio.innerHTML =
+            "💥 PERDEU — " +
+            dinheiro(apostaAtual);
+
+            resultadoTitulo.innerText =
+            "💥 VOCÊ PERDEU";
+
+            resultadoPremio.innerText =
+            "Você perdeu " +
+            dinheiro(apostaAtual);
+
+        }else{
+
+            premioReal =
+            Number(
+                (
+                    apostaAtual *
+                    Number(
+                        multiplicador
+                    )
+                ).toFixed(2)
+            );
+
+            somPremio();
+
+            mensagem.innerHTML =
+            "🎉 VOCÊ ACERTOU A CASA " +
+            (indiceResultado + 1) +
+            "!";
+
+            mensagem.style.color =
+            "#00ff88";
+
+            premio.innerHTML =
+            "🎉 " +
+            multiplicador +
+            "x — " +
+            dinheiro(
+                premioReal
+            );
+
+            resultadoTitulo.innerText =
+            "🎉 VOCÊ GANHOU";
+
+            resultadoPremio.innerText =
+            dinheiro(
+                premioReal
+            ) +
+            " (" +
+            multiplicador +
+            "x)";
+        }
+
+    }else{
+
+        /*
+           =================================================
+           PERDEU
+           =================================================
+
+           Mesmo que a casa onde caiu tenha 0.5x,
+           1x, 2x ou 10x, NÃO paga nada porque
+           o jogador escolheu outra casa.
+        */
+
         somPerdeu();
 
-        premio.innerHTML =
-        "💥 VOCÊ PERDEU " +
-        dinheiro(apostaAtual);
+        premioReal = 0;
+
+        if(casaResultado){
+
+            casaResultado.classList.add(
+                "vencedora"
+            );
+
+            casaResultado.classList.add(
+                "perdeu"
+            );
+        }
 
         mensagem.innerHTML =
         "💥 VOCÊ PERDEU " +
-        dinheiro(apostaAtual) +
-        " — CAIU NA CASA " +
-        (indiceResultado + 1);
+        dinheiro(apostaAtual);
 
         mensagem.style.color =
         "#ff5555";
 
-        resultadoNumero.innerText =
-        indiceResultado + 1;
-
-        resultadoPremio.innerText =
-        "💥 VOCÊ PERDEU " +
-        dinheiro(apostaAtual);
-
-    }
-
-    /* ================================================
-       CASO 2 — ACERTOU UMA CASA PERDEU
-       ================================================ */
-
-    else if(valor === "PERDEU"){
-
-        if(casaResultado){
-
-            casaResultado.classList.add(
-                "vencedora"
-            );
-        }
-
-        somPerdeu();
-
         premio.innerHTML =
-        "💥 VOCÊ PERDEU " +
+        "💥 PERDEU — " +
         dinheiro(apostaAtual);
 
-        mensagem.innerHTML =
-        "💥 VOCÊ PERDEU " +
-        dinheiro(apostaAtual);
-
-        mensagem.style.color =
-        "#ff5555";
-
-        resultadoNumero.innerText =
-        indiceResultado + 1;
+        resultadoTitulo.innerText =
+        "💥 VOCÊ PERDEU";
 
         resultadoPremio.innerText =
-        "💥 VOCÊ PERDEU " +
+        "Você perdeu " +
         dinheiro(apostaAtual);
 
-    }
+        /*
+           Mostra também qual casa foi escolhida
+           e qual foi a casa real onde caiu.
+        */
 
-    /* ================================================
-       CASO 3 — ACERTOU A CASA COM MULTIPLICADOR
-       ================================================ */
-
-    else{
-
-        if(casaResultado){
-
-            casaResultado.classList.add(
-                "vencedora"
-            );
-        }
-
-        premioReal =
-        Number(
-            (
-                apostaAtual *
-                Number(valor)
-            ).toFixed(2)
+        setTimeout(
+            ()=>{
+                mensagem.innerHTML =
+                "💥 CASA ESCOLHIDA: " +
+                (casaEscolhida + 1) +
+                " — CAIU NA CASA " +
+                (indiceResultado + 1) +
+                " — VOCÊ PERDEU " +
+                dinheiro(apostaAtual);
+            },
+            500
         );
-
-        somPremio();
-
-        premio.innerHTML =
-        "🎉 ACERTOU! " +
-        valor +
-        "x — " +
-        dinheiro(premioReal);
-
-        mensagem.innerHTML =
-        "🎉 VOCÊ ACERTOU A CASA " +
-        (indiceResultado + 1) +
-        "!";
-
-        mensagem.style.color =
-        "#00ff88";
-
-        resultadoNumero.innerText =
-        indiceResultado + 1;
-
-        resultadoPremio.innerText =
-        "🎉 GANHOU " +
-        dinheiro(premioReal) +
-        " (" +
-        valor +
-        "x)";
     }
 
     /*
-       Só existe crédito quando a casa escolhida
-       foi realmente acertada.
+       Só existe crédito quando houve acerto
+       em uma casa que possui multiplicador.
     */
 
-    if(
-        acertou &&
-        valor !== "PERDEU" &&
-        premioReal > 0
-    ){
+    if(premioReal > 0){
 
         const creditado =
         await creditarPremio(
@@ -1974,7 +2033,7 @@ async function finalizarBola(
         if(!creditado){
 
             mensagem.innerText =
-            "⚠️ PRÊMIO GERADO, MAS HOUVE ERRO AO ATUALIZAR O SALDO";
+            "⚠️ ERRO AO ATUALIZAR O PRÊMIO";
 
             mensagem.classList.add(
                 "erro"
@@ -1982,8 +2041,12 @@ async function finalizarBola(
         }
     }
 
+    resultadoNumero.innerText =
+    indiceResultado + 1;
+
     /*
-       Mostra o resultado.
+       Resultado final fica preparado
+       antes de abrir a tela.
     */
 
     setTimeout(
@@ -2049,13 +2112,17 @@ fecharResultado.addEventListener(
         );
 
         document
-        .querySelectorAll(".fichaNaCasa")
+        .querySelectorAll(
+            ".fichaNaCasa"
+        )
         .forEach(
             f => f.remove()
         );
 
         document
-        .querySelectorAll(".casa")
+        .querySelectorAll(
+            ".casa"
+        )
         .forEach(
             c =>
             c.classList.remove(
@@ -2075,6 +2142,10 @@ fecharResultado.addEventListener(
 
         mensagem.style.color =
         "#ffe36a";
+
+        mensagem.classList.remove(
+            "erro"
+        );
 
         premio.innerText =
         "Prêmio: R$ 0,00";
