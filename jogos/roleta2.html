@@ -192,7 +192,7 @@ margin-right:7px
 }
 
 /* =====================================================
-ROLETA
+   ÁREA DA ROLETA
 ===================================================== */
 
 .roleta-area{
@@ -202,6 +202,10 @@ align-items:center;
 min-height:520px;
 position:relative
 }
+
+/* =====================================================
+   CONTAGEM
+===================================================== */
 
 .contagem-roleta{
 position:absolute;
@@ -224,13 +228,11 @@ font-weight:900;
 text-shadow:0 0 12px #ffd400
 }
 
-/*
-IMPORTANTE:
-A roleta fica parada.
-Somente a bolinha gira.
-overflow:hidden garante que a bolinha
-não apareça fora da roleta.
-*/
+/* =====================================================
+   ROLETA
+   A ROSETA NÃO GIRA
+   BORDAS DOURADAS PRESERVADAS
+===================================================== */
 
 .roleta{
 width:min(520px,75vw);
@@ -239,13 +241,20 @@ border-radius:50%;
 position:relative;
 background:#22150a;
 border:16px solid #5f3915;
+
 box-shadow:
 0 0 0 5px #d29a38,
+0 0 0 9px rgba(255,215,80,.18),
 0 0 35px rgba(0,0,0,.9),
 inset 0 0 30px #000;
-overflow:hidden;
+
 transition:none;
-transform:none
+transform:none;
+
+/*
+   Impede a bolinha de aparecer fora da roda.
+*/
+overflow:hidden
 }
 
 .roleta::before{
@@ -253,6 +262,7 @@ content:"";
 position:absolute;
 inset:12px;
 border-radius:50%;
+
 background:conic-gradient(
 #0a9b46 0deg 9.73deg,
 #d52c23 9.73deg 19.46deg,
@@ -292,6 +302,7 @@ background:conic-gradient(
 #d52c23 340.55deg 350.28deg,
 #050505 350.28deg 360deg
 );
+
 box-shadow:inset 0 0 25px #000
 }
 
@@ -321,6 +332,10 @@ font-size:14px;
 color:#fff;
 text-shadow:0 1px 2px #000
 }
+
+/* =====================================================
+   CENTRO DOURADO
+===================================================== */
 
 .roleta-centro{
 position:absolute;
@@ -357,37 +372,47 @@ color:#fff2b0;
 text-shadow:0 2px 5px #000
 }
 
-/*
-=====================================================
-BOLINHA
-
-A bolinha fica presa ao centro da roleta.
-O raio foi reduzido para garantir que ela
-permaneça dentro da área da roda.
-=====================================================
-*/
+/* =====================================================
+   BOLINHA
+   SOMENTE ELA GIRA
+   RAIO MENOR PARA FICAR DENTRO DA ROLETA
+===================================================== */
 
 .bola{
 position:absolute;
+
 width:19px;
 height:19px;
+
 border-radius:50%;
+
 background:#fff;
+
 box-shadow:
 0 0 8px #fff,
-0 0 18px rgba(255,255,255,.8);
+0 0 18px rgba(255,255,255,.9),
+0 0 28px rgba(255,255,255,.45);
+
 left:50%;
 top:50%;
-margin-left:-9.5px;
-margin-top:-9.5px;
+
 transform:
+translate(-50%,-50%)
 rotate(0deg)
 translateY(-190px);
-transform-origin:
-9.5px 9.5px;
+
+transform-origin:center center;
+
 z-index:7;
-pointer-events:none
+
+pointer-events:none;
+
+will-change:transform
 }
+
+/* =====================================================
+   PONTEIRO
+===================================================== */
 
 .roleta-area::before{
 content:"";
@@ -617,12 +642,29 @@ outline:4px solid #ffe900;
 transform:scale(1.08)
 }
 
-.f05{background:#7253a5}
-.f1{background:#bd3029}
-.f2{background:#0b9e48}
-.f5{background:#333}
-.f10{background:#2464b5}
-.f50{background:#b56b18}
+.f05{
+background:#7253a5
+}
+
+.f1{
+background:#bd3029
+}
+
+.f2{
+background:#0b9e48
+}
+
+.f5{
+background:#333
+}
+
+.f10{
+background:#2464b5
+}
+
+.f50{
+background:#b56b18
+}
 
 .botoes-final{
 margin-left:auto;
@@ -661,9 +703,9 @@ color:#28ff78
 color:#ff6666
 }
 
-/*
-FICHAS SOBRE AS CASAS
-*/
+/* =====================================================
+   FICHAS NA APOSTA
+===================================================== */
 
 .fichas-na-aposta{
 position:absolute;
@@ -671,13 +713,18 @@ left:50%;
 top:50%;
 transform:translate(-50%,-50%);
 z-index:10;
+
 display:flex;
 justify-content:center;
 align-items:center;
+gap:2px;
+
 pointer-events:none;
-gap:3px;
+
 flex-wrap:wrap;
+
 max-width:90%;
+max-height:90%
 }
 
 .ficha-mesa{
@@ -685,17 +732,25 @@ width:38px;
 height:38px;
 border-radius:50%;
 border:4px dashed #fff;
+
 display:flex;
 align-items:center;
 justify-content:center;
+
 color:#fff;
+
 font-size:10px;
 font-weight:900;
+
 text-shadow:0 1px 2px #000;
+
 box-shadow:
 0 2px 6px #000,
 inset 0 0 5px rgba(255,255,255,.35);
-animation:entradaFicha .18s ease-out
+
+animation:entradaFicha .18s ease-out;
+
+flex-shrink:0
 }
 
 @keyframes entradaFicha{
@@ -710,12 +765,29 @@ opacity:1
 }
 }
 
-.ficha-mesa.f05{background:#7253a5}
-.ficha-mesa.f1{background:#bd3029}
-.ficha-mesa.f2{background:#0b9e48}
-.ficha-mesa.f5{background:#333}
-.ficha-mesa.f10{background:#2464b5}
-.ficha-mesa.f50{background:#b56b18}
+.ficha-mesa.f05{
+background:#7253a5
+}
+
+.ficha-mesa.f1{
+background:#bd3029
+}
+
+.ficha-mesa.f2{
+background:#0b9e48
+}
+
+.ficha-mesa.f5{
+background:#333
+}
+
+.ficha-mesa.f10{
+background:#2464b5
+}
+
+.ficha-mesa.f50{
+background:#b56b18
+}
 
 @media(max-width:1050px){
 
@@ -794,13 +866,12 @@ width:85px;
 height:85px
 }
 
-/*
-Raio menor no celular para manter
-a bolinha dentro da roda.
-*/
-
 .bola{
+width:17px;
+height:17px;
+
 transform:
+translate(-50%,-50%)
 rotate(0deg)
 translateY(-125px)
 }
@@ -832,6 +903,18 @@ margin-left:0
 
 .btn-final{
 flex:1
+}
+
+.fichas-na-aposta{
+max-width:95%;
+gap:1px
+}
+
+.ficha-mesa{
+width:32px;
+height:32px;
+font-size:8px;
+border-width:3px
 }
 
 }
@@ -907,7 +990,8 @@ Nenhum resultado
 
 </div>
 
-<hr style="margin:20px 0;border-color:#333;">
+<hr
+style="margin:20px 0;border-color:#333;">
 
 <h3>
 ESTATÍSTICAS
@@ -1011,7 +1095,9 @@ id="ultimoResultado">
 class="btn-girar"
 id="btnGirar"
 onclick="girarRoleta()">
+
 GIRAR ROLETA ⟳
+
 </button>
 
 <div class="auto">
@@ -1076,7 +1162,7 @@ R$ 0,50
 <span
 class="ficha-contador"
 id="fichaContador">
-0 fichas
+1 ficha
 </span>
 
 </div>
@@ -1218,20 +1304,29 @@ const VERMELHOS=[
 
 /*
 =====================================================
-SISTEMA DE FICHAS
-
-A ficha selecionada é apenas a DENOMINAÇÃO.
-Não existe mais "fichas disponíveis" limitado a 1.
-
-Exemplo:
-selecionou R$50
-clicou 3 vezes
-=> 3 fichas de R$50
-=> aposta total R$150
+   SISTEMA DE FICHAS
 =====================================================
 */
 
 let fichaSelecionadaValor=.50;
+
+/*
+   Quantidade de fichas disponíveis para a
+   denominação selecionada.
+
+   R$0,50 = 1 ficha
+   R$1    = 1 ficha
+   R$2    = 2 fichas
+   R$5    = 5 fichas
+   R$10   = 10 fichas
+   R$50   = 50 fichas
+
+   Cada clique usa UMA ficha.
+*/
+
+let fichasDisponiveis=1;
+
+let valorPorFicha=.50;
 
 let apostas=[];
 let ultimaAposta=[];
@@ -1240,53 +1335,15 @@ let resultados=[];
 let girando=false;
 let auto=false;
 
+let contagemIniciada=false;
+let intervaloContagemAposta=null;
+
 let audioContext=null;
 let somRoletaAtivo=false;
 let intervaloSomRoleta=null;
 
-const roleta=
-document.getElementById("roleta");
-
-const bola=
-document.getElementById("bola");
-
-const saldoEl=
-document.getElementById("saldo");
-
-const valorApostaEl=
-document.getElementById("valorAposta");
-
-const mensagemEl=
-document.getElementById("mensagem");
-
-const btnGirar=
-document.getElementById("btnGirar");
-
-const fichaSelecionadaEl=
-document.getElementById("fichaSelecionada");
-
-const fichaContadorEl=
-document.getElementById("fichaContador");
-
-const contagemEl=
-document.getElementById("contagemRoleta");
-
-
-function moeda(valor){
-
-return new Intl.NumberFormat(
-"pt-BR",
-{
-style:"currency",
-currency:"BRL"
-}
-).format(Number(valor)||0);
-
-}
-
-
 /* =====================================================
-ÁUDIO
+   ÁUDIO
 ===================================================== */
 
 function iniciarAudio(){
@@ -1296,10 +1353,7 @@ try{
 if(!audioContext){
 
 audioContext=
-new(
-window.AudioContext||
-window.webkitAudioContext
-)();
+new(window.AudioContext||window.webkitAudioContext)();
 
 }
 
@@ -1309,7 +1363,6 @@ audioContext.resume();
 }catch(e){}
 
 }
-
 
 function somFicha(){
 
@@ -1365,7 +1418,6 @@ osc.stop(agora+.11);
 
 }
 
-
 function somPalheta(){
 
 iniciarAudio();
@@ -1420,7 +1472,6 @@ osc.stop(agora+.07);
 
 }
 
-
 function iniciarSomRoleta(){
 
 iniciarAudio();
@@ -1432,16 +1483,14 @@ somRoletaAtivo=true;
 somPalheta();
 
 intervaloSomRoleta=
-setInterval(
-()=>{
+setInterval(()=>{
+
 if(somRoletaAtivo)
 somPalheta();
-},
-145
-);
+
+},145);
 
 }
-
 
 function pararSomRoleta(){
 
@@ -1449,9 +1498,7 @@ somRoletaAtivo=false;
 
 if(intervaloSomRoleta){
 
-clearInterval(
-intervaloSomRoleta
-);
+clearInterval(intervaloSomRoleta);
 
 intervaloSomRoleta=null;
 
@@ -1459,9 +1506,55 @@ intervaloSomRoleta=null;
 
 }
 
+/* =====================================================
+   ELEMENTOS
+===================================================== */
+
+const roleta=
+document.getElementById("roleta");
+
+const bola=
+document.getElementById("bola");
+
+const saldoEl=
+document.getElementById("saldo");
+
+const valorApostaEl=
+document.getElementById("valorAposta");
+
+const mensagemEl=
+document.getElementById("mensagem");
+
+const btnGirar=
+document.getElementById("btnGirar");
+
+const fichaSelecionadaEl=
+document.getElementById("fichaSelecionada");
+
+const fichaContadorEl=
+document.getElementById("fichaContador");
+
+const contagemEl=
+document.getElementById("contagemRoleta");
 
 /* =====================================================
-SALDO
+   MOEDA
+===================================================== */
+
+function moeda(valor){
+
+return new Intl.NumberFormat(
+"pt-BR",
+{
+style:"currency",
+currency:"BRL"
+}
+).format(Number(valor)||0);
+
+}
+
+/* =====================================================
+   SALDO
 ===================================================== */
 
 async function obterSaldo(){
@@ -1498,7 +1591,6 @@ return null;
 
 }
 
-
 async function debitar(valor){
 
 if(
@@ -1531,7 +1623,6 @@ await obterSaldo();
 return resultado;
 
 }
-
 
 async function creditar(valor){
 
@@ -1566,9 +1657,8 @@ return resultado;
 
 }
 
-
 /* =====================================================
-NÚMEROS DA ROLETA
+   NÚMEROS DA ROLETA
 ===================================================== */
 
 function criarNumerosRoleta(){
@@ -1602,9 +1692,8 @@ area.appendChild(span);
 
 }
 
-
 /* =====================================================
-TABELA
+   TABELA
 ===================================================== */
 
 function criarTabela(){
@@ -1625,10 +1714,7 @@ zero.className=
 zero.textContent="0";
 
 zero.onclick=
-()=>apostar(
-"numero",
-0
-);
+()=>apostar("numero",0);
 
 grid.appendChild(zero);
 
@@ -1675,40 +1761,25 @@ grid.appendChild(botao);
 
 }
 
-
 /* =====================================================
-CLASSE DA FICHA
+   CLASSE DA FICHA
 ===================================================== */
 
 function classeFicha(valor){
 
-if(Number(valor)===.50)
-return"f05";
-
-if(Number(valor)===1)
-return"f1";
-
-if(Number(valor)===2)
-return"f2";
-
-if(Number(valor)===5)
-return"f5";
-
-if(Number(valor)===10)
-return"f10";
-
-if(Number(valor)===50)
-return"f50";
+if(valor===.50)return"f05";
+if(valor===1)return"f1";
+if(valor===2)return"f2";
+if(valor===5)return"f5";
+if(valor===10)return"f10";
+if(valor===50)return"f50";
 
 return"f1";
 
 }
 
-
 /* =====================================================
-COLOCAR UMA FICHA VISUAL NA CASA
-
-CADA APOSTA ADICIONA UMA FICHA NOVA.
+   COLOCA FICHA VISUAL NO NÚMERO
 ===================================================== */
 
 function colocarFichaNoNumero(
@@ -1747,19 +1818,19 @@ botao.appendChild(area);
 
 }
 
-const chip=
+const ficha=
 document.createElement("div");
 
-chip.className=
+ficha.className=
 "ficha-mesa "+
 classeFicha(valor);
 
-chip.textContent=
-Number(valor)===.50
+ficha.textContent=
+valor===.50
 ?"0,50"
-:Number(valor);
+:String(valor).replace(".",",");
 
-area.appendChild(chip);
+area.appendChild(ficha);
 
 }
 
@@ -1767,6 +1838,9 @@ area.appendChild(chip);
 
 }
 
+/* =====================================================
+   LIMPA FICHAS VISUAIS
+===================================================== */
 
 function limparFichasVisuais(){
 
@@ -1780,11 +1854,8 @@ e=>e.remove()
 
 }
 
-
 /* =====================================================
-SELECIONAR FICHA
-
-AGORA NÃO LIMITA A QUANTIDADE.
+   SELECIONAR FICHA
 ===================================================== */
 
 function selecionarFicha(
@@ -1800,11 +1871,31 @@ somFicha();
 fichaSelecionadaValor=
 Number(valor);
 
+/*
+   A quantidade representa quantas fichas
+   existem daquela seleção.
+*/
+
+if(fichaSelecionadaValor===.50){
+
+valorPorFicha=.50;
+fichasDisponiveis=1;
+
+}else{
+
+valorPorFicha=1;
+
+fichasDisponiveis=
+Math.floor(
+fichaSelecionadaValor
+);
+
+}
+
 document
 .querySelectorAll(".ficha")
 .forEach(
-x=>
-x.classList.remove(
+x=>x.classList.remove(
 "selecionada"
 )
 );
@@ -1821,58 +1912,38 @@ fichaSelecionadaValor
 atualizarContadorFichas();
 
 mensagemEl.textContent=
-`Ficha selecionada: ${moeda(fichaSelecionadaValor)}. Clique nas casas para apostar.`;
+`Ficha selecionada: ${moeda(fichaSelecionadaValor)}`;
 
 mensagemEl.className=
 "mensagem";
 
 }
 
-
 /* =====================================================
-CONTADOR REAL DE FICHAS
+   CONTADOR DE FICHAS
 ===================================================== */
 
 function atualizarContadorFichas(){
 
-const quantidade=
-apostas.filter(
-aposta=>
-Number(aposta.quantia)===
-Number(fichaSelecionadaValor)
-).length;
-
 fichaContadorEl.textContent=
-quantidade===1
+fichasDisponiveis===1
 ?"1 ficha"
-:`${quantidade} fichas`;
+:`${fichasDisponiveis} fichas`;
 
 }
 
-
 /* =====================================================
-APOSTAR
-
-CADA CLIQUE = UMA FICHA DA DENOMINAÇÃO SELECIONADA.
+   APOSTAR
 ===================================================== */
 
 function apostar(tipo,valor){
 
 if(girando)return;
 
-iniciarAudio();
-somFicha();
-
-const quantia=
-Number(fichaSelecionadaValor);
-
-if(
-!Number.isFinite(quantia)||
-quantia<=0
-){
+if(fichasDisponiveis<=0){
 
 mensagemEl.textContent=
-"Valor de ficha inválido.";
+"❌ Você já usou todas as fichas selecionadas.";
 
 mensagemEl.className=
 "mensagem resultado-derrota";
@@ -1881,51 +1952,71 @@ return;
 
 }
 
+iniciarAudio();
+somFicha();
+
+/*
+   Cada clique representa UMA ficha.
+*/
+
+const valorRealDaFicha=
+fichaSelecionadaValor;
+
 apostas.push({
 
 tipo:tipo,
 valor:valor,
-quantia:quantia
+quantia:valorRealDaFicha
 
 });
 
-atualizarAposta();
+fichasDisponiveis--;
 
 atualizarContadorFichas();
+
+atualizarAposta();
 
 if(tipo==="numero"){
 
 colocarFichaNoNumero(
 valor,
-quantia
+valorRealDaFicha
 );
 
 }
 
 mensagemEl.textContent=
-`Ficha adicionada: ${moeda(quantia)} — aposta total: ${moeda(totalApostas())}`;
+`Ficha adicionada: ${moeda(valorRealDaFicha)} — Aposta: ${moeda(totalApostas())}`;
 
 mensagemEl.className=
 "mensagem";
 
+/*
+   PRIMEIRA FICHA:
+   começa a contagem de 10 segundos.
+*/
+
+if(apostas.length===1){
+
+iniciarContagemAposta();
+
 }
 
+}
 
 /* =====================================================
-TOTAL
+   TOTAL DA APOSTA
 ===================================================== */
 
 function totalApostas(){
 
 return apostas.reduce(
 (total,aposta)=>
-total+
-Number(aposta.quantia),
+total+Number(aposta.quantia),
 0
 );
 
 }
-
 
 function atualizarAposta(){
 
@@ -1936,9 +2027,62 @@ totalApostas()
 
 }
 
+/* =====================================================
+   CONTAGEM DE 10 SEGUNDOS
+===================================================== */
+
+function iniciarContagemAposta(){
+
+if(contagemIniciada)return;
+
+contagemIniciada=true;
+
+let numero=10;
+
+contagemEl.textContent=
+numero;
+
+contagemEl.style.display=
+"flex";
+
+intervaloContagemAposta=
+setInterval(()=>{
+
+numero--;
+
+if(numero>0){
+
+contagemEl.textContent=
+numero;
+
+}else{
+
+clearInterval(
+intervaloContagemAposta
+);
+
+intervaloContagemAposta=null;
+
+contagemEl.textContent=
+"GO!";
+
+setTimeout(()=>{
+
+contagemEl.style.display=
+"none";
+
+contagemIniciada=false;
+
+},500);
+
+}
+
+},1000);
+
+}
 
 /* =====================================================
-CONTAGEM DE 10 SEGUNDOS
+   CONTAGEM ORIGINAL DO GIRO
 ===================================================== */
 
 function contagemRegressiva(){
@@ -1955,8 +2099,7 @@ contagemEl.style.display=
 "flex";
 
 const intervalo=
-setInterval(
-()=>{
+setInterval(()=>{
 
 numero--;
 
@@ -1972,32 +2115,25 @@ clearInterval(intervalo);
 contagemEl.textContent=
 "GO!";
 
-setTimeout(
-()=>{
+setTimeout(()=>{
 
 contagemEl.style.display=
 "none";
 
 resolve();
 
-},
-500
-);
+},500);
 
 }
 
-},
-1000
-);
+},1000);
+
+});
 
 }
-);
-
-}
-
 
 /* =====================================================
-GIRAR ROLETA
+   GIRAR ROLETA
 ===================================================== */
 
 async function girarRoleta(){
@@ -2050,20 +2186,32 @@ apostas.map(
 a=>({...a})
 );
 
+/*
+   Se ainda estiver na contagem iniciada
+   pela primeira ficha, encerra o contador
+   antes do giro.
+*/
+
+if(intervaloContagemAposta){
+
+clearInterval(
+intervaloContagemAposta
+);
+
+intervaloContagemAposta=null;
+
+}
+
+contagemIniciada=false;
 
 /*
-=====================================================
-CONTAGEM ORIGINAL DE 10 SEGUNDOS
-=====================================================
+   CONTAGEM DE 10 SEGUNDOS DO GIRO
 */
 
 await contagemRegressiva();
 
-
 /*
-=====================================================
-DESCONTA DO SALDO REAL
-=====================================================
+   DESCONTA DO SALDO REAL
 */
 
 const debito=
@@ -2077,17 +2225,13 @@ throw new Error(
 
 }
 
-
-/*
-=====================================================
-SORTEIO
-=====================================================
-*/
+/* =====================================================
+   SORTEIO
+===================================================== */
 
 const indice=
 Math.floor(
-Math.random()*
-SEQUENCIA.length
+Math.random()*SEQUENCIA.length
 );
 
 const numeroFinal=
@@ -2099,14 +2243,8 @@ const anguloPorNumero=
 const anguloFinal=
 indice*anguloPorNumero;
 
-
 /*
-=====================================================
-BOLINHA
-
-Somente a bolinha recebe transform.
-A roleta permanece parada.
-=====================================================
+   Várias voltas da bolinha.
 */
 
 const voltas=10;
@@ -2114,20 +2252,37 @@ const voltas=10;
 const grausFinais=
 (voltas*360)+anguloFinal;
 
+/*
+   Cancela qualquer animação anterior.
+*/
+
 bola.getAnimations().forEach(
-animacao=>
-animacao.cancel()
+animacao=>animacao.cancel()
 );
+
+/*
+   POSIÇÃO INICIAL
+   RAIO 190PX
+   SEMPRE DENTRO DA ROLETA
+*/
+
+bola.style.left="50%";
+bola.style.top="50%";
 
 bola.style.transform=
-"rotate(0deg) translateY(-190px)";
+"translate(-50%,-50%) rotate(0deg) translateY(-190px)";
 
-await new Promise(
-resolve=>
-requestAnimationFrame(resolve)
-);
+/*
+   Força o navegador a aplicar a posição.
+*/
+
+void bola.offsetWidth;
 
 iniciarSomRoleta();
+
+/* =====================================================
+   ANIMAÇÃO DA BOLINHA
+===================================================== */
 
 const animacaoBola=
 bola.animate(
@@ -2135,32 +2290,37 @@ bola.animate(
 [
 {
 transform:
-"rotate(0deg) translateY(-190px)"
+"translate(-50%,-50%) rotate(0deg) translateY(-190px)"
 },
 
 {
 transform:
-`rotate(${grausFinais*.08}deg) translateY(-190px)`
+`translate(-50%,-50%) rotate(${grausFinais*.08}deg) translateY(-190px)`
 },
 
 {
 transform:
-`rotate(${grausFinais*.35}deg) translateY(-190px)`
+`translate(-50%,-50%) rotate(${grausFinais*.30}deg) translateY(-190px)`
 },
 
 {
 transform:
-`rotate(${grausFinais*.72}deg) translateY(-190px)`
+`translate(-50%,-50%) rotate(${grausFinais*.55}deg) translateY(-190px)`
 },
 
 {
 transform:
-`rotate(${grausFinais*.92}deg) translateY(-190px)`
+`translate(-50%,-50%) rotate(${grausFinais*.75}deg) translateY(-190px)`
 },
 
 {
 transform:
-`rotate(${grausFinais}deg) translateY(-190px)`
+`translate(-50%,-50%) rotate(${grausFinais*.90}deg) translateY(-190px)`
+},
+
+{
+transform:
+`translate(-50%,-50%) rotate(${grausFinais}deg) translateY(-190px)`
 }
 
 ],
@@ -2179,10 +2339,19 @@ mensagemEl.textContent=
 mensagemEl.className=
 "mensagem";
 
+/*
+   Espera terminar.
+*/
+
 await animacaoBola.finished;
 
+/*
+   MANTÉM A BOLINHA VISÍVEL
+   NO LOCAL FINAL.
+*/
+
 bola.style.transform=
-`rotate(${grausFinais}deg) translateY(-190px)`;
+`translate(-50%,-50%) rotate(${grausFinais}deg) translateY(-190px)`;
 
 pararSomRoleta();
 
@@ -2215,10 +2384,7 @@ btnGirar.disabled=false;
 
 await obterSaldo();
 
-if(
-auto&&
-apostas.length>0
-){
+if(auto&&apostas.length>0){
 
 setTimeout(
 girarRoleta,
@@ -2256,9 +2422,8 @@ await obterSaldo();
 
 }
 
-
 /* =====================================================
-FINALIZAR RODADA
+   FINALIZAR RODADA
 ===================================================== */
 
 async function finalizarRodada(numero){
@@ -2421,7 +2586,7 @@ apostas=[];
 
 atualizarAposta();
 
-atualizarContadorFichas();
+restaurarFichas();
 
 limparFichasVisuais();
 
@@ -2429,9 +2594,35 @@ await obterSaldo();
 
 }
 
+/* =====================================================
+   RESTAURAR FICHAS
+===================================================== */
+
+function restaurarFichas(){
+
+if(fichaSelecionadaValor===.50){
+
+valorPorFicha=.50;
+
+fichasDisponiveis=1;
+
+}else{
+
+valorPorFicha=1;
+
+fichasDisponiveis=
+Math.floor(
+fichaSelecionadaValor
+);
+
+}
+
+atualizarContadorFichas();
+
+}
 
 /* =====================================================
-COR
+   COR DO NÚMERO
 ===================================================== */
 
 function corNumero(numero){
@@ -2445,9 +2636,8 @@ return VERMELHOS.includes(numero)
 
 }
 
-
 /* =====================================================
-RESULTADOS
+   RESULTADOS
 ===================================================== */
 
 function atualizarResultados(){
@@ -2487,9 +2677,8 @@ box.appendChild(span);
 
 }
 
-
 /* =====================================================
-ESTATÍSTICAS
+   ESTATÍSTICAS
 ===================================================== */
 
 function atualizarEstatisticas(){
@@ -2538,20 +2727,34 @@ Math.round(green/total*100)+"%";
 
 }
 
-
 /* =====================================================
-LIMPAR
+   LIMPAR APOSTAS
 ===================================================== */
 
 function limparApostas(){
 
 if(girando)return;
 
+if(intervaloContagemAposta){
+
+clearInterval(
+intervaloContagemAposta
+);
+
+intervaloContagemAposta=null;
+
+}
+
+contagemIniciada=false;
+
+contagemEl.style.display=
+"none";
+
 apostas=[];
 
 atualizarAposta();
 
-atualizarContadorFichas();
+restaurarFichas();
 
 limparFichasVisuais();
 
@@ -2563,11 +2766,8 @@ mensagemEl.className=
 
 }
 
-
 /* =====================================================
-REPETIR APOSTA
-
-Mantém exatamente as fichas e valores da rodada anterior.
+   REPETIR APOSTA
 ===================================================== */
 
 function repetirAposta(){
@@ -2586,15 +2786,22 @@ return;
 
 }
 
-apostas=
-ultimaAposta.map(
-a=>({...a})
-);
-
 limparFichasVisuais();
 
-apostas.forEach(
+apostas=[];
+
+/*
+   Recria exatamente as apostas anteriores.
+*/
+
+ultimaAposta.forEach(
 aposta=>{
+
+apostas.push({
+tipo:aposta.tipo,
+valor:aposta.valor,
+quantia:aposta.quantia
+});
 
 if(aposta.tipo==="numero"){
 
@@ -2609,19 +2816,48 @@ aposta.quantia
 
 atualizarAposta();
 
+/*
+   Recalcula as fichas disponíveis
+   conforme a ficha selecionada.
+*/
+
+if(fichaSelecionadaValor===.50){
+
+fichasDisponiveis=
+Math.max(
+0,
+1-apostas.length
+);
+
+}else{
+
+fichasDisponiveis=
+Math.max(
+0,
+Math.floor(fichaSelecionadaValor)-
+apostas.length
+);
+
+}
+
 atualizarContadorFichas();
 
 mensagemEl.textContent=
-`Aposta anterior repetida: ${moeda(totalApostas())}`;
+"Aposta anterior repetida.";
 
 mensagemEl.className=
 "mensagem";
 
+if(apostas.length>0){
+
+iniciarContagemAposta();
+
 }
 
+}
 
 /* =====================================================
-AUTO
+   AUTO
 ===================================================== */
 
 function toggleAuto(){
@@ -2638,9 +2874,8 @@ auto
 
 }
 
-
 /* =====================================================
-DEPÓSITO
+   DEPÓSITO
 ===================================================== */
 
 function irDeposito(){
@@ -2650,9 +2885,8 @@ window.location.href=
 
 }
 
-
 /* =====================================================
-INICIALIZAÇÃO
+   INICIALIZAÇÃO
 ===================================================== */
 
 document.addEventListener(
@@ -2663,7 +2897,7 @@ criarNumerosRoleta();
 
 criarTabela();
 
-atualizarContadorFichas();
+restaurarFichas();
 
 let tentativas=0;
 
