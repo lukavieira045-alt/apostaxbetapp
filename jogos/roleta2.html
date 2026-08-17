@@ -6,7 +6,7 @@
 
 <title>Roleta da Sorte - ApostaXBet</title>
 
-<script src="../saldo.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{
@@ -33,8 +33,6 @@ body::before{
         radial-gradient(circle at 50% 35%,rgba(0,255,120,.10),transparent 35%),
         linear-gradient(115deg,transparent 40%,rgba(255,255,255,.025),transparent 60%);
 }
-
-/* TOPO */
 
 .topo{
     height:72px;
@@ -123,8 +121,6 @@ body::before{
     cursor:pointer;
 }
 
-/* LAYOUT */
-
 .container{
     width:min(1450px,96%);
     margin:18px auto 35px;
@@ -197,13 +193,12 @@ body::before{
     margin-right:7px;
 }
 
-/* ROLETA */
-
 .roleta-area{
     display:flex;
     justify-content:center;
     align-items:center;
     min-height:520px;
+    position:relative;
 }
 
 .roleta{
@@ -337,12 +332,6 @@ body::before{
     z-index:7;
 }
 
-/* SETA */
-
-.roleta-area{
-    position:relative;
-}
-
 .roleta-area::before{
     content:"";
     position:absolute;
@@ -357,8 +346,6 @@ body::before{
     z-index:20;
     filter:drop-shadow(0 2px 4px #000);
 }
-
-/* PAINEL DIREITO */
 
 .aposta-atual{
     text-align:center;
@@ -438,8 +425,6 @@ body::before{
 .switch.ativo::after{
     left:25px;
 }
-
-/* APOSTAS */
 
 .mesa{
     margin-top:15px;
@@ -595,8 +580,6 @@ body::before{
     background:#102b1b;
 }
 
-/* MENSAGEM */
-
 .mensagem{
     text-align:center;
     min-height:32px;
@@ -613,9 +596,8 @@ body::before{
     color:#ff6666;
 }
 
-/* RESPONSIVO */
-
 @media(max-width:1050px){
+
     .painel-superior{
         grid-template-columns:1fr;
     }
@@ -757,7 +739,6 @@ body::before{
 
 </header>
 
-
 <main class="container">
 
     <section class="painel-superior">
@@ -791,7 +772,6 @@ body::before{
 
         </div>
 
-
         <div class="roleta-area">
 
             <div class="roleta" id="roleta">
@@ -805,7 +785,6 @@ body::before{
             </div>
 
         </div>
-
 
         <div class="card aposta-atual">
 
@@ -823,7 +802,7 @@ body::before{
                 -
             </div>
 
-            <button class="btn-girar" id="btnGirar" onclick="girarRoleta()">
+            <button class="btn-girar" id="btnGirar" onclick="girarRoleta">
                 GIRAR ROLETA ⟳
             </button>
 
@@ -835,7 +814,6 @@ body::before{
         </div>
 
     </section>
-
 
     <section class="mesa">
 
@@ -858,15 +836,12 @@ body::before{
 
         </div>
 
-
         <div class="ficha-atual">
             FICHA SELECIONADA:
             <strong id="fichaSelecionada">R$ 0,50</strong>
         </div>
 
-
         <div class="numero-grid" id="numeroGrid"></div>
-
 
         <div class="extras">
 
@@ -904,7 +879,6 @@ body::before{
 
         </div>
 
-
         <div class="fichas">
 
             <div class="ficha f05 selecionada"
@@ -937,7 +911,6 @@ body::before{
                 50
             </div>
 
-
             <div class="botoes-final">
 
                 <button class="btn-final" onclick="limparApostas()">
@@ -958,8 +931,28 @@ body::before{
 
 </main>
 
-
 <script>
+
+/* =====================================================
+   CONFIGURAÇÃO SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+"https://jxbzjiwmajjzxgihfjgt.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ";
+
+const supabase =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+/* =====================================================
+   ROLETA
+===================================================== */
 
 const SEQUENCIA = [
     0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,
@@ -971,100 +964,414 @@ const VERMELHOS = [
     19,21,23,25,27,30,32,34,36
 ];
 
+let usuarioAtual = null;
+
+let saldoReal = 0;
+
 let ficha = 0.50;
+
 let apostas = [];
+
+let ultimaAposta = [];
+
 let resultados = [];
+
 let girando = false;
+
 let auto = false;
+
 let rotacaoAtual = 0;
 
-const roleta = document.getElementById("roleta");
-const bola = document.getElementById("bola");
-const saldoEl = document.getElementById("saldo");
-const valorApostaEl = document.getElementById("valorAposta");
-const mensagemEl = document.getElementById("mensagem");
+const roleta =
+document.getElementById("roleta");
+
+const bola =
+document.getElementById("bola");
+
+const saldoEl =
+document.getElementById("saldo");
+
+const valorApostaEl =
+document.getElementById("valorAposta");
+
+const mensagemEl =
+document.getElementById("mensagem");
+
+const btnGirar =
+document.getElementById("btnGirar");
 
 
-/* NUMEROS DA ROLETA */
+/* =====================================================
+   MOEDA
+===================================================== */
+
+function moeda(valor){
+
+    return new Intl.NumberFormat(
+        "pt-BR",
+        {
+            style:"currency",
+            currency:"BRL"
+        }
+    ).format(Number(valor) || 0);
+
+}
+
+
+/* =====================================================
+   SALDO
+===================================================== */
+
+function atualizarSaldo(){
+
+    saldoEl.textContent =
+        moeda(saldoReal);
+
+}
+
+
+/* =====================================================
+   USUÁRIO
+===================================================== */
+
+async function obterUsuario(){
+
+    const {data,error} =
+        await supabase.auth.getSession();
+
+    if(error){
+
+        console.error(
+            "Erro sessão:",
+            error
+        );
+
+        return null;
+    }
+
+    return data?.session?.user || null;
+
+}
+
+
+/* =====================================================
+   CARREGAR SALDO
+===================================================== */
+
+async function carregarSaldo(){
+
+    if(!usuarioAtual){
+        return false;
+    }
+
+    const {data,error} =
+        await supabase
+        .from("saldos")
+        .select("valor")
+        .eq("user_id",usuarioAtual.id)
+        .maybeSingle();
+
+    if(error){
+
+        console.error(
+            "Erro ao carregar saldo:",
+            error
+        );
+
+        mensagemEl.textContent =
+            "❌ Erro ao carregar saldo.";
+
+        mensagemEl.className =
+            "mensagem resultado-derrota";
+
+        return false;
+    }
+
+    saldoReal =
+        Number(data?.valor || 0);
+
+    atualizarSaldo();
+
+    return true;
+
+}
+
+
+/* =====================================================
+   DEBITAR SALDO REAL
+===================================================== */
+
+async function debitarAposta(valor){
+
+    if(!usuarioAtual){
+        return false;
+    }
+
+    const valorAposta =
+        Number(Number(valor).toFixed(2));
+
+    if(saldoReal < valorAposta){
+
+        throw new Error(
+            "Saldo insuficiente."
+        );
+
+    }
+
+    const novoSaldo =
+        Number(
+            (saldoReal - valorAposta)
+            .toFixed(2)
+        );
+
+    const {error} =
+        await supabase
+        .from("saldos")
+        .update({
+            valor:novoSaldo
+        })
+        .eq(
+            "user_id",
+            usuarioAtual.id
+        );
+
+    if(error){
+
+        console.error(
+            "Erro ao debitar:",
+            error
+        );
+
+        throw new Error(
+            "Não foi possível descontar a aposta."
+        );
+
+    }
+
+    saldoReal =
+        novoSaldo;
+
+    atualizarSaldo();
+
+    return true;
+
+}
+
+
+/* =====================================================
+   CREDITAR PRÊMIO
+===================================================== */
+
+async function creditarPremio(valor){
+
+    if(!usuarioAtual){
+        return false;
+    }
+
+    const premio =
+        Number(Number(valor).toFixed(2));
+
+    const novoSaldo =
+        Number(
+            (saldoReal + premio)
+            .toFixed(2)
+        );
+
+    const {error} =
+        await supabase
+        .from("saldos")
+        .update({
+            valor:novoSaldo
+        })
+        .eq(
+            "user_id",
+            usuarioAtual.id
+        );
+
+    if(error){
+
+        console.error(
+            "Erro ao creditar prêmio:",
+            error
+        );
+
+        throw new Error(
+            "Não foi possível creditar o prêmio."
+        );
+
+    }
+
+    saldoReal =
+        novoSaldo;
+
+    atualizarSaldo();
+
+    return true;
+
+}
+
+
+/* =====================================================
+   NÚMEROS
+===================================================== */
 
 function criarNumerosRoleta(){
 
-    const area = document.getElementById("numerosRoleta");
+    const area =
+        document.getElementById(
+            "numerosRoleta"
+        );
 
-    SEQUENCIA.forEach((numero,index)=>{
+    area.innerHTML = "";
 
-        const span = document.createElement("span");
+    SEQUENCIA.forEach(
+        (numero,index)=>{
 
-        const angulo = index * (360 / SEQUENCIA.length);
+            const span =
+                document.createElement("span");
 
-        span.textContent = numero;
+            const angulo =
+                index *
+                (360 / SEQUENCIA.length);
 
-        span.style.transform =
-            `rotate(${angulo}deg) translateY(-205px) rotate(-${angulo}deg)`;
+            span.textContent =
+                numero;
 
-        area.appendChild(span);
+            span.style.transform =
+                `rotate(${angulo}deg)
+                 translateY(-205px)
+                 rotate(-${angulo}deg)`;
 
-    });
+            area.appendChild(span);
+
+        }
+    );
+
 }
 
 
-/* TABELA */
+/* =====================================================
+   TABELA
+===================================================== */
 
 function criarTabela(){
 
-    const grid = document.getElementById("numeroGrid");
+    const grid =
+        document.getElementById(
+            "numeroGrid"
+        );
 
-    const zero = document.createElement("button");
+    grid.innerHTML = "";
 
-    zero.className = "num zero";
+    const zero =
+        document.createElement("button");
 
-    zero.textContent = "0";
+    zero.className =
+        "num zero";
 
-    zero.onclick = () => apostar("numero",0);
+    zero.textContent =
+        "0";
+
+    zero.onclick =
+        () => apostar(
+            "numero",
+            0
+        );
 
     grid.appendChild(zero);
 
-    for(let linha=0; linha<3; linha++){
 
-        for(let coluna=1; coluna<=12; coluna++){
+    for(
+        let linha = 0;
+        linha < 3;
+        linha++
+    ){
 
-            const numero = coluna * 3 - linha;
+        for(
+            let coluna = 1;
+            coluna <= 12;
+            coluna++
+        ){
 
-            const b = document.createElement("button");
+            const numero =
+                coluna * 3 - linha;
+
+            const b =
+                document.createElement(
+                    "button"
+                );
 
             b.className =
                 "num " +
-                (VERMELHOS.includes(numero) ? "red" : "black");
+                (
+                    VERMELHOS.includes(numero)
+                    ? "red"
+                    : "black"
+                );
 
-            b.textContent = numero;
+            b.textContent =
+                numero;
 
-            b.onclick = () => apostar("numero",numero);
+            b.onclick =
+                () => apostar(
+                    "numero",
+                    numero
+                );
 
             grid.appendChild(b);
+
         }
+
     }
+
 }
 
 
-/* FICHA */
+/* =====================================================
+   FICHA
+===================================================== */
 
-function selecionarFicha(valor,elemento){
+function selecionarFicha(
+    valor,
+    elemento
+){
 
-    ficha = valor;
+    if(girando) return;
 
-    document.querySelectorAll(".ficha")
-        .forEach(x => x.classList.remove("selecionada"));
+    ficha =
+        Number(valor);
 
-    elemento.classList.add("selecionada");
+    document
+        .querySelectorAll(".ficha")
+        .forEach(
+            x =>
+            x.classList.remove(
+                "selecionada"
+            )
+        );
 
-    document.getElementById("fichaSelecionada")
-        .textContent = moeda(valor);
+    elemento.classList.add(
+        "selecionada"
+    );
+
+    document
+        .getElementById(
+            "fichaSelecionada"
+        )
+        .textContent =
+        moeda(valor);
+
 }
 
 
-/* APOSTAR */
+/* =====================================================
+   APOSTAR
+===================================================== */
 
-function apostar(tipo,valor){
+function apostar(
+    tipo,
+    valor
+){
 
     if(girando) return;
 
@@ -1079,103 +1386,61 @@ function apostar(tipo,valor){
     mensagemEl.textContent =
         `Aposta adicionada: ${moeda(ficha)}`;
 
-    mensagemEl.className = "mensagem";
+    mensagemEl.className =
+        "mensagem";
+
 }
 
 
-/* TOTAL */
+/* =====================================================
+   TOTAL
+===================================================== */
 
 function totalApostas(){
 
     return apostas.reduce(
-        (total,a) => total + a.quantia,
+        (
+            total,
+            aposta
+        ) =>
+            total +
+            Number(aposta.quantia),
         0
     );
+
 }
 
 
-/* ATUALIZA */
+/* =====================================================
+   ATUALIZAR APOSTA
+===================================================== */
 
 function atualizarAposta(){
 
     valorApostaEl.textContent =
         moeda(totalApostas());
+
 }
 
 
-/* SALDO EXISTENTE */
-
-async function obterSaldo(){
-
-    try{
-
-        if(!window.SistemaSaldo){
-            throw new Error("SistemaSaldo não carregado.");
-        }
-
-        let valor;
-
-        if(typeof SistemaSaldo.get === "function"){
-            valor = await SistemaSaldo.get();
-        }
-
-        if(typeof valor === "number"){
-            saldoEl.textContent = moeda(valor);
-        }
-
-    }catch(e){
-
-        console.error(e);
-
-    }
-}
-
-
-/* DEBITAR */
-
-async function debitar(valor){
-
-    if(!window.SistemaSaldo){
-        throw new Error("SistemaSaldo não encontrado.");
-    }
-
-    if(typeof SistemaSaldo.debitar !== "function"){
-        throw new Error(
-            "A função debitar() não existe no SistemaSaldo."
-        );
-    }
-
-    return await SistemaSaldo.debitar(valor);
-}
-
-
-/* CREDITAR */
-
-async function creditar(valor){
-
-    if(!window.SistemaSaldo){
-        throw new Error("SistemaSaldo não encontrado.");
-    }
-
-    if(typeof SistemaSaldo.creditar === "function"){
-        return await SistemaSaldo.creditar(valor);
-    }
-
-    if(typeof SistemaSaldo.adicionar === "function"){
-        return await SistemaSaldo.adicionar(valor);
-    }
-
-    throw new Error(
-        "O SistemaSaldo não possui uma função de crédito."
-    );
-}
-
-
-/* GIRAR */
+/* =====================================================
+   GIRAR ROLETA
+===================================================== */
 
 async function girarRoleta(){
 
     if(girando) return;
+
+    if(!usuarioAtual){
+
+        mensagemEl.textContent =
+            "⚠️ Usuário não está logado.";
+
+        mensagemEl.className =
+            "mensagem resultado-derrota";
+
+        return;
+    }
 
     if(apostas.length === 0){
 
@@ -1188,64 +1453,104 @@ async function girarRoleta(){
         return;
     }
 
-    const total = totalApostas();
+    const total =
+        Number(
+            totalApostas()
+            .toFixed(2)
+        );
 
-    const btn = document.getElementById("btnGirar");
+    if(total <= 0){
+
+        mensagemEl.textContent =
+            "Valor da aposta inválido.";
+
+        return;
+    }
+
+
+    if(saldoReal < total){
+
+        mensagemEl.textContent =
+            `⚠️ Saldo insuficiente. Saldo atual: ${moeda(saldoReal)}`;
+
+        mensagemEl.className =
+            "mensagem resultado-derrota";
+
+        return;
+    }
+
 
     try{
 
         girando = true;
 
-        btn.disabled = true;
+        btnGirar.disabled = true;
 
         mensagemEl.textContent =
-            "Boa sorte! A roleta está girando...";
+            "🎰 Boa sorte! A roleta está girando...";
 
-        mensagemEl.className = "mensagem";
+        mensagemEl.className =
+            "mensagem";
+
+
+        /*
+         * GUARDA A APOSTA PARA O BOTÃO REPETIR
+         */
+
+        ultimaAposta =
+            apostas.map(
+                a => ({...a})
+            );
+
 
         /*
          * PRIMEIRO DESCONTA DO SALDO REAL.
-         * Se o débito falhar, a roleta NÃO gira.
          */
 
-        const resultadoDebito =
-            await debitar(total);
+        await debitarAposta(total);
 
-        if(resultadoDebito === false){
-            throw new Error("Saldo insuficiente.");
-        }
 
         /*
-         * Resultado aleatório.
+         * SORTEIO
          */
 
         const indice =
-            Math.floor(Math.random() * SEQUENCIA.length);
+            Math.floor(
+                Math.random() *
+                SEQUENCIA.length
+            );
 
         const numeroFinal =
             SEQUENCIA[indice];
 
+
         /*
-         * Animação.
+         * ANIMAÇÃO DA ROLETA
          */
 
         const voltas = 7;
 
         const anguloPorNumero =
-            360 / SEQUENCIA.length;
+            360 /
+            SEQUENCIA.length;
 
         const destino =
-            360 - (indice * anguloPorNumero);
+            360 -
+            (
+                indice *
+                anguloPorNumero
+            );
 
         rotacaoAtual +=
-            voltas * 360 + destino;
+            voltas * 360 +
+            destino;
 
         roleta.style.transform =
             `rotate(${rotacaoAtual}deg)`;
 
 
         /*
-         * Bola.
+         * ANIMAÇÃO DA BOLA
          */
 
         bola.animate(
@@ -1270,170 +1575,285 @@ async function girarRoleta(){
         );
 
 
-        setTimeout(async ()=>{
+        /*
+         * FINALIZA APÓS A ANIMAÇÃO
+         */
 
-            try{
+        setTimeout(
+            async ()=>{
 
-                finalizarRodada(numeroFinal);
+                try{
 
-            }catch(e){
+                    await finalizarRodada(
+                        numeroFinal
+                    );
 
-                console.error(e);
+                }catch(error){
 
-                mensagemEl.textContent =
-                    "Erro ao finalizar a rodada.";
+                    console.error(error);
 
-            }finally{
+                    mensagemEl.textContent =
+                        error.message ||
+                        "Erro ao finalizar a rodada.";
+
+                    mensagemEl.className =
+                        "mensagem resultado-derrota";
+
+                }
 
                 girando = false;
 
-                btn.disabled = false;
+                btnGirar.disabled = false;
 
-                await obterSaldo();
+                await carregarSaldo();
 
-                if(auto && apostas.length > 0){
-                    setTimeout(girarRoleta,1200);
+                if(
+                    auto &&
+                    apostas.length > 0
+                ){
+
+                    setTimeout(
+                        girarRoleta,
+                        1200
+                    );
+
                 }
 
-            }
+            },
+            5100
+        );
 
-        },5100);
+    }catch(error){
 
-    }catch(e){
-
-        console.error(e);
+        console.error(error);
 
         girando = false;
 
-        btn.disabled = false;
+        btnGirar.disabled = false;
 
         mensagemEl.textContent =
-            e.message ||
+            error.message ||
             "Não foi possível realizar a aposta.";
 
         mensagemEl.className =
             "mensagem resultado-derrota";
 
-        await obterSaldo();
+        await carregarSaldo();
+
     }
+
 }
 
 
-/* FINALIZA */
+/* =====================================================
+   FINALIZAR RODADA
+===================================================== */
 
-async function finalizarRodada(numero){
+async function finalizarRodada(
+    numero
+){
 
-    resultados.unshift(numero);
+    resultados.unshift(
+        numero
+    );
 
     resultados =
-        resultados.slice(0,8);
+        resultados.slice(
+            0,
+            8
+        );
 
     atualizarResultados();
 
-    document.getElementById("ultimoResultado")
-        .textContent = numero;
+    document
+        .getElementById(
+            "ultimoResultado"
+        )
+        .textContent =
+        numero;
 
 
     let premio = 0;
 
-    apostas.forEach(aposta=>{
 
-        if(aposta.tipo === "numero"){
-
-            if(aposta.valor === numero){
-
-                premio +=
-                    aposta.quantia * 36;
-            }
-
-        }
-
-        else if(aposta.tipo === "cor"){
-
-            const cor = corNumero(numero);
-
-            if(cor === aposta.valor){
-
-                premio +=
-                    aposta.quantia * 2;
-            }
-
-        }
-
-        else if(aposta.tipo === "par"){
-
-            if(numero !== 0){
-
-                const par =
-                    numero % 2 === 0
-                    ? "par"
-                    : "impar";
-
-                if(par === aposta.valor){
-
-                    premio +=
-                        aposta.quantia * 2;
-                }
-            }
-
-        }
-
-        else if(aposta.tipo === "baixo"){
-
-            if(numero >= 1 && numero <= 18){
-
-                premio +=
-                    aposta.quantia * 2;
-            }
-
-        }
-
-        else if(aposta.tipo === "alto"){
-
-            if(numero >= 19 && numero <= 36){
-
-                premio +=
-                    aposta.quantia * 2;
-            }
-
-        }
-
-        else if(aposta.tipo === "dozen"){
+    apostas.forEach(
+        aposta => {
 
             if(
-                (aposta.valor === 1 &&
-                 numero >= 1 &&
-                 numero <= 12)
+                aposta.tipo ===
+                "numero"
             ){
 
-                premio +=
-                    aposta.quantia * 3;
+                if(
+                    aposta.valor ===
+                    numero
+                ){
+
+                    premio +=
+                        aposta.quantia *
+                        36;
+
+                }
+
+            }
+
+            else if(
+                aposta.tipo ===
+                "cor"
+            ){
+
+                const cor =
+                    corNumero(
+                        numero
+                    );
+
+                if(
+                    cor ===
+                    aposta.valor
+                ){
+
+                    premio +=
+                        aposta.quantia *
+                        2;
+
+                }
+
+            }
+
+            else if(
+                aposta.tipo ===
+                "par"
+            ){
+
+                if(numero !== 0){
+
+                    const par =
+                        numero % 2 === 0
+                        ? "par"
+                        : "impar";
+
+                    if(
+                        par ===
+                        aposta.valor
+                    ){
+
+                        premio +=
+                            aposta.quantia *
+                            2;
+
+                    }
+
+                }
+
+            }
+
+            else if(
+                aposta.tipo ===
+                "baixo"
+            ){
+
+                if(
+                    numero >= 1 &&
+                    numero <= 18
+                ){
+
+                    premio +=
+                        aposta.quantia *
+                        2;
+
+                }
+
+            }
+
+            else if(
+                aposta.tipo ===
+                "alto"
+            ){
+
+                if(
+                    numero >= 19 &&
+                    numero <= 36
+                ){
+
+                    premio +=
+                        aposta.quantia *
+                        2;
+
+                }
+
+            }
+
+            else if(
+                aposta.tipo ===
+                "dozen"
+            ){
+
+                if(
+                    aposta.valor === 1 &&
+                    numero >= 1 &&
+                    numero <= 12
+                ){
+
+                    premio +=
+                        aposta.quantia *
+                        3;
+
+                }
+
+            }
+
+            else if(
+                aposta.tipo ===
+                "doze"
+            ){
+
+                const grupo =
+                    numero >= 1 &&
+                    numero <= 12
+                    ? 1
+                    :
+                    numero >= 13 &&
+                    numero <= 24
+                    ? 2
+                    :
+                    numero >= 25 &&
+                    numero <= 36
+                    ? 3
+                    :
+                    0;
+
+                if(
+                    grupo ===
+                    aposta.valor
+                ){
+
+                    premio +=
+                        aposta.quantia *
+                        3;
+
+                }
+
             }
 
         }
-
-        else if(aposta.tipo === "doze"){
-
-            const grupo =
-                numero >= 1 && numero <= 12 ? 1 :
-                numero >= 13 && numero <= 24 ? 2 :
-                numero >= 25 && numero <= 36 ? 3 : 0;
-
-            if(grupo === aposta.valor){
-
-                premio +=
-                    aposta.quantia * 3;
-            }
-        }
-
-    });
+    );
 
 
-    const cor = corNumero(numero);
+    const cor =
+        corNumero(
+            numero
+        );
+
+
+    /*
+     * HOUVE PRÊMIO
+     */
 
     if(premio > 0){
 
-        await creditar(premio);
+        await creditarPremio(
+            premio
+        );
 
         mensagemEl.textContent =
             `🎉 Saiu ${numero} (${cor.toUpperCase()}) — prêmio ${moeda(premio)}!`;
@@ -1441,48 +1861,78 @@ async function finalizarRodada(numero){
         mensagemEl.className =
             "mensagem resultado-vitoria";
 
-    }else{
+    }
+
+    /*
+     * PERDEU
+     */
+
+    else{
 
         mensagemEl.textContent =
             `Saiu ${numero} (${cor.toUpperCase()}). Boa sorte na próxima!`;
 
         mensagemEl.className =
             "mensagem resultado-derrota";
+
     }
 
 
     atualizarEstatisticas();
 
+
+    /*
+     * LIMPA APOSTAS DA RODADA.
+     */
+
     apostas = [];
 
     atualizarAposta();
+
 }
 
 
-/* COR */
+/* =====================================================
+   COR
+===================================================== */
 
-function corNumero(numero){
+function corNumero(
+    numero
+){
 
-    if(numero === 0){
+    if(
+        numero === 0
+    ){
+
         return "verde";
+
     }
 
-    return VERMELHOS.includes(numero)
-        ? "vermelho"
-        : "preto";
+    return VERMELHOS.includes(
+        numero
+    )
+    ? "vermelho"
+    : "preto";
+
 }
 
 
-/* RESULTADOS */
+/* =====================================================
+   RESULTADOS
+===================================================== */
 
 function atualizarResultados(){
 
     const box =
-        document.getElementById("ultimosResultados");
+        document.getElementById(
+            "ultimosResultados"
+        );
 
     box.innerHTML = "";
 
-    if(resultados.length === 0){
+    if(
+        resultados.length === 0
+    ){
 
         box.innerHTML =
             "<span style='opacity:.7;'>Nenhum resultado</span>";
@@ -1490,60 +1940,113 @@ function atualizarResultados(){
         return;
     }
 
-    resultados.forEach(numero=>{
+    resultados.forEach(
+        numero => {
 
-        const span =
-            document.createElement("span");
+            const span =
+                document.createElement(
+                    "span"
+                );
 
-        span.className =
-            "resultado " + corNumero(numero);
+            span.className =
+                "resultado " +
+                corNumero(
+                    numero
+                );
 
-        span.textContent = numero;
+            span.textContent =
+                numero;
 
-        box.appendChild(span);
+            box.appendChild(
+                span
+            );
 
-    });
+        }
+    );
+
 }
 
 
-/* ESTATISTICAS */
+/* =====================================================
+   ESTATÍSTICAS
+===================================================== */
 
 function atualizarEstatisticas(){
 
-    if(resultados.length === 0) return;
+    if(
+        resultados.length === 0
+    ) return;
 
     let red = 0;
+
     let black = 0;
+
     let green = 0;
 
-    resultados.forEach(numero=>{
 
-        const cor = corNumero(numero);
+    resultados.forEach(
+        numero => {
 
-        if(cor === "vermelho") red++;
-        if(cor === "preto") black++;
-        if(cor === "verde") green++;
+            const cor =
+                corNumero(
+                    numero
+                );
 
-    });
+            if(
+                cor === "vermelho"
+            ) red++;
+
+            if(
+                cor === "preto"
+            ) black++;
+
+            if(
+                cor === "verde"
+            ) green++;
+
+        }
+    );
+
 
     const total =
         resultados.length;
 
-    document.getElementById("estatRed")
-        .textContent =
-        Math.round(red / total * 100) + "%";
 
-    document.getElementById("estatBlack")
+    document
+        .getElementById(
+            "estatRed"
+        )
         .textContent =
-        Math.round(black / total * 100) + "%";
+        Math.round(
+            red / total * 100
+        ) + "%";
 
-    document.getElementById("estatGreen")
+
+    document
+        .getElementById(
+            "estatBlack"
+        )
         .textContent =
-        Math.round(green / total * 100) + "%";
+        Math.round(
+            black / total * 100
+        ) + "%";
+
+
+    document
+        .getElementById(
+            "estatGreen"
+        )
+        .textContent =
+        Math.round(
+            green / total * 100
+        ) + "%";
+
 }
 
 
-/* LIMPAR */
+/* =====================================================
+   LIMPAR
+===================================================== */
 
 function limparApostas(){
 
@@ -1558,76 +2061,178 @@ function limparApostas(){
 
     mensagemEl.className =
         "mensagem";
+
 }
 
 
-/* REPETIR */
-
-let ultimaAposta = [];
+/* =====================================================
+   REPETIR APOSTA
+===================================================== */
 
 function repetirAposta(){
 
     if(girando) return;
 
-    if(ultimaAposta.length === 0){
+    if(
+        ultimaAposta.length === 0
+    ){
 
         mensagemEl.textContent =
             "Ainda não existe uma aposta anterior.";
 
+        mensagemEl.className =
+            "mensagem";
+
         return;
     }
 
+
     apostas =
-        ultimaAposta.map(a=>({...a}));
+        ultimaAposta.map(
+            a => ({...a})
+        );
 
     atualizarAposta();
+
+    mensagemEl.textContent =
+        `Aposta repetida: ${moeda(totalApostas())}`;
+
+    mensagemEl.className =
+        "mensagem";
+
 }
 
 
-/* AUTO */
+/* =====================================================
+   AUTOMÁTICO
+===================================================== */
 
 function toggleAuto(){
 
-    auto = !auto;
+    auto =
+        !auto;
 
-    document.getElementById("switchAuto")
-        .classList.toggle("ativo",auto);
+    document
+        .getElementById(
+            "switchAuto"
+        )
+        .classList.toggle(
+            "ativo",
+            auto
+        );
 
 }
 
 
-/* MOEDA */
-
-function moeda(valor){
-
-    return new Intl.NumberFormat(
-        "pt-BR",
-        {
-            style:"currency",
-            currency:"BRL"
-        }
-    ).format(Number(valor) || 0);
-}
-
-
-/* DEPOSITO */
+/* =====================================================
+   DEPÓSITO
+===================================================== */
 
 function irDeposito(){
 
     window.location.href =
         "../deposito.html";
+
 }
 
 
-/* INICIO */
+/* =====================================================
+   AUTENTICAÇÃO
+===================================================== */
 
-criarNumerosRoleta();
+supabase.auth.onAuthStateChange(
+    (event,session)=>{
 
-criarTabela();
+        if(!session){
 
-obterSaldo();
+            window.location.href =
+                "../index.html";
 
-setInterval(obterSaldo,5000);
+        }
+
+    }
+);
+
+
+/* =====================================================
+   INICIAR
+===================================================== */
+
+async function iniciar(){
+
+    try{
+
+        usuarioAtual =
+            await obterUsuario();
+
+
+        if(!usuarioAtual){
+
+            window.location.href =
+                "../index.html";
+
+            return;
+
+        }
+
+
+        criarNumerosRoleta();
+
+        criarTabela();
+
+
+        const carregou =
+            await carregarSaldo();
+
+
+        if(!carregou){
+
+            btnGirar.disabled =
+                true;
+
+            return;
+
+        }
+
+
+        atualizarSaldo();
+
+
+        /*
+         * ATUALIZA O SALDO PERIODICAMENTE,
+         * COMO NOS OUTROS JOGOS.
+         */
+
+        setInterval(
+            async ()=>{
+                if(!girando){
+                    await carregarSaldo();
+                }
+            },
+            5000
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+        mensagemEl.textContent =
+            "❌ Erro ao iniciar a roleta.";
+
+        mensagemEl.className =
+            "mensagem resultado-derrota";
+
+    }
+
+}
+
+
+/* =====================================================
+   INICIAR AGORA
+===================================================== */
+
+iniciar();
 
 </script>
 
