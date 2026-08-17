@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Roleta da Sorte - ApostaXBet</title>
+
+<script src="../saldo.js"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    min-height:100vh;
+    background:
+        radial-gradient(circle at center,#123d25 0%,#06140d 48%,#020604 100%);
+    color:#fff;
+    overflow-x:hidden;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:
+        radial-gradient(circle at 50% 35%,rgba(0,255,120,.10),transparent 35%),
+        linear-gradient(115deg,transparent 40%,rgba(255,255,255,.025),transparent 60%);
+}
+
+/* TOPO */
+
+.topo{
+    height:72px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 18px;
+    background:rgba(2,8,6,.96);
+    border-bottom:1px solid rgba(255,255,255,.15);
+    position:relative;
+    z-index:10;
+}
+
+.logo{
+    font-size:27px;
+    font-weight:900;
+}
+
+.logo span{
+    color:#00e875;
+}
+
+.voltar{
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    border:1px solid #555;
+    background:#101714;
+    color:white;
+    font-size:30px;
+    cursor:pointer;
+}
+
+.titulo{
+    font-size:29px;
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+.titulo::before,
+.titulo::after{
+    content:"☘";
+    color:#20d96f;
+    margin:0 12px;
+}
+
+.acoes-topo{
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.icone{
+    font-size:29px;
+}
+
+.saldo-box{
+    min-width:165px;
+    border:1px solid #777;
+    border-radius:12px;
+    padding:7px 12px;
+    background:#0d1511;
+    text-align:center;
+}
+
+.saldo-label{
+    font-size:13px;
+    font-weight:bold;
+}
+
+#saldo{
+    color:#d9ff00;
+    font-size:21px;
+    font-weight:900;
+}
+
+.btn-deposito{
+    border:0;
+    width:38px;
+    height:38px;
+    border-radius:8px;
+    background:#20c94f;
+    color:white;
+    font-size:28px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* LAYOUT */
+
+.container{
+    width:min(1450px,96%);
+    margin:18px auto 35px;
+}
+
+.painel-superior{
+    display:grid;
+    grid-template-columns:280px 1fr 280px;
+    gap:18px;
+    align-items:center;
+}
+
+.card{
+    border:1px solid rgba(255,255,255,.35);
+    border-radius:14px;
+    background:rgba(2,10,7,.78);
+    box-shadow:0 0 18px rgba(0,0,0,.4);
+    padding:18px;
+}
+
+.card h3{
+    text-align:center;
+    margin-bottom:18px;
+    font-size:17px;
+}
+
+.resultados{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+    justify-content:center;
+}
+
+.resultado{
+    width:38px;
+    height:38px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:8px;
+    font-weight:bold;
+    font-size:17px;
+}
+
+.vermelho{
+    background:#d52c23;
+}
+
+.preto{
+    background:#050505;
+    border:1px solid #444;
+}
+
+.verde{
+    background:#0a9b46;
+}
+
+.estatistica{
+    display:flex;
+    justify-content:space-between;
+    margin:15px 0;
+    font-weight:bold;
+}
+
+.bolinha{
+    display:inline-block;
+    width:13px;
+    height:13px;
+    border-radius:50%;
+    margin-right:7px;
+}
+
+/* ROLETA */
+
+.roleta-area{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:520px;
+}
+
+.roleta{
+    width:min(520px,75vw);
+    aspect-ratio:1;
+    border-radius:50%;
+    position:relative;
+    background:#22150a;
+    border:16px solid #5f3915;
+    box-shadow:
+        0 0 0 5px #d29a38,
+        0 0 35px rgba(0,0,0,.9),
+        inset 0 0 30px #000;
+    transition:transform 5s cubic-bezier(.12,.75,.16,1);
+}
+
+.roleta::before{
+    content:"";
+    position:absolute;
+    inset:12px;
+    border-radius:50%;
+    background:
+        conic-gradient(
+            #0a9b46 0deg 9.73deg,
+            #d52c23 9.73deg 19.46deg,
+            #050505 19.46deg 29.19deg,
+            #d52c23 29.19deg 38.92deg,
+            #050505 38.92deg 48.65deg,
+            #d52c23 48.65deg 58.38deg,
+            #050505 58.38deg 68.11deg,
+            #d52c23 68.11deg 77.84deg,
+            #050505 77.84deg 87.57deg,
+            #d52c23 87.57deg 97.30deg,
+            #050505 97.30deg 107.03deg,
+            #d52c23 107.03deg 116.76deg,
+            #050505 116.76deg 126.49deg,
+            #d52c23 126.49deg 136.22deg,
+            #050505 136.22deg 145.95deg,
+            #d52c23 145.95deg 155.68deg,
+            #050505 155.68deg 165.41deg,
+            #d52c23 165.41deg 175.14deg,
+            #050505 175.14deg 184.87deg,
+            #d52c23 184.87deg 194.60deg,
+            #050505 194.60deg 204.33deg,
+            #d52c23 204.33deg 214.06deg,
+            #050505 214.06deg 223.79deg,
+            #d52c23 223.79deg 233.52deg,
+            #050505 233.52deg 243.25deg,
+            #d52c23 243.25deg 252.98deg,
+            #050505 252.98deg 262.71deg,
+            #d52c23 262.71deg 272.44deg,
+            #050505 272.44deg 282.17deg,
+            #d52c23 282.17deg 291.90deg,
+            #050505 291.90deg 301.63deg,
+            #d52c23 301.63deg 311.36deg,
+            #050505 311.36deg 321.09deg,
+            #d52c23 321.09deg 330.82deg,
+            #050505 330.82deg 340.55deg,
+            #d52c23 340.55deg 350.28deg,
+            #050505 350.28deg 360deg
+        );
+        box-shadow:inset 0 0 25px #000;
+}
+
+.numero-roleta{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:100%;
+    height:100%;
+    transform:translate(-50%,-50%);
+    z-index:2;
+}
+
+.numero-roleta span{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:34px;
+    height:34px;
+    margin-left:-17px;
+    margin-top:-17px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-weight:bold;
+    font-size:14px;
+    color:#fff;
+    text-shadow:0 1px 2px #000;
+}
+
+.roleta-centro{
+    position:absolute;
+    width:125px;
+    height:125px;
+    border-radius:50%;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    background:
+        radial-gradient(circle at 35% 30%,#ffe39a,#b87917 45%,#6a3808 70%,#2b1604);
+    border:8px solid #c58b2c;
+    box-shadow:
+        inset 0 0 15px #3b1d00,
+        0 0 12px #000;
+    z-index:5;
+}
+
+.roleta-centro::after{
+    content:"A";
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    font-size:42px;
+    font-weight:900;
+    color:#fff2b0;
+    text-shadow:0 2px 5px #000;
+}
+
+.bola{
+    position:absolute;
+    width:19px;
+    height:19px;
+    border-radius:50%;
+    background:#fff;
+    box-shadow:0 0 10px #fff;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%) translateY(-190px);
+    z-index:7;
+}
+
+/* SETA */
+
+.roleta-area{
+    position:relative;
+}
+
+.roleta-area::before{
+    content:"";
+    position:absolute;
+    top:calc(50% - 285px);
+    left:50%;
+    transform:translateX(-50%);
+    width:0;
+    height:0;
+    border-left:14px solid transparent;
+    border-right:14px solid transparent;
+    border-top:30px solid #ffd400;
+    z-index:20;
+    filter:drop-shadow(0 2px 4px #000);
+}
+
+/* PAINEL DIREITO */
+
+.aposta-atual{
+    text-align:center;
+}
+
+.valor-aposta{
+    color:#ffe500;
+    font-size:28px;
+    font-weight:900;
+    margin:15px 0 25px;
+}
+
+.ultimo{
+    font-size:38px;
+    font-weight:900;
+    margin-top:20px;
+}
+
+.btn-girar{
+    width:100%;
+    padding:20px 10px;
+    margin-top:20px;
+    border:0;
+    border-radius:12px;
+    background:linear-gradient(#22d95c,#08a53e);
+    color:white;
+    font-size:20px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 0 20px rgba(0,255,90,.22);
+}
+
+.btn-girar:hover{
+    filter:brightness(1.15);
+}
+
+.btn-girar:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.auto{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:15px;
+    padding:14px;
+    border:1px solid #555;
+    border-radius:10px;
+}
+
+.switch{
+    width:48px;
+    height:25px;
+    border-radius:20px;
+    background:#555;
+    position:relative;
+    cursor:pointer;
+}
+
+.switch::after{
+    content:"";
+    position:absolute;
+    width:21px;
+    height:21px;
+    border-radius:50%;
+    background:#fff;
+    left:2px;
+    top:2px;
+    transition:.2s;
+}
+
+.switch.ativo{
+    background:#15b94b;
+}
+
+.switch.ativo::after{
+    left:25px;
+}
+
+/* APOSTAS */
+
+.mesa{
+    margin-top:15px;
+    border:2px solid #b7db27;
+    border-radius:17px;
+    padding:15px;
+    background:rgba(0,15,7,.75);
+    box-shadow:0 0 18px rgba(200,255,0,.08);
+}
+
+.cores{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:12px;
+}
+
+.btn-cor{
+    min-height:75px;
+    border:2px solid #b7db27;
+    border-radius:10px;
+    color:#fff;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.btn-cor.vermelho-btn{
+    background:linear-gradient(#a92b20,#4d0b07);
+}
+
+.btn-cor.verde-btn{
+    background:linear-gradient(#159d45,#063d19);
+}
+
+.btn-cor.preto-btn{
+    background:linear-gradient(#181818,#020202);
+}
+
+.ficha-atual{
+    text-align:center;
+    margin:15px 0;
+    font-size:17px;
+}
+
+.numero-grid{
+    display:grid;
+    grid-template-columns:repeat(12,1fr);
+    gap:4px;
+}
+
+.num{
+    min-height:55px;
+    border:1px solid #80951d;
+    border-radius:4px;
+    color:#fff;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.num.red{
+    background:#a51f19;
+}
+
+.num.black{
+    background:#060606;
+}
+
+.num.zero{
+    background:#07863b;
+    grid-row:span 3;
+}
+
+.num:hover,
+.aposta-extra:hover,
+.btn-cor:hover{
+    filter:brightness(1.3);
+    transform:translateY(-1px);
+}
+
+.extras{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    margin-top:5px;
+}
+
+.aposta-extra{
+    min-height:55px;
+    background:#06180d;
+    color:white;
+    border:1px solid #80951d;
+    font-weight:bold;
+    cursor:pointer;
+    font-size:16px;
+}
+
+.fichas{
+    display:flex;
+    align-items:center;
+    gap:13px;
+    margin-top:20px;
+    flex-wrap:wrap;
+}
+
+.ficha{
+    width:62px;
+    height:62px;
+    border-radius:50%;
+    border:6px dashed #fff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:15px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 4px 10px #000;
+}
+
+.ficha:hover{
+    transform:scale(1.08);
+}
+
+.ficha.selecionada{
+    outline:4px solid #ffe900;
+    transform:scale(1.08);
+}
+
+.f05{background:#7253a5;}
+.f1{background:#bd3029;}
+.f2{background:#0b9e48;}
+.f5{background:#333;}
+.f10{background:#2464b5;}
+.f50{background:#b56b18;}
+
+.botoes-final{
+    margin-left:auto;
+    display:flex;
+    gap:10px;
+}
+
+.btn-final{
+    padding:15px 22px;
+    border:1px solid #3e9259;
+    border-radius:9px;
+    background:#07140d;
+    color:#fff;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.btn-final:hover{
+    background:#102b1b;
+}
+
+/* MENSAGEM */
+
+.mensagem{
+    text-align:center;
+    min-height:32px;
+    margin-top:15px;
+    font-size:20px;
+    font-weight:bold;
+}
+
+.resultado-vitoria{
+    color:#28ff78;
+}
+
+.resultado-derrota{
+    color:#ff6666;
+}
+
+/* RESPONSIVO */
+
+@media(max-width:1050px){
+    .painel-superior{
+        grid-template-columns:1fr;
+    }
+
+    .roleta-area{
+        min-height:470px;
+    }
+
+    .card{
+        width:100%;
+    }
+
+    .numero-grid{
+        grid-template-columns:repeat(12,1fr);
+    }
+}
+
+@media(max-width:650px){
+
+    .topo{
+        height:auto;
+        min-height:62px;
+        padding:8px;
+        gap:5px;
+    }
+
+    .logo{
+        font-size:18px;
+    }
+
+    .titulo{
+        font-size:16px;
+    }
+
+    .titulo::before,
+    .titulo::after{
+        margin:0 3px;
+    }
+
+    .voltar{
+        width:40px;
+        height:40px;
+    }
+
+    .acoes-topo{
+        gap:5px;
+    }
+
+    .icone{
+        display:none;
+    }
+
+    .saldo-box{
+        min-width:105px;
+    }
+
+    #saldo{
+        font-size:16px;
+    }
+
+    .btn-deposito{
+        width:32px;
+        height:32px;
+    }
+
+    .roleta{
+        width:82vw;
+    }
+
+    .roleta-centro{
+        width:85px;
+        height:85px;
+    }
+
+    .bola{
+        transform:translate(-50%,-50%) translateY(-125px);
+    }
+
+    .roleta-area::before{
+        top:calc(50% - 225px);
+    }
+
+    .cores{
+        grid-template-columns:1fr;
+    }
+
+    .numero-grid{
+        grid-template-columns:repeat(6,1fr);
+    }
+
+    .num.zero{
+        grid-row:auto;
+    }
+
+    .extras{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .fichas{
+        justify-content:center;
+    }
+
+    .botoes-final{
+        width:100%;
+        margin-left:0;
+    }
+
+    .btn-final{
+        flex:1;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topo">
+
+    <div style="display:flex;align-items:center;gap:10px;">
+        <button class="voltar" onclick="history.back()">‹</button>
+        <div class="logo">Aposta<span>XBet</span></div>
+    </div>
+
+    <div class="titulo">ROLETA DA SORTE</div>
+
+    <div class="acoes-topo">
+
+        <div class="icone">♫</div>
+        <div class="icone">🔊</div>
+
+        <div class="saldo-box">
+            <div class="saldo-label">💰 SALDO</div>
+            <div id="saldo">R$ 0,00</div>
+        </div>
+
+        <button class="btn-deposito" onclick="irDeposito()">+</button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <section class="painel-superior">
+
+        <div class="card">
+
+            <h3>ÚLTIMOS RESULTADOS</h3>
+
+            <div class="resultados" id="ultimosResultados">
+                <span style="opacity:.7;">Nenhum resultado</span>
+            </div>
+
+            <hr style="margin:20px 0;border-color:#333;">
+
+            <h3>ESTATÍSTICAS</h3>
+
+            <div class="estatistica">
+                <span><i class="bolinha vermelho"></i>VERMELHO</span>
+                <span id="estatRed">0%</span>
+            </div>
+
+            <div class="estatistica">
+                <span><i class="bolinha preto"></i>PRETO</span>
+                <span id="estatBlack">0%</span>
+            </div>
+
+            <div class="estatistica">
+                <span><i class="bolinha verde"></i>VERDE</span>
+                <span id="estatGreen">0%</span>
+            </div>
+
+        </div>
+
+
+        <div class="roleta-area">
+
+            <div class="roleta" id="roleta">
+
+                <div class="numero-roleta" id="numerosRoleta"></div>
+
+                <div class="bola" id="bola"></div>
+
+                <div class="roleta-centro"></div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card aposta-atual">
+
+            <h3>APOSTA ATUAL</h3>
+
+            <div class="valor-aposta" id="valorAposta">
+                R$ 0,00
+            </div>
+
+            <hr style="border-color:#333;">
+
+            <h3 style="margin-top:20px;">ÚLTIMO RESULTADO</h3>
+
+            <div class="ultimo" id="ultimoResultado">
+                -
+            </div>
+
+            <button class="btn-girar" id="btnGirar" onclick="girarRoleta()">
+                GIRAR ROLETA ⟳
+            </button>
+
+            <div class="auto">
+                <span>GIRAR AUTOMÁTICO</span>
+                <div class="switch" id="switchAuto" onclick="toggleAuto()"></div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="mesa">
+
+        <div class="cores">
+
+            <button class="btn-cor vermelho-btn"
+                    onclick="apostar('cor','vermelho')">
+                🎰 0,50<br>VERMELHO
+            </button>
+
+            <button class="btn-cor verde-btn"
+                    onclick="apostar('numero',0)">
+                🎰 0,50<br>VERDE (0)
+            </button>
+
+            <button class="btn-cor preto-btn"
+                    onclick="apostar('cor','preto')">
+                🎰 0,50<br>PRETO
+            </button>
+
+        </div>
+
+
+        <div class="ficha-atual">
+            FICHA SELECIONADA:
+            <strong id="fichaSelecionada">R$ 0,50</strong>
+        </div>
+
+
+        <div class="numero-grid" id="numeroGrid"></div>
+
+
+        <div class="extras">
+
+            <button class="aposta-extra" onclick="apostar('doze',1)">
+                1 - 12
+            </button>
+
+            <button class="aposta-extra" onclick="apostar('doze',2)">
+                13 - 24
+            </button>
+
+            <button class="aposta-extra" onclick="apostar('doze',3)">
+                25 - 36
+            </button>
+
+            <button class="aposta-extra" onclick="apostar('dozen',1)">
+                1º 12
+            </button>
+
+            <button class="aposta-extra" onclick="apostar('par','par')">
+                PAR
+            </button>
+
+            <button class="aposta-extra" onclick="apostar('par','impar')">
+                ÍMPAR
+            </button>
+
+            <button class="aposta-extra" onclick="apostar('baixo',true)">
+                1 - 18
+            </button>
+
+            <button class="aposta-extra" onclick="apostar('alto',true)">
+                19 - 36
+            </button>
+
+        </div>
+
+
+        <div class="fichas">
+
+            <div class="ficha f05 selecionada"
+                 onclick="selecionarFicha(.50,this)">
+                0,50
+            </div>
+
+            <div class="ficha f1"
+                 onclick="selecionarFicha(1,this)">
+                1
+            </div>
+
+            <div class="ficha f2"
+                 onclick="selecionarFicha(2,this)">
+                2
+            </div>
+
+            <div class="ficha f5"
+                 onclick="selecionarFicha(5,this)">
+                5
+            </div>
+
+            <div class="ficha f10"
+                 onclick="selecionarFicha(10,this)">
+                10
+            </div>
+
+            <div class="ficha f50"
+                 onclick="selecionarFicha(50,this)">
+                50
+            </div>
+
+
+            <div class="botoes-final">
+
+                <button class="btn-final" onclick="limparApostas()">
+                    ↩ LIMPAR
+                </button>
+
+                <button class="btn-final" onclick="repetirAposta()">
+                    ⟳ REPETIR APOSTA
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="mensagem" id="mensagem"></div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+const SEQUENCIA = [
+    0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,
+    10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26
+];
+
+const VERMELHOS = [
+    1,3,5,7,9,12,14,16,18,
+    19,21,23,25,27,30,32,34,36
+];
+
+let ficha = 0.50;
+let apostas = [];
+let resultados = [];
+let girando = false;
+let auto = false;
+let rotacaoAtual = 0;
+
+const roleta = document.getElementById("roleta");
+const bola = document.getElementById("bola");
+const saldoEl = document.getElementById("saldo");
+const valorApostaEl = document.getElementById("valorAposta");
+const mensagemEl = document.getElementById("mensagem");
+
+
+/* NUMEROS DA ROLETA */
+
+function criarNumerosRoleta(){
+
+    const area = document.getElementById("numerosRoleta");
+
+    SEQUENCIA.forEach((numero,index)=>{
+
+        const span = document.createElement("span");
+
+        const angulo = index * (360 / SEQUENCIA.length);
+
+        span.textContent = numero;
+
+        span.style.transform =
+            `rotate(${angulo}deg) translateY(-205px) rotate(-${angulo}deg)`;
+
+        area.appendChild(span);
+
+    });
+}
+
+
+/* TABELA */
+
+function criarTabela(){
+
+    const grid = document.getElementById("numeroGrid");
+
+    const zero = document.createElement("button");
+
+    zero.className = "num zero";
+
+    zero.textContent = "0";
+
+    zero.onclick = () => apostar("numero",0);
+
+    grid.appendChild(zero);
+
+    for(let linha=0; linha<3; linha++){
+
+        for(let coluna=1; coluna<=12; coluna++){
+
+            const numero = coluna * 3 - linha;
+
+            const b = document.createElement("button");
+
+            b.className =
+                "num " +
+                (VERMELHOS.includes(numero) ? "red" : "black");
+
+            b.textContent = numero;
+
+            b.onclick = () => apostar("numero",numero);
+
+            grid.appendChild(b);
+        }
+    }
+}
+
+
+/* FICHA */
+
+function selecionarFicha(valor,elemento){
+
+    ficha = valor;
+
+    document.querySelectorAll(".ficha")
+        .forEach(x => x.classList.remove("selecionada"));
+
+    elemento.classList.add("selecionada");
+
+    document.getElementById("fichaSelecionada")
+        .textContent = moeda(valor);
+}
+
+
+/* APOSTAR */
+
+function apostar(tipo,valor){
+
+    if(girando) return;
+
+    apostas.push({
+        tipo:tipo,
+        valor:valor,
+        quantia:ficha
+    });
+
+    atualizarAposta();
+
+    mensagemEl.textContent =
+        `Aposta adicionada: ${moeda(ficha)}`;
+
+    mensagemEl.className = "mensagem";
+}
+
+
+/* TOTAL */
+
+function totalApostas(){
+
+    return apostas.reduce(
+        (total,a) => total + a.quantia,
+        0
+    );
+}
+
+
+/* ATUALIZA */
+
+function atualizarAposta(){
+
+    valorApostaEl.textContent =
+        moeda(totalApostas());
+}
+
+
+/* SALDO EXISTENTE */
+
+async function obterSaldo(){
+
+    try{
+
+        if(!window.SistemaSaldo){
+            throw new Error("SistemaSaldo não carregado.");
+        }
+
+        let valor;
+
+        if(typeof SistemaSaldo.get === "function"){
+            valor = await SistemaSaldo.get();
+        }
+
+        if(typeof valor === "number"){
+            saldoEl.textContent = moeda(valor);
+        }
+
+    }catch(e){
+
+        console.error(e);
+
+    }
+}
+
+
+/* DEBITAR */
+
+async function debitar(valor){
+
+    if(!window.SistemaSaldo){
+        throw new Error("SistemaSaldo não encontrado.");
+    }
+
+    if(typeof SistemaSaldo.debitar !== "function"){
+        throw new Error(
+            "A função debitar() não existe no SistemaSaldo."
+        );
+    }
+
+    return await SistemaSaldo.debitar(valor);
+}
+
+
+/* CREDITAR */
+
+async function creditar(valor){
+
+    if(!window.SistemaSaldo){
+        throw new Error("SistemaSaldo não encontrado.");
+    }
+
+    if(typeof SistemaSaldo.creditar === "function"){
+        return await SistemaSaldo.creditar(valor);
+    }
+
+    if(typeof SistemaSaldo.adicionar === "function"){
+        return await SistemaSaldo.adicionar(valor);
+    }
+
+    throw new Error(
+        "O SistemaSaldo não possui uma função de crédito."
+    );
+}
+
+
+/* GIRAR */
+
+async function girarRoleta(){
+
+    if(girando) return;
+
+    if(apostas.length === 0){
+
+        mensagemEl.textContent =
+            "Faça pelo menos uma aposta antes de girar.";
+
+        mensagemEl.className =
+            "mensagem resultado-derrota";
+
+        return;
+    }
+
+    const total = totalApostas();
+
+    const btn = document.getElementById("btnGirar");
+
+    try{
+
+        girando = true;
+
+        btn.disabled = true;
+
+        mensagemEl.textContent =
+            "Boa sorte! A roleta está girando...";
+
+        mensagemEl.className = "mensagem";
+
+        /*
+         * PRIMEIRO DESCONTA DO SALDO REAL.
+         * Se o débito falhar, a roleta NÃO gira.
+         */
+
+        const resultadoDebito =
+            await debitar(total);
+
+        if(resultadoDebito === false){
+            throw new Error("Saldo insuficiente.");
+        }
+
+        /*
+         * Resultado aleatório.
+         */
+
+        const indice =
+            Math.floor(Math.random() * SEQUENCIA.length);
+
+        const numeroFinal =
+            SEQUENCIA[indice];
+
+        /*
+         * Animação.
+         */
+
+        const voltas = 7;
+
+        const anguloPorNumero =
+            360 / SEQUENCIA.length;
+
+        const destino =
+            360 - (indice * anguloPorNumero);
+
+        rotacaoAtual +=
+            voltas * 360 + destino;
+
+        roleta.style.transform =
+            `rotate(${rotacaoAtual}deg)`;
+
+
+        /*
+         * Bola.
+         */
+
+        bola.animate(
+            [
+                {
+                    transform:
+                    "translate(-50%,-50%) translateY(-185px) rotate(0deg)"
+                },
+                {
+                    transform:
+                    "translate(-50%,-50%) translateY(-185px) rotate(1080deg)"
+                },
+                {
+                    transform:
+                    "translate(-50%,-50%) translateY(-150px) rotate(1800deg)"
+                }
+            ],
+            {
+                duration:5000,
+                easing:"cubic-bezier(.12,.75,.16,1)"
+            }
+        );
+
+
+        setTimeout(async ()=>{
+
+            try{
+
+                finalizarRodada(numeroFinal);
+
+            }catch(e){
+
+                console.error(e);
+
+                mensagemEl.textContent =
+                    "Erro ao finalizar a rodada.";
+
+            }finally{
+
+                girando = false;
+
+                btn.disabled = false;
+
+                await obterSaldo();
+
+                if(auto && apostas.length > 0){
+                    setTimeout(girarRoleta,1200);
+                }
+
+            }
+
+        },5100);
+
+    }catch(e){
+
+        console.error(e);
+
+        girando = false;
+
+        btn.disabled = false;
+
+        mensagemEl.textContent =
+            e.message ||
+            "Não foi possível realizar a aposta.";
+
+        mensagemEl.className =
+            "mensagem resultado-derrota";
+
+        await obterSaldo();
+    }
+}
+
+
+/* FINALIZA */
+
+async function finalizarRodada(numero){
+
+    resultados.unshift(numero);
+
+    resultados =
+        resultados.slice(0,8);
+
+    atualizarResultados();
+
+    document.getElementById("ultimoResultado")
+        .textContent = numero;
+
+
+    let premio = 0;
+
+    apostas.forEach(aposta=>{
+
+        if(aposta.tipo === "numero"){
+
+            if(aposta.valor === numero){
+
+                premio +=
+                    aposta.quantia * 36;
+            }
+
+        }
+
+        else if(aposta.tipo === "cor"){
+
+            const cor = corNumero(numero);
+
+            if(cor === aposta.valor){
+
+                premio +=
+                    aposta.quantia * 2;
+            }
+
+        }
+
+        else if(aposta.tipo === "par"){
+
+            if(numero !== 0){
+
+                const par =
+                    numero % 2 === 0
+                    ? "par"
+                    : "impar";
+
+                if(par === aposta.valor){
+
+                    premio +=
+                        aposta.quantia * 2;
+                }
+            }
+
+        }
+
+        else if(aposta.tipo === "baixo"){
+
+            if(numero >= 1 && numero <= 18){
+
+                premio +=
+                    aposta.quantia * 2;
+            }
+
+        }
+
+        else if(aposta.tipo === "alto"){
+
+            if(numero >= 19 && numero <= 36){
+
+                premio +=
+                    aposta.quantia * 2;
+            }
+
+        }
+
+        else if(aposta.tipo === "dozen"){
+
+            if(
+                (aposta.valor === 1 &&
+                 numero >= 1 &&
+                 numero <= 12)
+            ){
+
+                premio +=
+                    aposta.quantia * 3;
+            }
+
+        }
+
+        else if(aposta.tipo === "doze"){
+
+            const grupo =
+                numero >= 1 && numero <= 12 ? 1 :
+                numero >= 13 && numero <= 24 ? 2 :
+                numero >= 25 && numero <= 36 ? 3 : 0;
+
+            if(grupo === aposta.valor){
+
+                premio +=
+                    aposta.quantia * 3;
+            }
+        }
+
+    });
+
+
+    const cor = corNumero(numero);
+
+    if(premio > 0){
+
+        await creditar(premio);
+
+        mensagemEl.textContent =
+            `🎉 Saiu ${numero} (${cor.toUpperCase()}) — prêmio ${moeda(premio)}!`;
+
+        mensagemEl.className =
+            "mensagem resultado-vitoria";
+
+    }else{
+
+        mensagemEl.textContent =
+            `Saiu ${numero} (${cor.toUpperCase()}). Boa sorte na próxima!`;
+
+        mensagemEl.className =
+            "mensagem resultado-derrota";
+    }
+
+
+    atualizarEstatisticas();
+
+    apostas = [];
+
+    atualizarAposta();
+}
+
+
+/* COR */
+
+function corNumero(numero){
+
+    if(numero === 0){
+        return "verde";
+    }
+
+    return VERMELHOS.includes(numero)
+        ? "vermelho"
+        : "preto";
+}
+
+
+/* RESULTADOS */
+
+function atualizarResultados(){
+
+    const box =
+        document.getElementById("ultimosResultados");
+
+    box.innerHTML = "";
+
+    if(resultados.length === 0){
+
+        box.innerHTML =
+            "<span style='opacity:.7;'>Nenhum resultado</span>";
+
+        return;
+    }
+
+    resultados.forEach(numero=>{
+
+        const span =
+            document.createElement("span");
+
+        span.className =
+            "resultado " + corNumero(numero);
+
+        span.textContent = numero;
+
+        box.appendChild(span);
+
+    });
+}
+
+
+/* ESTATISTICAS */
+
+function atualizarEstatisticas(){
+
+    if(resultados.length === 0) return;
+
+    let red = 0;
+    let black = 0;
+    let green = 0;
+
+    resultados.forEach(numero=>{
+
+        const cor = corNumero(numero);
+
+        if(cor === "vermelho") red++;
+        if(cor === "preto") black++;
+        if(cor === "verde") green++;
+
+    });
+
+    const total =
+        resultados.length;
+
+    document.getElementById("estatRed")
+        .textContent =
+        Math.round(red / total * 100) + "%";
+
+    document.getElementById("estatBlack")
+        .textContent =
+        Math.round(black / total * 100) + "%";
+
+    document.getElementById("estatGreen")
+        .textContent =
+        Math.round(green / total * 100) + "%";
+}
+
+
+/* LIMPAR */
+
+function limparApostas(){
+
+    if(girando) return;
+
+    apostas = [];
+
+    atualizarAposta();
+
+    mensagemEl.textContent =
+        "Apostas limpas.";
+
+    mensagemEl.className =
+        "mensagem";
+}
+
+
+/* REPETIR */
+
+let ultimaAposta = [];
+
+function repetirAposta(){
+
+    if(girando) return;
+
+    if(ultimaAposta.length === 0){
+
+        mensagemEl.textContent =
+            "Ainda não existe uma aposta anterior.";
+
+        return;
+    }
+
+    apostas =
+        ultimaAposta.map(a=>({...a}));
+
+    atualizarAposta();
+}
+
+
+/* AUTO */
+
+function toggleAuto(){
+
+    auto = !auto;
+
+    document.getElementById("switchAuto")
+        .classList.toggle("ativo",auto);
+
+}
+
+
+/* MOEDA */
+
+function moeda(valor){
+
+    return new Intl.NumberFormat(
+        "pt-BR",
+        {
+            style:"currency",
+            currency:"BRL"
+        }
+    ).format(Number(valor) || 0);
+}
+
+
+/* DEPOSITO */
+
+function irDeposito(){
+
+    window.location.href =
+        "../deposito.html";
+}
+
+
+/* INICIO */
+
+criarNumerosRoleta();
+
+criarTabela();
+
+obterSaldo();
+
+setInterval(obterSaldo,5000);
+
+</script>
+
+</body>
+</html>
