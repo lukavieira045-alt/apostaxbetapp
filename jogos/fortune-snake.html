@@ -22,22 +22,23 @@ body{
 body{
     min-height:100vh;
     overflow-x:hidden;
+
     background:
         radial-gradient(circle at 10% 20%,#5b00a8,transparent 35%),
         radial-gradient(circle at 90% 20%,#8a6200,transparent 35%),
         radial-gradient(circle at 80% 80%,#68005f,transparent 35%),
         #08000f;
+
     color:white;
     font-family:Arial,sans-serif;
 
     display:flex;
     justify-content:center;
-    align-items:flex-start;
+    align-items:center;
 
     position:relative;
 
-    padding-top:78px;
-    padding-bottom:30px;
+    padding:78px 0 30px;
 }
 
 /* FUNDO */
@@ -235,12 +236,10 @@ body::after{
 
     align-items:center;
 
-    justify-content:flex-start;
+    justify-content:center;
 }
 
-/* =====================================================
-   JOGO
-===================================================== */
+/* JOGO */
 
 .game-container{
 
@@ -574,8 +573,6 @@ button:disabled{
 
 <div class="page-content">
 
-    <!-- JOGO CENTRALIZADO -->
-
     <div class="game-container">
 
         <h2>
@@ -678,9 +675,7 @@ async function garantirMusica(){
 
     try{
 
-        if(
-            musica.paused
-        ){
+        if(musica.paused){
 
             musica.volume = 0.35;
 
@@ -726,7 +721,7 @@ document.addEventListener(
 
 
 /* =====================================================
-   SONS
+   SONS DO JOGO
 ===================================================== */
 
 let audioCtx = null;
@@ -761,49 +756,79 @@ function tocarTom(
     volume=0.04
 ){
 
+    try{
+
+        iniciarAudio();
+
+        const oscilador =
+            audioCtx.createOscillator();
+
+        const ganho =
+            audioCtx.createGain();
+
+        oscilador.type =
+            tipo;
+
+        oscilador.frequency.setValueAtTime(
+            frequencia,
+            audioCtx.currentTime
+        );
+
+        ganho.gain.setValueAtTime(
+            volume,
+            audioCtx.currentTime
+        );
+
+        ganho.gain.exponentialRampToValueAtTime(
+            0.001,
+            audioCtx.currentTime +
+            duracao
+        );
+
+        oscilador.connect(
+            ganho
+        );
+
+        ganho.connect(
+            audioCtx.destination
+        );
+
+        oscilador.start();
+
+        oscilador.stop(
+            audioCtx.currentTime +
+            duracao
+        );
+
+    }catch(erro){
+
+        console.log(
+            "Erro no som:",
+            erro
+        );
+
+    }
+
+}
+
+
+/* SOM IMEDIATO DO BOTÃO */
+
+function somBotao(){
+
     iniciarAudio();
 
-    const oscilador =
-        audioCtx.createOscillator();
-
-    const ganho =
-        audioCtx.createGain();
-
-    oscilador.type =
-        tipo;
-
-    oscilador.frequency.setValueAtTime(
-        frequencia,
-        audioCtx.currentTime
-    );
-
-    ganho.gain.setValueAtTime(
-        volume,
-        audioCtx.currentTime
-    );
-
-    ganho.gain.exponentialRampToValueAtTime(
-        0.001,
-        audioCtx.currentTime +
-        duracao
-    );
-
-    oscilador.connect(
-        ganho
-    );
-
-    ganho.connect(
-        audioCtx.destination
-    );
-
-    oscilador.start();
-
-    oscilador.stop(
-        audioCtx.currentTime +
-        duracao
+    tocarTom(
+        520,
+        .07,
+        "square",
+        .06
     );
 
 }
+
+
+/* SOM DO GIRO */
 
 function somGiro(){
 
@@ -815,46 +840,57 @@ function somGiro(){
         180,
         .08,
         "square",
-        .035
+        .05
     );
 
     setTimeout(()=>{
+
         tocarTom(
             220,
             .08,
             "square",
-            .035
+            .05
         );
+
     },100);
 
     setTimeout(()=>{
+
         tocarTom(
             270,
             .08,
             "square",
-            .035
+            .05
         );
+
     },200);
 
     setTimeout(()=>{
+
         tocarTom(
             330,
             .08,
             "square",
-            .035
+            .05
         );
+
     },300);
 
     setTimeout(()=>{
+
         tocarTom(
             400,
             .10,
             "square",
-            .04
+            .06
         );
+
     },400);
 
 }
+
+
+/* SOM DA VITÓRIA */
 
 function somVitoria(){
 
@@ -866,37 +902,46 @@ function somVitoria(){
         523,
         .15,
         "sine",
-        .07
+        .08
     );
 
     setTimeout(()=>{
+
         tocarTom(
             659,
             .15,
             "sine",
-            .07
+            .08
         );
+
     },130);
 
     setTimeout(()=>{
+
         tocarTom(
             784,
             .20,
             "sine",
-            .08
+            .09
         );
+
     },260);
 
     setTimeout(()=>{
+
         tocarTom(
             1046,
             .30,
             "sine",
-            .06
+            .07
         );
+
     },420);
 
 }
+
+
+/* SOM DA DERROTA */
 
 function somDerrota(){
 
@@ -908,16 +953,18 @@ function somDerrota(){
         190,
         .18,
         "sawtooth",
-        .045
+        .05
     );
 
     setTimeout(()=>{
+
         tocarTom(
             140,
             .25,
             "sawtooth",
-            .04
+            .045
         );
+
     },180);
 
 }
@@ -930,12 +977,14 @@ function somDerrota(){
 const APOSTA = 1.00;
 
 const SIMBOLOS = [
+
     "🍒",
     "🍋",
     "💰",
     "💎",
     "🏆",
     "🐍"
+
 ];
 
 const PAGAMENTOS = {
@@ -1243,7 +1292,16 @@ button.addEventListener(
     "click",
     async function(){
 
-        await garantirMusica();
+        /*
+         * O primeiro som acontece
+         * imediatamente no clique.
+         * Isso mantém o áudio liberado
+         * pelo gesto do usuário.
+         */
+
+        somBotao();
+
+        garantirMusica();
 
         iniciarAudio();
 
