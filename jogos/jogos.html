@@ -191,10 +191,6 @@ body::after{
     100%{opacity:1;}
 }
 
-/* =========================
-   CABEÇALHO
-========================= */
-
 header{
     position:relative;
     z-index:5;
@@ -252,10 +248,6 @@ header p{
     font-size:13px;
     font-weight:bold;
 }
-
-/* =========================
-   SALDO
-========================= */
 
 .saldo-box{
     position:relative;
@@ -337,10 +329,6 @@ header p{
     padding:22px 13px 25px;
 }
 
-/* =========================
-   TÍTULOS
-========================= */
-
 .titulo{
     text-align:center;
 
@@ -394,10 +382,6 @@ header p{
     font-size:13px;
     font-weight:600;
 }
-
-/* =========================
-   BANNER
-========================= */
 
 .banner{
     position:relative;
@@ -479,10 +463,6 @@ header p{
     font-weight:500;
 }
 
-/* =========================
-   SEÇÃO
-========================= */
-
 .secao{
     display:flex;
     align-items:center;
@@ -528,10 +508,6 @@ header p{
 
     border:1px solid rgba(255,255,255,.08);
 }
-
-/* =========================
-   MENU DOS JOGOS
-========================= */
 
 .jogos{
     display:grid;
@@ -617,10 +593,6 @@ header p{
     opacity:.35;
 }
 
-/* =========================
-   IMAGEM / BANNER DO JOGO
-========================= */
-
 .imagem-jogo{
     position:absolute;
 
@@ -654,7 +626,6 @@ header p{
 
 .imagem-jogo::before{
     content:"";
-
     position:absolute;
     width:100px;
     height:100px;
@@ -667,7 +638,7 @@ header p{
     opacity:.28;
 }
 
-.imagem-jogo img.capa-jogo{
+.imagem-jogo img.capa-fortune{
     position:relative;
     z-index:2;
 
@@ -727,10 +698,6 @@ header p{
 
     font-size:10px;
 }
-
-/* =========================
-   CORES
-========================= */
 
 .roleta{
     --glow:#ff006e;
@@ -937,10 +904,6 @@ header p{
 .jogo:nth-child(9){animation-delay:3.2s;}
 .jogo:nth-child(10){animation-delay:3.6s;}
 
-/* =========================
-   VOLTAR
-========================= */
-
 .voltar{
     display:block;
 
@@ -958,10 +921,6 @@ header p{
     position:relative;
     z-index:4;
 }
-
-/* =========================
-   MENU INFERIOR
-========================= */
 
 nav{
     position:fixed;
@@ -1044,10 +1003,6 @@ nav span{
     font-size:24px;
     line-height:1;
 }
-
-/* =========================
-   LOADER
-========================= */
 
 #loader{
     position:fixed;
@@ -1310,10 +1265,6 @@ nav span{
     font-size:12px;
     font-weight:bold;
 }
-
-/* =========================
-   RESPONSIVO
-========================= */
 
 @media(max-width:600px){
 
@@ -1759,10 +1710,7 @@ setInterval(
 
         </a>
 
-        <!-- MINES
-             SOMENTE O MINES RECEBE O BANNER
-             banner-mines.png
-        -->
+        <!-- MINES -->
 
         <a
             class="jogo mines"
@@ -1774,7 +1722,7 @@ setInterval(
             <div class="imagem-jogo">
 
                 <img
-                    class="capa-jogo"
+                    class="capa-fortune"
                     src="banner-mines.png"
                     alt="Mines"
                 >
@@ -1797,10 +1745,17 @@ setInterval(
             class="jogo crash"
             href="crash.html"
             data-jogo="Crash"
-            data-icone="🚀">
+            data-icone="🚀"
+            data-capa="banner-crash.png">
 
             <div class="imagem-jogo">
-                <div class="arte">🚀</div>
+
+                <img
+                    class="capa-fortune"
+                    src="banner-crash.png"
+                    alt="Crash"
+                >
+
             </div>
 
             <div class="nome">
@@ -1901,9 +1856,7 @@ setInterval(
 
         </a>
 
-        <!-- FORTUNE SNAKE
-             MANTIDO SEPARADO
-        -->
+        <!-- FORTUNE SNAKE -->
 
         <a
             class="jogo snake"
@@ -1915,7 +1868,7 @@ setInterval(
             <div class="imagem-jogo">
 
                 <img
-                    class="capa-jogo"
+                    class="capa-fortune"
                     src="banner-fortune-snake.png"
                     alt="Fortune Snake"
                 >
@@ -1972,10 +1925,6 @@ setInterval(
 
 </nav>
 
-<!-- =========================
-     CARREGAMENTO
-========================= -->
-
 <div id="loader">
 
     <div class="loader-luz"></div>
@@ -2003,15 +1952,11 @@ setInterval(
         </div>
 
         <div id="loaderNome">
-
             Carregando...
-
         </div>
 
         <div class="loader-status">
-
             CARREGANDO JOGO...
-
         </div>
 
         <div class="loader-bar">
@@ -2021,9 +1966,7 @@ setInterval(
         </div>
 
         <div id="loaderPorcentagem">
-
             0%
-
         </div>
 
     </div>
@@ -2168,20 +2111,17 @@ document
                 )`;
 
             /*
-             * SOMENTE JOGOS QUE POSSUEM
-             * data-capa USAM O BANNER NO LOADER.
+             * Jogos que possuem banner:
+             * Fortune Snake
+             * Mines
+             * Crash
              *
-             * Mines:
-             * banner-mines.png
-             *
-             * Fortune Snake:
-             * banner-fortune-snake.png
-             *
-             * Os demais continuam usando
-             * somente o ícone normal.
+             * Cada jogo usa somente a sua própria capa.
              */
 
-            if(capa){
+            if(
+                capa
+            ){
 
                 loaderImagem.src =
                     capa;
@@ -2191,23 +2131,6 @@ document
 
                 loaderIconeNormal.style.display =
                     "none";
-
-                /*
-                 * Se a imagem ainda não estiver
-                 * disponível, não quebra o loader.
-                 */
-                loaderImagem.onerror =
-                    function(){
-
-                        loaderImagem.style.display =
-                            "none";
-
-                        loaderIconeNormal.textContent =
-                            icone || "🎮";
-
-                        loaderIconeNormal.style.display =
-                            "flex";
-                    };
 
             }else{
 
@@ -2222,6 +2145,7 @@ document
 
                 loaderIconeNormal.style.display =
                     "flex";
+
             }
 
             loaderProgresso.style.width =
