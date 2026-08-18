@@ -892,6 +892,7 @@ header p{
             0 9px 23px rgba(0,0,0,.38),
             0 0 23px rgba(255,255,255,.13);
     }
+
 }
 
 .jogo:nth-child(2){animation-delay:.4s;}
@@ -1004,6 +1005,11 @@ nav span{
     line-height:1;
 }
 
+
+/* =====================================================
+   LOADER
+===================================================== */
+
 #loader{
     position:fixed;
     inset:0;
@@ -1034,7 +1040,8 @@ nav span{
 
     opacity:0;
 
-    transition:opacity .35s ease;
+    transition:
+        opacity .45s ease;
 }
 
 #loader.ativo{
@@ -1073,6 +1080,7 @@ nav span{
         transform:scale(1.15);
         opacity:.45;
     }
+
 }
 
 .loader-card{
@@ -1119,6 +1127,7 @@ nav span{
             scale(1)
             translateY(0);
     }
+
 }
 
 .loader-icone{
@@ -1146,7 +1155,7 @@ nav span{
 
     animation:
         iconeLoader
-        1.5s
+        1.4s
         ease-in-out
         infinite
         alternate;
@@ -1178,17 +1187,21 @@ nav span{
 @keyframes iconeLoader{
 
     from{
-        transform:scale(.98);
+        transform:scale(.97);
+        opacity:.82;
     }
 
     to{
-        transform:scale(1.02);
+        transform:scale(1);
+        opacity:1;
     }
+
 }
 
 #loaderNome{
     font-size:25px;
     font-weight:900;
+
     margin-bottom:8px;
 
     color:#fff;
@@ -1199,8 +1212,11 @@ nav span{
 
 .loader-status{
     color:#aaa;
+
     font-size:13px;
+
     margin-bottom:20px;
+
     letter-spacing:.4px;
 }
 
@@ -1255,6 +1271,7 @@ nav span{
     to{
         background-position:200% 0;
     }
+
 }
 
 #loaderPorcentagem{
@@ -1263,8 +1280,10 @@ nav span{
     color:#aaa;
 
     font-size:12px;
+
     font-weight:bold;
 }
+
 
 @media(max-width:600px){
 
@@ -1279,7 +1298,9 @@ nav span{
     .imagem-jogo{
         height:80px;
     }
+
 }
+
 
 @media(min-width:700px){
 
@@ -1294,7 +1315,9 @@ nav span{
     .imagem-jogo{
         height:100px;
     }
+
 }
+
 
 @media(max-width:380px){
 
@@ -1359,6 +1382,7 @@ nav span{
     .secao h2{
         font-size:18px;
     }
+
 }
 
 </style>
@@ -1380,12 +1404,15 @@ window.supabase.createClient(
     SUPABASE_KEY
 );
 
+
 function redirecionarLogin(){
 
     window.location.replace(
         "../index.html"
     );
+
 }
+
 
 async function protegerJogos(){
 
@@ -1399,7 +1426,9 @@ async function protegerJogos(){
         redirecionarLogin();
 
         return false;
+
     }
+
 
     try{
 
@@ -1416,7 +1445,9 @@ async function protegerJogos(){
             redirecionarLogin();
 
             return false;
+
         }
+
 
         if(
             !data ||
@@ -1427,7 +1458,9 @@ async function protegerJogos(){
             redirecionarLogin();
 
             return false;
+
         }
+
 
         return true;
 
@@ -1441,8 +1474,11 @@ async function protegerJogos(){
         redirecionarLogin();
 
         return false;
+
     }
+
 }
+
 
 async function carregarSaldo(){
 
@@ -1453,6 +1489,7 @@ async function carregarSaldo(){
         return;
     }
 
+
     try{
 
         const {
@@ -1460,6 +1497,7 @@ async function carregarSaldo(){
             error: sessaoErro
         } =
             await clienteSupabase.auth.getSession();
+
 
         if(
             sessaoErro ||
@@ -1469,10 +1507,13 @@ async function carregarSaldo(){
         ){
 
             return;
+
         }
+
 
         const userId =
             sessaoData.session.user.id;
+
 
         const {
             data,
@@ -1484,6 +1525,7 @@ async function carregarSaldo(){
                 .eq("user_id",userId)
                 .maybeSingle();
 
+
         if(error){
 
             console.log(
@@ -1492,12 +1534,15 @@ async function carregarSaldo(){
             );
 
             return;
+
         }
+
 
         const valor =
             Number(
                 data?.valor ?? 0
             );
+
 
         elemento.textContent =
             valor.toLocaleString(
@@ -1508,14 +1553,18 @@ async function carregarSaldo(){
                 }
             );
 
+
     }catch(erro){
 
         console.log(
             "Erro ao carregar saldo:",
             erro
         );
+
     }
+
 }
+
 
 (async function(){
 
@@ -1525,9 +1574,11 @@ async function carregarSaldo(){
     if(autorizado){
 
         await carregarSaldo();
+
     }
 
 })();
+
 
 window.addEventListener(
     "pageshow",
@@ -1536,8 +1587,10 @@ window.addEventListener(
         protegerJogos();
 
         carregarSaldo();
+
     }
 );
+
 
 clienteSupabase.auth.onAuthStateChange(
     function(event,session){
@@ -1547,11 +1600,14 @@ clienteSupabase.auth.onAuthStateChange(
             redirecionarLogin();
 
             return;
+
         }
 
         carregarSaldo();
+
     }
 );
+
 
 setInterval(
     carregarSaldo,
@@ -1559,6 +1615,7 @@ setInterval(
 );
 
 </script>
+
 
 <div class="luzes">
 
@@ -1572,6 +1629,7 @@ setInterval(
 
 </div>
 
+
 <audio
     id="musicaJogos"
     loop
@@ -1583,6 +1641,7 @@ setInterval(
 
 </audio>
 
+
 <button
     id="botaoSom"
     type="button"
@@ -1591,6 +1650,7 @@ setInterval(
     🔇
 
 </button>
+
 
 <header>
 
@@ -1607,6 +1667,7 @@ setInterval(
 
 </header>
 
+
 <main class="container">
 
     <h2 class="titulo">
@@ -1616,6 +1677,7 @@ setInterval(
     <p class="subtitulo">
         Entre, jogue e divirta-se no universo ApostaXBet
     </p>
+
 
     <section class="banner">
 
@@ -1630,6 +1692,7 @@ setInterval(
 
     </section>
 
+
     <div class="secao">
 
         <h2>
@@ -1642,7 +1705,9 @@ setInterval(
 
     </div>
 
+
     <div class="jogos">
+
 
         <!-- ROLETA -->
 
@@ -1653,7 +1718,11 @@ setInterval(
             data-icone="🎰">
 
             <div class="imagem-jogo">
-                <div class="arte">🎰</div>
+
+                <div class="arte">
+                    🎰
+                </div>
+
             </div>
 
             <div class="nome">
@@ -1666,6 +1735,7 @@ setInterval(
 
         </a>
 
+
         <!-- ROLETA PREMIUM -->
 
         <a
@@ -1675,7 +1745,11 @@ setInterval(
             data-icone="🎡">
 
             <div class="imagem-jogo">
-                <div class="arte">🎡</div>
+
+                <div class="arte">
+                    🎡
+                </div>
+
             </div>
 
             <div class="nome">
@@ -1688,6 +1762,7 @@ setInterval(
 
         </a>
 
+
         <!-- ROLETA CASSINO -->
 
         <a
@@ -1697,7 +1772,11 @@ setInterval(
             data-icone="🎰">
 
             <div class="imagem-jogo">
-                <div class="arte">🎰</div>
+
+                <div class="arte">
+                    🎰
+                </div>
+
             </div>
 
             <div class="nome">
@@ -1709,6 +1788,7 @@ setInterval(
             </div>
 
         </a>
+
 
         <!-- MINES -->
 
@@ -1739,6 +1819,7 @@ setInterval(
 
         </a>
 
+
         <!-- CRASH -->
 
         <a
@@ -1768,6 +1849,7 @@ setInterval(
 
         </a>
 
+
         <!-- PLINKO -->
 
         <a
@@ -1777,7 +1859,11 @@ setInterval(
             data-icone="🎯">
 
             <div class="imagem-jogo">
-                <div class="arte">🎯</div>
+
+                <div class="arte">
+                    🎯
+                </div>
+
             </div>
 
             <div class="nome">
@@ -1790,6 +1876,7 @@ setInterval(
 
         </a>
 
+
         <!-- DICE -->
 
         <a
@@ -1799,7 +1886,11 @@ setInterval(
             data-icone="🎲">
 
             <div class="imagem-jogo">
-                <div class="arte">🎲</div>
+
+                <div class="arte">
+                    🎲
+                </div>
+
             </div>
 
             <div class="nome">
@@ -1812,6 +1903,7 @@ setInterval(
 
         </a>
 
+
         <!-- LOBBY -->
 
         <a
@@ -1821,7 +1913,11 @@ setInterval(
             data-icone="🐺">
 
             <div class="imagem-jogo">
-                <div class="arte">🐺</div>
+
+                <div class="arte">
+                    🐺
+                </div>
+
             </div>
 
             <div class="nome">
@@ -1834,6 +1930,7 @@ setInterval(
 
         </a>
 
+
         <!-- NIGHT MONSTERS -->
 
         <a
@@ -1843,7 +1940,11 @@ setInterval(
             data-icone="🧛">
 
             <div class="imagem-jogo">
-                <div class="arte">🧛</div>
+
+                <div class="arte">
+                    🧛
+                </div>
+
             </div>
 
             <div class="nome">
@@ -1855,6 +1956,7 @@ setInterval(
             </div>
 
         </a>
+
 
         <!-- FORTUNE SNAKE -->
 
@@ -1885,7 +1987,9 @@ setInterval(
 
         </a>
 
+
     </div>
+
 
     <a
         class="voltar"
@@ -1897,6 +2001,7 @@ setInterval(
 
 </main>
 
+
 <nav>
 
     <a href="../index.html">
@@ -1907,6 +2012,7 @@ setInterval(
 
     </a>
 
+
     <a href="jogos.html">
 
         <span>🎮</span>
@@ -1914,6 +2020,7 @@ setInterval(
         Jogos
 
     </a>
+
 
     <a href="../index.html">
 
@@ -1925,64 +2032,20 @@ setInterval(
 
 </nav>
 
-<div id="loader">
-
-    <div class="loader-luz"></div>
-
-    <div class="loader-card">
-
-        <div
-            id="loaderIcone"
-            class="loader-icone">
-
-            <img
-                id="loaderImagem"
-                src=""
-                alt="Capa do jogo"
-            >
-
-            <div
-                id="loaderIconeNormal"
-                class="icone-normal">
-
-                🎮
-
-            </div>
-
-        </div>
-
-        <div id="loaderNome">
-            Carregando...
-        </div>
-
-        <div class="loader-status">
-            CARREGANDO JOGO...
-        </div>
-
-        <div class="loader-bar">
-
-            <div id="loaderProgresso"></div>
-
-        </div>
-
-        <div id="loaderPorcentagem">
-            0%
-        </div>
-
-    </div>
-
-</div>
 
 <script>
+
+/* =====================================================
+   LOADER DOS JOGOS
+   MESMA IDEIA DO SEGUNDO CARREGAMENTO DO
+   FORTUNE SNAKE
+===================================================== */
 
 const loader =
     document.getElementById("loader");
 
 const loaderNome =
     document.getElementById("loaderNome");
-
-const loaderIcone =
-    document.getElementById("loaderIcone");
 
 const loaderImagem =
     document.getElementById("loaderImagem");
@@ -1998,6 +2061,7 @@ const loaderPorcentagem =
 
 const loaderLuz =
     document.querySelector(".loader-luz");
+
 
 const coresJogos = {
 
@@ -2053,7 +2117,9 @@ const coresJogos = {
 
 };
 
+
 let carregando = false;
+
 
 document
 .querySelectorAll(".jogo")
@@ -2065,11 +2131,16 @@ document
 
             event.preventDefault();
 
+
             if(carregando){
+
                 return;
+
             }
 
+
             carregando = true;
+
 
             const destino =
                 card.getAttribute("href");
@@ -2083,6 +2154,7 @@ document
             const capa =
                 card.getAttribute("data-capa");
 
+
             const config =
                 coresJogos[nome] ||
                 {
@@ -2090,18 +2162,22 @@ document
                     glow:"rgba(131,56,236,.45)"
                 };
 
+
             loaderNome.textContent =
                 nome;
+
 
             loader.style.setProperty(
                 "--loader-cor",
                 config.cor
             );
 
+
             loader.style.setProperty(
                 "--loader-glow",
                 config.glow
             );
+
 
             loaderLuz.style.background =
                 `radial-gradient(
@@ -2110,18 +2186,13 @@ document
                     transparent 70%
                 )`;
 
+
             /*
-             * Jogos que possuem banner:
-             * Fortune Snake
-             * Mines
-             * Crash
-             *
-             * Cada jogo usa somente a sua própria capa.
+             * Se o jogo tiver banner,
+             * mostra somente o banner dele.
              */
 
-            if(
-                capa
-            ){
+            if(capa){
 
                 loaderImagem.src =
                     capa;
@@ -2148,69 +2219,130 @@ document
 
             }
 
+
             loaderProgresso.style.width =
                 "0%";
 
             loaderPorcentagem.textContent =
                 "0%";
 
+
             loader.classList.add(
                 "ativo"
             );
 
-            let progresso = 0;
 
-            const intervalo =
-                setInterval(
+            /*
+             * CARREGAMENTO:
+             *
+             * começa em 0%
+             * sobe gradualmente
+             * chega em 100%
+             * aguarda um pouco
+             * abre o jogo
+             */
+
+            const duracao =
+                1800;
+
+            const inicio =
+                performance.now();
+
+
+            function animarLoader(agora){
+
+                const tempo =
+                    agora - inicio;
+
+
+                let progresso =
+                    tempo / duracao;
+
+
+                if(progresso > 1){
+
+                    progresso = 1;
+
+                }
+
+
+                /*
+                 * Movimento suave de finalização,
+                 * semelhante ao carregamento do
+                 * Fortune Snake.
+                 */
+
+                const suavizado =
+                    1 -
+                    Math.pow(
+                        1 - progresso,
+                        2.2
+                    );
+
+
+                const porcentagem =
+                    Math.floor(
+                        suavizado * 100
+                    );
+
+
+                loaderProgresso.style.width =
+                    porcentagem + "%";
+
+
+                loaderPorcentagem.textContent =
+                    porcentagem + "%";
+
+
+                if(progresso < 1){
+
+                    requestAnimationFrame(
+                        animarLoader
+                    );
+
+                    return;
+
+                }
+
+
+                loaderProgresso.style.width =
+                    "100%";
+
+                loaderPorcentagem.textContent =
+                    "100%";
+
+
+                setTimeout(
                     function(){
 
-                        progresso +=
-                            Math.floor(
-                                Math.random() * 8
-                            ) + 4;
-
-                        if(progresso >= 100){
-
-                            progresso = 100;
-
-                        }
-
-                        loaderProgresso.style.width =
-                            progresso + "%";
-
-                        loaderPorcentagem.textContent =
-                            progresso + "%";
-
-                        if(progresso >= 100){
-
-                            clearInterval(
-                                intervalo
-                            );
-
-                            setTimeout(
-                                function(){
-
-                                    window.location.href =
-                                        destino;
-
-                                },
-                                350
-                            );
-
-                        }
+                        window.location.href =
+                            destino;
 
                     },
-                    100
+                    450
                 );
+
+            }
+
+
+            requestAnimationFrame(
+                animarLoader
+            );
 
         }
     );
 
 });
 
+
 </script>
 
+
 <script>
+
+/* =====================================================
+   MÚSICA DOS JOGOS
+===================================================== */
 
 const musica =
     document.getElementById(
@@ -2222,7 +2354,9 @@ const botaoSom =
         "botaoSom"
     );
 
+
 musica.volume = 0.70;
+
 
 function atualizarBotao(){
 
@@ -2235,8 +2369,11 @@ function atualizarBotao(){
 
         botaoSom.innerText =
             "🔊";
+
     }
+
 }
+
 
 async function alternarMusica(){
 
@@ -2258,18 +2395,23 @@ async function alternarMusica(){
 
             botaoSom.innerText =
                 "🔇";
+
         }
 
     }else{
 
         musica.pause();
 
-        musica.currentTime = 0;
+        musica.currentTime =
+            0;
 
         botaoSom.innerText =
             "🔇";
+
     }
+
 }
+
 
 botaoSom.addEventListener(
     "click",
@@ -2284,15 +2426,18 @@ botaoSom.addEventListener(
     }
 );
 
+
 musica.addEventListener(
     "pause",
     atualizarBotao
 );
 
+
 musica.addEventListener(
     "play",
     atualizarBotao
 );
+
 
 window.addEventListener(
     "pagehide",
@@ -2300,10 +2445,12 @@ window.addEventListener(
 
         musica.pause();
 
-        musica.currentTime = 0;
+        musica.currentTime =
+            0;
 
     }
 );
+
 
 document.addEventListener(
     "visibilitychange",
@@ -2316,13 +2463,17 @@ document.addEventListener(
 
             musica.pause();
 
-            musica.currentTime = 0;
+            musica.currentTime =
+                0;
 
             botaoSom.innerText =
                 "🔇";
+
         }
+
     }
 );
+
 
 atualizarBotao();
 
