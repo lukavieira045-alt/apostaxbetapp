@@ -1,3 +1,5 @@
+Fortune Snake — código completo corrigido
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -381,7 +383,13 @@ musica.volume = 0.35;
 
 let musicaLiberada = false;
 
-async function iniciarMusica(){
+/*
+   Mantém a música de fundo tocando.
+   Os efeitos sonoros usam AudioContext separado
+   e não devem pausar o elemento <audio>.
+*/
+
+async function garantirMusica(){
 
     try{
 
@@ -400,7 +408,7 @@ async function iniciarMusica(){
     }catch(erro){
 
         console.log(
-            "Música aguardando toque:",
+            "Música aguardando interação do usuário:",
             erro
         );
 
@@ -408,35 +416,46 @@ async function iniciarMusica(){
 
 }
 
+
 /*
-   O celular bloqueia áudio automático.
-   O primeiro toque do usuário libera
-   o MP3 e mantém a música tocando.
+   Libera a música no primeiro toque.
 */
+
+function liberarMusica(){
+
+    garantirMusica();
+
+}
 
 document.addEventListener(
     "pointerdown",
-    iniciarMusica,
+    liberarMusica,
     {
         once:true,
         passive:true
     }
 );
 
-document.addEventListener(
-    "touchstart",
-    iniciarMusica,
-    {
-        once:true,
-        passive:true
-    }
-);
+
+/*
+   Caso o navegador interrompa o áudio,
+   tenta recuperar a música quando a página
+   voltar a ficar ativa.
+*/
 
 document.addEventListener(
-    "click",
-    iniciarMusica,
-    {
-        once:true
+    "visibilitychange",
+    ()=>{
+
+        if(
+            document.visibilityState ===
+            "visible"
+        ){
+
+            garantirMusica();
+
+        }
+
     }
 );
 
@@ -468,6 +487,7 @@ function iniciarAudio(){
     }
 
 }
+
 
 function tocarTom(
     frequencia,
@@ -520,58 +540,155 @@ function tocarTom(
 
 }
 
+
+/* =====================================================
+   SOM DO GIRO
+===================================================== */
+
 function somGiro(){
+
+    /*
+       Garante que a música continue tocando
+       antes do efeito.
+    */
+
+    garantirMusica();
 
     iniciarAudio();
 
-    tocarTom(180,.08,"square",.035);
+    tocarTom(
+        180,
+        .08,
+        "square",
+        .035
+    );
 
     setTimeout(()=>{
-        tocarTom(220,.08,"square",.035);
+
+        tocarTom(
+            220,
+            .08,
+            "square",
+            .035
+        );
+
     },100);
 
     setTimeout(()=>{
-        tocarTom(270,.08,"square",.035);
+
+        tocarTom(
+            270,
+            .08,
+            "square",
+            .035
+        );
+
     },200);
 
     setTimeout(()=>{
-        tocarTom(330,.08,"square",.035);
+
+        tocarTom(
+            330,
+            .08,
+            "square",
+            .035
+        );
+
     },300);
 
     setTimeout(()=>{
-        tocarTom(400,.10,"square",.04);
+
+        tocarTom(
+            400,
+            .10,
+            "square",
+            .04
+        );
+
     },400);
 
 }
 
+
+/* =====================================================
+   SOM DE VITÓRIA
+===================================================== */
+
 function somVitoria(){
+
+    garantirMusica();
 
     iniciarAudio();
 
-    tocarTom(523,.15,"sine",.07);
+    tocarTom(
+        523,
+        .15,
+        "sine",
+        .07
+    );
 
     setTimeout(()=>{
-        tocarTom(659,.15,"sine",.07);
+
+        tocarTom(
+            659,
+            .15,
+            "sine",
+            .07
+        );
+
     },130);
 
     setTimeout(()=>{
-        tocarTom(784,.20,"sine",.08);
+
+        tocarTom(
+            784,
+            .20,
+            "sine",
+            .08
+        );
+
     },260);
 
     setTimeout(()=>{
-        tocarTom(1046,.30,"sine",.06);
+
+        tocarTom(
+            1046,
+            .30,
+            "sine",
+            .06
+        );
+
     },420);
 
 }
 
+
+/* =====================================================
+   SOM DE DERROTA
+===================================================== */
+
 function somDerrota(){
+
+    garantirMusica();
 
     iniciarAudio();
 
-    tocarTom(190,.18,"sawtooth",.045);
+    tocarTom(
+        190,
+        .18,
+        "sawtooth",
+        .045
+    );
 
     setTimeout(()=>{
-        tocarTom(140,.25,"sawtooth",.04);
+
+        tocarTom(
+            140,
+            .25,
+            "sawtooth",
+            .04
+        );
+
     },180);
 
 }
@@ -593,12 +710,14 @@ const SIMBOLOS = [
 ];
 
 const PAGAMENTOS = {
+
     "🍒":1.20,
     "🍋":1.50,
     "💰":2.00,
     "💎":3.00,
     "🏆":4.00,
     "🐍":7.00
+
 };
 
 const msg =
@@ -617,15 +736,35 @@ const button =
     );
 
 const reels = [
-    document.getElementById("reel0"),
-    document.getElementById("reel1"),
-    document.getElementById("reel2")
+
+    document.getElementById(
+        "reel0"
+    ),
+
+    document.getElementById(
+        "reel1"
+    ),
+
+    document.getElementById(
+        "reel2"
+    )
+
 ];
 
 const strips = [
-    document.getElementById("strip0"),
-    document.getElementById("strip1"),
-    document.getElementById("strip2")
+
+    document.getElementById(
+        "strip0"
+    ),
+
+    document.getElementById(
+        "strip1"
+    ),
+
+    document.getElementById(
+        "strip2"
+    )
+
 ];
 
 
@@ -876,9 +1015,12 @@ button.addEventListener(
     "click",
     async function(){
 
-        /* libera a música no mesmo toque */
+        /*
+           O toque no botão libera a música
+           e mantém ela tocando durante o jogo.
+        */
 
-        await iniciarMusica();
+        await garantirMusica();
 
         iniciarAudio();
 
@@ -920,6 +1062,12 @@ button.addEventListener(
                 return;
 
             }
+
+            /*
+               Música continua ativa.
+            */
+
+            await garantirMusica();
 
             somGiro();
 
@@ -966,6 +1114,13 @@ button.addEventListener(
             await executarGiro(
                 resultado
             );
+
+            /*
+               Reconfirma a música quando os
+               rolos terminam.
+            */
+
+            await garantirMusica();
 
             result.textContent =
                 resultado.join("   ");
@@ -1021,6 +1176,12 @@ button.addEventListener(
 
             }
 
+            /*
+               Mantém a música depois do resultado.
+            */
+
+            await garantirMusica();
+
             if(
                 window.SistemaSaldo
                 .atualizarTela
@@ -1045,8 +1206,15 @@ button.addEventListener(
 
         }finally{
 
+            /*
+               Garante novamente que a música
+               permaneça tocando depois do giro.
+            */
+
             setTimeout(
                 ()=>{
+
+                    garantirMusica();
 
                     reels.forEach(
                         reel=>{
