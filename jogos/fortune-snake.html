@@ -41,7 +41,174 @@ body{
     padding:78px 0 30px;
 }
 
-/* FUNDO */
+/* =====================================================
+   TELA DE CARREGAMENTO
+===================================================== */
+
+#loadingScreen{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:9999;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:20px;
+
+    background:
+        radial-gradient(
+            circle at 50% 40%,
+            #35105d,
+            #12001f 55%,
+            #08000f 100%
+        );
+
+    transition:
+        opacity .45s ease,
+        visibility .45s ease;
+}
+
+#loadingScreen.esconder{
+
+    opacity:0;
+
+    visibility:hidden;
+
+    pointer-events:none;
+}
+
+.loading-banner{
+
+    width:350px;
+
+    max-width:94vw;
+
+    display:block;
+
+    border-radius:18px;
+
+    border:
+        2px solid
+        rgba(255,215,0,.75);
+
+    box-shadow:
+        0 0 20px
+        rgba(255,215,0,.35),
+
+        0 0 50px
+        rgba(145,0,255,.35);
+
+    animation:
+        bannerCarregando
+        1.4s
+        ease-in-out
+        infinite
+        alternate;
+}
+
+@keyframes bannerCarregando{
+
+    from{
+        transform:scale(.97);
+        opacity:.82;
+    }
+
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+
+}
+
+.loading-title{
+
+    margin-top:22px;
+
+    color:#ffd700;
+
+    font-size:21px;
+
+    font-weight:bold;
+
+    text-align:center;
+
+    text-shadow:
+        0 0 10px
+        rgba(255,215,0,.6);
+}
+
+.loading-text{
+
+    margin-top:9px;
+
+    color:#cdbce0;
+
+    font-size:14px;
+
+    text-align:center;
+}
+
+.loading-dots{
+
+    margin-top:15px;
+
+    display:flex;
+
+    gap:7px;
+}
+
+.loading-dots span{
+
+    width:9px;
+    height:9px;
+
+    border-radius:50%;
+
+    background:#ffd700;
+
+    animation:
+        loadingDot
+        1s
+        infinite;
+}
+
+.loading-dots span:nth-child(2){
+
+    animation-delay:.15s;
+
+}
+
+.loading-dots span:nth-child(3){
+
+    animation-delay:.30s;
+
+}
+
+@keyframes loadingDot{
+
+    0%,100%{
+        transform:scale(.65);
+        opacity:.35;
+    }
+
+    50%{
+        transform:scale(1);
+        opacity:1;
+    }
+
+}
+
+/* =====================================================
+   FUNDO
+===================================================== */
 
 body::before{
     content:"";
@@ -125,7 +292,9 @@ body::after{
 
 }
 
-/* GLOW */
+/* =====================================================
+   GLOW
+===================================================== */
 
 .background-glow{
 
@@ -172,7 +341,9 @@ body::after{
 
 }
 
-/* SALDO */
+/* =====================================================
+   SALDO
+===================================================== */
 
 .saldo-jogo{
 
@@ -224,7 +395,9 @@ body::after{
         rgba(170,255,93,.5);
 }
 
-/* PÁGINA */
+/* =====================================================
+   PÁGINA
+===================================================== */
 
 .page-content{
 
@@ -239,7 +412,9 @@ body::after{
     justify-content:center;
 }
 
-/* JOGO */
+/* =====================================================
+   JOGO
+===================================================== */
 
 .game-container{
 
@@ -315,7 +490,9 @@ h2{
         rgba(0,237,145,.35);
 }
 
-/* SLOT */
+/* =====================================================
+   SLOT
+===================================================== */
 
 .slot-machine{
 
@@ -440,7 +617,9 @@ h2{
     font-size:18px;
 }
 
-/* CONTROLES */
+/* =====================================================
+   CONTROLES
+===================================================== */
 
 .controls{
 
@@ -521,7 +700,9 @@ button:disabled{
     filter:grayscale(1);
 }
 
-/* CELULAR */
+/* =====================================================
+   CELULAR
+===================================================== */
 
 @media(max-width:420px){
 
@@ -545,12 +726,48 @@ button:disabled{
         rotate:none !important;
     }
 
+    .loading-banner{
+
+        width:94vw;
+
+    }
+
 }
 
 </style>
 </head>
 
 <body>
+
+<!-- =====================================================
+     CARREGAMENTO COM BANNER
+===================================================== -->
+
+<div id="loadingScreen">
+
+    <img
+        class="loading-banner"
+        src="banner-fortune-snake.png"
+        alt="Fortune Snake"
+    >
+
+    <div class="loading-title">
+        🐍 Fortune Snake
+    </div>
+
+    <div class="loading-text">
+        Carregando jogo...
+    </div>
+
+    <div class="loading-dots">
+
+        <span></span>
+        <span></span>
+        <span></span>
+
+    </div>
+
+</div>
 
 <audio
     id="musicaFortuneSnake"
@@ -659,6 +876,34 @@ button:disabled{
 </script>
 
 <script>
+
+/* =====================================================
+   TELA DE CARREGAMENTO
+===================================================== */
+
+window.addEventListener(
+    "load",
+    ()=>{
+
+        setTimeout(
+            ()=>{
+
+                const loading =
+                    document.getElementById(
+                        "loadingScreen"
+                    );
+
+                loading.classList.add(
+                    "esconder"
+                );
+
+            },
+            1800
+        );
+
+    }
+);
+
 
 /* =====================================================
    MÚSICA
@@ -811,9 +1056,6 @@ function tocarTom(
 
 }
 
-
-/* SOM IMEDIATO DO BOTÃO */
-
 function somBotao(){
 
     iniciarAudio();
@@ -826,9 +1068,6 @@ function somBotao(){
     );
 
 }
-
-
-/* SOM DO GIRO */
 
 function somGiro(){
 
@@ -889,9 +1128,6 @@ function somGiro(){
 
 }
 
-
-/* SOM DA VITÓRIA */
-
 function somVitoria(){
 
     garantirMusica();
@@ -939,9 +1175,6 @@ function somVitoria(){
     },420);
 
 }
-
-
-/* SOM DA DERROTA */
 
 function somDerrota(){
 
@@ -1291,13 +1524,6 @@ function calcularPremio(
 button.addEventListener(
     "click",
     async function(){
-
-        /*
-         * O primeiro som acontece
-         * imediatamente no clique.
-         * Isso mantém o áudio liberado
-         * pelo gesto do usuário.
-         */
 
         somBotao();
 
