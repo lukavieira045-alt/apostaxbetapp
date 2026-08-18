@@ -667,6 +667,20 @@ header p{
     opacity:.28;
 }
 
+.imagem-jogo img.capa-fortune{
+    position:relative;
+    z-index:2;
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    display:block;
+
+    border-radius:14px;
+}
+
 .arte{
     position:relative;
     z-index:2;
@@ -1152,9 +1166,11 @@ nav span{
     }
 }
 
+/* ÁREA DA CAPA NO CARREGAMENTO */
+
 .loader-icone{
-    width:105px;
-    height:105px;
+    width:100%;
+    height:180px;
 
     margin:0 auto 18px;
 
@@ -1163,16 +1179,11 @@ nav span{
     align-items:center;
     justify-content:center;
 
-    border-radius:28px;
+    border-radius:20px;
 
-    font-size:60px;
+    overflow:hidden;
 
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255,255,255,.12),
-            rgba(255,255,255,.03)
-        );
+    background:#08000f;
 
     border:1px solid rgba(255,255,255,.2);
 
@@ -1188,18 +1199,37 @@ nav span{
         alternate;
 }
 
+.loader-icone img{
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    display:none;
+
+    border-radius:19px;
+}
+
+.loader-icone .icone-normal{
+    display:flex;
+
+    width:100%;
+    height:100%;
+
+    align-items:center;
+    justify-content:center;
+
+    font-size:60px;
+}
+
 @keyframes iconeLoader{
 
     from{
-        transform:
-            scale(.96)
-            rotate(-2deg);
+        transform:scale(.98);
     }
 
     to{
-        transform:
-            scale(1.05)
-            rotate(2deg);
+        transform:scale(1.02);
     }
 }
 
@@ -1358,8 +1388,10 @@ nav span{
     }
 
     .loader-icone{
-        width:90px;
-        height:90px;
+        height:160px;
+    }
+
+    .loader-icone .icone-normal{
         font-size:52px;
     }
 
@@ -1867,10 +1899,17 @@ setInterval(
             class="jogo snake"
             href="fortune-snake.html"
             data-jogo="Fortune Snake"
-            data-icone="🐍">
+            data-icone="🐍"
+            data-capa="banner-fortune-snake.png">
 
             <div class="imagem-jogo">
-                <div class="arte">🐍</div>
+
+                <img
+                    class="capa-fortune"
+                    src="banner-fortune-snake.png"
+                    alt="Fortune Snake"
+                >
+
             </div>
 
             <div class="nome">
@@ -1923,6 +1962,10 @@ setInterval(
 
 </nav>
 
+<!-- =========================
+     ÚNICO CARREGAMENTO
+========================= -->
+
 <div id="loader">
 
     <div class="loader-luz"></div>
@@ -1933,7 +1976,19 @@ setInterval(
             id="loaderIcone"
             class="loader-icone">
 
-            🎮
+            <img
+                id="loaderImagem"
+                src=""
+                alt="Capa do jogo"
+            >
+
+            <div
+                id="loaderIconeNormal"
+                class="icone-normal">
+
+                🎮
+
+            </div>
 
         </div>
 
@@ -1975,6 +2030,12 @@ const loaderNome =
 
 const loaderIcone =
     document.getElementById("loaderIcone");
+
+const loaderImagem =
+    document.getElementById("loaderImagem");
+
+const loaderIconeNormal =
+    document.getElementById("loaderIconeNormal");
 
 const loaderProgresso =
     document.getElementById("loaderProgresso");
@@ -2066,6 +2127,9 @@ document
             const icone =
                 card.getAttribute("data-icone");
 
+            const capa =
+                card.getAttribute("data-capa");
+
             const config =
                 coresJogos[nome] ||
                 {
@@ -2075,9 +2139,6 @@ document
 
             loaderNome.textContent =
                 nome;
-
-            loaderIcone.textContent =
-                icone;
 
             loader.style.setProperty(
                 "--loader-cor",
@@ -2096,13 +2157,50 @@ document
                     transparent 70%
                 )`;
 
+            /*
+             * FORTUNE SNAKE:
+             * usa a capa real durante o carregamento.
+             */
+
+            if(
+                nome === "Fortune Snake" &&
+                capa
+            ){
+
+                loaderImagem.src =
+                    capa;
+
+                loaderImagem.style.display =
+                    "block";
+
+                loaderIconeNormal.style.display =
+                    "none";
+
+            }else{
+
+                loaderImagem.src =
+                    "";
+
+                loaderImagem.style.display =
+                    "none";
+
+                loaderIconeNormal.textContent =
+                    icone || "🎮";
+
+                loaderIconeNormal.style.display =
+                    "flex";
+
+            }
+
             loaderProgresso.style.width =
                 "0%";
 
             loaderPorcentagem.textContent =
                 "0%";
 
-            loader.classList.add("ativo");
+            loader.classList.add(
+                "ativo"
+            );
 
             let progresso = 0;
 
@@ -2116,7 +2214,9 @@ document
                             ) + 4;
 
                         if(progresso >= 100){
+
                             progresso = 100;
+
                         }
 
                         loaderProgresso.style.width =
@@ -2140,6 +2240,7 @@ document
                                 },
                                 350
                             );
+
                         }
 
                     },
