@@ -618,7 +618,7 @@ header p{
 }
 
 /* =========================
-   IMAGEM DO JOGO
+   IMAGEM / BANNER DO JOGO
 ========================= */
 
 .imagem-jogo{
@@ -654,8 +654,8 @@ header p{
 
 .imagem-jogo::before{
     content:"";
-    position:absolute;
 
+    position:absolute;
     width:100px;
     height:100px;
 
@@ -667,7 +667,7 @@ header p{
     opacity:.28;
 }
 
-.imagem-jogo img.capa-fortune{
+.imagem-jogo img.capa-jogo{
     position:relative;
     z-index:2;
 
@@ -925,7 +925,6 @@ header p{
             0 9px 23px rgba(0,0,0,.38),
             0 0 23px rgba(255,255,255,.13);
     }
-
 }
 
 .jogo:nth-child(2){animation-delay:.4s;}
@@ -1694,6 +1693,8 @@ setInterval(
 
     <div class="jogos">
 
+        <!-- ROLETA -->
+
         <a
             class="jogo roleta"
             href="roleta.html"
@@ -1713,6 +1714,8 @@ setInterval(
             </div>
 
         </a>
+
+        <!-- ROLETA PREMIUM -->
 
         <a
             class="jogo roleta-nova"
@@ -1734,6 +1737,8 @@ setInterval(
 
         </a>
 
+        <!-- ROLETA CASSINO -->
+
         <a
             class="jogo roleta-cassino"
             href="roleta-cassino.html"
@@ -1754,14 +1759,26 @@ setInterval(
 
         </a>
 
+        <!-- MINES
+             SOMENTE O MINES RECEBE O BANNER
+             banner-mines.png
+        -->
+
         <a
             class="jogo mines"
             href="mines.html"
             data-jogo="Mines"
-            data-icone="💣">
+            data-icone="💣"
+            data-capa="banner-mines.png">
 
             <div class="imagem-jogo">
-                <div class="arte">💎</div>
+
+                <img
+                    class="capa-jogo"
+                    src="banner-mines.png"
+                    alt="Mines"
+                >
+
             </div>
 
             <div class="nome">
@@ -1773,6 +1790,8 @@ setInterval(
             </div>
 
         </a>
+
+        <!-- CRASH -->
 
         <a
             class="jogo crash"
@@ -1794,6 +1813,8 @@ setInterval(
 
         </a>
 
+        <!-- PLINKO -->
+
         <a
             class="jogo plinko"
             href="plinko.html"
@@ -1813,6 +1834,8 @@ setInterval(
             </div>
 
         </a>
+
+        <!-- DICE -->
 
         <a
             class="jogo dice"
@@ -1834,6 +1857,8 @@ setInterval(
 
         </a>
 
+        <!-- LOBBY -->
+
         <a
             class="jogo lobby"
             href="lobby.html"
@@ -1853,6 +1878,8 @@ setInterval(
             </div>
 
         </a>
+
+        <!-- NIGHT MONSTERS -->
 
         <a
             class="jogo night"
@@ -1875,8 +1902,7 @@ setInterval(
         </a>
 
         <!-- FORTUNE SNAKE
-             O BANNER FICA SOMENTE NA CAPA DO CARD.
-             NÃO É INSERIDO DENTRO DO JOGO.
+             MANTIDO SEPARADO
         -->
 
         <a
@@ -1889,7 +1915,7 @@ setInterval(
             <div class="imagem-jogo">
 
                 <img
-                    class="capa-fortune"
+                    class="capa-jogo"
                     src="banner-fortune-snake.png"
                     alt="Fortune Snake"
                 >
@@ -1945,6 +1971,10 @@ setInterval(
     </a>
 
 </nav>
+
+<!-- =========================
+     CARREGAMENTO
+========================= -->
 
 <div id="loader">
 
@@ -2138,15 +2168,20 @@ document
                 )`;
 
             /*
-             * SOMENTE O FORTUNE SNAKE
-             * usa o banner como imagem da capa
-             * no carregamento.
+             * SOMENTE JOGOS QUE POSSUEM
+             * data-capa USAM O BANNER NO LOADER.
+             *
+             * Mines:
+             * banner-mines.png
+             *
+             * Fortune Snake:
+             * banner-fortune-snake.png
+             *
+             * Os demais continuam usando
+             * somente o ícone normal.
              */
 
-            if(
-                nome === "Fortune Snake" &&
-                capa
-            ){
+            if(capa){
 
                 loaderImagem.src =
                     capa;
@@ -2156,6 +2191,23 @@ document
 
                 loaderIconeNormal.style.display =
                     "none";
+
+                /*
+                 * Se a imagem ainda não estiver
+                 * disponível, não quebra o loader.
+                 */
+                loaderImagem.onerror =
+                    function(){
+
+                        loaderImagem.style.display =
+                            "none";
+
+                        loaderIconeNormal.textContent =
+                            icone || "🎮";
+
+                        loaderIconeNormal.style.display =
+                            "flex";
+                    };
 
             }else{
 
@@ -2170,7 +2222,6 @@ document
 
                 loaderIconeNormal.style.display =
                     "flex";
-
             }
 
             loaderProgresso.style.width =
