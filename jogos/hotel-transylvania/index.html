@@ -296,6 +296,16 @@ body{
     color:#ffe45b;
 }
 
+.rtp{
+    margin-top:12px;
+    padding:8px;
+    border-top:1px solid #3a2941;
+    text-align:center;
+    color:#777;
+    font-size:9px;
+    line-height:14px;
+}
+
 .jogando .rolos{
     box-shadow:
         0 0 20px #a94cff,
@@ -314,6 +324,7 @@ body{
 }
 
 @media(max-width:360px){
+
     .rolo{
         height:125px;
     }
@@ -328,25 +339,12 @@ body{
 
 <body>
 
-<!--
-=========================================================
-MÚSICA
-O ARQUIVO ESTÁ EM:
-jogos/musica-night-monsters.mp3
-
-ESTE JOGO ESTÁ EM:
-jogos/hotel-transylvania/...
-
-POR ISSO O CAMINHO É ../
-=========================================================
--->
-
 <audio
     id="musicaNightMonsters"
     src="../musica-night-monsters.mp3"
     loop
-    preload="auto"
-></audio>
+    preload="auto">
+</audio>
 
 <header class="topo">
 
@@ -409,29 +407,25 @@ POR ISSO O CAMINHO É ../
 
             <button
                 class="valor ativo"
-                onclick="escolherValor(.50,this)"
-            >
+                onclick="escolherValor(.50,this)">
                 R$ 0,50
             </button>
 
             <button
                 class="valor"
-                onclick="escolherValor(1,this)"
-            >
+                onclick="escolherValor(1,this)">
                 R$ 1
             </button>
 
             <button
                 class="valor"
-                onclick="escolherValor(2,this)"
-            >
+                onclick="escolherValor(2,this)">
                 R$ 2
             </button>
 
             <button
                 class="valor"
-                onclick="escolherValor(5,this)"
-            >
+                onclick="escolherValor(5,this)">
                 R$ 5
             </button>
 
@@ -440,8 +434,7 @@ POR ISSO O CAMINHO É ../
         <button
             class="apostar"
             id="btn"
-            onclick="girar()"
-        >
+            onclick="girar()">
             GIRAR R$ 0,50
         </button>
 
@@ -461,6 +454,12 @@ POR ISSO O CAMINHO É ../
                 <strong id="saldo2">R$ 0,00</strong>
             </span>
 
+        </div>
+
+        <div class="rtp">
+            RTP TEÓRICO: 90% · VANTAGEM MATEMÁTICA: 10%<br>
+            Resultados aleatórios. O RTP representa uma expectativa
+            estatística de longo prazo.
         </div>
 
     </div>
@@ -498,13 +497,6 @@ musica.volume = 0.35;
 
 let musicaLiberada = false;
 
-
-/*
-=========================================================
-INICIA O MP3 NO PRIMEIRO TOQUE
-=========================================================
-*/
-
 async function iniciarMusica(){
 
     if(musicaLiberada)
@@ -532,12 +524,6 @@ async function iniciarMusica(){
     }
 }
 
-
-/*
-O Android bloqueia autoplay sem interação.
-O primeiro toque libera o MP3.
-*/
-
 document.addEventListener(
     "pointerdown",
     iniciarMusica,
@@ -549,16 +535,10 @@ document.addEventListener(
 
 
 /* =========================================================
-   SOM DA GIRADA
+   AUDIO
 ========================================================= */
 
 let audioContext = null;
-
-
-/*
-Cria o AudioContext somente
-quando o usuário tocar.
-*/
 
 function iniciarAudioContext(){
 
@@ -596,10 +576,6 @@ function iniciarAudioContext(){
     }
 }
 
-
-/*
-Som mecânico da máquina.
-*/
 
 function somGiro(){
 
@@ -653,6 +629,7 @@ function somGiro(){
     );
 
     osc.connect(ganho);
+
     ganho.connect(
         audioContext.destination
     );
@@ -664,10 +641,6 @@ function somGiro(){
     );
 }
 
-
-/*
-Som curto quando os rolos param.
-*/
 
 function somParada(){
 
@@ -707,6 +680,7 @@ function somParada(){
     );
 
     osc.connect(ganho);
+
     ganho.connect(
         audioContext.destination
     );
@@ -718,10 +692,6 @@ function somParada(){
     );
 }
 
-
-/*
-Som de vitória.
-*/
 
 function somPremio(){
 
@@ -783,11 +753,6 @@ function somPremio(){
     );
 }
 
-
-/*
-Libera áudio também no primeiro toque.
-*/
-
 document.addEventListener(
     "pointerdown",
     function(){
@@ -803,7 +768,7 @@ document.addEventListener(
 
 
 /* =========================================================
-   CONFIGURAÇÃO DO JOGO
+   CONFIGURAÇÃO
 ========================================================= */
 
 let aposta = 0.50;
@@ -944,6 +909,7 @@ async function alterarSaldo(novoSaldo){
             sucesso:false,
             erro:"Usuário não está logado."
         };
+
     }
 
     novoSaldo =
@@ -955,6 +921,7 @@ async function alterarSaldo(novoSaldo){
             sucesso:false,
             erro:"Saldo inválido."
         };
+
     }
 
     novoSaldo =
@@ -984,6 +951,7 @@ async function alterarSaldo(novoSaldo){
             sucesso:false,
             erro:error.message
         };
+
     }
 
     saldoAtual =
@@ -1038,6 +1006,7 @@ function criarRolo(id){
             escolherSimbolo();
 
         area.appendChild(div);
+
     }
 }
 
@@ -1087,6 +1056,172 @@ function escolherValor(
 
 
 /* =========================================================
+   SORTEIO
+=========================================================
+
+   Distribuição:
+
+   3x    6,50%
+   5x    3,50%
+   8x    1,50%
+   10x   1,00%
+   15x   0,70%
+   20x   0,40%
+   30x   0,25%
+   100x  0,05%
+
+   Total de vitórias: 13,90%
+   Total sem prêmio: 86,10%
+
+   RTP teórico = 90%
+========================================================= */
+
+function sortearResultado(){
+
+    const r =
+        Math.random();
+
+
+    /* 100x */
+
+    if(r < 0.0005){
+
+        return [
+            "💎",
+            "💎",
+            "💎"
+        ];
+
+    }
+
+
+    /* 30x */
+
+    if(r < 0.0030){
+
+        return [
+            "⚡",
+            "⚡",
+            "⚡"
+        ];
+
+    }
+
+
+    /* 20x */
+
+    if(r < 0.0070){
+
+        return [
+            "🎃",
+            "🎃",
+            "🎃"
+        ];
+
+    }
+
+
+    /* 15x */
+
+    if(r < 0.0140){
+
+        return [
+            "🧛",
+            "🧛",
+            "🧛"
+        ];
+
+    }
+
+
+    /* 10x */
+
+    if(r < 0.0240){
+
+        return [
+            "🕷️",
+            "🕷️",
+            "🕷️"
+        ];
+
+    }
+
+
+    /* 8x */
+
+    if(r < 0.0390){
+
+        return [
+            "💀",
+            "💀",
+            "💀"
+        ];
+
+    }
+
+
+    /* 5x */
+
+    if(r < 0.0740){
+
+        return [
+            "👻",
+            "👻",
+            "👻"
+        ];
+
+    }
+
+
+    /* 3x */
+
+    if(r < 0.1390){
+
+        return [
+            "🦇",
+            "🦇",
+            "🦇"
+        ];
+
+    }
+
+
+    /*
+    =====================================================
+    PERDA
+
+    86,10% das rodadas entram aqui.
+    =====================================================
+    */
+
+    let a =
+        escolherSimbolo();
+
+    let b =
+        escolherSimbolo();
+
+    let c =
+        escolherSimbolo();
+
+    while(
+        a === b &&
+        b === c
+    ){
+
+        c =
+            escolherSimbolo();
+
+    }
+
+    return [
+        a,
+        b,
+        c
+    ];
+}
+
+
+/* =========================================================
    GIRAR
 ========================================================= */
 
@@ -1094,10 +1229,6 @@ async function girar(){
 
     if(girando)
         return;
-
-    /*
-    Primeiro toque libera tudo.
-    */
 
     iniciarAudioContext();
 
@@ -1112,6 +1243,7 @@ async function girar(){
         await audioContext.resume();
 
     }
+
 
     const saldo =
         await getSaldo();
@@ -1129,9 +1261,11 @@ async function girar(){
         return;
     }
 
+
     girando = true;
 
     somGiro();
+
 
     const jogo =
         document.getElementById(
@@ -1147,6 +1281,7 @@ async function girar(){
         document.getElementById(
             "resultado"
         );
+
 
     jogo.classList.add(
         "jogando"
@@ -1167,6 +1302,13 @@ async function girar(){
     resultado.style.color =
         "#ffe45b";
 
+
+    /*
+    =====================================================
+    DEBITA A APOSTA
+    =====================================================
+    */
+
     const saldoDepois =
         Number(
             (
@@ -1175,10 +1317,12 @@ async function girar(){
             ).toFixed(2)
         );
 
+
     const debito =
         await alterarSaldo(
             saldoDepois
         );
+
 
     if(!debito.sucesso){
 
@@ -1207,73 +1351,19 @@ async function girar(){
         return;
     }
 
+
     await atualizarSaldo();
 
-    let resultadoFinal;
-
-    const sorteio =
-        Math.random();
 
     /*
-    Probabilidades do jogo.
+    =====================================================
+    UM ÚNICO SORTEIO POR RODADA
+    =====================================================
     */
 
-    if(sorteio < 0.015){
+    const resultadoFinal =
+        sortearResultado();
 
-        resultadoFinal = [
-            "💎",
-            "💎",
-            "💎"
-        ];
-
-    }
-    else if(sorteio < 0.06){
-
-        resultadoFinal = [
-            "⚡",
-            "⚡",
-            "⚡"
-        ];
-
-    }
-    else if(sorteio < 0.15){
-
-        const s =
-            escolherSimbolo();
-
-        resultadoFinal = [
-            s,
-            s,
-            s
-        ];
-
-    }
-    else{
-
-        let a =
-            escolherSimbolo();
-
-        let b =
-            escolherSimbolo();
-
-        let c =
-            escolherSimbolo();
-
-        while(
-            a === b &&
-            b === c
-        ){
-
-            c =
-                escolherSimbolo();
-        }
-
-        resultadoFinal = [
-            a,
-            b,
-            c
-        ];
-    }
 
     prepararRolo(
         "rolo1",
@@ -1292,6 +1382,7 @@ async function girar(){
         resultadoFinal[2],
         1500
     );
+
 
     setTimeout(
         function(){
@@ -1321,6 +1412,7 @@ function prepararRolo(
 
     area.innerHTML = "";
 
+
     for(
         let i=0;
         i<15;
@@ -1337,7 +1429,9 @@ function prepararRolo(
             escolherSimbolo();
 
         area.appendChild(div);
+
     }
+
 
     const finalDiv =
         document.createElement("div");
@@ -1350,6 +1444,7 @@ function prepararRolo(
 
     area.appendChild(finalDiv);
 
+
     area.style.transition =
         "none";
 
@@ -1358,13 +1453,16 @@ function prepararRolo(
 
     area.offsetHeight;
 
+
     area.style.transition =
         "transform " +
         (tempo / 1000 + .8) +
         "s cubic-bezier(.08,.75,.12,1)";
 
+
     const distancia =
         -(15 * 70) + 37;
+
 
     setTimeout(
         function(){
@@ -1403,17 +1501,20 @@ async function finalizar(
             "resultado"
         );
 
+
     jogo.classList.remove(
         "tremendo"
     );
 
     somParada();
 
+
     const iguais =
         resultadoFinal[0] ===
         resultadoFinal[1] &&
         resultadoFinal[1] ===
         resultadoFinal[2];
+
 
     if(iguais){
 
@@ -1423,34 +1524,21 @@ async function finalizar(
         const multiplicador =
             premios[simbolo];
 
-        const premio =
-            Number(
-                (
-                    aposta *
-                    multiplicador
-                ).toFixed(2)
-            );
 
-        const saldoAtualizado =
-            await getSaldo();
+        /*
+        Segurança:
+        somente símbolos presentes
+        na tabela de prêmios podem pagar.
+        */
 
-        const novoSaldo =
-            Number(
-                (
-                    saldoAtualizado +
-                    premio
-                ).toFixed(2)
-            );
-
-        const credito =
-            await alterarSaldo(
-                novoSaldo
-            );
-
-        if(!credito.sucesso){
+        if(
+            !Number.isFinite(
+                multiplicador
+            )
+        ){
 
             resultado.innerText =
-                "ERRO AO CREDITAR O PRÊMIO";
+                "RESULTADO INVÁLIDO";
 
             resultado.style.color =
                 "#ff5555";
@@ -1458,23 +1546,69 @@ async function finalizar(
         }
         else{
 
-            await atualizarSaldo();
+            const premio =
+                Number(
+                    (
+                        aposta *
+                        multiplicador
+                    ).toFixed(2)
+                );
 
-            document.getElementById(
-                "multiplicador"
-            ).innerText =
-                multiplicador + "x";
 
-            resultado.innerHTML =
-                "⚡ COMBINAÇÃO PREMIADA!<br>" +
-                "<span class='premio'>" +
-                dinheiro(premio) +
-                "</span>";
+            const saldoAtualizado =
+                await getSaldo();
 
-            resultado.style.color =
-                "#ffe45b";
 
-            somPremio();
+            const novoSaldo =
+                Number(
+                    (
+                        saldoAtualizado +
+                        premio
+                    ).toFixed(2)
+                );
+
+
+            const credito =
+                await alterarSaldo(
+                    novoSaldo
+                );
+
+
+            if(!credito.sucesso){
+
+                resultado.innerText =
+                    "ERRO AO CREDITAR O PRÊMIO";
+
+                resultado.style.color =
+                    "#ff5555";
+
+            }
+            else{
+
+                await atualizarSaldo();
+
+
+                document.getElementById(
+                    "multiplicador"
+                ).innerText =
+                    multiplicador + "x";
+
+
+                resultado.innerHTML =
+                    "⚡ COMBINAÇÃO PREMIADA!<br>" +
+                    "<span class='premio'>" +
+                    dinheiro(premio) +
+                    "</span>";
+
+
+                resultado.style.color =
+                    "#ffe45b";
+
+
+                somPremio();
+
+            }
+
         }
 
     }
@@ -1485,14 +1619,23 @@ async function finalizar(
         ).innerText =
             "TENTE NOVAMENTE";
 
+
         resultado.innerText =
             "NÃO FOI DESSA VEZ";
+
 
         resultado.style.color =
             "#999";
 
+
         await atualizarSaldo();
+
     }
+
+
+    jogo.classList.remove(
+        "jogando"
+    );
 
     girando = false;
 
@@ -1565,6 +1708,7 @@ supabaseClient.auth.onAuthStateChange(
                 "saldo2"
             ).innerText =
                 "R$ 0,00";
+
         }
 
     }
