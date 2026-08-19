@@ -301,7 +301,6 @@ text-shadow:0 0 10px currentColor;
 line-height:24px;
 }
 
-/* CONTAGEM DOS 10 SEGUNDOS */
 .contagem{
 text-align:center;
 margin:0 0 8px;
@@ -763,10 +762,6 @@ let numeroEscolhido=null;
 let fichaSelecionada=false;
 let fichasNaRoleta=[];
 
-/* ================================
-   CONTROLE DOS 10 SEGUNDOS
-================================ */
-
 let rodadaAberta=true;
 let tempoRestante=10;
 let intervaloContagem=null;
@@ -821,7 +816,7 @@ Number(valor||0)
 }
 
 /* ================================
-   CONTAGEM DE 10 SEGUNDOS
+   CONTAGEM
 ================================ */
 
 function iniciarContagem(){
@@ -898,12 +893,6 @@ resultado.style.color="#ff4141";
 
 atualizarBotao();
 
-/*
-Se ninguém colocou ficha,
-abre uma nova janela de 10 segundos
-automaticamente.
-*/
-
 setTimeout(function(){
 
 if(!girando && fichasNaRoleta.length===0){
@@ -921,7 +910,7 @@ iniciarContagem();
 }
 
 /* ================================
-   QUANTIDADE DE FICHAS
+   FICHAS
 ================================ */
 
 function quantidadeMaximaFichas(){
@@ -933,7 +922,7 @@ saldoReal/valorAposta
 }
 
 /* ================================
-   ATUALIZAR SALDO
+   SALDO
 ================================ */
 
 function atualizarSaldo(){
@@ -952,10 +941,6 @@ saldoReal<valorAposta
 atualizarBotao();
 
 }
-
-/* ================================
-   ATUALIZAR BOTÃO
-================================ */
 
 function atualizarBotao(){
 
@@ -1000,11 +985,6 @@ btnApostar.innerText=
 return;
 
 }
-
-/*
-Depois que os 10 segundos acabarem,
-o botão pode girar.
-*/
 
 if(rodadaAberta){
 
@@ -1148,7 +1128,7 @@ return true;
 }
 
 /* ================================
-   DEBITAR FICHAS
+   DEBITAR APOSTA
 ================================ */
 
 async function debitarAposta(){
@@ -1215,7 +1195,7 @@ return true;
 }
 
 /* ================================
-   CALCULAR PRÊMIO
+   PRÊMIO
 ================================ */
 
 function calcularPremio(valorRoleta){
@@ -1235,7 +1215,7 @@ valorRoleta*2
 }
 
 /* ================================
-   CRIAR NÚMEROS
+   NÚMEROS
 ================================ */
 
 function criarNumeros(){
@@ -1472,7 +1452,7 @@ atualizarBotao();
 }
 
 /* ================================
-   SELECIONAR VALOR
+   VALOR
 ================================ */
 
 window.selecionarValor=
@@ -1899,6 +1879,84 @@ deslocamento;
 }
 
 /* ================================
+   SORTEIO MATEMÁTICO
+   HOUSE EDGE FIXA
+================================ */
+
+/*
+   O resultado é sorteado somente pela
+   distribuição abaixo.
+
+   Ele NÃO usa:
+   - saldo do jogador
+   - valor apostado
+   - histórico do jogador
+   - quantidade de lucro da casa
+   - identidade do usuário
+
+   A vantagem matemática é aplicada
+   através das probabilidades.
+*/
+
+function sortearIndiceRoleta(){
+
+const pesos=[
+0.13,  // 0  - R$0,20
+0.04,  // 1  - R$0,40
+0.05,  // 2  - R$0,50
+0.055, // 3  - R$0,80
+0.05,  // 4  - R$1,00
+
+0.13,  // 5  - R$0,20
+0.05,  // 6  - R$0,50
+0.07,  // 7  - PERDEU
+0.055, // 8  - R$0,80
+0.05,  // 9  - R$1,00
+
+0.04,  // 10 - R$0,40
+0.05,  // 11 - R$0,50
+0.13,  // 12 - R$0,20
+0.055, // 13 - R$0,80
+0.01,  // 14 - R$5,00
+
+0.04,  // 15 - R$0,40
+0.09,  // 16 - PERDEU
+0.05,  // 17 - R$0,50
+0.05,  // 18 - R$1,00
+0.13   // 19 - R$0,20
+];
+
+const total=
+pesos.reduce(
+(soma,peso)=>
+soma+peso,
+0
+);
+
+let sorteio=
+Math.random()*total;
+
+for(
+let i=0;
+i<pesos.length;
+i++
+){
+
+sorteio-=pesos[i];
+
+if(sorteio<=0){
+
+return i;
+
+}
+
+}
+
+return pesos.length-1;
+
+}
+
+/* ================================
    GIRAR ROLETA
 ================================ */
 
@@ -2021,11 +2079,12 @@ n=>n.classList.remove(
 )
 );
 
+/*
+   Resultado independente do jogador.
+*/
+
 const indice=
-Math.floor(
-Math.random()*
-premios.length
-);
+sortearIndiceRoleta();
 
 const premio=
 premios[indice];
@@ -2433,11 +2492,6 @@ atualizarSaldo();
 
 carregando.style.display=
 "none";
-
-/*
-Começa a contagem de 10 segundos
-assim que a roleta estiver carregada.
-*/
 
 iniciarContagem();
 
