@@ -723,7 +723,7 @@ SALDO CONECTADO À SUA CONTA
 
 <button
 class="repeat-btn"
-onclick="repetirAposta()">
+onclick="repetirAposta">
 ↻
 </button>
 
@@ -766,11 +766,50 @@ let rodadaAberta=true;
 let tempoRestante=10;
 let intervaloContagem=null;
 
+/*
+====================================================
+TABELA DE PAGAMENTO
+====================================================
+
+Os valores abaixo são os pagamentos efetivos
+por ficha vencedora.
+
+Não existe alteração baseada no saldo da casa,
+no jogador ou no histórico anterior.
+
+A distribuição é fixa.
+
+0.00 = perde
+0.10 / 0.20 / 0.30 / 0.50 / 0.80 / 1.00
+= pagamentos efetivos.
+
+O SUPER BÔNUS continua sendo R$5,00.
+
+Para jogos com dinheiro real, o ideal é mover
+o sorteio para o servidor e auditar o RTP.
+*/
+
 const premios=[
-0.20,0.40,0.50,0.80,1.00,
-0.20,0.50,0,0.80,1.00,
-0.40,0.50,0.20,0.80,5.00,
-0.40,0,0.50,1.00,0.20
+0.10,
+0.20,
+0.30,
+0.50,
+0.80,
+0.10,
+0.30,
+0.00,
+0.50,
+0.80,
+0.20,
+0.30,
+0.10,
+0.50,
+5.00,
+0.20,
+0.00,
+0.30,
+0.80,
+0.10
 ];
 
 const roleta=
@@ -814,10 +853,6 @@ Number(valor||0)
 .replace(".",",");
 
 }
-
-/* ================================
-   CONTAGEM
-================================ */
 
 function iniciarContagem(){
 
@@ -896,9 +931,7 @@ atualizarBotao();
 setTimeout(function(){
 
 if(!girando && fichasNaRoleta.length===0){
-
 iniciarContagem();
-
 }
 
 },1000);
@@ -908,10 +941,6 @@ iniciarContagem();
 },1000);
 
 }
-
-/* ================================
-   FICHAS
-================================ */
 
 function quantidadeMaximaFichas(){
 
@@ -920,10 +949,6 @@ saldoReal/valorAposta
 );
 
 }
-
-/* ================================
-   SALDO
-================================ */
 
 function atualizarSaldo(){
 
@@ -971,15 +996,11 @@ if(fichasNaRoleta.length===0){
 btnApostar.disabled=true;
 
 if(rodadaAberta){
-
 btnApostar.innerText=
 "COLOQUE A FICHA";
-
 }else{
-
 btnApostar.innerText=
 "AGUARDANDO FICHAS";
-
 }
 
 return;
@@ -1023,10 +1044,6 @@ btnApostar.innerText=
 
 }
 
-/* ================================
-   USUÁRIO
-================================ */
-
 async function obterUsuario(){
 
 const {data,error}=
@@ -1043,10 +1060,6 @@ return null;
 return data?.session?.user||null;
 
 }
-
-/* ================================
-   CARREGAR SALDO
-================================ */
 
 async function carregarSaldo(){
 
@@ -1081,10 +1094,6 @@ atualizarSaldo();
 return true;
 
 }
-
-/* ================================
-   SALVAR SALDO
-================================ */
 
 async function salvarSaldo(novoSaldo){
 
@@ -1127,10 +1136,6 @@ return true;
 
 }
 
-/* ================================
-   DEBITAR APOSTA
-================================ */
-
 async function debitarAposta(){
 
 if(!usuarioAtual)return false;
@@ -1150,9 +1155,7 @@ const saldoAntes=
 Number(saldoReal);
 
 if(saldoAntes<valorTotal){
-
 return false;
-
 }
 
 const novoSaldo=
@@ -1194,29 +1197,32 @@ return true;
 
 }
 
-/* ================================
-   PRÊMIO
-================================ */
+/*
+====================================================
+PAGAMENTO
+====================================================
+
+IMPORTANTE:
+
+Antes:
+
+valorRoleta * 2
+
+Isso fazia a tabela antiga devolver em média 119%.
+
+Agora o valor da tabela já é o pagamento final.
+
+Assim evitamos o pagamento duplicado.
+*/
 
 function calcularPremio(valorRoleta){
 
-if(valorRoleta===0)
-return 0;
-
-if(valorRoleta===5)
-return 5;
-
 return Number(
-(
-valorRoleta*2
-).toFixed(2)
+Number(valorRoleta||0)
+.toFixed(2)
 );
 
 }
-
-/* ================================
-   NÚMEROS
-================================ */
 
 function criarNumeros(){
 
@@ -1293,10 +1299,6 @@ area.appendChild(numero);
 
 }
 
-/* ================================
-   COLOCAR FICHA
-================================ */
-
 function colocarFichaNoNumero(index){
 
 if(girando)return;
@@ -1367,9 +1369,7 @@ const ficha={
 index:index
 };
 
-fichasNaRoleta.push(
-ficha
-);
+fichasNaRoleta.push(ficha);
 
 const novaFicha=
 document.createElement("div");
@@ -1451,10 +1451,6 @@ atualizarBotao();
 
 }
 
-/* ================================
-   VALOR
-================================ */
-
 window.selecionarValor=
 function(valor,botao){
 
@@ -1469,9 +1465,7 @@ document
 b=>b.classList.remove("ativo")
 );
 
-botao.classList.add(
-"ativo"
-);
+botao.classList.add("ativo");
 
 apostaInfo.innerText=
 dinheiro(valorAposta);
@@ -1495,10 +1489,6 @@ valorAposta
 atualizarSaldo();
 
 };
-
-/* ================================
-   CLIQUE NA FICHA
-================================ */
 
 fichaDisplay.addEventListener(
 "click",
@@ -1574,10 +1564,6 @@ resultado.style.color=
 {passive:false}
 );
 
-/* ================================
-   ÁUDIO
-================================ */
-
 let audioContext=null;
 let timerRoleta=null;
 let velocidadeSom=45;
@@ -1587,8 +1573,13 @@ function iniciarMusica(){
 
 if(musicaIniciada)return;
 
+const musica=
+document.getElementById(
+"musicaRoleta"
+);
+
 const promessa=
-musicaRoleta.play();
+musica.play();
 
 if(promessa){
 
@@ -1845,10 +1836,6 @@ superBonusOverlay.classList.remove(
 
 }
 
-/* ================================
-   ROTAÇÃO
-================================ */
-
 function calcularRotacaoCorreta(indice){
 
 const tamanhoCasa=
@@ -1878,88 +1865,6 @@ deslocamento;
 
 }
 
-/* ================================
-   SORTEIO MATEMÁTICO
-   HOUSE EDGE FIXA
-================================ */
-
-/*
-   O resultado é sorteado somente pela
-   distribuição abaixo.
-
-   Ele NÃO usa:
-   - saldo do jogador
-   - valor apostado
-   - histórico do jogador
-   - quantidade de lucro da casa
-   - identidade do usuário
-
-   A vantagem matemática é aplicada
-   através das probabilidades.
-*/
-
-function sortearIndiceRoleta(){
-
-const pesos=[
-0.13,  // 0  - R$0,20
-0.04,  // 1  - R$0,40
-0.05,  // 2  - R$0,50
-0.055, // 3  - R$0,80
-0.05,  // 4  - R$1,00
-
-0.13,  // 5  - R$0,20
-0.05,  // 6  - R$0,50
-0.07,  // 7  - PERDEU
-0.055, // 8  - R$0,80
-0.05,  // 9  - R$1,00
-
-0.04,  // 10 - R$0,40
-0.05,  // 11 - R$0,50
-0.13,  // 12 - R$0,20
-0.055, // 13 - R$0,80
-0.01,  // 14 - R$5,00
-
-0.04,  // 15 - R$0,40
-0.09,  // 16 - PERDEU
-0.05,  // 17 - R$0,50
-0.05,  // 18 - R$1,00
-0.13   // 19 - R$0,20
-];
-
-const total=
-pesos.reduce(
-(soma,peso)=>
-soma+peso,
-0
-);
-
-let sorteio=
-Math.random()*total;
-
-for(
-let i=0;
-i<pesos.length;
-i++
-){
-
-sorteio-=pesos[i];
-
-if(sorteio<=0){
-
-return i;
-
-}
-
-}
-
-return pesos.length-1;
-
-}
-
-/* ================================
-   GIRAR ROLETA
-================================ */
-
 window.girarRoleta=
 async function(){
 
@@ -1986,8 +1891,7 @@ return;
 if(fichasNaRoleta.length===0){
 
 resultado.innerHTML=
-"🎯 COLOQUE PELO MENOS UMA FICHA"+
-" EM UM NÚMERO";
+"🎯 COLOQUE PELO MENOS UMA FICHA EM UM NÚMERO";
 
 resultado.style.color=
 "#ffe36a";
@@ -2080,11 +1984,17 @@ n=>n.classList.remove(
 );
 
 /*
-   Resultado independente do jogador.
+Sorteio uniforme entre as casas.
+
+A vantagem matemática vem da tabela fixa
+de pagamentos, e não de manipulação do resultado.
 */
 
 const indice=
-sortearIndiceRoleta();
+Math.floor(
+Math.random()*
+premios.length
+);
 
 const premio=
 premios[indice];
@@ -2115,10 +2025,6 @@ premio
 );
 
 };
-
-/* ================================
-   FINALIZAR RODADA
-================================ */
 
 async function finalizarRodada(
 indice,
@@ -2360,10 +2266,6 @@ iniciarContagem();
 
 }
 
-/* ================================
-   REPETIR
-================================ */
-
 window.repetirAposta=
 function(){
 
@@ -2403,10 +2305,6 @@ girarRoleta();
 
 };
 
-/* ================================
-   MENU
-================================ */
-
 window.abrirMenu=
 function(){
 
@@ -2417,10 +2315,6 @@ alert(
 );
 
 };
-
-/* ================================
-   AUTENTICAÇÃO
-================================ */
 
 supabase.auth.onAuthStateChange(
 (event,session)=>{
@@ -2434,10 +2328,6 @@ window.location.href=
 
 });
 
-/* ================================
-   MÚSICA
-================================ */
-
 document.addEventListener(
 "touchstart",
 iniciarMusica,
@@ -2449,10 +2339,6 @@ document.addEventListener(
 iniciarMusica,
 {once:true}
 );
-
-/* ================================
-   INICIAR
-================================ */
 
 async function iniciar(){
 
