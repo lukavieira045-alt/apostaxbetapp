@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080014">
 
-<title>Jogos - ApostaXBet</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>Night Monsters</title>
 
 <style>
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
 
 html{
@@ -21,990 +21,703 @@ html{
 
 body{
     min-height:100vh;
-    padding-bottom:90px;
     overflow-x:hidden;
     color:#fff;
     font-family:Arial,Helvetica,sans-serif;
     background:
-        radial-gradient(circle at 10% 10%,rgba(255,0,110,.28),transparent 28%),
-        radial-gradient(circle at 90% 15%,rgba(58,134,255,.25),transparent 30%),
-        radial-gradient(circle at 50% 100%,rgba(131,56,236,.35),transparent 40%),
-        linear-gradient(145deg,#070014,#120026,#080018);
-    position:relative;
+        radial-gradient(circle at 50% 10%,rgba(126,34,206,.35),transparent 28%),
+        radial-gradient(circle at 15% 70%,rgba(236,72,153,.18),transparent 25%),
+        radial-gradient(circle at 85% 75%,rgba(37,99,235,.20),transparent 25%),
+        linear-gradient(160deg,#05000b,#10001d 45%,#05000c);
 }
 
-body::before{
-    content:"ApostaXBet";
-    position:fixed;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%);
-    width:110%;
-    text-align:center;
-    font-size:clamp(75px,22vw,210px);
-    font-weight:900;
-    letter-spacing:-6px;
-    color:rgba(255,0,110,.07);
-    -webkit-text-stroke:2px rgba(255,0,110,.08);
-    text-shadow:
-        0 0 20px rgba(255,0,110,.15),
-        0 0 50px rgba(131,56,236,.18);
-    pointer-events:none;
-    z-index:0;
-    white-space:nowrap;
-    animation:brilhoFundo 4s ease-in-out infinite alternate;
-}
+/* FUNDO */
 
-@keyframes brilhoFundo{
-    0%{opacity:.35;}
-    100%{opacity:.8;}
-}
-
-body::after{
-    content:"";
-    position:fixed;
-    inset:-100px;
-    background:
-        radial-gradient(circle at 10% 20%,rgba(255,0,110,.15),transparent 14%),
-        radial-gradient(circle at 90% 25%,rgba(58,134,255,.17),transparent 15%),
-        radial-gradient(circle at 30% 80%,rgba(131,56,236,.15),transparent 14%),
-        radial-gradient(circle at 80% 85%,rgba(0,255,170,.13),transparent 15%);
-    pointer-events:none;
-    z-index:1;
-    animation:luzesFundo 8s ease-in-out infinite alternate;
-}
-
-@keyframes luzesFundo{
-    0%{transform:translate(-20px,-10px) scale(1);}
-    50%{transform:translate(20px,15px) scale(1.08);}
-    100%{transform:translate(-10px,25px) scale(1);}
-}
-
-.luzes{
+.fundo{
     position:fixed;
     inset:0;
     overflow:hidden;
     pointer-events:none;
-    z-index:1;
+    z-index:0;
 }
 
-.luz{
+.nevoa{
     position:absolute;
-    width:4px;
-    height:4px;
     border-radius:50%;
-    background:#ffbe0b;
-    box-shadow:
-        0 0 8px #ffbe0b,
-        0 0 18px #ffbe0b;
-    opacity:.7;
-    animation:
-        subir 7s linear infinite,
-        piscar 2s ease-in-out infinite alternate;
+    filter:blur(55px);
+    opacity:.35;
+    animation:flutuar 8s ease-in-out infinite alternate;
 }
 
-.luz:nth-child(1){left:8%;bottom:-20px;animation-delay:0s;}
-.luz:nth-child(2){left:20%;bottom:-30px;animation-delay:2s;}
-.luz:nth-child(3){left:35%;bottom:-20px;animation-delay:4s;}
-.luz:nth-child(4){left:52%;bottom:-30px;animation-delay:1s;}
-.luz:nth-child(5){left:68%;bottom:-20px;animation-delay:3s;}
-.luz:nth-child(6){left:84%;bottom:-30px;animation-delay:5s;}
-.luz:nth-child(7){left:95%;bottom:-20px;animation-delay:2.5s;}
-
-@keyframes subir{
-    0%{transform:translateY(0) scale(.5);opacity:0;}
-    10%{opacity:.8;}
-    50%{transform:translateY(-50vh) scale(1);opacity:1;}
-    100%{transform:translateY(-110vh) scale(.4);opacity:0;}
+.nevoa1{
+    width:240px;
+    height:240px;
+    background:#7c3aed;
+    top:5%;
+    left:-80px;
 }
+
+.nevoa2{
+    width:280px;
+    height:280px;
+    background:#db2777;
+    right:-100px;
+    top:30%;
+    animation-delay:2s;
+}
+
+.nevoa3{
+    width:220px;
+    height:220px;
+    background:#2563eb;
+    bottom:-70px;
+    left:30%;
+    animation-delay:4s;
+}
+
+@keyframes flutuar{
+    from{
+        transform:translate(0,0) scale(1);
+    }
+    to{
+        transform:translate(35px,-25px) scale(1.15);
+    }
+}
+
+.estrelas{
+    position:absolute;
+    inset:0;
+}
+
+.estrela{
+    position:absolute;
+    width:3px;
+    height:3px;
+    border-radius:50%;
+    background:#fff;
+    box-shadow:0 0 8px #fff;
+    animation:piscar 2s ease-in-out infinite alternate;
+}
+
+.estrela:nth-child(1){left:8%;top:12%;animation-delay:.2s;}
+.estrela:nth-child(2){left:20%;top:30%;animation-delay:1s;}
+.estrela:nth-child(3){left:34%;top:8%;animation-delay:.5s;}
+.estrela:nth-child(4){left:48%;top:22%;animation-delay:1.5s;}
+.estrela:nth-child(5){left:62%;top:11%;animation-delay:.8s;}
+.estrela:nth-child(6){left:76%;top:35%;animation-delay:1.2s;}
+.estrela:nth-child(7){left:91%;top:15%;animation-delay:.3s;}
+.estrela:nth-child(8){left:14%;top:65%;animation-delay:1.7s;}
+.estrela:nth-child(9){left:42%;top:58%;animation-delay:.6s;}
+.estrela:nth-child(10){left:70%;top:68%;animation-delay:1.4s;}
+.estrela:nth-child(11){left:87%;top:80%;animation-delay:.9s;}
+.estrela:nth-child(12){left:28%;top:88%;animation-delay:1.9s;}
 
 @keyframes piscar{
-    0%{opacity:.25;}
-    100%{opacity:1;}
+    from{
+        opacity:.2;
+        transform:scale(.6);
+    }
+    to{
+        opacity:1;
+        transform:scale(1.4);
+    }
 }
 
-header{
+/* TOPO */
+
+.topo{
     position:relative;
     z-index:5;
-    padding:18px 15px 16px;
-    text-align:center;
-    background:
-        linear-gradient(
-            180deg,
-            rgba(10,5,25,.92),
-            rgba(10,5,25,.72)
-        );
-    border-bottom:1px solid rgba(255,0,110,.25);
-    backdrop-filter:blur(14px);
-}
-
-header h1{
-    font-size:31px;
-    font-weight:1000;
-    margin-bottom:6px;
-    letter-spacing:.5px;
-    background:
-        linear-gradient(
-            90deg,
-            #ffbe0b 0%,
-            #ff006e 28%,
-            #8338ec 55%,
-            #3a86ff 78%,
-            #00ff88 100%
-        );
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-    -webkit-text-stroke:.5px rgba(255,255,255,.08);
-    text-shadow:
-        0 0 12px rgba(255,0,110,.35),
-        0 0 28px rgba(131,56,236,.25);
-    animation:brilhoTitulo 3s ease-in-out infinite alternate;
-}
-
-@keyframes brilhoTitulo{
-    from{filter:brightness(.95);}
-    to{filter:brightness(1.35);}
-}
-
-header p{
-    color:#ddd5eb;
-    font-size:13px;
-    font-weight:bold;
-}
-
-.saldo-box{
-    position:relative;
-    z-index:6;
-    width:max-content;
-    max-width:calc(100% - 30px);
-    margin:12px auto 0;
-    padding:9px 17px;
-    border-radius:15px;
-    background:
-        linear-gradient(
-            135deg,
-            rgba(131,56,236,.30),
-            rgba(255,0,110,.22)
-        );
-    border:1px solid rgba(255,255,255,.14);
-    box-shadow:
-        0 0 20px rgba(131,56,236,.20),
-        inset 0 0 15px rgba(255,255,255,.03);
-    backdrop-filter:blur(12px);
-    font-size:14px;
-    font-weight:bold;
-}
-
-#saldo{
-    color:#fff;
-}
-
-#botaoSom{
-    position:fixed;
-    right:13px;
-    top:13px;
-    width:42px;
-    height:42px;
-    border:1px solid rgba(255,190,11,.55);
-    border-radius:50%;
-    background:rgba(10,5,25,.92);
-    color:#ffd166;
-    font-size:19px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    z-index:999;
-    box-shadow:0 0 15px rgba(255,0,110,.22);
-    transition:.2s ease;
-}
-
-#botaoSom:active{
-    transform:scale(.9);
-}
-
-.container{
-    position:relative;
-    z-index:3;
-    width:100%;
-    max-width:1100px;
-    margin:auto;
-    padding:22px 13px 25px;
-}
-
-.titulo{
-    text-align:center;
-    margin:4px 0 8px;
-    font-size:29px;
-    font-weight:1000;
-    background:
-        linear-gradient(
-            90deg,
-            #ffbe0b,
-            #ff006e,
-            #8338ec,
-            #3a86ff,
-            #00ff88
-        );
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-    text-shadow:0 0 20px rgba(255,0,110,.28);
-    animation:
-        tituloJogos
-        3s
-        ease-in-out
-        infinite
-        alternate;
-}
-
-@keyframes tituloJogos{
-    from{transform:scale(1);filter:brightness(.95);}
-    to{transform:scale(1.025);filter:brightness(1.25);}
-}
-
-.subtitulo{
-    text-align:center;
-    color:#c8bfd8;
-    margin-bottom:22px;
-    font-size:13px;
-    font-weight:600;
-}
-
-.banner{
-    position:relative;
-    overflow:hidden;
-    border-radius:21px;
-    padding:19px 17px;
-    margin-bottom:23px;
-    background:
-        radial-gradient(
-            circle at 15% 50%,
-            rgba(255,190,11,.3),
-            transparent 25%
-        ),
-        radial-gradient(
-            circle at 85% 20%,
-            rgba(58,134,255,.3),
-            transparent 28%
-        ),
-        linear-gradient(
-            135deg,
-            #40106b,
-            #b00068,
-            #24105c
-        );
-    border:1px solid rgba(255,255,255,.16);
-    box-shadow:
-        0 12px 35px rgba(0,0,0,.35),
-        0 0 28px rgba(255,0,110,.18);
-}
-
-.banner::before{
-    content:"";
-    position:absolute;
-    width:170px;
-    height:170px;
-    right:-70px;
-    top:-85px;
-    border-radius:50%;
-    background:#ffbe0b;
-    filter:blur(45px);
-    opacity:.2;
-}
-
-.banner h2{
-    position:relative;
-    font-size:23px;
-    font-weight:1000;
-    margin-bottom:6px;
-    display:flex;
-    align-items:center;
-    gap:7px;
-    color:#fff;
-}
-
-.banner p{
-    position:relative;
-    color:#f1eaf8;
-    font-size:13px;
-    font-weight:500;
-}
-
-.secao{
+    padding:15px;
     display:flex;
     align-items:center;
     justify-content:space-between;
-    margin:0 2px 11px;
-    padding-bottom:7px;
-    border-bottom:1px solid rgba(255,255,255,.08);
+    gap:10px;
+    background:rgba(5,0,12,.78);
+    border-bottom:1px solid rgba(168,85,247,.25);
+    backdrop-filter:blur(15px);
 }
 
-.secao h2{
+.logo{
     font-size:20px;
     font-weight:1000;
-    background:
-        linear-gradient(
-            90deg,
-            #ffbe0b,
-            #ff006e,
-            #8338ec,
-            #3a86ff
-        );
+    letter-spacing:.5px;
+    background:linear-gradient(
+        90deg,
+        #f9a8d4,
+        #c084fc,
+        #818cf8,
+        #67e8f9
+    );
     -webkit-background-clip:text;
     background-clip:text;
     color:transparent;
 }
 
-.secao span{
-    color:#c4b8d6;
-    font-size:11px;
-    font-weight:bold;
-    padding:5px 8px;
-    border-radius:20px;
+.voltar{
+    border:1px solid rgba(255,255,255,.15);
     background:rgba(255,255,255,.06);
-    border:1px solid rgba(255,255,255,.08);
+    color:#fff;
+    text-decoration:none;
+    padding:9px 13px;
+    border-radius:12px;
+    font-size:12px;
+    font-weight:bold;
 }
 
-.jogos{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:10px;
+/* CONTAINER */
+
+.container{
+    position:relative;
+    z-index:2;
+    width:100%;
+    max-width:520px;
+    margin:0 auto;
+    padding:20px 13px 35px;
 }
+
+/* TÍTULO */
+
+.titulo{
+    text-align:center;
+    margin-top:8px;
+}
+
+.icone{
+    font-size:58px;
+    display:block;
+    margin-bottom:4px;
+    filter:
+        drop-shadow(0 0 8px rgba(192,132,252,.8))
+        drop-shadow(0 0 25px rgba(236,72,153,.45));
+    animation:flutuarIcone 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes flutuarIcone{
+    from{
+        transform:translateY(4px) rotate(-2deg);
+    }
+    to{
+        transform:translateY(-5px) rotate(2deg);
+    }
+}
+
+.titulo h1{
+    font-size:34px;
+    line-height:1;
+    font-weight:1000;
+    background:linear-gradient(
+        90deg,
+        #f9a8d4,
+        #c084fc,
+        #818cf8,
+        #67e8f9
+    );
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    text-shadow:0 0 25px rgba(168,85,247,.35);
+}
+
+.titulo p{
+    margin-top:9px;
+    color:#cfc4dd;
+    font-size:12px;
+    font-weight:bold;
+}
+
+/* SALDO */
+
+.saldo{
+    margin:18px 0 12px;
+    padding:14px 16px;
+    border-radius:17px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(124,58,237,.25),
+            rgba(219,39,119,.18)
+        );
+    border:1px solid rgba(255,255,255,.13);
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.3),
+        inset 0 0 20px rgba(255,255,255,.025);
+}
+
+.saldo-label{
+    color:#c9bdd7;
+    font-size:12px;
+}
+
+.saldo-valor{
+    font-size:19px;
+    font-weight:1000;
+    color:#86efac;
+    text-shadow:0 0 12px rgba(74,222,128,.3);
+}
+
+/* JOGO */
 
 .jogo{
     position:relative;
-    min-height:155px;
     overflow:hidden;
-    border-radius:18px;
-    text-decoration:none;
-    color:#fff;
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-end;
-    padding:13px;
-    border:1px solid rgba(255,255,255,.15);
+    padding:16px;
+    border-radius:23px;
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(168,85,247,.25),
+            transparent 42%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(30,10,52,.96),
+            rgba(9,8,28,.98)
+        );
+    border:1px solid rgba(192,132,252,.25);
     box-shadow:
-        0 9px 23px rgba(0,0,0,.38),
-        inset 0 0 28px rgba(255,255,255,.04);
-    transition:
-        transform .25s ease,
-        box-shadow .25s ease;
-    animation:pulse 4s ease-in-out infinite;
-}
-
-.jogo:hover{
-    transform:translateY(-5px) scale(1.012);
-    box-shadow:
-        0 14px 32px rgba(0,0,0,.5),
-        0 0 26px var(--glow);
-}
-
-.jogo:active{
-    transform:scale(.97);
+        0 20px 45px rgba(0,0,0,.45),
+        0 0 35px rgba(124,58,237,.12);
 }
 
 .jogo::before{
     content:"";
     position:absolute;
-    inset:0;
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255,255,255,.20),
-            transparent 35%
-        );
+    width:220px;
+    height:220px;
+    left:50%;
+    top:-150px;
+    transform:translateX(-50%);
+    border-radius:50%;
+    background:#a855f7;
+    filter:blur(65px);
+    opacity:.15;
     pointer-events:none;
 }
 
-.jogo::after{
-    content:"";
-    position:absolute;
-    width:150px;
-    height:150px;
-    right:-62px;
-    top:-58px;
-    border-radius:50%;
-    background:var(--light);
-    filter:blur(32px);
-    opacity:.35;
-}
+/* PAINEL */
 
-.imagem-jogo{
-    position:absolute;
-    top:10px;
-    left:10px;
-    right:10px;
-    height:83px;
-    border-radius:15px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255,255,255,.15),
-            rgba(0,0,0,.22)
-        );
-    border:1px solid rgba(255,255,255,.16);
-    box-shadow:
-        inset 0 0 25px rgba(255,255,255,.07),
-        0 5px 15px rgba(0,0,0,.25);
-}
-
-.imagem-jogo::before{
-    content:"";
-    position:absolute;
-    width:100px;
-    height:100px;
-    border-radius:50%;
-    background:var(--light);
-    filter:blur(30px);
-    opacity:.28;
-}
-
-.imagem-jogo img.capa-fortune{
+.painel{
     position:relative;
     z-index:2;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
-    border-radius:14px;
-}
-
-.arte{
-    position:relative;
-    z-index:2;
-    font-size:55px;
-    filter:
-        drop-shadow(0 0 8px rgba(255,255,255,.5))
-        drop-shadow(0 0 18px var(--glow));
-    animation:
-        flutuarArte
-        2.8s
-        ease-in-out
-        infinite
-        alternate;
-}
-
-@keyframes flutuarArte{
-    from{transform:translateY(3px) scale(.96);}
-    to{transform:translateY(-4px) scale(1.04);}
-}
-
-@keyframes pulse{
-    0%,100%{
-        box-shadow:
-            0 9px 23px rgba(0,0,0,.38),
-            0 0 10px rgba(255,255,255,.05);
-    }
-    50%{
-        box-shadow:
-            0 9px 23px rgba(0,0,0,.38),
-            0 0 23px rgba(255,255,255,.13);
-    }
-}
-
-.nome{
-    position:relative;
-    z-index:2;
-    font-size:17px;
-    font-weight:900;
-    margin-bottom:3px;
-}
-
-.descricao{
-    position:relative;
-    z-index:2;
-    color:rgba(255,255,255,.78);
-    font-size:10px;
-}
-
-.roleta{
-    --glow:#ff006e;
-    --light:#ffbe0b;
-    background:
-        radial-gradient(
-            circle at 80% 20%,
-            rgba(255,190,11,.65),
-            transparent 30%
-        ),
-        linear-gradient(
-            145deg,
-            #ff006e,
-            #8b008b,
-            #3b146d
-        );
-}
-
-.roleta-nova{
-    --glow:#00ff88;
-    --light:#ffd166;
-    background:
-        radial-gradient(
-            circle at 80% 20%,
-            rgba(255,209,102,.65),
-            transparent 30%
-        ),
-        linear-gradient(
-            145deg,
-            #087f45,
-            #064f79,
-            #24105c
-        );
-}
-
-.roleta-cassino{
-    --glow:#ffd166;
-    --light:#ff006e;
-    background:
-        radial-gradient(
-            circle at 80% 20%,
-            rgba(255,209,102,.65),
-            transparent 30%
-        ),
-        linear-gradient(
-            145deg,
-            #b8860b,
-            #a90068,
-            #3b146d
-        );
-}
-
-.mines{
-    --glow:#3a86ff;
-    --light:#00e5ff;
-    background:
-        radial-gradient(
-            circle at 80% 20%,
-            rgba(0,229,255,.5),
-            transparent 30%
-        ),
-        linear-gradient(
-            145deg,
-            #0064d8,
-            #122c91,
-            #24105c
-        );
-}
-
-.crash{
-    --glow:#ffbe0b;
-    --light:#ff5c00;
-    background:
-        radial-gradient(
-            circle at 80% 20%,
-            rgba(255,190,11,.65),
-            transparent 30%
-        ),
-        linear-gradient(
-            145deg,
-            #ff5c00,
-            #db0068,
-            #551078
-        );
-}
-
-.plinko{
-    --glow:#00e5ff;
-    --light:#00ff88;
-    background:
-        radial-gradient(
-            circle at 80% 20%,
-            rgba(0,255,136,.5),
-            transparent 30%
-        ),
-        linear-gradient(
-            145deg,
-            #008ca8,
-            #004f91,
-            #1c155d
-        );
-}
-
-.dice{
-    --glow:#8338ec;
-    --light:#ff00d4;
-    background:
-        radial-gradient(
-            circle at 80% 20%,
-            rgba(255,0,212,.5),
-            transparent 30%
-        ),
-        linear-gradient(
-            145deg,
-            #8338ec,
-            #5b13b8,
-            #15104f
-        );
-}
-
-.lobby{
-    --glow:#00ff88;
-    --light:#00e5ff;
-    background:
-        radial-gradient(
-            circle at 80% 20%,
-            rgba(0,255,136,.5),
-            transparent 30%
-        ),
-        linear-gradient(
-            145deg,
-            #00834e,
-            #064c75,
-            #25105c
-        );
-}
-
-.night{
-    --glow:#8338ec;
-    --light:#ff006e;
-    background:
-        radial-gradient(
-            circle at 80% 20%,
-            rgba(255,0,110,.45),
-            transparent 30%
-        ),
-        linear-gradient(
-            145deg,
-            #30105c,
-            #14195c,
-            #090c31
-        );
-}
-
-.snake{
-    --glow:#ff006e;
-    --light:#ffbe0b;
-    background:
-        radial-gradient(
-            circle at 80% 20%,
-            rgba(255,190,11,.6),
-            transparent 30%
-        ),
-        linear-gradient(
-            145deg,
-            #ff006e,
-            #b3006e,
-            #3d166f
-        );
-}
-
-.jogo:nth-child(2){animation-delay:.4s;}
-.jogo:nth-child(3){animation-delay:.8s;}
-.jogo:nth-child(4){animation-delay:1.2s;}
-.jogo:nth-child(5){animation-delay:1.6s;}
-.jogo:nth-child(6){animation-delay:2s;}
-.jogo:nth-child(7){animation-delay:2.4s;}
-.jogo:nth-child(8){animation-delay:2.8s;}
-.jogo:nth-child(9){animation-delay:3.2s;}
-.jogo:nth-child(10){animation-delay:3.6s;}
-
-.voltar{
-    display:block;
+    padding:15px;
+    border-radius:18px;
     text-align:center;
-    margin:20px auto 5px;
-    color:#ffbe0b;
-    text-decoration:none;
-    font-size:12px;
-    font-weight:bold;
-    position:relative;
-    z-index:4;
+    background:rgba(0,0,0,.22);
+    border:1px solid rgba(255,255,255,.08);
 }
 
-nav{
-    position:fixed;
-    bottom:0;
-    left:0;
-    right:0;
-    height:74px;
-    background:rgba(10,5,20,.97);
-    border-top:1px solid rgba(255,0,110,.55);
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-    z-index:100;
-    box-shadow:0 -6px 22px rgba(0,0,0,.5);
-    backdrop-filter:blur(10px);
-}
-
-nav a{
-    position:relative;
-    width:33.333%;
-    height:100%;
-    color:#999;
-    text-decoration:none;
-    text-align:center;
+.status-label{
+    color:#aaa0b7;
     font-size:11px;
+    font-weight:bold;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+.multiplicador{
+    margin-top:3px;
+    font-size:52px;
+    line-height:1;
+    font-weight:1000;
+    color:#fff;
+    text-shadow:
+        0 0 12px rgba(192,132,252,.7),
+        0 0 30px rgba(168,85,247,.4);
+    transition:.25s ease;
+}
+
+.multiplicador.verde{
+    color:#86efac;
+    text-shadow:0 0 20px rgba(74,222,128,.7);
+}
+
+.multiplicador.vermelho{
+    color:#fb7185;
+    text-shadow:0 0 20px rgba(244,63,94,.7);
+}
+
+.multiplicador.roxo{
+    color:#c084fc;
+}
+
+/* MONSTRO */
+
+.arena{
+    position:relative;
+    z-index:2;
+    height:265px;
+    margin:14px 0;
+    overflow:hidden;
+    border-radius:19px;
     display:flex;
-    flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:3px;
+    background:
+        radial-gradient(
+            circle at 50% 55%,
+            rgba(124,58,237,.28),
+            transparent 30%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(20,7,38,.8),
+            rgba(3,5,18,.95)
+        );
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.lua{
+    position:absolute;
+    width:95px;
+    height:95px;
+    border-radius:50%;
+    top:24px;
+    right:30px;
+    background:#eee;
+    box-shadow:
+        0 0 20px rgba(255,255,255,.55),
+        0 0 50px rgba(147,197,253,.35);
+}
+
+.lua::after{
+    content:"";
+    position:absolute;
+    width:95px;
+    height:95px;
+    border-radius:50%;
+    background:#090617;
+    left:-24px;
+    top:-8px;
+}
+
+.nuvem{
+    position:absolute;
+    bottom:35px;
+    width:100%;
+    height:75px;
+    opacity:.25;
+    background:
+        radial-gradient(
+            ellipse,
+            #7c3aed 0%,
+            transparent 65%
+        );
+    filter:blur(18px);
+}
+
+.monstro{
+    position:relative;
+    z-index:3;
+    font-size:125px;
+    line-height:1;
+    filter:
+        drop-shadow(0 0 8px rgba(192,132,252,.8))
+        drop-shadow(0 0 30px rgba(124,58,237,.55));
+    animation:monstroFlutua 2s ease-in-out infinite alternate;
+    user-select:none;
+}
+
+@keyframes monstroFlutua{
+    from{
+        transform:translateY(7px) scale(.98);
+    }
+    to{
+        transform:translateY(-8px) scale(1.03);
+    }
+}
+
+.arena.jogando .monstro{
+    animation:
+        monstroFlutua .6s ease-in-out infinite alternate,
+        brilhoMonstro .7s ease-in-out infinite alternate;
+}
+
+@keyframes brilhoMonstro{
+    from{
+        filter:
+            drop-shadow(0 0 8px rgba(192,132,252,.8))
+            drop-shadow(0 0 25px rgba(124,58,237,.5));
+    }
+    to{
+        filter:
+            drop-shadow(0 0 18px rgba(244,114,182,1))
+            drop-shadow(0 0 45px rgba(168,85,247,.9));
+    }
+}
+
+/* RESULTADO */
+
+.resultado{
+    position:absolute;
+    inset:0;
+    z-index:10;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    background:rgba(5,0,15,.78);
+    backdrop-filter:blur(4px);
+    opacity:0;
+    visibility:hidden;
+    transition:.25s ease;
+}
+
+.resultado.ativo{
+    opacity:1;
+    visibility:visible;
+}
+
+.resultado-titulo{
+    font-size:28px;
+    font-weight:1000;
+}
+
+.resultado-texto{
+    margin-top:7px;
+    color:#d8cce3;
+    font-size:13px;
+}
+
+/* CONTROLES */
+
+.controles{
+    position:relative;
+    z-index:2;
+}
+
+.linha{
+    display:flex;
+    gap:9px;
+}
+
+.campo{
+    flex:1;
+}
+
+.campo label{
+    display:block;
+    color:#aaa0b7;
+    font-size:10px;
+    font-weight:bold;
+    margin-bottom:6px;
+}
+
+.input-box{
+    width:100%;
+    height:46px;
+    padding:0 12px;
+    border-radius:12px;
+    outline:none;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(0,0,0,.28);
+    color:#fff;
+    font-size:15px;
+    font-weight:bold;
+}
+
+.input-box:focus{
+    border-color:#a855f7;
+    box-shadow:0 0 12px rgba(168,85,247,.2);
+}
+
+.botao{
+    width:100%;
+    height:50px;
+    margin-top:12px;
+    border:0;
+    border-radius:14px;
+    color:#fff;
+    font-size:16px;
+    font-weight:1000;
+    cursor:pointer;
+    background:
+        linear-gradient(
+            90deg,
+            #7c3aed,
+            #c026d3,
+            #db2777
+        );
+    box-shadow:
+        0 8px 20px rgba(124,58,237,.28),
+        inset 0 1px rgba(255,255,255,.25);
     transition:.2s ease;
 }
 
-nav a:nth-child(2){
-    color:#ffbe0b;
+.botao:active{
+    transform:scale(.97);
 }
 
-nav a:nth-child(2)::before{
-    content:"";
-    position:absolute;
-    top:0;
-    width:42px;
-    height:2px;
-    background:#ffbe0b;
-    box-shadow:0 0 10px rgba(255,190,11,.8);
-    border-radius:0 0 5px 5px;
+.botao:disabled{
+    opacity:.5;
+    cursor:not-allowed;
 }
 
-nav a:active{
-    transform:scale(.92);
-}
-
-nav span{
-    display:block;
-    font-size:24px;
-    line-height:1;
-}
-
-#loader{
-    position:fixed;
-    inset:0;
-    z-index:99999;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    padding:20px;
-    background:
-        radial-gradient(
-            circle at 50% 40%,
-            #35105d,
-            #12001f 55%,
-            #08000f 100%
-        );
-    opacity:0;
-    visibility:hidden;
-    pointer-events:none;
-    transition:
-        opacity .45s ease,
-        visibility .45s ease;
-}
-
-#loader.ativo{
-    opacity:1;
-    visibility:visible;
-    pointer-events:auto;
-}
-
-.loader-card{
-    width:350px;
-    max-width:94vw;
-    padding:0;
-    text-align:center;
-    background:transparent;
-    border:0;
-    box-shadow:none;
-}
-
-.loader-icone{
-    width:350px;
-    max-width:94vw;
-    height:auto;
-    min-height:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
-    border-radius:18px;
-    background:#08000f;
-    border:2px solid rgba(255,215,0,.75);
-    box-shadow:
-        0 0 20px rgba(255,215,0,.35),
-        0 0 50px rgba(145,0,255,.35);
-    animation:
-        bannerCarregando
-        1.4s
-        ease-in-out
-        infinite
-        alternate;
-}
-
-@keyframes bannerCarregando{
-    from{
-        transform:scale(.97);
-        opacity:.82;
-    }
-    to{
-        transform:scale(1);
-        opacity:1;
-    }
-}
-
-.loader-icone img{
-    width:100%;
-    height:auto;
-    max-height:none;
-    object-fit:contain;
+.botao-retirar{
     display:none;
-    border-radius:16px;
+    background:
+        linear-gradient(
+            90deg,
+            #059669,
+            #10b981
+        );
+    box-shadow:
+        0 8px 20px rgba(16,185,129,.25);
 }
 
-.loader-icone .icone-normal{
-    width:100%;
-    min-height:180px;
+.botao-retirar.ativo{
+    display:block;
+}
+
+/* INFO */
+
+.info{
+    position:relative;
+    z-index:2;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:7px;
+    margin-top:12px;
+}
+
+.info-box{
+    padding:10px 5px;
+    text-align:center;
+    border-radius:12px;
+    background:rgba(255,255,255,.035);
+    border:1px solid rgba(255,255,255,.06);
+}
+
+.info-box small{
+    display:block;
+    color:#8f859a;
+    font-size:9px;
+    margin-bottom:3px;
+}
+
+.info-box strong{
+    font-size:12px;
+}
+
+/* HISTÓRICO */
+
+.historico{
+    margin-top:14px;
+}
+
+.historico-titulo{
     display:flex;
     align-items:center;
-    justify-content:center;
-    font-size:65px;
+    justify-content:space-between;
+    margin-bottom:8px;
 }
 
-#loaderNome{
-    margin-top:22px;
-    color:#ffd700;
-    font-size:21px;
-    font-weight:bold;
-    text-align:center;
-    text-shadow:0 0 10px rgba(255,215,0,.6);
+.historico-titulo strong{
+    font-size:13px;
 }
 
-.loader-status{
-    margin-top:9px;
-    color:#cdbce0;
-    font-size:14px;
-    text-align:center;
+.historico-titulo span{
+    color:#85798e;
+    font-size:10px;
 }
 
-.loader-dots{
-    margin-top:15px;
+.lista{
     display:flex;
-    justify-content:center;
-    gap:7px;
+    gap:6px;
+    overflow-x:auto;
+    padding-bottom:3px;
+    scrollbar-width:none;
 }
 
-.loader-dots span{
-    width:9px;
-    height:9px;
-    border-radius:50%;
-    background:#ffd700;
-    box-shadow:0 0 8px rgba(255,215,0,.7);
-    animation:loadingDot 1s infinite;
+.lista::-webkit-scrollbar{
+    display:none;
 }
 
-.loader-dots span:nth-child(2){
-    animation-delay:.15s;
+.historico-item{
+    flex:0 0 auto;
+    min-width:61px;
+    padding:8px 7px;
+    border-radius:10px;
+    text-align:center;
+    font-size:11px;
+    font-weight:bold;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.06);
 }
 
-.loader-dots span:nth-child(3){
-    animation-delay:.30s;
+.historico-item.alto{
+    color:#86efac;
+    border-color:rgba(74,222,128,.22);
 }
 
-@keyframes loadingDot{
-    0%,100%{
-        transform:scale(.65);
-        opacity:.35;
+.historico-item.baixo{
+    color:#fb7185;
+    border-color:rgba(244,63,94,.2);
+}
+
+/* MENSAGEM */
+
+.mensagem{
+    min-height:18px;
+    margin-top:10px;
+    text-align:center;
+    color:#aaa0b7;
+    font-size:11px;
+    font-weight:bold;
+}
+
+/* RESPONSIVO */
+
+@media(max-width:380px){
+
+    .container{
+        padding-left:9px;
+        padding-right:9px;
     }
-    50%{
-        transform:scale(1);
-        opacity:1;
-    }
-}
 
-@media(max-width:600px){
-    .jogos{
-        grid-template-columns:repeat(2,1fr);
+    .titulo h1{
+        font-size:30px;
     }
 
-    .jogo{
-        min-height:155px;
+    .icone{
+        font-size:50px;
     }
 
-    .imagem-jogo{
-        height:80px;
+    .multiplicador{
+        font-size:45px;
+    }
+
+    .arena{
+        height:235px;
+    }
+
+    .monstro{
+        font-size:105px;
+    }
+
+    .lua{
+        width:75px;
+        height:75px;
+    }
+
+    .lua::after{
+        width:75px;
+        height:75px;
     }
 }
 
 @media(min-width:700px){
-    .jogos{
-        grid-template-columns:repeat(3,1fr);
+
+    body{
+        display:flex;
+        justify-content:center;
     }
 
-    .jogo{
-        min-height:180px;
-    }
-
-    .imagem-jogo{
-        height:100px;
-    }
-}
-
-@media(max-width:380px){
     .container{
-        padding-left:8px;
-        padding-right:8px;
-    }
-
-    .jogos{
-        gap:7px;
-    }
-
-    .jogo{
-        min-height:145px;
-        border-radius:16px;
-        padding:11px;
-    }
-
-    .imagem-jogo{
-        top:9px;
-        left:9px;
-        right:9px;
-        height:72px;
-    }
-
-    .arte{
-        font-size:48px;
-    }
-
-    .nome{
-        font-size:15px;
-    }
-
-    .descricao{
-        font-size:9px;
-    }
-
-    header h1{
-        font-size:27px;
-    }
-
-    .titulo{
-        font-size:26px;
-    }
-
-    .banner h2{
-        font-size:21px;
-    }
-
-    .secao h2{
-        font-size:18px;
-    }
-
-    .loader-icone{
-        width:94vw;
-    }
-
-    .loader-icone .icone-normal{
-        min-height:160px;
-        font-size:52px;
-    }
-
-    .loader-card{
-        width:94vw;
+        width:520px;
     }
 }
 </style>
@@ -1012,823 +725,926 @@ nav span{
 
 <body>
 
-<script>
-const SUPABASE_URL =
-'https://jxbzjiwmajjzxgihfjgt.supabase.co';
+<div class="fundo">
 
-const SUPABASE_KEY =
-'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ';
+    <div class="nevoa nevoa1"></div>
+    <div class="nevoa nevoa2"></div>
+    <div class="nevoa nevoa3"></div>
 
-const clienteSupabase =
-window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
+    <div class="estrelas">
+        <div class="estrela"></div>
+        <div class="estrela"></div>
+        <div class="estrela"></div>
+        <div class="estrela"></div>
+        <div class="estrela"></div>
+        <div class="estrela"></div>
+        <div class="estrela"></div>
+        <div class="estrela"></div>
+        <div class="estrela"></div>
+        <div class="estrela"></div>
+        <div class="estrela"></div>
+        <div class="estrela"></div>
+    </div>
 
-function redirecionarLogin(){
-    window.location.replace("../index.html");
-}
-
-async function protegerJogos(){
-
-    const saiu =
-        sessionStorage.getItem("apostaxbet_logout");
-
-    if(saiu === "1"){
-        redirecionarLogin();
-        return false;
-    }
-
-    try{
-
-        const {data,error} =
-            await clienteSupabase.auth.getSession();
-
-        if(error){
-            console.log("Erro ao verificar sessão:",error);
-            redirecionarLogin();
-            return false;
-        }
-
-        if(
-            !data ||
-            !data.session ||
-            !data.session.user
-        ){
-            redirecionarLogin();
-            return false;
-        }
-
-        return true;
-
-    }catch(erro){
-
-        console.log("Erro na proteção:",erro);
-        redirecionarLogin();
-        return false;
-
-    }
-}
-
-async function carregarSaldo(){
-
-    const elemento =
-        document.getElementById("saldo");
-
-    if(!elemento){
-        return;
-    }
-
-    try{
-
-        const {
-            data: sessaoData,
-            error: sessaoErro
-        } =
-            await clienteSupabase.auth.getSession();
-
-        if(
-            sessaoErro ||
-            !sessaoData ||
-            !sessaoData.session ||
-            !sessaoData.session.user
-        ){
-            return;
-        }
-
-        const userId =
-            sessaoData.session.user.id;
-
-        const {
-            data,
-            error
-        } =
-            await clienteSupabase
-                .from("saldos")
-                .select("valor")
-                .eq("user_id",userId)
-                .maybeSingle();
-
-        if(error){
-            console.log("Erro ao carregar saldo:",error);
-            return;
-        }
-
-        const valor =
-            Number(data?.valor ?? 0);
-
-        elemento.textContent =
-            valor.toLocaleString(
-                "pt-BR",
-                {
-                    style:"currency",
-                    currency:"BRL"
-                }
-            );
-
-    }catch(erro){
-
-        console.log("Erro ao carregar saldo:",erro);
-
-    }
-}
-
-(async function(){
-
-    const autorizado =
-        await protegerJogos();
-
-    if(autorizado){
-        await carregarSaldo();
-    }
-
-})();
-
-window.addEventListener(
-    "pageshow",
-    function(){
-        protegerJogos();
-        carregarSaldo();
-    }
-);
-
-clienteSupabase.auth.onAuthStateChange(
-    function(event,session){
-
-        if(!session){
-            redirecionarLogin();
-            return;
-        }
-
-        carregarSaldo();
-    }
-);
-
-setInterval(
-    carregarSaldo,
-    3000
-);
-</script>
-
-<div class="luzes">
-    <div class="luz"></div>
-    <div class="luz"></div>
-    <div class="luz"></div>
-    <div class="luz"></div>
-    <div class="luz"></div>
-    <div class="luz"></div>
-    <div class="luz"></div>
 </div>
 
-<audio
-    id="musicaJogos"
-    loop
-    preload="auto">
+<header class="topo">
 
-    <source
-        src="musica-jogos.mp3"
-        type="audio/mpeg">
-
-</audio>
-
-<button
-    id="botaoSom"
-    type="button"
-    aria-label="Ativar ou desativar música">
-
-    🔇
-
-</button>
-
-<header>
-
-    <h1>🎰 ApostaXBet</h1>
-
-    <p>Escolha seu jogo</p>
-
-    <div class="saldo-box">
-
-        💰 Saldo:
-        <span id="saldo">Carregando...</span>
-
+    <div class="logo">
+        🌙 Night Monsters
     </div>
+
+    <a
+        class="voltar"
+        href="../jogos.html">
+
+        ← Jogos
+
+    </a>
 
 </header>
 
 <main class="container">
 
-    <h2 class="titulo">
-        🎮 Escolha seu jogo
-    </h2>
+    <section class="titulo">
 
-    <p class="subtitulo">
-        Entre, jogue e divirta-se no universo ApostaXBet
-    </p>
+        <span class="icone">
+            🧛
+        </span>
 
-    <section class="banner">
-
-        <h2>
-            🔥 Jogos em destaque
-        </h2>
+        <h1>
+            NIGHT MONSTERS
+        </h1>
 
         <p>
-            🎮 Experimente nossos jogos com visual neon,
-            animações e muita emoção.
+            Entre na noite e descubra até onde o monstro vai.
         </p>
 
     </section>
 
-    <div class="secao">
+    <section class="saldo">
 
-        <h2>
-            🎰 Todos os jogos
-        </h2>
+        <div class="saldo-label">
+            💰 Saldo disponível
+        </div>
 
-        <span>
-            10 jogos disponíveis
-        </span>
+        <div
+            id="saldo"
+            class="saldo-valor">
 
-    </div>
+            R$ 0,00
 
-    <div class="jogos">
+        </div>
 
-        <!-- ROLETA -->
+    </section>
 
-        <a
-            class="jogo roleta"
-            href="roleta.html"
-            data-jogo="Roleta"
-            data-icone="🎰"
-            data-capa="banner-roleta.png">
+    <section class="jogo">
 
-            <div class="imagem-jogo">
+        <div class="painel">
 
-                <img
-                    class="capa-fortune"
-                    src="banner-roleta.png"
-                    alt="Roleta"
-                >
-
-            </div>
-
-            <div class="nome">
-                Roleta
-            </div>
-
-            <div class="descricao">
-                Gire a roleta
-            </div>
-
-        </a>
-
-
-        <!-- ROLETA PREMIUM -->
-
-        <a
-            class="jogo roleta-nova"
-            href="roleta2.html"
-            data-jogo="Roleta Premium"
-            data-icone="🎡"
-            data-capa="banner-roleta-premium.png">
-
-            <div class="imagem-jogo">
-
-                <img
-                    class="capa-fortune"
-                    src="banner-roleta-premium.png"
-                    alt="Roleta Premium"
-                >
-
-            </div>
-
-            <div class="nome">
-                Roleta Premium
-            </div>
-
-            <div class="descricao">
-                Nova roleta
-            </div>
-
-        </a>
-
-
-        <!-- ROLETA CASSINO -->
-
-        <a
-            class="jogo roleta-cassino"
-            href="roleta-cassino.html"
-            data-jogo="Roleta Cassino"
-            data-icone="🎰"
-            data-capa="banner-roleta-cassino.png">
-
-            <div class="imagem-jogo">
-
-                <img
-                    class="capa-fortune"
-                    src="banner-roleta-cassino.png"
-                    alt="Roleta Cassino"
-                >
-
-            </div>
-
-            <div class="nome">
-                Roleta Cassino
-            </div>
-
-            <div class="descricao">
-                Roleta automática
-            </div>
-
-        </a>
-
-
-        <!-- MINES -->
-
-        <a
-            class="jogo mines"
-            href="mines.html"
-            data-jogo="Mines"
-            data-icone="💣"
-            data-capa="banner-mines.png">
-
-            <div class="imagem-jogo">
-
-                <img
-                    class="capa-fortune"
-                    src="banner-mines.png"
-                    alt="Mines"
-                >
-
-            </div>
-
-            <div class="nome">
-                Mines
-            </div>
-
-            <div class="descricao">
-                Encontre os diamantes
-            </div>
-
-        </a>
-
-
-        <!-- CRASH -->
-
-        <a
-            class="jogo crash"
-            href="crash.html"
-            data-jogo="Crash"
-            data-icone="🚀"
-            data-capa="banner-crash.png">
-
-            <div class="imagem-jogo">
-
-                <img
-                    class="capa-fortune"
-                    src="banner-crash.png"
-                    alt="Crash"
-                >
-
-            </div>
-
-            <div class="nome">
-                Crash
-            </div>
-
-            <div class="descricao">
+            <div class="status-label">
                 Multiplicador
             </div>
 
-        </a>
+            <div
+                id="multiplicador"
+                class="multiplicador">
 
-
-        <!-- PLINKO -->
-
-        <a
-            class="jogo plinko"
-            href="plinko.html"
-            data-jogo="Plinko"
-            data-icone="🎯"
-            data-capa="banner-plinko.png">
-
-            <div class="imagem-jogo">
-
-                <img
-                    class="capa-fortune"
-                    src="banner-plinko.png"
-                    alt="Plinko"
-                >
+                1.00x
 
             </div>
 
-            <div class="nome">
-                Plinko
-            </div>
+        </div>
 
-            <div class="descricao">
-                Solte a bola
-            </div>
+        <div
+            id="arena"
+            class="arena">
 
-        </a>
+            <div class="lua"></div>
 
+            <div class="nuvem"></div>
 
-        <!-- DICE -->
+            <div
+                id="monstro"
+                class="monstro">
 
-        <a
-            class="jogo dice"
-            href="dice.html"
-            data-jogo="Dice"
-            data-icone="🎲"
-            data-capa="banner-dice.png">
-
-            <div class="imagem-jogo">
-
-                <img
-                    class="capa-fortune"
-                    src="banner-dice.png"
-                    alt="Dice"
-                >
+                🧛
 
             </div>
 
-            <div class="nome">
-                Dice
-            </div>
+            <div
+                id="resultado"
+                class="resultado">
 
-            <div class="descricao">
-                Jogue os dados
-            </div>
+                <div
+                    id="resultadoTitulo"
+                    class="resultado-titulo">
 
-        </a>
+                    💀 Fim da noite
 
+                </div>
 
-        <!-- LOBBY -->
+                <div
+                    id="resultadoTexto"
+                    class="resultado-texto">
 
-        <a
-            class="jogo lobby"
-            href="lobby.html"
-            data-jogo="Lobby"
-            data-icone="🐺"
-            data-capa="banner-lobby.png">
+                    O monstro foi embora.
 
-            <div class="imagem-jogo">
-
-                <img
-                    class="capa-fortune"
-                    src="banner-lobby.png"
-                    alt="Lobby"
-                >
+                </div>
 
             </div>
 
-            <div class="nome">
-                Lobby
-            </div>
+        </div>
 
-            <div class="descricao">
-                Jogue Lobby
-            </div>
+        <div class="controles">
 
-        </a>
+            <div class="linha">
 
+                <div class="campo">
 
-        <!-- NIGHT MONSTERS -->
+                    <label>
+                        VALOR DA APOSTA
+                    </label>
 
-        <a
-            class="jogo night"
-            href="hotel-transylvania/index.html"
-            data-jogo="Night Monsters"
-            data-icone="🧛">
+                    <input
+                        id="aposta"
+                        class="input-box"
+                        type="number"
+                        min="1"
+                        step="0.01"
+                        value="10"
+                        inputmode="decimal"
+                    >
 
-            <div class="imagem-jogo">
-                <div class="arte">🧛</div>
-            </div>
+                </div>
 
-            <div class="nome">
-                Night Monsters
-            </div>
+                <div class="campo">
 
-            <div class="descricao">
-                Hotel Transilvânia
-            </div>
+                    <label>
+                        RETIRAR EM
+                    </label>
 
-        </a>
+                    <input
+                        id="alvo"
+                        class="input-box"
+                        type="number"
+                        min="1.01"
+                        step="0.01"
+                        value="2"
+                        inputmode="decimal"
+                    >
 
-
-        <!-- FORTUNE SNAKE -->
-
-        <a
-            class="jogo snake"
-            href="fortune-snake.html"
-            data-jogo="Fortune Snake"
-            data-icone="🐍"
-            data-capa="banner-fortune-snake.png">
-
-            <div class="imagem-jogo">
-
-                <img
-                    class="capa-fortune"
-                    src="banner-fortune-snake.png"
-                    alt="Fortune Snake"
-                >
+                </div>
 
             </div>
 
-            <div class="nome">
-                Fortune Snake
+            <button
+                id="botaoJogar"
+                class="botao"
+                type="button">
+
+                🌙 COMEÇAR NOITE
+
+            </button>
+
+            <button
+                id="botaoRetirar"
+                class="botao botao-retirar"
+                type="button">
+
+                💰 RETIRAR AGORA
+
+            </button>
+
+        </div>
+
+        <div class="info">
+
+            <div class="info-box">
+
+                <small>
+                    APOSTA
+                </small>
+
+                <strong id="infoAposta">
+                    R$ 0,00
+                </strong>
+
             </div>
 
-            <div class="descricao">
-                Tente sua sorte
+            <div class="info-box">
+
+                <small>
+                    POSSÍVEL RETORNO
+                </small>
+
+                <strong id="infoRetorno">
+                    R$ 0,00
+                </strong>
+
             </div>
 
-        </a>
+            <div class="info-box">
 
-    </div>
+                <small>
+                    STATUS
+                </small>
 
-    <a
-        class="voltar"
-        href="../index.html">
+                <strong id="infoStatus">
+                    Pronto
+                </strong>
 
-        ← Voltar para o início
+            </div>
 
-    </a>
+        </div>
+
+        <div
+            id="mensagem"
+            class="mensagem">
+
+            Escolha sua aposta e comece a noite.
+
+        </div>
+
+        <div class="historico">
+
+            <div class="historico-titulo">
+
+                <strong>
+                    🌙 Últimas noites
+                </strong>
+
+                <span>
+                    Histórico
+                </span>
+
+            </div>
+
+            <div
+                id="historico"
+                class="lista">
+
+            </div>
+
+        </div>
+
+    </section>
 
 </main>
 
-<nav>
-
-    <a href="../index.html">
-        <span>🏠</span>
-        Início
-    </a>
-
-    <a href="jogos.html">
-        <span>🎮</span>
-        Jogos
-    </a>
-
-    <a href="../index.html">
-        <span>👤</span>
-        Conta
-    </a>
-
-</nav>
-
-<div id="loader">
-
-    <div class="loader-card">
-
-        <div
-            id="loaderIcone"
-            class="loader-icone">
-
-            <img
-                id="loaderImagem"
-                src=""
-                alt="Capa do jogo"
-            >
-
-            <div
-                id="loaderIconeNormal"
-                class="icone-normal">
-
-                🎮
-
-            </div>
-
-        </div>
-
-        <div id="loaderNome">
-            Carregando...
-        </div>
-
-        <div class="loader-status">
-            Carregando jogo...
-        </div>
-
-        <div class="loader-dots">
-
-            <span></span>
-            <span></span>
-            <span></span>
-
-        </div>
-
-    </div>
-
-</div>
-
 <script>
 
-const loader =
-    document.getElementById("loader");
+/* =====================================================
+   NIGHT MONSTERS
+   JOGO COMPLETO
+===================================================== */
 
-const loaderNome =
-    document.getElementById("loaderNome");
+let saldo = 1000;
 
-const loaderImagem =
-    document.getElementById("loaderImagem");
+let jogando = false;
+let apostaAtual = 0;
+let multiplicadorAtual = 1;
+let multiplicadorFinal = 1;
+let intervaloJogo = null;
 
-const loaderIconeNormal =
-    document.getElementById("loaderIconeNormal");
+const saldoElemento =
+    document.getElementById("saldo");
 
-let carregando = false;
+const apostaElemento =
+    document.getElementById("aposta");
 
-document
-.querySelectorAll(".jogo")
-.forEach(function(card){
+const alvoElemento =
+    document.getElementById("alvo");
 
-    card.addEventListener(
-        "click",
-        function(event){
+const multiplicadorElemento =
+    document.getElementById("multiplicador");
 
-            event.preventDefault();
+const botaoJogar =
+    document.getElementById("botaoJogar");
 
-            if(carregando){
-                return;
-            }
+const botaoRetirar =
+    document.getElementById("botaoRetirar");
 
-            carregando = true;
+const arena =
+    document.getElementById("arena");
 
-            const destino =
-                card.getAttribute("href");
+const resultado =
+    document.getElementById("resultado");
 
-            const nome =
-                card.getAttribute("data-jogo");
+const resultadoTitulo =
+    document.getElementById("resultadoTitulo");
 
-            const icone =
-                card.getAttribute("data-icone");
+const resultadoTexto =
+    document.getElementById("resultadoTexto");
 
-            const capa =
-                card.getAttribute("data-capa");
+const infoAposta =
+    document.getElementById("infoAposta");
 
-            loaderNome.textContent =
-                nome || "Carregando...";
+const infoRetorno =
+    document.getElementById("infoRetorno");
 
-            if(capa){
+const infoStatus =
+    document.getElementById("infoStatus");
 
-                loaderImagem.src =
-                    capa;
+const mensagem =
+    document.getElementById("mensagem");
 
-                loaderImagem.style.display =
-                    "block";
+const historico =
+    document.getElementById("historico");
 
-                loaderIconeNormal.style.display =
-                    "none";
 
-            }else{
+/* =====================================================
+   FORMATAÇÃO
+===================================================== */
 
-                loaderImagem.src =
-                    "";
+function dinheiro(valor){
 
-                loaderImagem.style.display =
-                    "none";
+    return Number(valor).toLocaleString(
+        "pt-BR",
+        {
+            style:"currency",
+            currency:"BRL"
+        }
+    );
 
-                loaderIconeNormal.textContent =
-                    icone || "🎮";
+}
 
-                loaderIconeNormal.style.display =
-                    "flex";
+function atualizarSaldo(){
 
-            }
+    saldoElemento.textContent =
+        dinheiro(saldo);
 
-            loader.classList.add("ativo");
+}
 
-            setTimeout(
-                function(){
 
-                    window.location.href =
-                        destino;
+/* =====================================================
+   HISTÓRICO
+===================================================== */
 
-                },
-                1800
-            );
+const resultadosIniciais = [
+    1.42,
+    2.18,
+    1.07,
+    3.74,
+    1.63,
+    5.21
+];
+
+function criarHistorico(){
+
+    historico.innerHTML = "";
+
+    resultadosIniciais.forEach(
+        function(valor){
+
+            adicionarHistorico(valor);
 
         }
     );
 
-});
+}
 
-</script>
+function adicionarHistorico(valor){
 
-<script>
+    const item =
+        document.createElement("div");
 
-const musica =
-    document.getElementById("musicaJogos");
+    item.className =
+        "historico-item " +
+        (valor >= 2 ? "alto" : "baixo");
 
-const botaoSom =
-    document.getElementById("botaoSom");
+    item.textContent =
+        valor.toFixed(2) + "x";
 
-musica.volume = 0.70;
+    historico.prepend(item);
 
-function atualizarBotao(){
+    while(
+        historico.children.length > 8
+    ){
 
-    if(musica.paused){
-
-        botaoSom.innerText =
-            "🔇";
-
-    }else{
-
-        botaoSom.innerText =
-            "🔊";
+        historico.removeChild(
+            historico.lastElementChild
+        );
 
     }
 
 }
 
-async function alternarMusica(){
 
-    if(musica.paused){
+/* =====================================================
+   GERADOR DO MULTIPLICADOR FINAL
+===================================================== */
 
-        try{
+function gerarMultiplicadorFinal(){
 
-            await musica.play();
+    /*
+        Distribuição simples para a demonstração:
 
-            botaoSom.innerText =
-                "🔊";
+        45% -> até 1.50x
+        35% -> 1.50x até 3x
+        15% -> 3x até 6x
+        5%  -> acima de 6x
+    */
 
-        }catch(erro){
+    const sorteio =
+        Math.random();
 
-            console.log(
-                "Não foi possível iniciar a música:",
-                erro
+    let resultado;
+
+    if(sorteio < 0.45){
+
+        resultado =
+            1 +
+            Math.random() * 0.5;
+
+    }else if(sorteio < 0.80){
+
+        resultado =
+            1.5 +
+            Math.random() * 1.5;
+
+    }else if(sorteio < 0.95){
+
+        resultado =
+            3 +
+            Math.random() * 3;
+
+    }else{
+
+        resultado =
+            6 +
+            Math.random() * 9;
+
+    }
+
+    return Number(
+        resultado.toFixed(2)
+    );
+
+}
+
+
+/* =====================================================
+   ATUALIZAR INTERFACE
+===================================================== */
+
+function atualizarInterface(){
+
+    multiplicadorElemento.textContent =
+        multiplicadorAtual.toFixed(2) + "x";
+
+    infoAposta.textContent =
+        dinheiro(apostaAtual);
+
+    infoRetorno.textContent =
+        dinheiro(
+            apostaAtual *
+            multiplicadorAtual
+        );
+
+}
+
+
+/* =====================================================
+   COMEÇAR JOGO
+===================================================== */
+
+function iniciarJogo(){
+
+    if(jogando){
+        return;
+    }
+
+    const aposta =
+        Number(
+            apostaElemento.value
+        );
+
+    const alvo =
+        Number(
+            alvoElemento.value
+        );
+
+    if(
+        !Number.isFinite(aposta) ||
+        aposta <= 0
+    ){
+
+        mensagem.textContent =
+            "Digite um valor de aposta válido.";
+
+        return;
+
+    }
+
+    if(aposta > saldo){
+
+        mensagem.textContent =
+            "Saldo insuficiente para essa aposta.";
+
+        return;
+
+    }
+
+    if(
+        !Number.isFinite(alvo) ||
+        alvo < 1.01
+    ){
+
+        mensagem.textContent =
+            "O multiplicador precisa ser maior que 1.00x.";
+
+        return;
+
+    }
+
+    saldo -= aposta;
+
+    atualizarSaldo();
+
+    apostaAtual =
+        aposta;
+
+    multiplicadorAtual =
+        1;
+
+    multiplicadorFinal =
+        gerarMultiplicadorFinal();
+
+    jogando =
+        true;
+
+    resultado.classList.remove(
+        "ativo"
+    );
+
+    arena.classList.add(
+        "jogando"
+    );
+
+    multiplicadorElemento.className =
+        "multiplicador roxo";
+
+    infoStatus.textContent =
+        "Jogando";
+
+    mensagem.textContent =
+        "A noite começou... retire antes do monstro atacar!";
+
+    botaoJogar.disabled =
+        true;
+
+    botaoRetirar.classList.add(
+        "ativo"
+    );
+
+    apostaElemento.disabled =
+        true;
+
+    alvoElemento.disabled =
+        true;
+
+    atualizarInterface();
+
+    const inicio =
+        Date.now();
+
+    intervaloJogo =
+        setInterval(
+            function(){
+
+                const tempo =
+                    Date.now() - inicio;
+
+                /*
+                    Crescimento progressivo.
+                */
+
+                multiplicadorAtual =
+                    1 +
+                    (
+                        tempo / 1000
+                    ) * 0.38;
+
+                multiplicadorAtual =
+                    Number(
+                        multiplicadorAtual.toFixed(2)
+                    );
+
+                if(
+                    multiplicadorAtual >=
+                    multiplicadorFinal
+                ){
+
+                    multiplicadorAtual =
+                        multiplicadorFinal;
+
+                    atualizarInterface();
+
+                    finalizarPerda();
+
+                    return;
+
+                }
+
+                atualizarInterface();
+
+                const alvoAtual =
+                    Number(
+                        alvoElemento.value
+                    );
+
+                if(
+                    multiplicadorAtual >=
+                    alvoAtual &&
+                    !botaoRetirar.dataset.aviso
+                ){
+
+                    botaoRetirar.dataset.aviso =
+                        "1";
+
+                    mensagem.textContent =
+                        "🎯 Seu alvo foi alcançado! Você pode retirar agora.";
+
+                }
+
+            },
+            100
+        );
+
+}
+
+
+/* =====================================================
+   RETIRAR
+===================================================== */
+
+function retirar(){
+
+    if(!jogando){
+        return;
+    }
+
+    const ganho =
+        apostaAtual *
+        multiplicadorAtual;
+
+    saldo += ganho;
+
+    atualizarSaldo();
+
+    clearInterval(
+        intervaloJogo
+    );
+
+    intervaloJogo =
+        null;
+
+    jogando =
+        false;
+
+    arena.classList.remove(
+        "jogando"
+    );
+
+    multiplicadorElemento.className =
+        "multiplicador verde";
+
+    resultadoTitulo.textContent =
+        "💰 VOCÊ GANHOU!";
+
+    resultadoTexto.textContent =
+        "Retorno de " +
+        dinheiro(ganho) +
+        " em " +
+        multiplicadorAtual.toFixed(2) +
+        "x.";
+
+    resultado.classList.add(
+        "ativo"
+    );
+
+    infoStatus.textContent =
+        "Ganhou";
+
+    mensagem.textContent =
+        "Boa! O monstro não conseguiu pegar sua aposta.";
+
+    adicionarHistorico(
+        multiplicadorAtual
+    );
+
+    resetarControles();
+
+}
+
+
+/* =====================================================
+   PERDEU
+===================================================== */
+
+function finalizarPerda(){
+
+    if(!jogando){
+        return;
+    }
+
+    clearInterval(
+        intervaloJogo
+    );
+
+    intervaloJogo =
+        null;
+
+    jogando =
+        false;
+
+    arena.classList.remove(
+        "jogando"
+    );
+
+    multiplicadorElemento.className =
+        "multiplicador vermelho";
+
+    resultadoTitulo.textContent =
+        "💀 O MONSTRO PEGOU!";
+
+    resultadoTexto.textContent =
+        "A rodada terminou em " +
+        multiplicadorFinal.toFixed(2) +
+        "x.";
+
+    resultado.classList.add(
+        "ativo"
+    );
+
+    infoStatus.textContent =
+        "Perdeu";
+
+    mensagem.textContent =
+        "A noite foi mais forte dessa vez.";
+
+    adicionarHistorico(
+        multiplicadorFinal
+    );
+
+    resetarControles();
+
+}
+
+
+/* =====================================================
+   RESET
+===================================================== */
+
+function resetarControles(){
+
+    botaoJogar.disabled =
+        false;
+
+    botaoRetirar.classList.remove(
+        "ativo"
+    );
+
+    delete botaoRetirar.dataset.aviso;
+
+    apostaElemento.disabled =
+        false;
+
+    alvoElemento.disabled =
+        false;
+
+    apostaAtual =
+        0;
+
+    infoAposta.textContent =
+        dinheiro(0);
+
+    infoRetorno.textContent =
+        dinheiro(0);
+
+}
+
+
+/* =====================================================
+   BOTÕES
+===================================================== */
+
+botaoJogar.addEventListener(
+    "click",
+    iniciarJogo
+);
+
+botaoRetirar.addEventListener(
+    "click",
+    retirar
+);
+
+
+/* =====================================================
+   ATUALIZAÇÃO DOS CAMPOS
+===================================================== */
+
+apostaElemento.addEventListener(
+    "input",
+    function(){
+
+        if(jogando){
+            return;
+        }
+
+        const valor =
+            Number(
+                apostaElemento.value
             );
 
-            botaoSom.innerText =
-                "🔇";
-        }
+        infoAposta.textContent =
+            dinheiro(
+                Number.isFinite(valor)
+                ? valor
+                : 0
+            );
 
-    }else{
-
-        musica.pause();
-
-        musica.currentTime = 0;
-
-        botaoSom.innerText =
-            "🔇";
+        infoRetorno.textContent =
+            dinheiro(
+                Number.isFinite(valor)
+                ? valor *
+                  Number(alvoElemento.value || 1)
+                : 0
+            );
 
     }
+);
 
-}
+alvoElemento.addEventListener(
+    "input",
+    function(){
 
-botaoSom.addEventListener(
+        if(jogando){
+            return;
+        }
+
+        const valor =
+            Number(
+                apostaElemento.value
+            );
+
+        const alvo =
+            Number(
+                alvoElemento.value
+            );
+
+        infoRetorno.textContent =
+            dinheiro(
+                Number.isFinite(valor) &&
+                Number.isFinite(alvo)
+                ? valor * alvo
+                : 0
+            );
+
+    }
+);
+
+
+/* =====================================================
+   FECHAR RESULTADO AO CLICAR
+===================================================== */
+
+resultado.addEventListener(
     "click",
-    function(event){
-
-        event.preventDefault();
-
-        event.stopPropagation();
-
-        alternarMusica();
-
-    }
-);
-
-musica.addEventListener(
-    "pause",
-    atualizarBotao
-);
-
-musica.addEventListener(
-    "play",
-    atualizarBotao
-);
-
-window.addEventListener(
-    "pagehide",
     function(){
 
-        musica.pause();
+        resultado.classList.remove(
+            "ativo"
+        );
 
-        musica.currentTime = 0;
+        multiplicadorElemento.className =
+            "multiplicador";
 
-    }
-);
+        multiplicadorAtual =
+            1;
 
-document.addEventListener(
-    "visibilitychange",
-    function(){
+        atualizarInterface();
 
-        if(
-            document.visibilityState ===
-            "hidden"
-        ){
+        mensagem.textContent =
+            "Escolha sua aposta e comece uma nova noite.";
 
-            musica.pause();
-
-            musica.currentTime = 0;
-
-            botaoSom.innerText =
-                "🔇";
-
-        }
+        infoStatus.textContent =
+            "Pronto";
 
     }
 );
 
-atualizarBotao();
+
+/* =====================================================
+   INICIALIZAÇÃO
+===================================================== */
+
+atualizarSaldo();
+
+criarHistorico();
+
+atualizarInterface();
 
 </script>
 
