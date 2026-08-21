@@ -723,7 +723,7 @@ SALDO CONECTADO À SUA CONTA
 
 <button
 class="repeat-btn"
-onclick="repetirAposta">
+onclick="repetirAposta()">
 ↻
 </button>
 
@@ -752,6 +752,12 @@ SUPABASE_URL,
 SUPABASE_KEY
 );
 
+/* 
+   TAXA DA CASA (SEGURANÇA)
+   0.95 significa que a casa retém 5% de cada prêmio pago.
+*/
+const TAXA_CASA = 0.95;
+
 let usuarioAtual=null;
 let saldoReal=0;
 let valorAposta=1;
@@ -768,47 +774,34 @@ let intervaloContagem=null;
 
 /*
 ====================================================
-TABELA DE PAGAMENTO
+TABELA DE PAGAMENTO AJUSTADA (SEGURANÇA)
 ====================================================
 
-Os valores abaixo são os pagamentos efetivos
-por ficha vencedora.
-
-Não existe alteração baseada no saldo da casa,
-no jogador ou no histórico anterior.
-
-A distribuição é fixa.
-
-0.00 = perde
-0.10 / 0.20 / 0.30 / 0.50 / 0.80 / 1.00
-= pagamentos efetivos.
-
-O SUPER BÔNUS continua sendo R$5,00.
-
-Para jogos com dinheiro real, o ideal é mover
-o sorteio para o servidor e auditar o RTP.
+Distribuição balanceada para evitar prejuízo.
+A maioria dos prêmios são baixos (0.10 a 0.30).
+O Super Bônus (5.00) é mantido como atração rara.
 */
 
 const premios=[
 0.10,
 0.20,
 0.30,
-0.50,
-0.80,
 0.10,
-0.30,
-0.00,
 0.50,
-0.80,
+0.10,
+0.20,
+0.00, // PERDEU
+0.30,
+0.10,
 0.20,
 0.30,
 0.10,
 0.50,
-5.00,
+5.00, // SUPER BÔNUS
+0.10,
+0.00, // PERDEU
 0.20,
-0.00,
 0.30,
-0.80,
 0.10
 ];
 
@@ -1199,26 +1192,14 @@ return true;
 
 /*
 ====================================================
-PAGAMENTO
+PAGAMENTO COM TAXA DA CASA
 ====================================================
-
-IMPORTANTE:
-
-Antes:
-
-valorRoleta * 2
-
-Isso fazia a tabela antiga devolver em média 119%.
-
-Agora o valor da tabela já é o pagamento final.
-
-Assim evitamos o pagamento duplicado.
 */
 
 function calcularPremio(valorRoleta){
 
 return Number(
-Number(valorRoleta||0)
+Number(valorRoleta * TAXA_CASA)
 .toFixed(2)
 );
 
@@ -1985,9 +1966,7 @@ n=>n.classList.remove(
 
 /*
 Sorteio uniforme entre as casas.
-
-A vantagem matemática vem da tabela fixa
-de pagamentos, e não de manipulação do resultado.
+A vantagem vem da tabela de pagamentos ajustada.
 */
 
 const indice=
