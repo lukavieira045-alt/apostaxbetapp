@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crash ApostaXBet - Debug</title>
+<title>Crash ApostaXBet - Fix Final</title>
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif}
 html{background:#02030a}
@@ -112,64 +112,48 @@ function atualizarSomAviao(){if(!motorOsc||!motorGain||!audioContext)return;cons
 function somVum(){iniciarAudio();if(!audioContext)return;const agora=audioContext.currentTime;const osc=audioContext.createOscillator();const gain=audioContext.createGain();osc.type="sine";osc.frequency.setValueAtTime(180,agora);osc.frequency.exponentialRampToValueAtTime(650,agora+0.35);gain.gain.setValueAtTime(0.001,agora);gain.gain.linearRampToValueAtTime(0.10,agora+0.06);gain.gain.exponentialRampToValueAtTime(0.001,agora+0.40);osc.connect(gain);gain.connect(audioContext.destination);osc.start(agora);osc.stop(agora+0.42)}
 function pararSomAviao(){if(motorOsc&&motorGain&&audioContext){const agora=audioContext.currentTime;motorGain.gain.cancelScheduledValues(agora);motorGain.gain.setTargetAtTime(0.001,agora,0.08);try{motorOsc.stop(agora+0.25)}catch(e){}motorOsc=null;motorGain=null}}
 
-// FUNÇÃO DE SALDO COM DEBUG INTEGRADO
+// FUNÇÃO DE SALDO COM UPSERT AUTOMÁTICO E DEBUG
 async function buscarSaldo(){
     if(!usuarioAtual){
-        console.error("❌ USUÁRIO NÃO LOGADO AO BUSCAR SALDO");
-        mensagemEl.innerText = "⚠️ ERRO CRÍTICO: Usuário não autenticado!";
+        console.error(" USUÁRIO NÃO LOGADO");
+        mensagemEl.innerText = "⚠️ ERRO: Faça login primeiro!";
         mensagemEl.className = "mensagemCrash";
         return 0;
     }
     
-    console.log("🔍 [DEBUG] Buscando saldo para user_id:", usuarioAtual.id);
+    console.log("🔍 Buscando/criando saldo para:", usuarioAtual.id);
     
-    const {data, error} = await supabase
+    // Tenta buscar primeiro
+    let {data, error} = await supabase
         .from("saldos")
         .select("valor")
         .eq("user_id", usuarioAtual.id)
         .single();
     
-    if(error){
-        console.error(" [DEBUG] ERRO SUPABASE:", error.message);
-        console.error("❌ [DEBUG] DETALHES:", error.details);
-        console.error("❌ [DEBUG] HINT:", error.hint);
+    // Se não encontrou ou deu erro, tenta criar/atualizar (UPSERT)
+    if(error || !data){
+        console.warn("⚠️ Registro não encontrado, criando via upsert...");
         
-        // Se for erro de política (RLS) ou tabela inexistente
-        if(error.code === 'PGRST116' || error.message.includes('permission denied')){
-            mensagemEl.innerText = "⚠️ BLOQUEIO DE SEGURANÇA: Verifique as políticas RLS no Supabase!";
-        } else if (error.code === '42P01') {
-            mensagemEl.innerText = "⚠️ TABELA FALTANDO: Crie a tabela 'saldos' no Supabase!";
-        } else {
-            mensagemEl.innerText = "⚠️ ERRO BANCO: " + error.message;
-        }
-        mensagemEl.className = "mensagemCrash";
-        return 0;
-    }
-    
-    if(!data){
-        console.warn("⚠️ [DEBUG] NENHUM REGISTRO ENCONTRADO PARA ESTE USUÁRIO");
-        mensagemEl.innerText = "⚠️ Criando registro de saldo zerado...";
-        mensagemEl.className = "mensagemCrash";
-        
-        // Tenta criar automaticamente se não existir
-        const {error: insertError} = await supabase
+        const {data: newData, error: upsertError} = await supabase
             .from("saldos")
-            .insert({user_id: usuarioAtual.id, valor: 0});
+            .upsert({user_id: usuarioAtual.id, valor: 0}, {onConflict: 'user_id'})
+            .select("valor")
+            .single();
             
-        if(insertError) {
-            console.error("❌ [DEBUG] FALHA AO CRIAR REGISTRO:", insertError.message);
-            mensagemEl.innerText = "⚠️ Falha ao criar saldo. Verifique RLS de INSERT.";
-        } else {
-            console.log("✅ [DEBUG] Registro criado com sucesso!");
-            mensagemEl.innerText = "✅ Registro criado. Atualizando...";
-            setTimeout(() => buscarSaldo(), 1000);
+        if(upsertError || !newData){
+            console.error("❌ FALHA NO UPSERT:", upsertError?.message);
+            mensagemEl.innerText = "⚠️ ERRO CRÍTICO: Não foi possível criar saldo. Verifique RLS!";
+            mensagemEl.className = "mensagemCrash";
+            return 0;
         }
-        return 0;
+        
+        data = newData;
+        console.log("✅ Registro criado/atualizado com sucesso!");
     }
     
     saldoReal = parseFloat(data.valor || 0);
-    console.log("✅ [DEBUG] SALDO CARREGADO COM SUCESSO:", saldoReal);
-    mensagemEl.innerText = ""; // Limpa mensagens de erro
+    console.log("✅ SALDO DEFINITIVO:", saldoReal);
+    mensagemEl.innerText = "";
     atualizarTela();
     return saldoReal;
 }
@@ -178,7 +162,7 @@ async function salvarSaldo(novoValor){
     if(!usuarioAtual)return false;
     const valorFinal=Number(Number(novoValor).toFixed(2));
     const {error}=await supabase.from("saldos").update({valor:valorFinal}).eq("user_id",usuarioAtual.id);
-    if(error){console.error("Erro ao salvar saldo:",error);return false}
+    if(error){console.error("Erro ao salvar:",error);return false}
     saldoReal=valorFinal;atualizarTela();return true
 }
 
@@ -200,36 +184,21 @@ async function processarVitoria(valorAposta,multiplicador){
     return ganhoReal
 }
 
-function atualizarTela(){
-    document.getElementById("saldo").innerText=`💰 Saldo: R$ ${saldoReal.toFixed(2).replace(".",",")}`
-}
+function atualizarTela(){document.getElementById("saldo").innerText=`💰 Saldo: R$ ${saldoReal.toFixed(2).replace(".",",")}`}
 
-window.selecionarAposta=function(valorSelecionado,botao){
-    if(rodando)return;
-    apostaValor=Number(valorSelecionado);
-    apostaInput.value=apostaValor;
-    document.querySelectorAll(".valor-btn").forEach(b=>b.classList.remove("ativo"));
-    botao.classList.add("ativo")
-};
+window.selecionarAposta=function(v,b){if(rodando)return;apostaValor=Number(v);apostaInput.value=v;document.querySelectorAll(".valor-btn").forEach(x=>x.classList.remove("ativo"));b.classList.add("ativo")};
 
 window.jogar=async function(){
     if(rodando)return;
     await iniciarMusica();iniciarAudio();
     apostaValor=Number(apostaInput.value);
-    if(!Number.isFinite(apostaValor)||apostaValor<=0){alert("Digite um valor de aposta válido.");return}
+    if(!Number.isFinite(apostaValor)||apostaValor<=0){alert("Valor inválido.");return}
     
-    // VALIDAÇÃO DE SALDO EM TEMPO REAL ANTES DO GIRO
-    const saldoAtualizado = await buscarSaldo();
-    if(apostaValor > saldoReal){
-        alert("❌ Saldo insuficiente! Seu saldo atual é R$ " + saldoReal.toFixed(2));
-        return;
-    }
+    const saldoAtual = await buscarSaldo();
+    if(apostaValor > saldoReal){alert("❌ Saldo insuficiente! Atual: R$ "+saldoReal.toFixed(2));return}
     
     const debitado = await debitar(apostaValor);
-    if(!debitado){
-        alert("Falha ao debitar aposta. Tente novamente.");
-        return;
-    }
+    if(!debitado){alert("Falha ao debitar.");return}
     
     rodando=true;valorAtual=1;
     const r=Math.random();queda=(0.92/(1-r));
@@ -247,27 +216,27 @@ function atualizarVoo(){
     if(!rodando)return;
     valorAtual+=0.05;
     numeroEl.innerHTML=valorAtual.toFixed(2)+"x";
-    const progresso=Math.min((valorAtual-1)/6,1);
-    const altura=30+progresso*220;const esquerda=38+progresso*180;
-    aviaoEl.style.bottom=altura+"px";aviaoEl.style.left=esquerda+"px";
-    const tamanhoLinha=Math.min(25+(valorAtual-1)*42,255);
-    linhaEl.style.height=tamanhoLinha+"px";linhaEl.style.left=(esquerda+12)+"px";
-    const movimentoCenario=Math.min((valorAtual-1)*13,150);
-    cenarioEl.style.transform=`translateY(${movimentoCenario}px)`;
-    const escala=Math.min(0.7+valorAtual*0.08,2.5);
-    energiaEl.style.transform=`scale(${escala})`;energiaEl.style.opacity=Math.min(0.2+valorAtual*0.04,0.8);
+    const p=Math.min((valorAtual-1)/6,1);
+    const alt=30+p*220; const esq=38+p*180;
+    aviaoEl.style.bottom=alt+"px";aviaoEl.style.left=esq+"px";
+    const tl=Math.min(25+(valorAtual-1)*42,255);
+    linhaEl.style.height=tl+"px";linhaEl.style.left=(esq+12)+"px";
+    const mc=Math.min((valorAtual-1)*13,150);
+    cenarioEl.style.transform=`translateY(${mc}px)`;
+    const sc=Math.min(0.7+valorAtual*0.08,2.5);
+    energiaEl.style.transform=`scale(${sc})`;energiaEl.style.opacity=Math.min(0.2+valorAtual*0.04,0.8);
     atualizarSomAviao();
-    if(valorAtual>2&&Math.abs(valorAtual%1)<0.051){somVum()}
-    if(valorAtual>=queda){finalizarCrash()}
+    if(valorAtual>2&&Math.abs(valorAtual%1)<0.051)somVum();
+    if(valorAtual>=queda)finalizarCrash();
 }
 
 window.parar=async function(){
     if(!rodando)return;
     clearInterval(tempo);rodando=false;pararBtn.disabled=true;pararSomAviao();
-    const ganho=await processarVitoria(apostaValor,valorAtual);
-    if(ganho<=0){mensagemEl.className="mensagemCrash";mensagemEl.innerHTML="❌ ERRO AO PROCESSAR O SALDO";jogarBtn.disabled=false;resetarVisual();return}
+    const g=await processarVitoria(apostaValor,valorAtual);
+    if(g<=0){mensagemEl.className="mensagemCrash";mensagemEl.innerHTML="❌ ERRO AO CREDITAR";jogarBtn.disabled=false;resetarVisual();return}
     somVum();mensagemEl.className="mensagemSaque";
-    mensagemEl.innerHTML=" PAROU EM "+valorAtual.toFixed(2)+"x<br>💰 RETORNO: R$ "+ganho.toFixed(2).replace(".",",");
+    mensagemEl.innerHTML=" PAROU EM "+valorAtual.toFixed(2)+"x<br>💰 RETORNO: R$ "+g.toFixed(2).replace(".",",");
     adicionarHistorico(valorAtual.toFixed(2)+"x");numeroEl.classList.remove("subindo");rastroEl.classList.remove("ativo");
     jogarBtn.disabled=false;await atualizarTela();setTimeout(resetarVisual,1200);
 };
@@ -291,45 +260,30 @@ function resetarVisual(){
     jogarBtn.disabled=false;pararBtn.disabled=true;
 }
 
-function adicionarHistorico(valorHistorico){historico.unshift(valorHistorico);if(historico.length>5){historico.pop()}document.getElementById("historico").innerHTML="Últimas rodadas:<br>"+historico.join(" | ")}
+function adicionarHistorico(v){historico.unshift(v);if(historico.length>5)historico.pop();document.getElementById("historico").innerHTML="Últimas:<br>"+historico.join(" | ")}
+
+async function obterUsuario(){const {data,error}=await supabase.auth.getSession();if(error){console.error(error);return null}return data?.session?.user||null}
 
 async function iniciarPagina(){
     try{
         usuarioAtual=await obterUsuario();
         if(!usuarioAtual){
-            console.warn("Nenhum usuário logado encontrado");
-            mensagemEl.innerText = "⚠️ Faça login para jogar";
-            mensagemEl.className = "mensagemCrash";
-            setTimeout(() => {
-                if(confirm("Você precisa estar logado para jogar. Ir para página de login?")) {
-                    window.location.href="../index.html";
-                }
-            }, 2000);
+            mensagemEl.innerText="⚠️ Faça login para jogar";
+            mensagemEl.className="mensagemCrash";
+            setTimeout(()=>{if(confirm("Ir para login?"))window.location.href="../index.html"},2000);
             return;
         }
-        musicaFundo.volume=0.10;
-        await buscarSaldo();
-    }catch(error){
-        console.error("Erro fatal ao iniciar:", error);
-        mensagemEl.innerText = "❌ Erro ao iniciar jogo: " + error.message;
-        mensagemEl.className = "mensagemCrash";
+        await buscarSaldo(); // Usa upsert automático
+    }catch(e){
+        console.error(e);
+        mensagemEl.innerText="❌ Erro fatal: "+e.message;
+        mensagemEl.className="mensagemCrash";
     }
 }
 
-async function obterUsuario(){
-    const {data,error}=await supabase.auth.getSession();
-    if(error){console.error("Erro de sessão:",error);return null}
-    return data?.session?.user||null
-}
-
-supabase.auth.onAuthStateChange(function(event,session){
-    if(!session){
-        console.warn("Sessão expirada ou logout detectado");
-        window.location.href="../index.html";
-    } else {
-        usuarioAtual = session.user;
-        buscarSaldo();
-    }
+supabase.auth.onAuthStateChange((e,s)=>{
+    if(!s)window.location.href="../index.html";
+    else{usuarioAtual=s.user;buscarSaldo()}
 });
 
 iniciarPagina();
