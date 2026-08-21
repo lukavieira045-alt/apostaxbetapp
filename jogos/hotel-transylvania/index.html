@@ -3,1684 +3,386 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
 <title>Night Monsters - ApostaXBet</title>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    -webkit-tap-highlight-color:transparent;
-}
-
-body{
-    min-height:100vh;
-    background:
-        radial-gradient(circle at 50% 25%,#35154b 0,#12091c 38%,#050507 80%);
-    color:white;
-    font-family:Arial,sans-serif;
-    overflow-x:hidden;
-}
-
-.topo{
-    height:60px;
-    padding:0 15px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    background:#08080b;
-    border-bottom:1px solid #5c426c;
-}
-
-.logo{
-    color:#f5d45c;
-    font-size:17px;
-    font-weight:900;
-    letter-spacing:1px;
-}
-
-.saldo{
-    text-align:right;
-}
-
-.saldo small{
-    display:block;
-    color:#777;
-    font-size:9px;
-}
-
-#saldo{
-    color:#ffe45e;
-    font-weight:bold;
-}
-
-.container{
-    width:100%;
-    max-width:500px;
-    margin:auto;
-    padding:12px 10px 35px;
-}
-
-.voltar{
-    display:inline-block;
-    color:#aaa;
-    text-decoration:none;
-    font-size:12px;
-    margin-bottom:8px;
-}
-
-.titulo{
-    text-align:center;
-    color:#f4d35e;
-    font-weight:900;
-    font-size:20px;
-    letter-spacing:2px;
-    text-shadow:0 0 12px #a65cff;
-}
-
-.subtitulo{
-    text-align:center;
-    color:#777;
-    font-size:9px;
-    letter-spacing:3px;
-    margin-top:4px;
-}
-
-.jogo{
-    margin-top:15px;
-    padding:12px 9px 15px;
-    border:1px solid #73517e;
-    border-radius:12px;
-    background:linear-gradient(145deg,#211226,#09090c);
-    box-shadow:
-        0 0 25px rgba(148,60,200,.25),
-        inset 0 0 20px rgba(0,0,0,.8);
-    position:relative;
-    overflow:hidden;
-}
-
-.raio{
-    position:absolute;
-    height:3px;
-    width:120px;
-    background:white;
-    box-shadow:0 0 5px white,0 0 15px #c56cff;
-    opacity:.6;
-    animation:flash .8s infinite alternate;
-}
-
-.raio1{
-    top:35px;
-    left:-20px;
-    transform:rotate(25deg);
-}
-
-.raio2{
-    top:80px;
-    right:-20px;
-    transform:rotate(-28deg);
-    animation-delay:.3s;
-}
-
-.raio3{
-    bottom:45px;
-    left:15px;
-    transform:rotate(-20deg);
-    animation-delay:.5s;
-}
-
-@keyframes flash{
-    from{opacity:.15}
-    to{opacity:1}
-}
-
-.multiplicador{
-    text-align:center;
-    height:45px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-#multiplicador{
-    color:#ffe25b;
-    font-size:22px;
-    font-weight:900;
-    text-shadow:0 0 5px #ffbf00,0 0 15px #a648ff;
-}
-
-.rolos{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:7px;
-    padding:10px;
-    border:2px solid #b18b3a;
-    border-radius:8px;
-    background:linear-gradient(180deg,#180d20,#050507);
-    box-shadow:0 0 20px rgba(183,112,255,.25),inset 0 0 18px #000;
-}
-
-.rolo{
-    height:145px;
-    overflow:hidden;
-    position:relative;
-    border:2px solid #6e4b7d;
-    border-radius:7px;
-    background:#09090c;
-    box-shadow:inset 0 0 18px #000;
-}
-
-.rolo::before,
-.rolo::after{
-    content:"";
-    position:absolute;
-    left:0;
-    right:0;
-    height:35px;
-    z-index:4;
-    pointer-events:none;
-}
-
-.rolo::before{
-    top:0;
-    background:linear-gradient(#08080b,transparent);
-}
-
-.rolo::after{
-    bottom:0;
-    background:linear-gradient(transparent,#08080b);
-}
-
-.simbolos{
-    position:absolute;
-    top:0;
-    width:100%;
-}
-
-.simbolo{
-    height:70px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:42px;
-    border-bottom:1px solid #23172a;
-    background:radial-gradient(circle,#281832,#08080b 70%);
-}
-
-.simbolo.destaque{
-    text-shadow:0 0 8px white,0 0 20px #bf55ff;
-}
-
-.linha{
-    height:4px;
-    position:absolute;
-    top:50%;
-    left:9px;
-    right:9px;
-    transform:translateY(-50%);
-    background:#ffe45c;
-    box-shadow:0 0 10px #ffe45c;
-    z-index:6;
-    opacity:.75;
-    pointer-events:none;
-}
-
-.valor-area{
-    margin-top:12px;
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:5px;
-}
-
-.valor{
-    height:40px;
-    border:1px solid #624d29;
-    background:#0a090b;
-    color:#aaa;
-    border-radius:5px;
-    font-weight:bold;
-}
-
-.valor.ativo{
-    color:#ffe45b;
-    border-color:#ffe45b;
-    box-shadow:0 0 10px rgba(255,215,60,.3);
-}
-
-.apostar{
-    width:100%;
-    height:55px;
-    margin-top:10px;
-    border:1px solid #e1b93e;
-    border-radius:6px;
-    background:linear-gradient(180deg,#4b3510,#171105);
-    color:#ffe36a;
-    font-size:17px;
-    font-weight:900;
-    letter-spacing:2px;
-    box-shadow:0 0 15px rgba(255,210,50,.2);
-}
-
-.apostar:disabled{
-    opacity:.35;
-}
-
-.resultado{
-    min-height:55px;
-    margin-top:10px;
-    text-align:center;
-    color:#bbb;
-    font-weight:900;
-    font-size:16px;
-    line-height:22px;
-}
-
-.premio{
-    color:#ffe45b;
-    font-size:22px;
-    text-shadow:0 0 15px #ffbd00;
-}
-
-.info{
-    display:flex;
-    justify-content:space-between;
-    color:#777;
-    font-size:11px;
-    margin-top:5px;
-}
-
-.info strong{
-    color:#ffe45b;
-}
-
-.rtp{
-    margin-top:12px;
-    padding:8px;
-    border-top:1px solid #3a2941;
-    text-align:center;
-    color:#777;
-    font-size:9px;
-    line-height:14px;
-}
-
-.jogando .rolos{
-    box-shadow:
-        0 0 20px #a94cff,
-        0 0 40px rgba(176,65,255,.35),
-        inset 0 0 18px #000;
-}
-
-@keyframes tremor{
-    0%,100%{transform:translateX(0)}
-    25%{transform:translateX(-2px)}
-    75%{transform:translateX(2px)}
-}
-
-.tremendo{
-    animation:tremor .08s infinite;
-}
-
-@media(max-width:360px){
-
-    .rolo{
-        height:125px;
-    }
-
-    .simbolo{
-        height:60px;
-        font-size:34px;
-    }
-}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:radial-gradient(circle at 50% 25%,#35154b 0,#12091c 38%,#050507 80%);color:white;font-family:Arial,sans-serif;overflow-x:hidden}
+.topo{height:60px;padding:0 15px;display:flex;align-items:center;justify-content:space-between;background:#08080b;border-bottom:1px solid #5c426c}
+.logo{color:#f5d45c;font-size:17px;font-weight:900;letter-spacing:1px}
+.saldo{text-align:right}
+.saldo small{display:block;color:#777;font-size:9px}
+#saldo{color:#ffe45e;font-weight:bold}
+.container{width:100%;max-width:500px;margin:auto;padding:12px 10px 35px}
+.voltar{display:inline-block;color:#aaa;text-decoration:none;font-size:12px;margin-bottom:8px}
+.titulo{text-align:center;color:#f4d35e;font-weight:900;font-size:20px;letter-spacing:2px;text-shadow:0 0 12px #a65cff}
+.subtitulo{text-align:center;color:#777;font-size:9px;letter-spacing:3px;margin-top:4px}
+.jogo{margin-top:15px;padding:12px 9px 15px;border:1px solid #73517e;border-radius:12px;background:linear-gradient(145deg,#211226,#09090c);box-shadow:0 0 25px rgba(148,60,200,.25),inset 0 0 20px rgba(0,0,0,.8);position:relative;overflow:hidden}
+.raio{position:absolute;height:3px;width:120px;background:white;box-shadow:0 0 5px white,0 0 15px #c56cff;opacity:.6;animation:flash .8s infinite alternate}
+.raio1{top:35px;left:-20px;transform:rotate(25deg)}
+.raio2{top:80px;right:-20px;transform:rotate(-28deg);animation-delay:.3s}
+.raio3{bottom:45px;left:15px;transform:rotate(-20deg);animation-delay:.5s}
+@keyframes flash{from{opacity:.15}to{opacity:1}}
+.multiplicador{text-align:center;height:45px;display:flex;align-items:center;justify-content:center}
+#multiplicador{color:#ffe25b;font-size:22px;font-weight:900;text-shadow:0 0 5px #ffbf00,0 0 15px #a648ff}
+.rolos{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:10px;border:2px solid #b18b3a;border-radius:8px;background:linear-gradient(180deg,#180d20,#050507);box-shadow:0 0 20px rgba(183,112,255,.25),inset 0 0 18px #000}
+.rolo{height:145px;overflow:hidden;position:relative;border:2px solid #6e4b7d;border-radius:7px;background:#09090c;box-shadow:inset 0 0 18px #000}
+.rolo::before,.rolo::after{content:"";position:absolute;left:0;right:0;height:35px;z-index:4;pointer-events:none}
+.rolo::before{top:0;background:linear-gradient(#08080b,transparent)}
+.rolo::after{bottom:0;background:linear-gradient(transparent,#08080b)}
+.simbolos{position:absolute;top:0;width:100%}
+.simbolo{height:70px;display:flex;align-items:center;justify-content:center;font-size:42px;border-bottom:1px solid #23172a;background:radial-gradient(circle,#281832,#08080b 70%)}
+.simbolo.destaque{text-shadow:0 0 8px white,0 0 20px #bf55ff}
+.linha{height:4px;position:absolute;top:50%;left:9px;right:9px;transform:translateY(-50%);background:#ffe45c;box-shadow:0 0 10px #ffe45c;z-index:6;opacity:.75;pointer-events:none}
+.valor-area{margin-top:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.valor{height:40px;border:1px solid #624d29;background:#0a090b;color:#aaa;border-radius:5px;font-weight:bold}
+.valor.ativo{color:#ffe45b;border-color:#ffe45b;box-shadow:0 0 10px rgba(255,215,60,.3)}
+.apostar{width:100%;height:55px;margin-top:10px;border:1px solid #e1b93e;border-radius:6px;background:linear-gradient(180deg,#4b3510,#171105);color:#ffe36a;font-size:17px;font-weight:900;letter-spacing:2px;box-shadow:0 0 15px rgba(255,210,50,.2)}
+.apostar:disabled{opacity:.35}
+.resultado{min-height:55px;margin-top:10px;text-align:center;color:#bbb;font-weight:900;font-size:16px;line-height:22px}
+.premio{color:#ffe45b;font-size:22px;text-shadow:0 0 15px #ffbd00}
+.info{display:flex;justify-content:space-between;color:#777;font-size:11px;margin-top:5px}
+.info strong{color:#ffe45b}
+.rtp{margin-top:12px;padding:8px;border-top:1px solid #3a2941;text-align:center;color:#777;font-size:9px;line-height:14px}
+.jogando .rolos{box-shadow:0 0 20px #a94cff,0 0 40px rgba(176,65,255,.35),inset 0 0 18px #000}
+@keyframes tremor{0%,100%{transform:translateX(0)}25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}
+.tremendo{animation:tremor .08s infinite}
+@media(max-width:360px){.rolo{height:125px}.simbolo{height:60px;font-size:34px}}
 </style>
 </head>
-
 <body>
-
-<audio
-    id="musicaNightMonsters"
-    src="../musica-night-monsters.mp3"
-    loop
-    preload="auto">
-</audio>
-
+<audio id="musicaNightMonsters" src="../musica-night-monsters.mp3" loop preload="auto"></audio>
 <header class="topo">
-
-    <div class="logo">
-        ⚡ NIGHT MONSTERS
-    </div>
-
-    <div class="saldo">
-        <small>SALDO</small>
-        <div id="saldo">R$ 0,00</div>
-    </div>
-
+    <div class="logo">⚡ NIGHT MONSTERS</div>
+    <div class="saldo"><small>SALDO</small><div id="saldo">R$ 0,00</div></div>
 </header>
-
 <div class="container">
-
-    <a href="../index.html" class="voltar">
-        ← Voltar para Jogos
-    </a>
-
-    <div class="titulo">
-        ⚡ NIGHT MONSTERS ⚡
-    </div>
-
-    <div class="subtitulo">
-        SLOTS DE RELÂMPAGOS
-    </div>
-
+    <a href="../index.html" class="voltar">← Voltar para Jogos</a>
+    <div class="titulo">⚡ NIGHT MONSTERS ⚡</div>
+    <div class="subtitulo">SLOTS DE RELÂMPAGOS</div>
     <div class="jogo" id="jogo">
-
-        <div class="raio raio1"></div>
-        <div class="raio raio2"></div>
-        <div class="raio raio3"></div>
-
-        <div class="multiplicador">
-            <div id="multiplicador">
-                PRÊMIO ATÉ 50x
-            </div>
-        </div>
-
+        <div class="raio raio1"></div><div class="raio raio2"></div><div class="raio raio3"></div>
+        <div class="multiplicador"><div id="multiplicador">PRÊMIO ATÉ 50x</div></div>
         <div class="rolos">
-
-            <div class="rolo">
-                <div class="simbolos" id="rolo1"></div>
-            </div>
-
-            <div class="rolo">
-                <div class="simbolos" id="rolo2"></div>
-            </div>
-
-            <div class="rolo">
-                <div class="simbolos" id="rolo3"></div>
-            </div>
-
+            <div class="rolo"><div class="simbolos" id="rolo1"></div></div>
+            <div class="rolo"><div class="simbolos" id="rolo2"></div></div>
+            <div class="rolo"><div class="simbolos" id="rolo3"></div></div>
             <div class="linha"></div>
-
         </div>
-
         <div class="valor-area">
-
-            <button
-                class="valor ativo"
-                onclick="escolherValor(.50,this)">
-                R$ 0,50
-            </button>
-
-            <button
-                class="valor"
-                onclick="escolherValor(1,this)">
-                R$ 1
-            </button>
-
-            <button
-                class="valor"
-                onclick="escolherValor(2,this)">
-                R$ 2
-            </button>
-
-            <button
-                class="valor"
-                onclick="escolherValor(5,this)">
-                R$ 5
-            </button>
-
+            <button class="valor ativo" onclick="escolherValor(.50,this)">R$ 0,50</button>
+            <button class="valor" onclick="escolherValor(1,this)">R$ 1</button>
+            <button class="valor" onclick="escolherValor(2,this)">R$ 2</button>
+            <button class="valor" onclick="escolherValor(5,this)">R$ 5</button>
         </div>
-
-        <button
-            class="apostar"
-            id="btn"
-            onclick="girar()">
-            GIRAR R$ 0,50
-        </button>
-
-        <div class="resultado" id="resultado">
-            BOA SORTE!
-        </div>
-
+        <button class="apostar" id="btn" onclick="girar()">GIRAR R$ 0,50</button>
+        <div class="resultado" id="resultado">BOA SORTE!</div>
         <div class="info">
-
-            <span>
-                Aposta:
-                <strong id="aposta">R$ 0,50</strong>
-            </span>
-
-            <span>
-                Saldo:
-                <strong id="saldo2">R$ 0,00</strong>
-            </span>
-
+            <span>Aposta: <strong id="aposta">R$ 0,50</strong></span>
+            <span>Saldo: <strong id="saldo2">R$ 0,00</strong></span>
         </div>
-
-        <div class="rtp">
-            RTP AJUSTADO · VANTAGEM DA CASA GARANTIDA<br>
-            Resultados aleatórios. Jogue com responsabilidade.
-        </div>
-
+        <div class="rtp">RTP AJUSTADO · VANTAGEM DA CASA GARANTIDA<br>Resultados aleatórios. Jogue com responsabilidade.</div>
     </div>
 </div>
-
 <script>
+const SUPABASE_URL = 'https://jxbzjiwmajjzxgihfjgt.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ';
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-/* =========================================================
-   SUPABASE
-========================================================= */
-
-const SUPABASE_URL =
-'https://jxbzjiwmajjzxgihfjgt.supabase.co';
-
-const SUPABASE_KEY =
-'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ';
-
-const supabaseClient =
-window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
-
-
-/* =========================================================
-   MÚSICA
-========================================================= */
-
-const musica =
-    document.getElementById(
-        "musicaNightMonsters"
-    );
-
+const musica = document.getElementById("musicaNightMonsters");
 musica.volume = 0.35;
-
 let musicaLiberada = false;
-
 async function iniciarMusica(){
-
-    if(musicaLiberada)
-        return;
-
-    try{
-
+    if(musicaLiberada) return;
+    try {
         musica.volume = 0.35;
-
         await musica.play();
-
         musicaLiberada = true;
-
-        console.log(
-            "🎵 Night Monsters: música iniciada"
-        );
-
-    }catch(erro){
-
-        console.log(
-            "MP3 aguardando interação do usuário:",
-            erro
-        );
-
+        console.log("🎵 Night Monsters: música iniciada");
+    } catch(erro) {
+        console.log("MP3 aguardando interação do usuário:", erro);
     }
 }
-
-document.addEventListener(
-    "pointerdown",
-    iniciarMusica,
-    {
-        once:true,
-        passive:true
-    }
-);
-
-
-/* =========================================================
-   AUDIO
-========================================================= */
+document.addEventListener("pointerdown", iniciarMusica, {once:true, passive:true});
 
 let audioContext = null;
-
 function iniciarAudioContext(){
-
-    if(audioContext)
-        return;
-
-    try{
-
-        const AudioContext =
-            window.AudioContext ||
-            window.webkitAudioContext;
-
-        if(!AudioContext)
-            return;
-
-        audioContext =
-            new AudioContext();
-
-        if(
-            audioContext.state ===
-            "suspended"
-        ){
-
-            audioContext.resume();
-
-        }
-
-    }catch(e){
-
-        console.log(
-            "AudioContext indisponível",
-            e
-        );
-
+    if(audioContext) return;
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if(!AudioContext) return;
+        audioContext = new AudioContext();
+        if(audioContext.state === "suspended") audioContext.resume();
+    } catch(e) {
+        console.log("AudioContext indisponível", e);
     }
 }
-
-
 function somGiro(){
-
-    if(!audioContext)
-        return;
-
-    if(
-        audioContext.state ===
-        "suspended"
-    ){
-
-        audioContext.resume();
-
-    }
-
-    const agora =
-        audioContext.currentTime;
-
-    const osc =
-        audioContext.createOscillator();
-
-    const ganho =
-        audioContext.createGain();
-
-    osc.type =
-        "square";
-
-    osc.frequency.setValueAtTime(
-        180,
-        agora
-    );
-
-    osc.frequency.exponentialRampToValueAtTime(
-        70,
-        agora + 0.9
-    );
-
-    ganho.gain.setValueAtTime(
-        0.0001,
-        agora
-    );
-
-    ganho.gain.exponentialRampToValueAtTime(
-        0.045,
-        agora + 0.03
-    );
-
-    ganho.gain.exponentialRampToValueAtTime(
-        0.0001,
-        agora + 1
-    );
-
+    if(!audioContext) return;
+    if(audioContext.state === "suspended") audioContext.resume();
+    const agora = audioContext.currentTime;
+    const osc = audioContext.createOscillator();
+    const ganho = audioContext.createGain();
+    osc.type = "square";
+    osc.frequency.setValueAtTime(180, agora);
+    osc.frequency.exponentialRampToValueAtTime(70, agora + 0.9);
+    ganho.gain.setValueAtTime(0.0001, agora);
+    ganho.gain.exponentialRampToValueAtTime(0.045, agora + 0.03);
+    ganho.gain.exponentialRampToValueAtTime(0.0001, agora + 1);
     osc.connect(ganho);
-
-    ganho.connect(
-        audioContext.destination
-    );
-
+    ganho.connect(audioContext.destination);
     osc.start(agora);
-
-    osc.stop(
-        agora + 1.05
-    );
+    osc.stop(agora + 1.05);
 }
-
-
 function somParada(){
-
-    if(!audioContext)
-        return;
-
-    const agora =
-        audioContext.currentTime;
-
-    const osc =
-        audioContext.createOscillator();
-
-    const ganho =
-        audioContext.createGain();
-
-    osc.type =
-        "triangle";
-
-    osc.frequency.setValueAtTime(
-        100,
-        agora
-    );
-
-    osc.frequency.exponentialRampToValueAtTime(
-        55,
-        agora + 0.18
-    );
-
-    ganho.gain.setValueAtTime(
-        0.05,
-        agora
-    );
-
-    ganho.gain.exponentialRampToValueAtTime(
-        0.0001,
-        agora + 0.25
-    );
-
+    if(!audioContext) return;
+    const agora = audioContext.currentTime;
+    const osc = audioContext.createOscillator();
+    const ganho = audioContext.createGain();
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(100, agora);
+    osc.frequency.exponentialRampToValueAtTime(55, agora + 0.18);
+    ganho.gain.setValueAtTime(0.05, agora);
+    ganho.gain.exponentialRampToValueAtTime(0.0001, agora + 0.25);
     osc.connect(ganho);
-
-    ganho.connect(
-        audioContext.destination
-    );
-
+    ganho.connect(audioContext.destination);
     osc.start(agora);
-
-    osc.stop(
-        agora + 0.3
-    );
+    osc.stop(agora + 0.3);
 }
-
-
 function somPremio(){
-
-    if(!audioContext)
-        return;
-
-    const agora =
-        audioContext.currentTime;
-
-    const notas =
-        [523,659,784,1046];
-
-    notas.forEach(
-        function(freq,i){
-
-            const osc =
-                audioContext.createOscillator();
-
-            const ganho =
-                audioContext.createGain();
-
-            osc.type =
-                "sine";
-
-            osc.frequency.value =
-                freq;
-
-            const inicio =
-                agora + i * 0.12;
-
-            ganho.gain.setValueAtTime(
-                0.0001,
-                inicio
-            );
-
-            ganho.gain.exponentialRampToValueAtTime(
-                0.07,
-                inicio + 0.03
-            );
-
-            ganho.gain.exponentialRampToValueAtTime(
-                0.0001,
-                inicio + 0.4
-            );
-
-            osc.connect(ganho);
-
-            ganho.connect(
-                audioContext.destination
-            );
-
-            osc.start(inicio);
-
-            osc.stop(
-                inicio + 0.45
-            );
-
-        }
-    );
+    if(!audioContext) return;
+    const agora = audioContext.currentTime;
+    const notas = [523,659,784,1046];
+    notas.forEach(function(freq,i){
+        const osc = audioContext.createOscillator();
+        const ganho = audioContext.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        const inicio = agora + i * 0.12;
+        ganho.gain.setValueAtTime(0.0001, inicio);
+        ganho.gain.exponentialRampToValueAtTime(0.07, inicio + 0.03);
+        ganho.gain.exponentialRampToValueAtTime(0.0001, inicio + 0.4);
+        osc.connect(ganho);
+        ganho.connect(audioContext.destination);
+        osc.start(inicio);
+        osc.stop(inicio + 0.45);
+    });
 }
-
-document.addEventListener(
-    "pointerdown",
-    function(){
-
-        iniciarAudioContext();
-
-    },
-    {
-        once:true,
-        passive:true
-    }
-);
-
-
-/* =========================================================
-   CONFIGURAÇÃO
-========================================================= */
+document.addEventListener("pointerdown", function(){iniciarAudioContext();}, {once:true, passive:true});
 
 let aposta = 0.50;
 let girando = false;
 let saldoAtual = 0;
-let ultimoResultado = null; // Proteção contra manipulação
+let ultimoResultado = null;
 
-const simbolos = [
-    "🦇",
-    "👻",
-    "💀",
-    "🕷️",
-    "🧛",
-    "🎃",
-    "⚡",
-    "💎"
-];
+const simbolos = ["🦇","👻","💀","️","🧛","🎃","⚡","💎"];
+const premios = {"🦇":2,"👻":3,"💀":5,"🕷️":8,"🧛":12,"🎃":15,"⚡":20,"💎":50};
 
-/* 
-   TABELA DE PRÊMIOS AJUSTADA PARA SEGURANÇA DA BANCA 
-   Reduzimos os multiplicadores altos para evitar prejuízo imediato.
-*/
-const premios = {
-    "🦇": 2,    // Antes 3
-    "👻": 3,    // Antes 5
-    "💀": 5,    // Antes 8
-    "🕷️": 8,    // Antes 10
-    "🧛": 12,   // Antes 15
-    "🎃": 15,   // Antes 20
-    "⚡": 20,   // Antes 30
-    "💎": 50    // Antes 100 (Mudança crítica para seu bolso)
-};
-
-
-/* =========================================================
-   DINHEIRO
-========================================================= */
-
-function dinheiro(valor){
-
-    return "R$ " +
-        Number(valor)
-        .toFixed(2)
-        .replace(".",",");
-
-}
-
-
-/* =========================================================
-   USUÁRIO
-========================================================= */
+function dinheiro(valor){return "R$ " + Number(valor).toFixed(2).replace(".",",")}
 
 async function getUsuario(){
-
-    const {data,error} =
-        await supabaseClient
-        .auth
-        .getSession();
-
-    if(error){
-
-        console.error(
-            "Erro na sessão:",
-            error
-        );
-
-        return null;
-    }
-
+    const {data,error} = await supabaseClient.auth.getSession();
+    if(error){console.error("Erro na sessão:",error);return null;}
     return data?.session?.user || null;
 }
 
-
-/* =========================================================
-   SALDO
-========================================================= */
-
 async function getSaldo(){
-
-    const user =
-        await getUsuario();
-
-    if(!user)
-        return 0;
-
-    const {data,error} =
-        await supabaseClient
-        .from("saldos")
-        .select("valor")
-        .eq("user_id",user.id)
-        .single();
-
-    if(error){
-
-        console.error(
-            "Erro ao buscar saldo:",
-            error
-        );
-
-        return 0;
-    }
-
-    saldoAtual =
-        Number(data?.valor || 0);
-
+    const user = await getUsuario();
+    if(!user) return 0;
+    const {data,error} = await supabaseClient.from("saldos").select("valor").eq("user_id",user.id).single();
+    if(error){console.error("Erro ao buscar saldo:",error);return 0;}
+    saldoAtual = Number(data?.valor || 0);
     return saldoAtual;
 }
 
-
-/* =========================================================
-   ATUALIZAR SALDO
-========================================================= */
-
 async function atualizarSaldo(){
-
-    const saldo =
-        await getSaldo();
-
-    document.getElementById(
-        "saldo"
-    ).innerText =
-        dinheiro(saldo);
-
-    document.getElementById(
-        "saldo2"
-    ).innerText =
-        dinheiro(saldo);
+    const saldo = await getSaldo();
+    document.getElementById("saldo").innerText = dinheiro(saldo);
+    document.getElementById("saldo2").innerText = dinheiro(saldo);
 }
-
-
-/* =========================================================
-   ALTERAR SALDO COM PROTEÇÃO
-========================================================= */
 
 async function alterarSaldo(novoSaldo){
-
-    const user =
-        await getUsuario();
-
-    if(!user){
-
-        return {
-            sucesso:false,
-            erro:"Usuário não está logado."
-        };
-
-    }
-
-    novoSaldo =
-        Number(novoSaldo);
-
-    if(!Number.isFinite(novoSaldo)){
-
-        return {
-            sucesso:false,
-            erro:"Saldo inválido."
-        };
-
-    }
-
-    novoSaldo =
-        Math.max(
-            0,
-            Number(
-                novoSaldo.toFixed(2)
-            )
-        );
-
-    // Proteção: Verifica se o saldo atual no banco é consistente
-    const {data: dadosAtuais, error: erroLeitura} =
-        await supabaseClient
-        .from("saldos")
-        .select("valor")
-        .eq("user_id",user.id)
-        .single();
-
-    if(erroLeitura){
-        return {
-            sucesso:false,
-            erro:"Erro ao verificar saldo atual."
-        };
-    }
-
-    const saldoNoBanco = Number(dadosAtuais?.valor || 0);
-    
-    // Se houver discrepância grande, recusa a operação
-    if(Math.abs(saldoNoBanco - (novoSaldo)) > 1000){
-        console.warn("Discrepância de saldo detectada");
-    }
-
-    const {error} =
-        await supabaseClient
-        .from("saldos")
-        .update({
-            valor:novoSaldo,
-            ultima_atualizacao: new Date().toISOString() // Log temporal
-        })
-        .eq("user_id",user.id);
-
-    if(error){
-
-        console.error(
-            "Erro ao atualizar saldo:",
-            error
-        );
-
-        return {
-            sucesso:false,
-            erro:error.message
-        };
-
-    }
-
-    saldoAtual =
-        novoSaldo;
-
-    return {
-        sucesso:true,
-        saldo:novoSaldo
-    };
+    const user = await getUsuario();
+    if(!user) return {sucesso:false,erro:"Usuário não está logado."};
+    novoSaldo = Number(novoSaldo);
+    if(!Number.isFinite(novoSaldo)) return {sucesso:false,erro:"Saldo inválido."};
+    novoSaldo = Math.max(0, Number(novoSaldo.toFixed(2)));
+    const {error} = await supabaseClient.from("saldos").update({valor:novoSaldo}).eq("user_id",user.id);
+    if(error){console.error("Erro ao atualizar saldo:",error);return {sucesso:false,erro:error.message};}
+    saldoAtual = novoSaldo;
+    return {sucesso:true,saldo:novoSaldo};
 }
 
-
-/* =========================================================
-   SÍMBOLO
-========================================================= */
-
-function escolherSimbolo(){
-
-    return simbolos[
-        Math.floor(
-            Math.random() *
-            simbolos.length
-        )
-    ];
-}
-
-
-/* =========================================================
-   CRIAR ROLO
-========================================================= */
+function escolherSimbolo(){return simbolos[Math.floor(Math.random() * simbolos.length)];}
 
 function criarRolo(id){
-
-    const area =
-        document.getElementById(id);
-
+    const area = document.getElementById(id);
     area.innerHTML = "";
-
-    for(
-        let i=0;
-        i<18;
-        i++
-    ){
-
-        const div =
-            document.createElement("div");
-
-        div.className =
-            "simbolo";
-
-        div.innerText =
-            escolherSimbolo();
-
+    for(let i=0;i<18;i++){
+        const div = document.createElement("div");
+        div.className = "simbolo";
+        div.innerText = escolherSimbolo();
         area.appendChild(div);
-
     }
 }
 
-
-/* =========================================================
-   ESCOLHER APOSTA
-========================================================= */
-
-function escolherValor(
-    valor,
-    botao
-){
-
-    if(girando)
-        return;
-
-    aposta =
-        Number(valor);
-
-    document
-        .querySelectorAll(".valor")
-        .forEach(
-            function(b){
-
-                b.classList.remove(
-                    "ativo"
-                );
-
-            }
-        );
-
-    botao.classList.add(
-        "ativo"
-    );
-
-    document.getElementById(
-        "aposta"
-    ).innerText =
-        dinheiro(aposta);
-
-    document.getElementById(
-        "btn"
-    ).innerText =
-        "GIRAR " +
-        dinheiro(aposta);
+function escolherValor(valor, botao){
+    if(girando) return;
+    aposta = Number(valor);
+    document.querySelectorAll(".valor").forEach(function(b){b.classList.remove("ativo");});
+    botao.classList.add("ativo");
+    document.getElementById("aposta").innerText = dinheiro(aposta);
+    document.getElementById("btn").innerText = "GIRAR " + dinheiro(aposta);
 }
-
-
-/* =========================================================
-   SORTEIO AJUSTADO (PROTEÇÃO DE PREJUÍZO)
-========================================================= */
 
 function sortearResultado(){
-
     const r = Math.random();
-
-    /* 
-       Distribuição Ajustada para Segurança da Banca 
-       Total de vitórias: ~14.5% 
-       RTP Teórico ajustado para ser favorável à casa.
-    */
-
-    /* 50x (Diamante) - Muito Raro: 0.02% (1 em 5000) */
-    if(r < 0.0002){
-        return ["💎", "💎", "💎"];
-    }
-
-    /* 20x (Raio) - Raro: 0.08% */
-    if(r < 0.0010){
-        return ["⚡", "⚡", "⚡"];
-    }
-
-    /* 15x (Abóbora) */
-    if(r < 0.0030){
-        return ["🎃", "🎃", "🎃"];
-    }
-
-    /* 12x (Vampiro) */
-    if(r < 0.0070){
-        return ["🧛", "🧛", "🧛"];
-    }
-
-    /* 8x (Aranha) */
-    if(r < 0.0150){
-        return ["🕷️", "🕷️", "🕷️"];
-    }
-
-    /* 5x (Caveira) */
-    if(r < 0.0350){
-        return ["💀", "💀", "💀"];
-    }
-
-    /* 3x (Fantasma) */
-    if(r < 0.0750){
-        return ["👻", "👻", "👻"];
-    }
-
-    /* 2x (Morcego) - Prêmio de consolação frequente */
-    if(r < 0.1450){
-        return ["🦇", "🦇", "🦇"];
-    }
-
-    /* 
-       PERDA: 85.5% das vezes 
-       Garante que nunca saiam 3 iguais aqui
-    */
+    if(r < 0.0002) return ["","💎","💎"];
+    if(r < 0.0010) return ["","⚡","⚡"];
+    if(r < 0.0030) return ["🎃","🎃",""];
+    if(r < 0.0070) return ["🧛","🧛","🧛"];
+    if(r < 0.0150) return ["🕷️","🕷️","🕷️"];
+    if(r < 0.0350) return ["💀","💀","💀"];
+    if(r < 0.0750) return ["👻","👻",""];
+    if(r < 0.1450) return ["🦇","","🦇"];
     let a = escolherSimbolo();
     let b = escolherSimbolo();
     let c = escolherSimbolo();
-
-    while(a === b && b === c){
-        c = escolherSimbolo();
-    }
-
-    return [a, b, c];
+    while(a === b && b === c) c = escolherSimbolo();
+    return [a,b,c];
 }
-
-
-/* =========================================================
-   GIRAR COM PROTEÇÕES
-========================================================= */
 
 async function girar(){
-
-    // Proteção 1: Impede múltiplos cliques
-    if(girando)
-        return;
-
-    // Proteção 2: Verifica se já existe uma rodada em andamento no servidor
-    const user = await getUsuario();
-    if(user){
-        const {data: statusJogo} = await supabaseClient
-            .from("saldos")
-            .select("ultima_atualizacao")
-            .eq("user_id", user.id)
-            .single();
-        
-        if(statusJogo && statusJogo.ultima_atualizacao){
-            const ultimaVez = new Date(statusJogo.ultima_atualizacao).getTime();
-            const agora = Date.now();
-            // Se a última atualização foi há menos de 2 segundos, bloqueia
-            if((agora - ultimaVez) < 2000){
-                console.log("Aguarde... rodada anterior ainda processando");
-                return;
-            }
-        }
-    }
-
+    if(girando) return;
     iniciarAudioContext();
-
     await iniciarMusica();
+    if(audioContext && audioContext.state === "suspended") await audioContext.resume();
 
-    if(
-        audioContext &&
-        audioContext.state ===
-        "suspended"
-    ){
-
-        await audioContext.resume();
-
-    }
-
-
-    const saldo =
-        await getSaldo();
-
+    const saldo = await getSaldo();
     if(saldo < aposta){
-
-        alert(
-            "Saldo insuficiente!\n\n" +
-            "Saldo disponível: " +
-            dinheiro(saldo) +
-            "\n\nAposta: " +
-            dinheiro(aposta)
-        );
-
+        alert("Saldo insuficiente!\n\nSaldo disponível: " + dinheiro(saldo) + "\n\nAposta: " + dinheiro(aposta));
         return;
     }
-
 
     girando = true;
-
     somGiro();
-
-
-    const jogo =
-        document.getElementById(
-            "jogo"
-        );
-
-    const btn =
-        document.getElementById(
-            "btn"
-        );
-
-    const resultado =
-        document.getElementById(
-            "resultado"
-        );
-
-
-    jogo.classList.add(
-        "jogando"
-    );
-
-    jogo.classList.add(
-        "tremendo"
-    );
-
+    const jogo = document.getElementById("jogo");
+    const btn = document.getElementById("btn");
+    const resultado = document.getElementById("resultado");
+    jogo.classList.add("jogando","tremendo");
     btn.disabled = true;
+    btn.innerText = "GIRANDO...";
+    resultado.innerText = "⚡ OS MONSTROS ESTÃO GIRANDO...";
+    resultado.style.color = "#ffe45b";
 
-    btn.innerText =
-        "GIRANDO...";
-
-    resultado.innerText =
-        "⚡ OS MONSTROS ESTÃO GIRANDO...";
-
-    resultado.style.color =
-        "#ffe45b";
-
-
-    /*
-    =====================================================
-    DEBITA A APOSTA
-    =====================================================
-    */
-
-    const saldoDepois =
-        Number(
-            (
-                saldo -
-                aposta
-            ).toFixed(2)
-        );
-
-
-    const debito =
-        await alterarSaldo(
-            saldoDepois
-        );
-
-
+    const saldoDepois = Number((saldo - aposta).toFixed(2));
+    const debito = await alterarSaldo(saldoDepois);
     if(!debito.sucesso){
-
         girando = false;
-
-        jogo.classList.remove(
-            "jogando"
-        );
-
-        jogo.classList.remove(
-            "tremendo"
-        );
-
+        jogo.classList.remove("jogando","tremendo");
         btn.disabled = false;
-
-        btn.innerText =
-            "GIRAR " +
-            dinheiro(aposta);
-
-        resultado.innerText =
-            "ERRO AO PROCESSAR A APOSTA";
-
-        resultado.style.color =
-            "#ff5555";
-
+        btn.innerText = "GIRAR " + dinheiro(aposta);
+        resultado.innerText = "ERRO: " + debito.erro;
+        resultado.style.color = "#ff5555";
         return;
     }
-
-
     await atualizarSaldo();
 
-
-    /*
-    =====================================================
-    UM ÚNICO SORTEIO POR RODADA
-    =====================================================
-    */
-
-    const resultadoFinal =
-        sortearResultado();
-    
-    // Armazena o resultado para validação posterior
+    const resultadoFinal = sortearResultado();
     ultimoResultado = resultadoFinal;
-
-
-    prepararRolo(
-        "rolo1",
-        resultadoFinal[0],
-        500
-    );
-
-    prepararRolo(
-        "rolo2",
-        resultadoFinal[1],
-        1000
-    );
-
-    prepararRolo(
-        "rolo3",
-        resultadoFinal[2],
-        1500
-    );
-
-
-    setTimeout(
-        function(){
-
-            finalizar(
-                resultadoFinal
-            );
-
-        },
-        2400
-    );
+    prepararRolo("rolo1", resultadoFinal[0], 500);
+    prepararRolo("rolo2", resultadoFinal[1], 1000);
+    prepararRolo("rolo3", resultadoFinal[2], 1500);
+    setTimeout(function(){finalizar(resultadoFinal);}, 2400);
 }
 
-
-/* =========================================================
-   PREPARAR ROLO
-========================================================= */
-
-function prepararRolo(
-    id,
-    final,
-    tempo
-){
-
-    const area =
-        document.getElementById(id);
-
+function prepararRolo(id, final, tempo){
+    const area = document.getElementById(id);
     area.innerHTML = "";
-
-
-    for(
-        let i=0;
-        i<15;
-        i++
-    ){
-
-        const div =
-            document.createElement("div");
-
-        div.className =
-            "simbolo";
-
-        div.innerText =
-            escolherSimbolo();
-
+    for(let i=0;i<15;i++){
+        const div = document.createElement("div");
+        div.className = "simbolo";
+        div.innerText = escolherSimbolo();
         area.appendChild(div);
-
     }
-
-
-    const finalDiv =
-        document.createElement("div");
-
-    finalDiv.className =
-        "simbolo destaque";
-
-    finalDiv.innerText =
-        final;
-
+    const finalDiv = document.createElement("div");
+    finalDiv.className = "simbolo destaque";
+    finalDiv.innerText = final;
     area.appendChild(finalDiv);
-
-
-    area.style.transition =
-        "none";
-
-    area.style.transform =
-        "translateY(0)";
-
+    area.style.transition = "none";
+    area.style.transform = "translateY(0)";
     area.offsetHeight;
-
-
-    area.style.transition =
-        "transform " +
-        (tempo / 1000 + .8) +
-        "s cubic-bezier(.08,.75,.12,1)";
-
-
-    const distancia =
-        -(15 * 70) + 37;
-
-
-    setTimeout(
-        function(){
-
-            area.style.transform =
-                "translateY(" +
-                distancia +
-                "px)";
-
-        },
-        50
-    );
+    area.style.transition = "transform " + (tempo / 1000 + .8) + "s cubic-bezier(.08,.75,.12,1)";
+    const distancia = -(15 * 70) + 37;
+    setTimeout(function(){area.style.transform = "translateY(" + distancia + "px)";}, 50);
 }
 
-
-/* =========================================================
-   FINALIZAR COM VALIDAÇÃO
-========================================================= */
-
-async function finalizar(
-    resultadoFinal
-){
-
-    const jogo =
-        document.getElementById(
-            "jogo"
-        );
-
-    const btn =
-        document.getElementById(
-            "btn"
-        );
-
-    const resultado =
-        document.getElementById(
-            "resultado"
-        );
-
-
-    jogo.classList.remove(
-        "tremendo"
-    );
-
+async function finalizar(resultadoFinal){
+    const jogo = document.getElementById("jogo");
+    const btn = document.getElementById("btn");
+    const resultado = document.getElementById("resultado");
+    jogo.classList.remove("tremendo");
     somParada();
 
-
-    const iguais =
-        resultadoFinal[0] ===
-        resultadoFinal[1] &&
-        resultadoFinal[1] ===
-        resultadoFinal[2];
-
-
+    const iguais = resultadoFinal[0] === resultadoFinal[1] && resultadoFinal[1] === resultadoFinal[2];
     if(iguais){
-
-        const simbolo =
-            resultadoFinal[0];
-
-        const multiplicador =
-            premios[simbolo];
-
-
-        /*
-        Segurança:
-        somente símbolos presentes
-        na tabela de prêmios podem pagar.
-        */
-
-        if(
-            !Number.isFinite(
-                multiplicador
-            )
-        ){
-
-            resultado.innerText =
-                "RESULTADO INVÁLIDO";
-
-            resultado.style.color =
-                "#ff5555";
-
-        }
-        else{
-
-            const premio =
-                Number(
-                    (
-                        aposta *
-                        multiplicador
-                    ).toFixed(2)
-                );
-
-
-            const saldoAtualizado =
-                await getSaldo();
-
-
-            const novoSaldo =
-                Number(
-                    (
-                        saldoAtualizado +
-                        premio
-                    ).toFixed(2)
-                );
-
-
-            const credito =
-                await alterarSaldo(
-                    novoSaldo
-                );
-
-
+        const simbolo = resultadoFinal[0];
+        const multiplicador = premios[simbolo];
+        if(!Number.isFinite(multiplicador)){
+            resultado.innerText = "RESULTADO INVÁLIDO";
+            resultado.style.color = "#ff5555";
+        } else {
+            const premio = Number((aposta * multiplicador).toFixed(2));
+            const saldoAtualizado = await getSaldo();
+            const novoSaldo = Number((saldoAtualizado + premio).toFixed(2));
+            const credito = await alterarSaldo(novoSaldo);
             if(!credito.sucesso){
-
-                resultado.innerText =
-                    "ERRO AO CREDITAR O PRÊMIO";
-
-                resultado.style.color =
-                    "#ff5555";
-
-            }
-            else{
-
+                resultado.innerText = "ERRO AO CREDITAR O PRÊMIO";
+                resultado.style.color = "#ff5555";
+            } else {
                 await atualizarSaldo();
-
-
-                document.getElementById(
-                    "multiplicador"
-                ).innerText =
-                    multiplicador + "x";
-
-
-                resultado.innerHTML =
-                    "⚡ COMBINAÇÃO PREMIADA!<br>" +
-                    "<span class='premio'>" +
-                    dinheiro(premio) +
-                    "</span>";
-
-
-                resultado.style.color =
-                    "#ffe45b";
-
-
+                document.getElementById("multiplicador").innerText = multiplicador + "x";
+                resultado.innerHTML = "⚡ COMBINAÇÃO PREMIADA!<br><span class='premio'>" + dinheiro(premio) + "</span>";
+                resultado.style.color = "#ffe45b";
                 somPremio();
-
             }
-
         }
-
-    }
-    else{
-
-        document.getElementById(
-            "multiplicador"
-        ).innerText =
-            "TENTE NOVAMENTE";
-
-
-        resultado.innerText =
-            "NÃO FOI DESSA VEZ";
-
-
-        resultado.style.color =
-            "#999";
-
-
+    } else {
+        document.getElementById("multiplicador").innerText = "TENTE NOVAMENTE";
+        resultado.innerText = "NÃO FOI DESSA VEZ";
+        resultado.style.color = "#999";
         await atualizarSaldo();
-
     }
 
-
-    jogo.classList.remove(
-        "jogando"
-    );
-
+    jogo.classList.remove("jogando");
     girando = false;
-
     btn.disabled = false;
-
-    btn.innerText =
-        "GIRAR " +
-        dinheiro(aposta);
-    
-    // Limpa o resultado armazenado
+    btn.innerText = "GIRAR " + dinheiro(aposta);
     ultimoResultado = null;
 }
-
-
-/* =========================================================
-   INICIALIZAÇÃO
-========================================================= */
 
 criarRolo("rolo1");
 criarRolo("rolo2");
 criarRolo("rolo3");
-
 atualizarSaldo();
 
+setInterval(function(){if(!girando) atualizarSaldo();}, 3000);
 
-/* =========================================================
-   ATUALIZAÇÃO AUTOMÁTICA DO SALDO
-========================================================= */
-
-setInterval(
-    function(){
-
-        if(!girando){
-
-            atualizarSaldo();
-
-        }
-
-    },
-    3000
-);
-
-
-/* =========================================================
-   LOGIN
-========================================================= */
-
-supabaseClient.auth.onAuthStateChange(
-    function(event,session){
-
-        if(session){
-
-            setTimeout(
-                function(){
-
-                    atualizarSaldo();
-
-                },
-                300
-            );
-
-        }
-        else{
-
-            saldoAtual = 0;
-
-            document.getElementById(
-                "saldo"
-            ).innerText =
-                "R$ 0,00";
-
-            document.getElementById(
-                "saldo2"
-            ).innerText =
-                "R$ 0,00";
-
-        }
-
+supabaseClient.auth.onAuthStateChange(function(event,session){
+    if(session){setTimeout(function(){atualizarSaldo();}, 300);}
+    else {
+        saldoAtual = 0;
+        document.getElementById("saldo").innerText = "R$ 0,00";
+        document.getElementById("saldo2").innerText = "R$ 0,00";
     }
-);
+});
 
-// Proteção adicional: Monitora tentativas de manipulação do console
 setInterval(() => {
     if(ultimoResultado && !girando){
         console.warn("Detectada possível manipulação de resultado");
         ultimoResultado = null;
     }
 }, 1000);
-
 </script>
-
 </body>
 </html>
