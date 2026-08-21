@@ -5,283 +5,496 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Crash ApostaXBet</title>
 <style>
+/* =====================================================
+   BASE
+===================================================== */
 *{box-sizing:border-box;font-family:Arial,sans-serif}
 html{background:#02030a}
 body{margin:0;min-height:100vh;background:radial-gradient(circle at 20% 20%,#002b55,transparent 30%),radial-gradient(circle at 80% 70%,#33002f,transparent 30%),linear-gradient(135deg,#02030a,#080014,#001322);background-size:180% 180%;animation:fundo 10s ease-in-out infinite alternate;color:white;text-align:center;overflow-x:hidden}
 @keyframes fundo{0%{background-position:0% 0%}50%{background-position:100% 50%}100%{background-position:0% 100%}}
+
+/* =====================================================
+   LUZES
+===================================================== */
 .luz{position:fixed;width:280px;height:280px;border-radius:50%;filter:blur(100px);opacity:.35;pointer-events:none;z-index:-3}
 .luz1{background:#0066ff;left:-120px;top:10%;animation:luz1 8s infinite alternate}
 .luz2{background:#ff0088;right:-120px;bottom:10%;animation:luz2 9s infinite alternate}
 @keyframes luz1{to{transform:translate(180px,100px) scale(1.4)}}
 @keyframes luz2{to{transform:translate(-180px,-100px) scale(1.4)}}
+
+/* =====================================================
+   PARTICULAS
+===================================================== */
 .particulas{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:-2}
 .particulas span{position:absolute;bottom:-20px;width:4px;height:4px;border-radius:50%;background:#00ffcc;box-shadow:0 0 8px #00ffcc,0 0 18px #0088ff;animation:subirParticula linear infinite}
-.particulas span:nth-child(1){left:5%;animation-duration:6s}.particulas span:nth-child(2){left:15%;animation-duration:9s}.particulas span:nth-child(3){left:25%;animation-duration:7s}.particulas span:nth-child(4){left:35%;animation-duration:11s}.particulas span:nth-child(5){left:45%;animation-duration:8s}.particulas span:nth-child(6){left:55%;animation-duration:10s}.particulas span:nth-child(7){left:65%;animation-duration:7s}.particulas span:nth-child(8){left:75%;animation-duration:9s}.particulas span:nth-child(9){left:85%;animation-duration:6s}.particulas span:nth-child(10){left:95%;animation-duration:12s}
+.particulas span:nth-child(1){left:5%;animation-duration:6s}
+.particulas span:nth-child(2){left:15%;animation-duration:9s}
+.particulas span:nth-child(3){left:25%;animation-duration:7s}
+.particulas span:nth-child(4){left:35%;animation-duration:11s}
+.particulas span:nth-child(5){left:45%;animation-duration:8s}
+.particulas span:nth-child(6){left:55%;animation-duration:10s}
+.particulas span:nth-child(7){left:65%;animation-duration:7s}
+.particulas span:nth-child(8){left:75%;animation-duration:9s}
+.particulas span:nth-child(9){left:85%;animation-duration:6s}
+.particulas span:nth-child(10){left:95%;animation-duration:12s}
 @keyframes subirParticula{0%{transform:translateY(0);opacity:0}20%{opacity:1}100%{transform:translateY(-110vh);opacity:0}}
+
+/* =====================================================
+   TITULO E SALDO
+===================================================== */
 h1{margin-top:25px;color:#00ff88;font-size:34px;text-shadow:0 0 8px #00ff88,0 0 20px #00ff88}
 #saldo{display:inline-block;color:#00ff88;font-size:21px;margin:8px 15px 20px;padding:9px 18px;border:1px solid #00ff88;border-radius:30px;background:rgba(0,0,0,.55);box-shadow:0 0 15px rgba(0,255,136,.25)}
-.box{width:94%;max-width:450px;margin:auto;background:linear-gradient(145deg,rgba(20,25,40,.95),rgba(3,5,15,.97));border:1px solid rgba(0,255,136,.22);border-radius:22px;padding:18px;box-shadow:0 0 25px rgba(0,255,136,.10),0 20px 70px rgba(0,0,0,.7);backdrop-filter:blur(10px);padding-bottom:30px}
+
+/* =====================================================
+   CAIXA
+===================================================== */
+.box{width:94%;max-width:450px;margin:auto;background:linear-gradient(145deg,rgba(20,25,40,.95),rgba(3,5,15,.97));border:1px solid rgba(0,255,136,.22);border-radius:22px;padding:18px;box-shadow:0 0 25px rgba(0,255,136,.10),0 20px 70px rgba(0,0,0,.7);backdrop-filter:blur(10px)}
+
+/* =====================================================
+   MULTIPLICADOR
+===================================================== */
 #numero{font-size:58px;font-weight:900;color:#00ff88;margin:5px 0 15px;text-shadow:0 0 8px #00ff88,0 0 25px #00ff88}
 #numero.subindo{animation:pulsar .35s infinite alternate}
 @keyframes pulsar{from{transform:scale(1)}to{transform:scale(1.05);text-shadow:0 0 12px #00ff88,0 0 35px #00ff88}}
+
+/* =====================================================
+   ÁREA DO VOO
+===================================================== */
 .area{height:310px;background:radial-gradient(circle at 20% 80%,rgba(0,255,136,.18),transparent 30%),radial-gradient(circle at 80% 20%,rgba(0,100,255,.20),transparent 35%),linear-gradient(160deg,#020711,#050014);border-radius:18px;overflow:hidden;position:relative;border:1px solid rgba(0,255,136,.25);box-shadow:inset 0 0 40px rgba(0,0,0,.8)}
 .cenario{position:absolute;inset:0;transition:transform .12s linear}
 .grade{position:absolute;inset:-100px;opacity:.14;background-image:linear-gradient(rgba(0,255,136,.35) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,136,.35) 1px,transparent 1px);background-size:35px 35px;transform:perspective(300px) rotateX(55deg) translateY(100px)}
+
+/* =====================================================
+   LINHA E ESCALA
+===================================================== */
 #linha{position:absolute;width:4px;height:0;background:linear-gradient(to top,#00ff88,#00ffff);bottom:30px;left:55px;transform-origin:bottom center;transform:rotate(-32deg);border-radius:10px;box-shadow:0 0 8px #00ff88,0 0 20px #00ff88,0 0 35px #00ffff;transition:height .12s,left .12s}
 #escala{position:absolute;right:8px;top:10px;bottom:10px;width:65px;pointer-events:none}
 .marca{position:absolute;right:0;display:flex;align-items:center;gap:5px;color:#00ff88;font-size:12px;font-weight:bold;text-shadow:0 0 7px #00ff88;opacity:.8}
 .marca::before{content:"";display:block;width:16px;height:1px;background:#00ff88;box-shadow:0 0 5px #00ff88}
+
+/* =====================================================
+   AVIÃO, RASTRO E ENERGIA
+===================================================== */
 #aviao{position:absolute;bottom:30px;left:38px;font-size:54px;z-index:10;transform:rotate(-18deg);filter:drop-shadow(0 0 8px #00ffff) drop-shadow(0 0 18px #0088ff);transition:bottom .12s,left .12s,transform .12s}
 #rastro{position:absolute;width:90px;height:4px;border-radius:20px;background:linear-gradient(90deg,transparent,#00ffff,#00ff88);left:0;bottom:38px;opacity:0;transform:rotate(-12deg);filter:blur(1px) drop-shadow(0 0 7px #00ffff);z-index:7}
 #rastro.ativo{opacity:1;animation:rastro .18s infinite alternate}
 @keyframes rastro{from{transform:rotate(-12deg) scaleX(.7)}to{transform:rotate(-12deg) scaleX(1.2)}}
 #energia{position:absolute;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(0,255,136,.55),rgba(0,150,255,.15),transparent 70%);filter:blur(15px);left:5px;bottom:0;opacity:.2;transform:scale(.7);transition:transform .15s,opacity .15s}
+
+/* =====================================================
+   CRASH E APOSTAS
+===================================================== */
 .area.crash{animation:tremer .35s;border-color:#ff1744;box-shadow:0 0 25px #ff1744,inset 0 0 50px rgba(255,0,40,.4)}
 @keyframes tremer{0%{transform:translateX(0)}25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-5px)}100%{transform:translateX(0)}}
 .titulo-aposta{margin-top:18px;color:#aaa;font-size:12px;letter-spacing:1px}
 .valores{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0 12px}
 .valor-btn{padding:11px 4px;margin:0;border:1px solid rgba(0,255,136,.25);border-radius:9px;background:#060b0d;color:#aaa;font-size:14px;box-shadow:none}
 .valor-btn.ativo{color:#00ff88;border-color:#00ff88;box-shadow:0 0 10px rgba(0,255,136,.25)}
+
+/* =====================================================
+   INPUTS E BOTÕES
+===================================================== */
 input{width:130px;padding:12px;margin:8px;border-radius:10px;border:1px solid #333;background:#050505;color:white;font-size:18px;text-align:center}
 .botoes{display:flex;justify-content:center;gap:8px;margin-top:5px}
 button{padding:14px 20px;margin:0;border:0;border-radius:12px;background:linear-gradient(180deg,#00ff88,#00bb66);color:#001f12;font-weight:bold;font-size:17px;box-shadow:0 0 12px rgba(0,255,136,.35);cursor:pointer}
-button:active{transform:scale(.95)}button:disabled{opacity:.35;cursor:not-allowed}
+button:active{transform:scale(.95)}
+button:disabled{opacity:.35;cursor:not-allowed}
 #pararBtn{background:linear-gradient(180deg,#ff6680,#e00035);color:white;box-shadow:0 0 14px rgba(255,0,70,.35)}
+
+/* =====================================================
+   MENSAGENS E HISTÓRICO
+===================================================== */
 #mensagem{min-height:28px;margin-top:12px;font-size:17px;font-weight:bold}
 .mensagemCrash{color:#ff416d;text-shadow:0 0 12px #ff1744}
 .mensagemSaque{color:#00ff88;text-shadow:0 0 12px #00ff88}
 #historico{margin-top:18px;padding-top:13px;border-top:1px solid rgba(255,255,255,.12);color:#aaa;line-height:2}
+
 @media(max-width:450px){h1{font-size:30px}.box{width:95%}.area{height:300px}#numero{font-size:50px}#aviao{font-size:48px}.valor-btn{font-size:13px}}
 </style>
 </head>
 <body>
+
 <div class="luz luz1"></div><div class="luz luz2"></div>
 <div class="particulas"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+
 <audio id="musicaFundo" src="musica-jogos.mp3" loop preload="auto"></audio>
+
 <h1>✈️ Crash ApostaXBet</h1>
 <div id="saldo">💰 Saldo: R$ 0,00</div>
+
 <div class="box">
-<div id="numero">1.00x</div>
-<div class="area" id="area">
-<div class="cenario" id="cenario">
-<div class="grade"></div><div id="energia"></div><div id="linha"></div><div id="rastro"></div><div id="aviao">✈️</div>
+    <div id="numero">1.00x</div>
+    
+    <div class="area" id="area">
+        <div class="cenario" id="cenario">
+            <div class="grade"></div>
+            <div id="energia"></div>
+            <div id="linha"></div>
+            <div id="rastro"></div>
+            <div id="aviao">✈️</div>
+        </div>
+        <div id="escala">
+            <div class="marca" style="top:8%">10x</div>
+            <div class="marca" style="top:27%">5x</div>
+            <div class="marca" style="top:47%">3x</div>
+            <div class="marca" style="top:67%">2x</div>
+            <div class="marca" style="top:87%">1x</div>
+        </div>
+    </div>
+
+    <div id="mensagem"></div>
+
+    <div class="titulo-aposta">ESCOLHA O VALOR DA APOSTA</div>
+    <div class="valores">
+        <button class="valor-btn ativo" onclick="selecionarAposta(1,this)">R$ 1</button>
+        <button class="valor-btn" onclick="selecionarAposta(2,this)">R$ 2</button>
+        <button class="valor-btn" onclick="selecionarAposta(5,this)">R$ 5</button>
+        <button class="valor-btn" onclick="selecionarAposta(10,this)">R$ 10</button>
+        <button class="valor-btn" onclick="selecionarAposta(20,this)">R$ 20</button>
+        <button class="valor-btn" onclick="selecionarAposta(50,this)">R$ 50</button>
+        <button class="valor-btn" onclick="selecionarAposta(100,this)">R$ 100</button>
+    </div>
+
+    <input id="aposta" type="number" value="1" min="1" step="1">
+
+    <div class="botoes">
+        <button id="jogarBtn" onclick="jogar()">✈️ INICIAR</button>
+        <button id="pararBtn" onclick="parar()" disabled>🛑 PARAR</button>
+    </div>
+
+    <div id="historico">Últimas rodadas:</div>
 </div>
-<div id="escala">
-<div class="marca" style="top:8%">10x</div><div class="marca" style="top:27%">5x</div><div class="marca" style="top:47%">3x</div><div class="marca" style="top:67%">2x</div><div class="marca" style="top:87%">1x</div>
-</div>
-</div>
-<div id="mensagem"></div>
-<div class="titulo-aposta">ESCOLHA O VALOR DA APOSTA</div>
-<div class="valores">
-<button class="valor-btn ativo" onclick="selecionarAposta(1,this)">R$ 1</button>
-<button class="valor-btn" onclick="selecionarAposta(2,this)">R$ 2</button>
-<button class="valor-btn" onclick="selecionarAposta(5,this)">R$ 5</button>
-<button class="valor-btn" onclick="selecionarAposta(10,this)">R$ 10</button>
-<button class="valor-btn" onclick="selecionarAposta(20,this)">R$ 20</button>
-<button class="valor-btn" onclick="selecionarAposta(50,this)">R$ 50</button>
-<button class="valor-btn" onclick="selecionarAposta(100,this)">R$ 100</button>
-</div>
-<input id="aposta" type="number" value="1" min="1" step="1">
-<div class="botoes">
-<button id="jogarBtn" onclick="jogar()">INICIAR</button>
-<button id="pararBtn" onclick="parar()" disabled>PARAR</button>
-</div>
-<div id="historico">Últimas rodadas:</div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
+
+<script type="module">
+/* =====================================================
+   SUPABASE
+===================================================== */
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
 const SUPABASE_URL = "https://jxbzjiwmajjzxgihfjgt.supabase.co";
 const SUPABASE_KEY = "sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ";
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* =====================================================
+   VANTAGEM DA CASA AJUSTADA (SEGURANÇA)
+===================================================== */
 const CASA_VANTAGEM = 0.85;
 
-let usuarioAtual = null, saldoReal = 0, rodando = false, apostaValor = 1, valorAtual = 1, queda = 0, tempo = null, historico = [];
-let audioContext = null, motorOsc = null, motorGain = null;
-
-const numeroEl = document.getElementById("numero"), aviaoEl = document.getElementById("aviao"), linhaEl = document.getElementById("linha");
-const energiaEl = document.getElementById("energia"), rastroEl = document.getElementById("rastro"), areaEl = document.getElementById("area");
-const cenarioEl = document.getElementById("cenario"), mensagemEl = document.getElementById("mensagem");
-const jogarBtn = document.getElementById("jogarBtn"), pararBtn = document.getElementById("pararBtn"), apostaInput = document.getElementById("aposta");
-const musicaFundo = document.getElementById("musicaFundo");
-musicaFundo.volume = 0.10;
-
-async function iniciarMusica(){try{musicaFundo.volume=0.10;if(musicaFundo.paused){await musicaFundo.play()}}catch(error){console.log("Música aguardando interação")}}
-function iniciarAudio(){if(!audioContext){const AudioCtx=window.AudioContext||window.webkitAudioContext;if(!AudioCtx)return;audioContext=new AudioCtx()}if(audioContext.state==="suspended"){audioContext.resume()}}
-function iniciarSomAviao(){iniciarAudio();if(!audioContext)return;pararSomAviao();motorOsc=audioContext.createOscillator();motorGain=audioContext.createGain();motorOsc.type="sawtooth";motorOsc.frequency.setValueAtTime(70,audioContext.currentTime);motorGain.gain.setValueAtTime(0.001,audioContext.currentTime);motorGain.gain.linearRampToValueAtTime(0.035,audioContext.currentTime+0.4);motorOsc.connect(motorGain);motorGain.connect(audioContext.destination);motorOsc.start()}
-function atualizarSomAviao(){if(!motorOsc||!motorGain||!audioContext)return;const agora=audioContext.currentTime;const frequencia=Math.min(70+valorAtual*16,330);motorOsc.frequency.setTargetAtTime(frequencia,agora,0.08);const volume=Math.min(0.035+valorAtual*0.004,0.09);motorGain.gain.setTargetAtTime(volume,agora,0.08)}
-function somVum(){iniciarAudio();if(!audioContext)return;const agora=audioContext.currentTime;const osc=audioContext.createOscillator();const gain=audioContext.createGain();osc.type="sine";osc.frequency.setValueAtTime(180,agora);osc.frequency.exponentialRampToValueAtTime(650,agora+0.35);gain.gain.setValueAtTime(0.001,agora);gain.gain.linearRampToValueAtTime(0.10,agora+0.06);gain.gain.exponentialRampToValueAtTime(0.001,agora+0.40);osc.connect(gain);gain.connect(audioContext.destination);osc.start(agora);osc.stop(agora+0.42)}
-function pararSomAviao(){if(motorOsc&&motorGain&&audioContext){const agora=audioContext.currentTime;motorGain.gain.cancelScheduledValues(agora);motorGain.gain.setTargetAtTime(0.001,agora,0.08);try{motorOsc.stop(agora+0.25)}catch(e){}motorOsc=null;motorGain=null}}
-
-async function obterUsuario(){
-    const {data,error}=await supabase.auth.getSession();
-    if(error){console.error("Erro de sessão:",error);return null}
-    return data?.session?.user||null
+/* =====================================================
+   USUÁRIO E SALDO
+===================================================== */
+async function getUsuarioLogado(){
+    const { data, error } = await supabase.auth.getSession();
+    if(error){ console.error("Erro de sessão:", error); return null; }
+    return data?.session?.user || null;
 }
 
 async function buscarSaldo(){
-    if(!usuarioAtual) return 0;
-    try {
-        const {data,error}=await supabase.from("saldos").select("valor").eq("user_id",usuarioAtual.id).single();
-        if(error) throw error;
-        saldoReal=parseFloat(data?.valor||0);
-        atualizarTela();
-        return saldoReal;
-    } catch (e) {
-        console.error("Erro ao buscar saldo:", e);
-        return 0;
-    }
+    const user = await getUsuarioLogado();
+    if(!user) return 0;
+    const { data, error } = await supabase.from("saldos").select("valor").eq("user_id", user.id).single();
+    if(error){ console.error("Erro ao buscar saldo:", error); return 0; }
+    return parseFloat(data?.valor || 0);
 }
 
 async function salvarSaldo(novoValor){
-    if(!usuarioAtual)return false;
-    const valorFinal=Number(Number(novoValor).toFixed(2));
-    const {error}=await supabase.from("saldos").update({valor:valorFinal}).eq("user_id",usuarioAtual.id);
-    if(error){console.error("Erro ao salvar saldo:",error);return false}
-    saldoReal=valorFinal;atualizarTela();return true
+    const user = await getUsuarioLogado();
+    if(!user) return false;
+    const { error } = await supabase.from("saldos").upsert({ user_id:user.id, valor:Number(Number(novoValor).toFixed(2)) }, { onConflict:"user_id" });
+    if(error){ console.error("Erro ao salvar saldo:", error); return false; }
+    return true;
+}
+
+let saldoAtual = 0;
+
+async function atualizarTela(){
+    saldoAtual = await buscarSaldo();
+    const valorFormatado = saldoAtual.toFixed(2).replace(".",",");
+    document.getElementById("saldo").innerText = `💰 Saldo: R$ ${valorFormatado}`;
+    return saldoAtual;
 }
 
 async function debitar(valorAposta){
-    if(!usuarioAtual)return false;
-    if(saldoReal<valorAposta){alert("❌ Saldo insuficiente!");return false}
-    const novoSaldo=Number((saldoReal-valorAposta).toFixed(2));
-    const salvo=await salvarSaldo(novoSaldo);
-    if(!salvo)return false;
-    return true
+    const valor = Number(valorAposta);
+    if(!Number.isFinite(valor) || valor > saldoAtual){
+        alert("❌ Saldo insuficiente!");
+        return false;
+    }
+    const novoSaldo = saldoAtual - valor;
+    const salvo = await salvarSaldo(novoSaldo);
+    if(!salvo) return false;
+    await atualizarTela();
+    return true;
 }
 
-async function processarVitoria(valorAposta,multiplicador){
-    if(!usuarioAtual)return 0;
-    const ganhoReal=(Number(valorAposta)*Number(multiplicador))*CASA_VANTAGEM;
-    const novoSaldo=Number((saldoReal+ganhoReal).toFixed(2));
-    const salvo=await salvarSaldo(novoSaldo);
-    if(!salvo)return 0;
-    return ganhoReal
+async function processarVitoria(valorAposta, multiplicador){
+    const aposta = Number(valorAposta);
+    const mult = Number(multiplicador);
+    if(!Number.isFinite(aposta) || !Number.isFinite(mult)) return 0;
+    
+    const ganhoReal = (aposta * mult) * CASA_VANTAGEM;
+    const novoSaldo = saldoAtual + ganhoReal;
+    const salvo = await salvarSaldo(novoSaldo);
+    if(!salvo) return 0;
+    await atualizarTela();
+    return ganhoReal;
 }
 
-function atualizarTela(){
-    document.getElementById("saldo").innerText=`💰 Saldo: R$ ${saldoReal.toFixed(2).replace(".",",")}`
+window.SistemaSaldo = { get:buscarSaldo, debitar:debitar, ganhar:processarVitoria, atualizarTela:atualizarTela };
+
+/* =====================================================
+   ELEMENTOS E AUDIO
+===================================================== */
+const numero = document.getElementById("numero");
+const aviao = document.getElementById("aviao");
+const linha = document.getElementById("linha");
+const energia = document.getElementById("energia");
+const rastro = document.getElementById("rastro");
+const area = document.getElementById("area");
+const cenario = document.getElementById("cenario");
+const mensagem = document.getElementById("mensagem");
+const jogarBtn = document.getElementById("jogarBtn");
+const pararBtn = document.getElementById("pararBtn");
+const apostaInput = document.getElementById("aposta");
+const musicaFundo = document.getElementById("musicaFundo");
+
+musicaFundo.volume = 0.10;
+
+async function iniciarMusica(){
+    try{
+        musicaFundo.volume = 0.10;
+        if(musicaFundo.paused) await musicaFundo.play();
+    }catch(error){ console.log("A música aguardará uma interação do usuário."); }
 }
 
-window.selecionarAposta=function(valorSelecionado,botao){
-    if(rodando)return;
-    apostaValor=Number(valorSelecionado);
-    apostaInput.value=apostaValor;
-    document.querySelectorAll(".valor-btn").forEach(b=>b.classList.remove("ativo"));
-    botao.classList.add("ativo")
+let rodando = false;
+let aposta = 1;
+let valor = 1;
+let queda = 0;
+let tempo = null;
+let historico = [];
+let audioContext = null;
+let motorOsc = null;
+let motorGain = null;
+
+function iniciarAudio(){
+    if(!audioContext){
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if(!AudioCtx) return;
+        audioContext = new AudioCtx();
+    }
+    if(audioContext.state === "suspended") audioContext.resume();
+}
+
+function iniciarSomAviao(){
+    iniciarAudio();
+    if(!audioContext) return;
+    pararSomAviao();
+    motorOsc = audioContext.createOscillator();
+    motorGain = audioContext.createGain();
+    motorOsc.type = "sawtooth";
+    motorOsc.frequency.setValueAtTime(70, audioContext.currentTime);
+    motorGain.gain.setValueAtTime(0.001, audioContext.currentTime);
+    motorGain.gain.linearRampToValueAtTime(0.035, audioContext.currentTime + 0.4);
+    motorOsc.connect(motorGain);
+    motorGain.connect(audioContext.destination);
+    motorOsc.start();
+}
+
+function atualizarSomAviao(){
+    if(!motorOsc || !motorGain || !audioContext) return;
+    const agora = audioContext.currentTime;
+    const frequencia = Math.min(70 + valor * 16, 330);
+    motorOsc.frequency.setTargetAtTime(frequencia, agora, 0.08);
+    const volume = Math.min(0.035 + valor * 0.004, 0.09);
+    motorGain.gain.setTargetAtTime(volume, agora, 0.08);
+}
+
+function somVum(){
+    iniciarAudio();
+    if(!audioContext) return;
+    const agora = audioContext.currentTime;
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(180, agora);
+    osc.frequency.exponentialRampToValueAtTime(650, agora + 0.35);
+    gain.gain.setValueAtTime(0.001, agora);
+    gain.gain.linearRampToValueAtTime(0.10, agora + 0.06);
+    gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.40);
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+    osc.start(agora);
+    osc.stop(agora + 0.42);
+}
+
+function pararSomAviao(){
+    if(motorOsc && motorGain && audioContext){
+        const agora = audioContext.currentTime;
+        motorGain.gain.cancelScheduledValues(agora);
+        motorGain.gain.setTargetAtTime(0.001, agora, 0.08);
+        try{ motorOsc.stop(agora + 0.25); }catch(e){}
+        motorOsc = null;
+        motorGain = null;
+    }
+}
+
+/* =====================================================
+   LÓGICA DO JOGO
+===================================================== */
+window.selecionarAposta = function(valorSelecionado, botao){
+    if(rodando) return;
+    aposta = Number(valorSelecionado);
+    apostaInput.value = aposta;
+    document.querySelectorAll(".valor-btn").forEach(b => b.classList.remove("ativo"));
+    botao.classList.add("ativo");
 };
 
-window.jogar=async function(){
-    if(rodando)return;
-    await iniciarMusica();iniciarAudio();
-    apostaValor=Number(apostaInput.value);
-    if(!Number.isFinite(apostaValor)||apostaValor<=0){alert("Digite um valor de aposta válido.");return}
+window.jogar = async function(){
+    if(rodando) return;
+    await iniciarMusica();
+    iniciarAudio();
+    aposta = Number(apostaInput.value);
+    if(!Number.isFinite(aposta) || aposta <= 0){ alert("Digite um valor válido."); return; }
     
-    const saldoAtualizado = await buscarSaldo();
-    if(apostaValor > saldoReal){
-        alert("❌ Saldo insuficiente! Seu saldo atual é R$ " + saldoReal.toFixed(2));
+    const saldoAtualizado = await atualizarTela();
+    if(aposta > saldoAtualizado){
+        alert("❌ Saldo insuficiente!");
         return;
     }
     
-    const debitado = await debitar(apostaValor);
-    if(!debitado){
-        alert("Falha ao debitar aposta. Tente novamente.");
-        return;
-    }
-    
-    rodando=true;valorAtual=1;
-    const r=Math.random();queda=(0.92/(1-r));
-    if(queda<1.10)queda=1.10;if(queda>50)queda=50;
-    
-    mensagemEl.className="";mensagemEl.innerHTML="✈️ AVIÃO DECOLANDO...";
-    numeroEl.innerHTML="1.00x";numeroEl.classList.add("subindo");
-    jogarBtn.disabled=true;pararBtn.disabled=false;
-    areaEl.classList.remove("crash");rastroEl.classList.add("ativo");
-    iniciarSomAviao();somVum();
-    tempo=setInterval(atualizarVoo,100);
+    const debitado = await debitar(aposta);
+    if(!debitado) return;
+
+    rodando = true;
+    valor = 1;
+    const r = Math.random();
+    queda = (0.92 / (1 - r));
+    if(queda < 1.10) queda = 1.10;
+    if(queda > 50) queda = 50;
+
+    mensagem.className = "";
+    mensagem.innerHTML = "✈️ AVIÃO DECOLANDO...";
+    numero.innerHTML = "1.00x";
+    numero.classList.add("subindo");
+    jogarBtn.disabled = true;
+    pararBtn.disabled = false;
+    area.classList.remove("crash");
+    rastro.classList.add("ativo");
+    iniciarSomAviao();
+    somVum();
+    tempo = setInterval(atualizarVoo, 100);
 };
 
 function atualizarVoo(){
-    if(!rodando)return;
-    valorAtual+=0.05;
-    numeroEl.innerHTML=valorAtual.toFixed(2)+"x";
-    const progresso=Math.min((valorAtual-1)/6,1);
-    const altura=30+progresso*220;const esquerda=38+progresso*180;
-    aviaoEl.style.bottom=altura+"px";aviaoEl.style.left=esquerda+"px";
-    const tamanhoLinha=Math.min(25+(valorAtual-1)*42,255);
-    linhaEl.style.height=tamanhoLinha+"px";linhaEl.style.left=(esquerda+12)+"px";
-    const movimentoCenario=Math.min((valorAtual-1)*13,150);
-    cenarioEl.style.transform=`translateY(${movimentoCenario}px)`;
-    const escala=Math.min(0.7+valorAtual*0.08,2.5);
-    energiaEl.style.transform=`scale(${escala})`;energiaEl.style.opacity=Math.min(0.2+valorAtual*0.04,0.8);
+    if(!rodando) return;
+    valor += 0.05;
+    numero.innerHTML = valor.toFixed(2) + "x";
+    
+    const progresso = Math.min((valor - 1) / 6, 1);
+    const altura = 30 + progresso * 220;
+    const esquerda = 38 + progresso * 180;
+    
+    aviao.style.bottom = altura + "px";
+    aviao.style.left = esquerda + "px";
+    
+    const tamanhoLinha = Math.min(25 + (valor - 1) * 42, 255);
+    linha.style.height = tamanhoLinha + "px";
+    linha.style.left = (esquerda + 12) + "px";
+    
+    const movimentoCenario = Math.min((valor - 1) * 13, 150);
+    cenario.style.transform = `translateY(${movimentoCenario}px)`;
+    
+    const escala = Math.min(0.7 + valor * 0.08, 2.5);
+    energia.style.transform = `scale(${escala})`;
+    energia.style.opacity = Math.min(0.2 + valor * 0.04, 0.8);
+    
     atualizarSomAviao();
-    if(valorAtual>2&&Math.abs(valorAtual%1)<0.051){somVum()}
-    if(valorAtual>=queda){finalizarCrash()}
+    if(valor > 2 && Math.abs(valor % 1) < 0.051) somVum();
+    if(valor >= queda) finalizarCrash();
 }
 
-window.parar=async function(){
-    if(!rodando)return;
-    clearInterval(tempo);rodando=false;pararBtn.disabled=true;pararSomAviao();
-    const ganho=await processarVitoria(apostaValor,valorAtual);
-    if(ganho<=0){mensagemEl.className="mensagemCrash";mensagemEl.innerHTML="❌ ERRO AO PROCESSAR O SALDO";jogarBtn.disabled=false;resetarVisual();return}
-    somVum();mensagemEl.className="mensagemSaque";
-    mensagemEl.innerHTML="🎉 PAROU EM "+valorAtual.toFixed(2)+"x<br>💰 RETORNO: R$ "+ganho.toFixed(2).replace(".",",");
-    adicionarHistorico(valorAtual.toFixed(2)+"x");numeroEl.classList.remove("subindo");rastroEl.classList.remove("ativo");
-    jogarBtn.disabled=false;await atualizarTela();setTimeout(resetarVisual,1200);
+window.parar = async function(){
+    if(!rodando) return;
+    clearInterval(tempo);
+    rodando = false;
+    pararBtn.disabled = true;
+    pararSomAviao();
+    
+    const ganho = await processarVitoria(aposta, valor);
+    if(ganho <= 0){
+        mensagem.className = "mensagemCrash";
+        mensagem.innerHTML = "❌ ERRO AO PROCESSAR SALDO";
+        jogarBtn.disabled = false;
+        resetarVisual();
+        return;
+    }
+    
+    somVum();
+    mensagem.className = "mensagemSaque";
+    mensagem.innerHTML = "🎉 PAROU EM " + valor.toFixed(2) + "x<br>💰 RETORNO: R$ " + ganho.toFixed(2).replace(".", ",");
+    adicionarHistorico(valor.toFixed(2) + "x");
+    numero.classList.remove("subindo");
+    rastro.classList.remove("ativo");
+    jogarBtn.disabled = false;
+    await atualizarTela();
+    setTimeout(resetarVisual, 1200);
 };
 
 async function finalizarCrash(){
-    clearInterval(tempo);rodando=false;pararSomAviao();pararBtn.disabled=true;
-    numeroEl.classList.remove("subindo");rastroEl.classList.remove("ativo");
-    areaEl.classList.add("crash");numeroEl.style.color="#ff416d";
-    numeroEl.style.textShadow="0 0 10px #ff1744,0 0 30px #ff1744";
-    mensagemEl.className="mensagemCrash";mensagemEl.innerHTML="💥 CRASH EM "+valorAtual.toFixed(2)+"x";
-    adicionarHistorico(valorAtual.toFixed(2)+"x");jogarBtn.disabled=false;
-    await atualizarTela();setTimeout(resetarVisual,1000);
+    clearInterval(tempo);
+    rodando = false;
+    pararSomAviao();
+    pararBtn.disabled = true;
+    numero.classList.remove("subindo");
+    rastro.classList.remove("ativo");
+    area.classList.add("crash");
+    numero.style.color = "#ff416d";
+    numero.style.textShadow = "0 0 10px #ff1744,0 0 30px #ff1744";
+    mensagem.className = "mensagemCrash";
+    mensagem.innerHTML = "💥 CRASH EM " + valor.toFixed(2) + "x";
+    adicionarHistorico(valor.toFixed(2) + "x");
+    jogarBtn.disabled = false;
+    await atualizarTela();
+    setTimeout(resetarVisual, 1000);
 }
 
 function resetarVisual(){
-    areaEl.classList.remove("crash");numeroEl.style.color="";numeroEl.style.textShadow="";
-    numeroEl.innerHTML="1.00x";aviaoEl.style.bottom="30px";aviaoEl.style.left="38px";
-    linhaEl.style.height="0px";linhaEl.style.left="55px";
-    energiaEl.style.transform="scale(.7)";energiaEl.style.opacity=".2";
-    cenarioEl.style.transform="translateY(0px)";rastroEl.classList.remove("ativo");
-    jogarBtn.disabled=false;pararBtn.disabled=true;
+    area.classList.remove("crash");
+    numero.style.color = "";
+    numero.style.textShadow = "";
+    numero.innerHTML = "1.00x";
+    aviao.style.bottom = "30px";
+    aviao.style.left = "38px";
+    linha.style.height = "0px";
+    linha.style.left = "55px";
+    energia.style.transform = "scale(.7)";
+    energia.style.opacity = ".2";
+    cenario.style.transform = "translateY(0px)";
+    rastro.classList.remove("ativo");
+    jogarBtn.disabled = false;
+    pararBtn.disabled = true;
 }
 
-function adicionarHistorico(valorHistorico){historico.unshift(valorHistorico);if(historico.length>5){historico.pop()}document.getElementById("historico").innerHTML="Últimas rodadas:<br>"+historico.join(" | ")}
+function adicionarHistorico(valorHistorico){
+    historico.unshift(valorHistorico);
+    if(historico.length > 5) historico.pop();
+    document.getElementById("historico").innerHTML = "Últimas rodadas:<br>" + historico.join(" | ");
+}
 
 async function iniciarPagina(){
-    try{
-        usuarioAtual=await obterUsuario();
-        if(!usuarioAtual){
-            console.warn("Nenhum usuário logado encontrado");
-            mensagemEl.innerText = "⚠️ Faça login para jogar";
-            mensagemEl.className = "mensagemCrash";
-            setTimeout(() => {
-                if(confirm("Você precisa estar logado para jogar. Ir para página de login?")) {
-                    window.location.href="../index.html";
-                }
-            }, 2000);
-            return;
-        }
-        musicaFundo.volume=0.10;
-        await buscarSaldo();
-    }catch(error){
-        console.error("Erro fatal ao iniciar:", error);
-        mensagemEl.innerText = "❌ Erro ao iniciar jogo: " + error.message;
-        mensagemEl.className = "mensagemCrash";
+    const usuario = await getUsuarioLogado();
+    if(!usuario){
+        alert("Você precisa estar logado para jogar.");
+        window.location.href = "../index.html";
+        return;
     }
+    musicaFundo.volume = 0.10;
+    await atualizarTela();
 }
 
-supabase.auth.onAuthStateChange(function(event,session){
-    if(!session){
-        console.warn("Sessão expirada ou logout detectado");
-        window.location.href="../index.html";
-    } else {
-        // Recarrega saldo quando sessão muda (ex: após login)
-        usuarioAtual = session.user;
-        buscarSaldo();
-    }
+supabase.auth.onAuthStateChange(function(event, session){
+    if(!session) window.location.href = "../index.html";
 });
 
 iniciarPagina();
