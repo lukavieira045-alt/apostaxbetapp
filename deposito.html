@@ -1,5 +1,3 @@
-deposito.html — PIX atualizado
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -205,6 +203,9 @@ deposito.html — PIX atualizado
     <script>
         let valorAtual = 0;
 
+        // URL DA EDGE FUNCTION DO SUPABASE
+        const WEBHOOK_DEPOSITO_URL = 'https://jxbzjiwmajjzxgihfjgt.supabase.co/functions/v1/swift-action';
+
         // PIX REAL ATUALIZADO
         const chavePixReal = "00020101021126450014BR.GOV.BCB.PIX0123lukavieira045@gmail.com5204000053039865802BR5925Lucas Vieira Campos de Je6009SAO PAULO62080504daqr63044F93";
 
@@ -239,8 +240,9 @@ deposito.html — PIX atualizado
                 `💰 Depositar R$ ${valor},00 via PIX`;
         }
 
-        function abrirModal() {
+        async function abrirModal() {
             if (valorAtual > 0) {
+                // Abre a modal visualmente
                 document.getElementById('valorDisplay').innerText =
                     `Valor: R$ ${valorAtual},00`;
 
@@ -248,6 +250,38 @@ deposito.html — PIX atualizado
                     chavePixReal;
 
                 document.getElementById('modalPix').style.display = 'flex';
+
+                // Envia os dados para o Supabase
+                try {
+                    // Tenta pegar o ID do usuário logado (baseado na screenshot anterior)
+                    const userId = localStorage.getItem('apostaXBet_userId') || 
+                                   document.querySelector('[id^="ID"]')?.textContent.replace('ID: ', '') || 
+                                   'nao_identificado';
+
+                    const response = await fetch(WEBHOOK_DEPOSITO_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                            // Se você configurou senha secreta no Supabase, adicione:
+                            // 'X-Betting-Secret': 'SUA_SENHA_AQUI'
+                        },
+                        body: JSON.stringify({
+                            tipo: 'deposito_pix',
+                            valor: valorAtual,
+                            userId: userId,
+                            data: new Date().toISOString(),
+                            status: 'pendente'
+                        })
+                    });
+
+                    if (!response.ok) {
+                        console.error('Erro ao registrar depósito no sistema');
+                    } else {
+                        console.log('Depósito registrado com sucesso no banco!');
+                    }
+                } catch (erro) {
+                    console.error('Falha na conexão com o servidor:', erro);
+                }
             }
         }
 
