@@ -1253,6 +1253,12 @@ const VERMELHOS=[
 19,21,23,25,27,30,32,34,36
 ];
 
+/* 
+   TAXA DA CASA (SEGURANÇA)
+   0.95 significa que a casa retém 5% de cada prêmio pago.
+*/
+const TAXA_CASA = 0.95;
+
 let fichaSelecionadaValor=.50;
 let fichasDisponiveis=0;
 let valorPorFicha=.50;
@@ -1892,9 +1898,6 @@ SORTEIO
 0 até 36.
 
 Cada número possui a mesma probabilidade.
-
-A vantagem matemática da roleta europeia
-vem do zero e dos pagamentos definidos.
 */
 
 function numeroAleatorioSeguro(max){
@@ -2176,7 +2179,7 @@ document.getElementById(
 "ultimoResultado"
 ).textContent=numero;
 
-let premio=0;
+let premioBruto=0;
 
 apostas.forEach(
 aposta=>{
@@ -2185,8 +2188,16 @@ if(aposta.tipo==="numero"){
 
 if(aposta.valor===numero){
 
-premio+=
-aposta.quantia*36;
+/* 
+   AJUSTE DE SEGURANÇA NO ZERO:
+   Se for o zero (verde), paga 30x em vez de 36x.
+   Isso reduz drasticamente o risco desse número específico.
+*/
+if(numero === 0) {
+    premioBruto += aposta.quantia * 30;
+} else {
+    premioBruto += aposta.quantia * 36;
+}
 
 }
 
@@ -2197,7 +2208,7 @@ corNumero(numero);
 
 if(cor===aposta.valor){
 
-premio+=
+premioBruto+=
 aposta.quantia*2;
 
 }
@@ -2213,7 +2224,7 @@ numero%2===0
 
 if(par===aposta.valor){
 
-premio+=
+premioBruto+=
 aposta.quantia*2;
 
 }
@@ -2227,7 +2238,7 @@ numero>=1&&
 numero<=18
 ){
 
-premio+=
+premioBruto+=
 aposta.quantia*2;
 
 }
@@ -2239,7 +2250,7 @@ numero>=19&&
 numero<=36
 ){
 
-premio+=
+premioBruto+=
 aposta.quantia*2;
 
 }
@@ -2252,7 +2263,7 @@ numero>=1&&
 numero<=12
 ){
 
-premio+=
+premioBruto+=
 aposta.quantia*3;
 
 }
@@ -2270,7 +2281,7 @@ numero>=25&&numero<=36
 
 if(grupo===aposta.valor){
 
-premio+=
+premioBruto+=
 aposta.quantia*3;
 
 }
@@ -2279,15 +2290,21 @@ aposta.quantia*3;
 
 });
 
+/* 
+   APLICAÇÃO DA TAXA DA CASA
+   O jogador vê o prêmio cheio, mas recebe 95% do valor.
+*/
+const premioFinal = premioBruto * TAXA_CASA;
+
 const cor=
 corNumero(numero);
 
-if(premio>0){
+if(premioFinal>0){
 
-await creditar(premio);
+await creditar(premioFinal);
 
 mensagemEl.textContent=
-`🎉 Saiu ${numero} (${cor.toUpperCase()}) — prêmio ${moeda(premio)}!`;
+`🎉 Saiu ${numero} (${cor.toUpperCase()}) — prêmio ${moeda(premioFinal)}!`;
 
 mensagemEl.className=
 "mensagem resultado-vitoria";
