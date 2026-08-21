@@ -1568,7 +1568,7 @@ async function init(){
 
 
 /* =====================================================
-   GIRAR COM SEGURANÇA (AJUSTADO)
+   GIRAR COM SORTE REAL
 ===================================================== */
 
 async function spin(){
@@ -1626,6 +1626,14 @@ async function spin(){
     .SistemaSaldo
     .atualizarTela();
 
+    // Sorteia posições independentes para cada rolo (Sorte Pura)
+    const totalSimbolos = symbols.length;
+    const posicoesFinais = [
+        Math.floor(Math.random() * totalSimbolos),
+        Math.floor(Math.random() * totalSimbolos),
+        Math.floor(Math.random() * totalSimbolos)
+    ];
+
     reels.forEach(
         (reel,index) => {
 
@@ -1637,6 +1645,7 @@ async function spin(){
 
             void reel.offsetHeight;
 
+            // Calcula a distância para parar no símbolo sorteado
             const casas =
             45 +
             Math.floor(
@@ -1646,11 +1655,13 @@ async function spin(){
             const altura =
             157;
 
+            // Ajuste fino para alinhar o símbolo sorteado no centro
             const distancia =
             -(
                 (
                     casas +
-                    index * 3
+                    index * 3 +
+                    posicoesFinais[index]
                 )
                 *
                 altura
@@ -1678,24 +1689,23 @@ async function spin(){
     setTimeout(
         async () => {
 
-            /* 
-               LÓGICA DE SEGURANÇA AJUSTADA
-               Chance de vitória: 25% (antes era 40%)
-               Multiplicadores: 2x a 3.5x (antes ia até 6x)
-               Taxa da Casa: 8% sobre o prêmio
-            */
-            
-            const chanceVitoria = 0.25; 
-            const ganhou = Math.random() < chanceVitoria;
+            // Verifica se os 3 rolos pararam no mesmo índice (Sorte Real)
+            const r1 = posicoesFinais[0];
+            const r2 = posicoesFinais[1];
+            const r3 = posicoesFinais[2];
 
             let ganhoValor = 0;
 
-            if(ganhou){
+            if(r1 === r2 && r2 === r3){
 
-                const TAXA_CASA = 0.92; // A casa fica com 8%
+                /* 
+                   TAXA DA CASA (HOUSE EDGE)
+                   Aplica 8% de taxa sobre o prêmio final.
+                */
+                const TAXA_CASA = 0.92; 
 
-                // Multiplicador entre 2x e 3.5x
-                const multiplicador = 2 + (Math.random() * 1.5); 
+                // Multiplicador entre 10x e 20x para compensar a dificuldade
+                const multiplicador = 10 + (Math.random() * 10); 
                 
                 const premioBruto = bet * multiplicador;
                 ganhoValor = premioBruto * TAXA_CASA;
@@ -1707,7 +1717,7 @@ async function spin(){
                 );
 
                 messageEl.textContent =
-                `⚡ 🎉 Ganhou ${dinheiro(ganhoValor)}!`;
+                `⚡ 🎉 JACKPOT! ${dinheiro(ganhoValor)}!`;
 
                 messageEl.style.color =
                 "#aaff5d";
