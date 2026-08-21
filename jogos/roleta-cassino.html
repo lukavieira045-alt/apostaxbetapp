@@ -573,6 +573,12 @@ window.supabase.createClient(
   SUPABASE_KEY
 );
 
+/* 
+   TAXA DA CASA (SEGURANÇA)
+   0.95 significa que a casa retém 5% de cada prêmio pago.
+*/
+const TAXA_CASA = 0.95;
+
 
 /* ==================================================
    ELEMENTOS
@@ -1758,7 +1764,7 @@ function girarAutomaticamente(){
 
 
 /* ==================================================
-   FINALIZAR
+   FINALIZAR COM TAXA DA CASA
 ================================================== */
 
 async function finalizarRodada(
@@ -1769,7 +1775,7 @@ async function finalizarRodada(
 
   somResultado();
 
-  let premio = 0;
+  let premioBruto = 0;
 
   apostas.forEach(
   function(aposta){
@@ -1785,13 +1791,13 @@ async function finalizarRodada(
         typeof aposta.tipo === "number"
       ){
 
-        premio +=
+        premioBruto +=
           aposta.valor * 36;
 
       }
       else{
 
-        premio +=
+        premioBruto +=
           aposta.valor * 2;
 
       }
@@ -1800,8 +1806,13 @@ async function finalizarRodada(
 
   });
 
-  dinheiro +=
-    premio;
+  /* 
+     APLICAÇÃO DA TAXA DA CASA
+     O jogador recebe 95% do prêmio bruto.
+  */
+  const premioFinal = premioBruto * TAXA_CASA;
+
+  dinheiro += premioFinal;
 
   await salvarSaldo();
 
@@ -1827,7 +1838,7 @@ async function finalizarRodada(
 
   }
 
-  if(premio > 0){
+  if(premioFinal > 0){
 
     mensagem.textContent =
       "🏆 Resultado: " +
@@ -1835,7 +1846,7 @@ async function finalizarRodada(
       " — " +
       cor +
       " | Prêmio virtual: " +
-      formatar(premio);
+      formatar(premioFinal);
 
   }
   else{
