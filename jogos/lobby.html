@@ -1568,7 +1568,7 @@ async function init(){
 
 
 /* =====================================================
-   GIRAR COM SEGURANÇA
+   GIRAR COM SEGURANÇA (AJUSTADO)
 ===================================================== */
 
 async function spin(){
@@ -1679,26 +1679,23 @@ async function spin(){
         async () => {
 
             /* 
-               PROBABILIDADE AJUSTADA (SEGURANÇA)
-               Chance de vitória reduzida para 28%.
-               Multiplicadores controlados entre 2x e 4x.
+               LÓGICA DE SEGURANÇA AJUSTADA
+               Chance de vitória: 25% (antes era 40%)
+               Multiplicadores: 2x a 3.5x (antes ia até 6x)
+               Taxa da Casa: 8% sobre o prêmio
             */
             
-            const chanceVitoria = 0.28; // 28% de chance
+            const chanceVitoria = 0.25; 
             const ganhou = Math.random() < chanceVitoria;
 
             let ganhoValor = 0;
 
             if(ganhou){
 
-                /* 
-                   TAXA DA CASA (HOUSE EDGE)
-                   Aplica 5% de taxa sobre o prêmio final.
-                */
-                const TAXA_CASA = 0.95;
+                const TAXA_CASA = 0.92; // A casa fica com 8%
 
-                // Multiplicador entre 2x e 4x (mais seguro que ir até 6x)
-                const multiplicador = Math.floor(Math.random() * 3) + 2; 
+                // Multiplicador entre 2x e 3.5x
+                const multiplicador = 2 + (Math.random() * 1.5); 
                 
                 const premioBruto = bet * multiplicador;
                 ganhoValor = premioBruto * TAXA_CASA;
