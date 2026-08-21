@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crash ApostaXBet - Corrigido</title>
+<title>Crash ApostaXBet - Debug</title>
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif}
 html{background:#02030a}
@@ -83,8 +83,8 @@ button:active{transform:scale(.95)}button:disabled{opacity:.35;cursor:not-allowe
 </div>
 <input id="aposta" type="number" value="1" min="1" step="1">
 <div class="botoes">
-<button id="jogarBtn" onclick="jogar()">️ INICIAR</button>
-<button id="pararBtn" onclick="parar()" disabled> PARAR</button>
+<button id="jogarBtn" onclick="jogar()">INICIAR</button>
+<button id="pararBtn" onclick="parar()" disabled>PARAR</button>
 </div>
 <div id="historico">Últimas rodadas:</div>
 </div>
@@ -112,33 +112,66 @@ function atualizarSomAviao(){if(!motorOsc||!motorGain||!audioContext)return;cons
 function somVum(){iniciarAudio();if(!audioContext)return;const agora=audioContext.currentTime;const osc=audioContext.createOscillator();const gain=audioContext.createGain();osc.type="sine";osc.frequency.setValueAtTime(180,agora);osc.frequency.exponentialRampToValueAtTime(650,agora+0.35);gain.gain.setValueAtTime(0.001,agora);gain.gain.linearRampToValueAtTime(0.10,agora+0.06);gain.gain.exponentialRampToValueAtTime(0.001,agora+0.40);osc.connect(gain);gain.connect(audioContext.destination);osc.start(agora);osc.stop(agora+0.42)}
 function pararSomAviao(){if(motorOsc&&motorGain&&audioContext){const agora=audioContext.currentTime;motorGain.gain.cancelScheduledValues(agora);motorGain.gain.setTargetAtTime(0.001,agora,0.08);try{motorOsc.stop(agora+0.25)}catch(e){}motorOsc=null;motorGain=null}}
 
-// FUNÇÕES DE SALDO CORRIGIDAS E SEGURAS
-async function obterUsuario(){
-    const {data,error}=await supabase.auth.getSession();
-    if(error){console.error("Erro de sessão:",error);return null}
-    return data?.session?.user||null
-}
-
+// FUNÇÃO DE SALDO COM DEBUG INTEGRADO
 async function buscarSaldo(){
     if(!usuarioAtual){
-        console.warn("Usuário não logado ao buscar saldo");
+        console.error("❌ USUÁRIO NÃO LOGADO AO BUSCAR SALDO");
+        mensagemEl.innerText = "⚠️ ERRO CRÍTICO: Usuário não autenticado!";
+        mensagemEl.className = "mensagemCrash";
         return 0;
     }
-    try {
-        const {data,error}=await supabase.from("saldos").select("valor").eq("user_id",usuarioAtual.id).single();
-        if(error){
-            console.error("Erro ao buscar saldo:", error.message);
-            mensagemEl.innerText = "⚠️ Erro ao carregar saldo: " + error.message;
-            mensagemEl.className = "mensagemCrash";
-            return 0;
+    
+    console.log("🔍 [DEBUG] Buscando saldo para user_id:", usuarioAtual.id);
+    
+    const {data, error} = await supabase
+        .from("saldos")
+        .select("valor")
+        .eq("user_id", usuarioAtual.id)
+        .single();
+    
+    if(error){
+        console.error(" [DEBUG] ERRO SUPABASE:", error.message);
+        console.error("❌ [DEBUG] DETALHES:", error.details);
+        console.error("❌ [DEBUG] HINT:", error.hint);
+        
+        // Se for erro de política (RLS) ou tabela inexistente
+        if(error.code === 'PGRST116' || error.message.includes('permission denied')){
+            mensagemEl.innerText = "⚠️ BLOQUEIO DE SEGURANÇA: Verifique as políticas RLS no Supabase!";
+        } else if (error.code === '42P01') {
+            mensagemEl.innerText = "⚠️ TABELA FALTANDO: Crie a tabela 'saldos' no Supabase!";
+        } else {
+            mensagemEl.innerText = "⚠️ ERRO BANCO: " + error.message;
         }
-        saldoReal=parseFloat(data?.valor||0);
-        atualizarTela();
-        return saldoReal;
-    } catch (e) {
-        console.error("Exceção ao buscar saldo:", e);
+        mensagemEl.className = "mensagemCrash";
         return 0;
     }
+    
+    if(!data){
+        console.warn("⚠️ [DEBUG] NENHUM REGISTRO ENCONTRADO PARA ESTE USUÁRIO");
+        mensagemEl.innerText = "⚠️ Criando registro de saldo zerado...";
+        mensagemEl.className = "mensagemCrash";
+        
+        // Tenta criar automaticamente se não existir
+        const {error: insertError} = await supabase
+            .from("saldos")
+            .insert({user_id: usuarioAtual.id, valor: 0});
+            
+        if(insertError) {
+            console.error("❌ [DEBUG] FALHA AO CRIAR REGISTRO:", insertError.message);
+            mensagemEl.innerText = "⚠️ Falha ao criar saldo. Verifique RLS de INSERT.";
+        } else {
+            console.log("✅ [DEBUG] Registro criado com sucesso!");
+            mensagemEl.innerText = "✅ Registro criado. Atualizando...";
+            setTimeout(() => buscarSaldo(), 1000);
+        }
+        return 0;
+    }
+    
+    saldoReal = parseFloat(data.valor || 0);
+    console.log("✅ [DEBUG] SALDO CARREGADO COM SUCESSO:", saldoReal);
+    mensagemEl.innerText = ""; // Limpa mensagens de erro
+    atualizarTela();
+    return saldoReal;
 }
 
 async function salvarSaldo(novoValor){
@@ -234,7 +267,7 @@ window.parar=async function(){
     const ganho=await processarVitoria(apostaValor,valorAtual);
     if(ganho<=0){mensagemEl.className="mensagemCrash";mensagemEl.innerHTML="❌ ERRO AO PROCESSAR O SALDO";jogarBtn.disabled=false;resetarVisual();return}
     somVum();mensagemEl.className="mensagemSaque";
-    mensagemEl.innerHTML="🎉 PAROU EM "+valorAtual.toFixed(2)+"x<br>💰 RETORNO: R$ "+ganho.toFixed(2).replace(".",",");
+    mensagemEl.innerHTML=" PAROU EM "+valorAtual.toFixed(2)+"x<br>💰 RETORNO: R$ "+ganho.toFixed(2).replace(".",",");
     adicionarHistorico(valorAtual.toFixed(2)+"x");numeroEl.classList.remove("subindo");rastroEl.classList.remove("ativo");
     jogarBtn.disabled=false;await atualizarTela();setTimeout(resetarVisual,1200);
 };
@@ -244,7 +277,7 @@ async function finalizarCrash(){
     numeroEl.classList.remove("subindo");rastroEl.classList.remove("ativo");
     areaEl.classList.add("crash");numeroEl.style.color="#ff416d";
     numeroEl.style.textShadow="0 0 10px #ff1744,0 0 30px #ff1744";
-    mensagemEl.className="mensagemCrash";mensagemEl.innerHTML=" CRASH EM "+valorAtual.toFixed(2)+"x";
+    mensagemEl.className="mensagemCrash";mensagemEl.innerHTML="CRASH EM "+valorAtual.toFixed(2)+"x";
     adicionarHistorico(valorAtual.toFixed(2)+"x");jogarBtn.disabled=false;
     await atualizarTela();setTimeout(resetarVisual,1000);
 }
@@ -267,7 +300,6 @@ async function iniciarPagina(){
             console.warn("Nenhum usuário logado encontrado");
             mensagemEl.innerText = "⚠️ Faça login para jogar";
             mensagemEl.className = "mensagemCrash";
-            // Não redireciona imediatamente para permitir ver a mensagem
             setTimeout(() => {
                 if(confirm("Você precisa estar logado para jogar. Ir para página de login?")) {
                     window.location.href="../index.html";
@@ -276,12 +308,7 @@ async function iniciarPagina(){
             return;
         }
         musicaFundo.volume=0.10;
-        const saldoCarregado = await buscarSaldo();
-        if(saldoCarregado === 0 && usuarioAtual) {
-            console.warn("Usuário logado mas saldo é 0. Verifique se existe registro na tabela saldos.");
-            mensagemEl.innerText = "⚠️ Saldo não encontrado. Contate o suporte.";
-            mensagemEl.className = "mensagemCrash";
-        }
+        await buscarSaldo();
     }catch(error){
         console.error("Erro fatal ao iniciar:", error);
         mensagemEl.innerText = "❌ Erro ao iniciar jogo: " + error.message;
@@ -289,12 +316,17 @@ async function iniciarPagina(){
     }
 }
 
+async function obterUsuario(){
+    const {data,error}=await supabase.auth.getSession();
+    if(error){console.error("Erro de sessão:",error);return null}
+    return data?.session?.user||null
+}
+
 supabase.auth.onAuthStateChange(function(event,session){
     if(!session){
         console.warn("Sessão expirada ou logout detectado");
         window.location.href="../index.html";
     } else {
-        // Recarrega saldo quando sessão muda (ex: após login)
         usuarioAtual = session.user;
         buscarSaldo();
     }
