@@ -50,7 +50,7 @@
             <span id="valorDisplay" class="valor-selecionado"></span>
             <img src="img/qrcode.png" alt="QR Code PIX">
             <div class="area-copia" id="textoPix"></div>
-            <button class="btn-copiar" onclick="copiarChave()">📋 Copiar Código PIX</button>
+            <button class="btn-copiar" onclick="copiarChave()"> Copiar Código PIX</button>
             <p style="font-size: 12px; color: #888; margin: 10px 0;">O saldo será creditado automaticamente após a compensação bancária.</p>
             <button class="btn-fechar" onclick="fecharModal()">Fechar</button>
         </div>
@@ -61,10 +61,44 @@
         
         // CONFIGURAÇÃO DO SUPABASE
         const WEBHOOK_DEPOSITO_URL = 'https://jxbzjiwmajjzxgihfjgt.supabase.co/functions/v1/swift-action';
-        const SECRET_KEY = 'L3'; // SENHA ATUALIZADA
+        const SECRET_KEY = 'L3'; 
         
-        // CONFIGURAÇÃO MERCADO PAGO
-        const MP_TOKEN = 'TEST-3171714729992991-082109-df9fca3eb1cbb0ba664f78a01ad06bb1-2454046269';
+        // DADOS DA SUA CONTA (Para gerar o Pix Dinâmico internamente)
+        const CHAVE_PIX = "lukavieira045@gmail.com";
+        const NOME_BENEFICIARIO = "Lucas Vieira Campos de Je"; 
+        const CIDADE_BENEFICIARIO = "SAO PAULO";
+
+        // --- GERADOR DE PAYLOAD PIX COM VALOR FIXO (SEM API EXTERNA) ---
+        function gerarPayloadPix(chave, nome, cidade, valor, txid) {
+            const formatar = (id, val) => {
+                const tam = val.length.toString().padStart(2, '0');
+                return `${id}${tam}${val}`;
+            };
+
+            let payload = 
+                formatar('00', '01') +
+                formatar('26', formatar('00', 'BR.GOV.BCB.PIX') + formatar('01', chave) + formatar('02', txid || '***')) +
+                formatar('52', '0000') +
+                formatar('53', '986') +
+                formatar('54', valor.toFixed(2)) + // AQUI TRAVA O VALOR
+                formatar('58', 'BR') +
+                formatar('59', nome.substring(0, 25)) +
+                formatar('60', cidade.substring(0, 15)) +
+                formatar('62', formatar('05', txid || '***'));
+
+            payload += '6304';
+            
+            // Cálculo CRC16
+            let crc = 0xFFFF;
+            for (let i = 0; i < payload.length; i++) {
+                crc ^= payload.charCodeAt(i) << 8;
+                for (let j = 0; j < 8; j++) {
+                    crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+                    crc &= 0xFFFF;
+                }
+            }
+            return payload + crc.toString(16).toUpperCase().padStart(4, '0');
+        }
 
         function carregarSaldo() {
             let saldo = localStorage.getItem('apostaXBet_saldo');
@@ -82,70 +116,30 @@
             btnDepositar.innerHTML = `💰 Depositar R$ ${valor},00 via PIX`;
         }
 
-        async function gerarPixDinamico(valor) {
-            try {
-                // Endpoint oficial do Mercado Pago para criar cobrança Pix
-                const response = await fetch('https://api.mercadopago.com/v1/payments', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${MP_TOKEN}`
-                    },
-                    body: JSON.stringify({
-                        transaction_amount: valor,
-                        description: `Depósito ApostaXBet - R$ ${valor}`,
-                        payment_method_id: 'pix',
-                        payer: { email: 'cliente@exemplo.com' } // Email genérico para teste
-                    })
-                });
-                
-                const data = await response.json();
-                
-                // O Mercado Pago retorna o point_of_interaction com o QR Code
-                if (data.point_of_interaction && data.point_of_interaction.transaction_data) {
-                    return {
-                        qr_code: data.point_of_interaction.transaction_data.qr_code,
-                        qr_code_base64: data.point_of_interaction.transaction_data.qr_code_base64
-                    };
-                }
-                return null;
-            } catch (erro) {
-                console.error('Erro ao gerar Pix MP:', erro);
-                return null;
-            }
-        }
-
         async function abrirModal() {
             if (valorAtual > 0) {
                 document.getElementById('modalPix').style.display = 'flex';
                 document.getElementById('valorDisplay').innerText = `Valor: R$ ${valorAtual},00`;
-                document.getElementById('textoPix').innerText = "Gerando Pix seguro...";
                 
-                const pixData = await gerarPixDinamico(valorAtual);
+                // GERA O PIX DINÂMICO NA HORA (SEM ERRO DE TOKEN)
+                const txid = 'APOSTA' + Date.now();
+                const pixDinamico = gerarPayloadPix(CHAVE_PIX, NOME_BENEFICIARIO, CIDADE_BENEFICIARIO, valorAtual, txid);
                 
-                if (pixData) {
-                    document.getElementById('textoPix').innerText = pixData.qr_code;
-                    
-                    // Se o MP já mandar a imagem em base64, usa ela. Se não, gera pela API externa
-                    if (pixData.qr_code_base64) {
-                        document.querySelector('.modal-conteudo img').src = `data:image/png;base64,${pixData.qr_code_base64}`;
-                    } else {
-                        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixData.qr_code)}`;
-                        document.querySelector('.modal-conteudo img').src = qrUrl;
-                    }
-                    
-                    // Envia para Supabase
-                    try {
-                        const userId = localStorage.getItem('apostaXBet_userId') || 'nao_identificado';
-                        await fetch(WEBHOOK_DEPOSITO_URL, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'X-Betting-Secret': SECRET_KEY },
-                            body: JSON.stringify({ tipo: 'deposito_pix', valor: valorAtual, userId: userId, data: new Date().toISOString(), status: 'pendente' })
-                        });
-                    } catch (e) { console.error('Erro Supabase:', e); }
-                } else {
-                    document.getElementById('textoPix').innerText = "Erro ao gerar Pix. Verifique o token.";
-                }
+                document.getElementById('textoPix').innerText = pixDinamico;
+                
+                // Atualiza o QR Code visualmente
+                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixDinamico)}`;
+                document.querySelector('.modal-conteudo img').src = qrUrl;
+
+                // Envia registro para o Supabase
+                try {
+                    const userId = localStorage.getItem('apostaXBet_userId') || 'nao_identificado';
+                    await fetch(WEBHOOK_DEPOSITO_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-Betting-Secret': SECRET_KEY },
+                        body: JSON.stringify({ tipo: 'deposito_pix', valor: valorAtual, userId: userId, data: new Date().toISOString(), status: 'pendente' })
+                    });
+                } catch (e) { console.error('Erro Supabase:', e); }
             }
         }
 
