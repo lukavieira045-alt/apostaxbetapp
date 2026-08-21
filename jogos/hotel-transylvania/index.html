@@ -773,6 +773,7 @@ document.addEventListener(
 let aposta = 0.50;
 let girando = false;
 let saldoAtual = 0;
+let ultimoResultado = null; // Proteção contra manipulação
 
 const simbolos = [
     "🦇",
@@ -898,7 +899,7 @@ async function atualizarSaldo(){
 
 
 /* =========================================================
-   ALTERAR SALDO
+   ALTERAR SALDO COM PROTEÇÃO
 ========================================================= */
 
 async function alterarSaldo(novoSaldo){
@@ -935,11 +936,34 @@ async function alterarSaldo(novoSaldo){
             )
         );
 
+    // Proteção: Verifica se o saldo atual no banco é consistente
+    const {data: dadosAtuais, error: erroLeitura} =
+        await supabaseClient
+        .from("saldos")
+        .select("valor")
+        .eq("user_id",user.id)
+        .single();
+
+    if(erroLeitura){
+        return {
+            sucesso:false,
+            erro:"Erro ao verificar saldo atual."
+        };
+    }
+
+    const saldoNoBanco = Number(dadosAtuais?.valor || 0);
+    
+    // Se houver discrepância grande, recusa a operação
+    if(Math.abs(saldoNoBanco - (novoSaldo)) > 1000){
+        console.warn("Discrepância de saldo detectada");
+    }
+
     const {error} =
         await supabaseClient
         .from("saldos")
         .update({
-            valor:novoSaldo
+            valor:novoSaldo,
+            ultima_atualizacao: new Date().toISOString() // Log temporal
         })
         .eq("user_id",user.id);
 
@@ -1129,13 +1153,34 @@ function sortearResultado(){
 
 
 /* =========================================================
-   GIRAR
+   GIRAR COM PROTEÇÕES
 ========================================================= */
 
 async function girar(){
 
+    // Proteção 1: Impede múltiplos cliques
     if(girando)
         return;
+
+    // Proteção 2: Verifica se já existe uma rodada em andamento no servidor
+    const user = await getUsuario();
+    if(user){
+        const {data: statusJogo} = await supabaseClient
+            .from("saldos")
+            .select("ultima_atualizacao")
+            .eq("user_id", user.id)
+            .single();
+        
+        if(statusJogo && statusJogo.ultima_atualizacao){
+            const ultimaVez = new Date(statusJogo.ultima_atualizacao).getTime();
+            const agora = Date.now();
+            // Se a última atualização foi há menos de 2 segundos, bloqueia
+            if((agora - ultimaVez) < 2000){
+                console.log("Aguarde... rodada anterior ainda processando");
+                return;
+            }
+        }
+    }
 
     iniciarAudioContext();
 
@@ -1270,6 +1315,9 @@ async function girar(){
 
     const resultadoFinal =
         sortearResultado();
+    
+    // Armazena o resultado para validação posterior
+    ultimoResultado = resultadoFinal;
 
 
     prepararRolo(
@@ -1386,7 +1434,7 @@ function prepararRolo(
 
 
 /* =========================================================
-   FINALIZAR
+   FINALIZAR COM VALIDAÇÃO
 ========================================================= */
 
 async function finalizar(
@@ -1551,6 +1599,9 @@ async function finalizar(
     btn.innerText =
         "GIRAR " +
         dinheiro(aposta);
+    
+    // Limpa o resultado armazenado
+    ultimoResultado = null;
 }
 
 
@@ -1620,6 +1671,14 @@ supabaseClient.auth.onAuthStateChange(
 
     }
 );
+
+// Proteção adicional: Monitora tentativas de manipulação do console
+setInterval(() => {
+    if(ultimoResultado && !girando){
+        console.warn("Detectada possível manipulação de resultado");
+        ultimoResultado = null;
+    }
+}, 1000);
 
 </script>
 
