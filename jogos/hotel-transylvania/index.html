@@ -381,7 +381,7 @@ body{
 
         <div class="multiplicador">
             <div id="multiplicador">
-                PRÊMIO ATÉ 100x
+                PRÊMIO ATÉ 50x
             </div>
         </div>
 
@@ -457,9 +457,8 @@ body{
         </div>
 
         <div class="rtp">
-            RTP TEÓRICO: 90% · VANTAGEM MATEMÁTICA: 10%<br>
-            Resultados aleatórios. O RTP representa uma expectativa
-            estatística de longo prazo.
+            RTP AJUSTADO · VANTAGEM DA CASA GARANTIDA<br>
+            Resultados aleatórios. Jogue com responsabilidade.
         </div>
 
     </div>
@@ -786,15 +785,19 @@ const simbolos = [
     "💎"
 ];
 
+/* 
+   TABELA DE PRÊMIOS AJUSTADA PARA SEGURANÇA DA BANCA 
+   Reduzimos os multiplicadores altos para evitar prejuízo imediato.
+*/
 const premios = {
-    "🦇":3,
-    "👻":5,
-    "💀":8,
-    "🕷️":10,
-    "🧛":15,
-    "🎃":20,
-    "⚡":30,
-    "💎":100
+    "🦇": 2,    // Antes 3
+    "👻": 3,    // Antes 5
+    "💀": 5,    // Antes 8
+    "🕷️": 8,    // Antes 10
+    "🧛": 12,   // Antes 15
+    "🎃": 15,   // Antes 20
+    "⚡": 20,   // Antes 30
+    "💎": 50    // Antes 100 (Mudança crítica para seu bolso)
 };
 
 
@@ -1056,168 +1059,72 @@ function escolherValor(
 
 
 /* =========================================================
-   SORTEIO
-=========================================================
-
-   Distribuição:
-
-   3x    6,50%
-   5x    3,50%
-   8x    1,50%
-   10x   1,00%
-   15x   0,70%
-   20x   0,40%
-   30x   0,25%
-   100x  0,05%
-
-   Total de vitórias: 13,90%
-   Total sem prêmio: 86,10%
-
-   RTP teórico = 90%
+   SORTEIO AJUSTADO (PROTEÇÃO DE PREJUÍZO)
 ========================================================= */
 
 function sortearResultado(){
 
-    const r =
-        Math.random();
+    const r = Math.random();
 
-
-    /* 100x */
-
-    if(r < 0.0005){
-
-        return [
-            "💎",
-            "💎",
-            "💎"
-        ];
-
-    }
-
-
-    /* 30x */
-
-    if(r < 0.0030){
-
-        return [
-            "⚡",
-            "⚡",
-            "⚡"
-        ];
-
-    }
-
-
-    /* 20x */
-
-    if(r < 0.0070){
-
-        return [
-            "🎃",
-            "🎃",
-            "🎃"
-        ];
-
-    }
-
-
-    /* 15x */
-
-    if(r < 0.0140){
-
-        return [
-            "🧛",
-            "🧛",
-            "🧛"
-        ];
-
-    }
-
-
-    /* 10x */
-
-    if(r < 0.0240){
-
-        return [
-            "🕷️",
-            "🕷️",
-            "🕷️"
-        ];
-
-    }
-
-
-    /* 8x */
-
-    if(r < 0.0390){
-
-        return [
-            "💀",
-            "💀",
-            "💀"
-        ];
-
-    }
-
-
-    /* 5x */
-
-    if(r < 0.0740){
-
-        return [
-            "👻",
-            "👻",
-            "👻"
-        ];
-
-    }
-
-
-    /* 3x */
-
-    if(r < 0.1390){
-
-        return [
-            "🦇",
-            "🦇",
-            "🦇"
-        ];
-
-    }
-
-
-    /*
-    =====================================================
-    PERDA
-
-    86,10% das rodadas entram aqui.
-    =====================================================
+    /* 
+       Distribuição Ajustada para Segurança da Banca 
+       Total de vitórias: ~14.5% 
+       RTP Teórico ajustado para ser favorável à casa.
     */
 
-    let a =
-        escolherSimbolo();
-
-    let b =
-        escolherSimbolo();
-
-    let c =
-        escolherSimbolo();
-
-    while(
-        a === b &&
-        b === c
-    ){
-
-        c =
-            escolherSimbolo();
-
+    /* 50x (Diamante) - Muito Raro: 0.02% (1 em 5000) */
+    if(r < 0.0002){
+        return ["💎", "💎", "💎"];
     }
 
-    return [
-        a,
-        b,
-        c
-    ];
+    /* 20x (Raio) - Raro: 0.08% */
+    if(r < 0.0010){
+        return ["⚡", "⚡", "⚡"];
+    }
+
+    /* 15x (Abóbora) */
+    if(r < 0.0030){
+        return ["🎃", "🎃", "🎃"];
+    }
+
+    /* 12x (Vampiro) */
+    if(r < 0.0070){
+        return ["🧛", "🧛", "🧛"];
+    }
+
+    /* 8x (Aranha) */
+    if(r < 0.0150){
+        return ["🕷️", "🕷️", "🕷️"];
+    }
+
+    /* 5x (Caveira) */
+    if(r < 0.0350){
+        return ["💀", "💀", "💀"];
+    }
+
+    /* 3x (Fantasma) */
+    if(r < 0.0750){
+        return ["👻", "👻", "👻"];
+    }
+
+    /* 2x (Morcego) - Prêmio de consolação frequente */
+    if(r < 0.1450){
+        return ["🦇", "🦇", "🦇"];
+    }
+
+    /* 
+       PERDA: 85.5% das vezes 
+       Garante que nunca saiam 3 iguais aqui
+    */
+    let a = escolherSimbolo();
+    let b = escolherSimbolo();
+    let c = escolherSimbolo();
+
+    while(a === b && b === c){
+        c = escolherSimbolo();
+    }
+
+    return [a, b, c];
 }
 
 
