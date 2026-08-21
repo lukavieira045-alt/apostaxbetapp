@@ -1,3 +1,5 @@
+deposito.html — PIX atualizado
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -11,14 +13,14 @@
         .topo h1 { margin: 0; color: #e6c229; font-size: 28px; }
         .saldo { margin-top: 8px; color: #00ed91; font-weight: bold; font-size: 18px; }
         .container { width: 94%; max-width: 600px; margin: 25px auto; }
-        
-        /* Estilos dos Botões de Valor */
+
         .valores-rapidos {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
+
         .btn-valor {
             flex: 1;
             min-width: 70px;
@@ -31,13 +33,13 @@
             font-weight: bold;
             transition: all 0.2s;
         }
+
         .btn-valor:hover, .btn-valor.ativo {
             background: #e6c229;
             color: #000;
             border-color: #e6c229;
         }
 
-        /* Estilos do Botão PIX Principal */
         .btn-pix {
             display: block;
             width: 100%;
@@ -50,18 +52,22 @@
             cursor: pointer;
             font-weight: bold;
         }
+
         .btn-pix:active { transform: scale(0.98); }
 
-        /* Estilos da Janela Modal (QR Code) */
         .modal-pix {
             display: none;
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(0,0,0,0.8);
             z-index: 9999;
             justify-content: center;
             align-items: center;
         }
+
         .modal-conteudo {
             background: white;
             padding: 30px;
@@ -72,17 +78,27 @@
             color: #333;
             position: relative;
         }
-        .modal-conteudo h3 { margin-top: 0; color: #111; }
-        .modal-conteudo img { max-width: 100%; height: auto; border-radius: 8px; margin: 15px 0; }
-        .valor-selecionado { 
-            font-size: 20px; 
-            color: #28a745; 
-            font-weight: bold; 
-            margin-bottom: 10px; 
+
+        .modal-conteudo h3 {
+            margin-top: 0;
+            color: #111;
+        }
+
+        .modal-conteudo img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .valor-selecionado {
+            font-size: 20px;
+            color: #28a745;
+            font-weight: bold;
+            margin-bottom: 10px;
             display: block;
         }
-        
-        /* Área de Copia e Cola */
+
         .area-copia {
             background: #f0f0f0;
             padding: 10px;
@@ -96,6 +112,7 @@
             overflow-y: auto;
             border: 1px dashed #ccc;
         }
+
         .btn-copiar {
             background: #007bff;
             color: white;
@@ -111,8 +128,9 @@
             justify-content: center;
             gap: 5px;
         }
+
         .btn-copiar:active { transform: scale(0.98); }
-        
+
         .btn-fechar {
             background: #dc3545;
             color: white;
@@ -125,6 +143,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="topo">
@@ -135,8 +154,7 @@
     <div class="container">
         <h2>Recarregar Saldo</h2>
         <p>Escolha um valor para depositar via PIX:</p>
-        
-        <!-- BOTÕES DE VALORES RÁPIDOS -->
+
         <div class="valores-rapidos">
             <button class="btn-valor" onclick="selecionarValor(this, 10)">R$ 10</button>
             <button class="btn-valor" onclick="selecionarValor(this, 20)">R$ 20</button>
@@ -145,64 +163,90 @@
             <button class="btn-valor" onclick="selecionarValor(this, 200)">R$ 200</button>
         </div>
 
-        <!-- BOTÃO DE DEPOSITAR -->
-        <button id="btnDepositar" class="btn-pix" onclick="abrirModal()" disabled style="opacity: 0.6;">
-             Depositar via PIX
+        <button
+            id="btnDepositar"
+            class="btn-pix"
+            onclick="abrirModal()"
+            disabled
+            style="opacity: 0.6;"
+        >
+            Depositar via PIX
         </button>
     </div>
 
-    <!-- JANELA DO QR CODE (MODAL) -->
-    <div id="modalPix" class="modal-pix" onclick="if(event.target === this) fecharModal()">
+    <div
+        id="modalPix"
+        class="modal-pix"
+        onclick="if(event.target === this) fecharModal()"
+    >
         <div class="modal-conteudo">
             <h3>Escaneie ou Copie</h3>
+
             <span id="valorDisplay" class="valor-selecionado"></span>
-            
+
             <img src="img/qrcode.png" alt="QR Code PIX">
-            
-            <!-- ÁREA DE COPIA E COLA -->
-            <div class="area-copia" id="textoPix">
-                <!-- O código será inserido aqui pelo JavaScript -->
-            </div>
-            
+
+            <div class="area-copia" id="textoPix"></div>
+
             <button class="btn-copiar" onclick="copiarChave()">
                 📋 Copiar Código PIX
             </button>
-            
-            <p style="font-size: 12px; color: #888; margin: 10px 0;">O saldo será creditado automaticamente após a compensação bancária.</p>
-            <button class="btn-fechar" onclick="fecharModal()">Fechar</button>
+
+            <p style="font-size: 12px; color: #888; margin: 10px 0;">
+                O saldo será creditado automaticamente após a compensação bancária.
+            </p>
+
+            <button class="btn-fechar" onclick="fecharModal()">
+                Fechar
+            </button>
         </div>
     </div>
 
     <script>
         let valorAtual = 0;
-        // ⚠️ SUBSTITUA PELO SEU CÓDIGO PIX REAL
-        const chavePixReal = "00020101021126450014BR.GOV.BCB.PIX0123lukavieira045@gmail.com5204000053039865802BR5925Luka Vieira0456008Sao Paulo62070503***6304XXXX";
+
+        // PIX REAL ATUALIZADO
+        const chavePixReal = "00020101021126450014BR.GOV.BCB.PIX0123lukavieira045@gmail.com5204000053039865802BR5925Lucas Vieira Campos de Je6009SAO PAULO62080504daqr63044F93";
 
         // --- SISTEMA DE SALDO ---
         function carregarSaldo() {
             let saldo = localStorage.getItem('apostaXBet_saldo');
+
             if (!saldo) {
                 saldo = 0;
                 localStorage.setItem('apostaXBet_saldo', 0);
             }
-            document.getElementById('displaySaldo').innerText = `Saldo: R$ ${parseFloat(saldo).toFixed(2).replace('.', ',')}`;
+
+            document.getElementById('displaySaldo').innerText =
+                `Saldo: R$ ${parseFloat(saldo).toFixed(2).replace('.', ',')}`;
         }
 
         // --- FUNÇÕES DA MODAL ---
         function selecionarValor(botao, valor) {
-            document.querySelectorAll('.btn-valor').forEach(b => b.classList.remove('ativo'));
+            document.querySelectorAll('.btn-valor')
+                .forEach(b => b.classList.remove('ativo'));
+
             botao.classList.add('ativo');
+
             valorAtual = valor;
+
             const btnDepositar = document.getElementById('btnDepositar');
+
             btnDepositar.disabled = false;
             btnDepositar.style.opacity = '1';
-            btnDepositar.innerHTML = `💰 Depositar R$ ${valor},00 via PIX`;
+
+            btnDepositar.innerHTML =
+                `💰 Depositar R$ ${valor},00 via PIX`;
         }
 
         function abrirModal() {
             if (valorAtual > 0) {
-                document.getElementById('valorDisplay').innerText = `Valor: R$ ${valorAtual},00`;
-                document.getElementById('textoPix').innerText = chavePixReal; 
+                document.getElementById('valorDisplay').innerText =
+                    `Valor: R$ ${valorAtual},00`;
+
+                document.getElementById('textoPix').innerText =
+                    chavePixReal;
+
                 document.getElementById('modalPix').style.display = 'flex';
             }
         }
@@ -212,19 +256,29 @@
         }
 
         function copiarChave() {
-            const texto = document.getElementById('textoPix').innerText;
-            navigator.clipboard.writeText(texto).then(() => {
-                const btn = document.querySelector('.btn-copiar');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = "✅ Copiado!";
-                btn.style.background = "#28a745";
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.style.background = "#007bff";
-                }, 2000);
-            }).catch(err => {
-                alert("Erro ao copiar. Tente selecionar e copiar manualmente.");
-            });
+            const texto =
+                document.getElementById('textoPix').innerText;
+
+            navigator.clipboard.writeText(texto)
+                .then(() => {
+                    const btn =
+                        document.querySelector('.btn-copiar');
+
+                    const originalText = btn.innerHTML;
+
+                    btn.innerHTML = "✅ Copiado!";
+                    btn.style.background = "#28a745";
+
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.style.background = "#007bff";
+                    }, 2000);
+                })
+                .catch(err => {
+                    alert(
+                        "Erro ao copiar. Tente selecionar e copiar manualmente."
+                    );
+                });
         }
 
         // Inicializa o saldo ao carregar a página
