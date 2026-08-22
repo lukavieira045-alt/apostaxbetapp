@@ -223,7 +223,6 @@
         </div>
     </div>
 
-
     <div class="container">
 
         <h2>Recarregar Saldo</h2>
@@ -232,46 +231,29 @@
             Escolha um valor para depositar via PIX:
         </p>
 
-
         <div class="valores-rapidos">
 
-            <button
-                class="btn-valor"
-                onclick="selecionarValor(this, 10)"
-            >
+            <button class="btn-valor" onclick="selecionarValor(this, 10)">
                 R$ 10
             </button>
 
-            <button
-                class="btn-valor"
-                onclick="selecionarValor(this, 20)"
-            >
+            <button class="btn-valor" onclick="selecionarValor(this, 20)">
                 R$ 20
             </button>
 
-            <button
-                class="btn-valor"
-                onclick="selecionarValor(this, 50)"
-            >
+            <button class="btn-valor" onclick="selecionarValor(this, 50)">
                 R$ 50
             </button>
 
-            <button
-                class="btn-valor"
-                onclick="selecionarValor(this, 100)"
-            >
+            <button class="btn-valor" onclick="selecionarValor(this, 100)">
                 R$ 100
             </button>
 
-            <button
-                class="btn-valor"
-                onclick="selecionarValor(this, 200)"
-            >
+            <button class="btn-valor" onclick="selecionarValor(this, 200)">
                 R$ 200
             </button>
 
         </div>
-
 
         <button
             id="btnDepositar"
@@ -283,15 +265,9 @@
             Depositar via PIX
         </button>
 
-
-        <div
-            id="mensagemDeposito"
-        ></div>
+        <div id="mensagemDeposito"></div>
 
     </div>
-
-
-    <!-- MODAL PIX -->
 
     <div
         id="modalPix"
@@ -301,23 +277,13 @@
 
         <div class="modal-conteudo">
 
-            <h3>
-                Pague com PIX
-            </h3>
+            <h3>Pague com PIX</h3>
 
-            <span
-                id="valorDisplay"
-                class="valor-selecionado"
-            ></span>
+            <span id="valorDisplay" class="valor-selecionado"></span>
 
-
-            <div
-                id="carregandoPix"
-                class="carregando"
-            >
+            <div id="carregandoPix" class="carregando">
                 Criando PIX...
             </div>
-
 
             <img
                 id="qrCodePix"
@@ -326,44 +292,24 @@
                 style="display:none;"
             >
 
+            <div class="area-copia" id="textoPix"></div>
 
-            <div
-                class="area-copia"
-                id="textoPix"
-            ></div>
-
-
-            <button
-                class="btn-copiar"
-                onclick="copiarChave()"
-            >
+            <button class="btn-copiar" onclick="copiarChave()">
                 📋 Copiar Código PIX
             </button>
 
-
-            <p
-                style="
-                    font-size:12px;
-                    color:#888;
-                    margin:10px 0;
-                "
-            >
+            <p style="font-size:12px;color:#888;margin:10px 0;">
                 Escaneie o QR Code no aplicativo do seu banco
                 ou copie o código PIX.
             </p>
 
-
-            <button
-                class="btn-fechar"
-                onclick="fecharModal()"
-            >
+            <button class="btn-fechar" onclick="fecharModal()">
                 Fechar
             </button>
 
         </div>
 
     </div>
-
 
     <script>
 
@@ -374,8 +320,84 @@
         const WEBHOOK_DEPOSITO_URL =
             "https://jxbzjiwmajjzxgihfjgt.supabase.co/functions/v1/swift-action";
 
-
         let valorAtual = 0;
+
+
+        // =====================================================
+        // IDENTIFICAÇÃO DO MESMO USUÁRIO DO SITE
+        // =====================================================
+
+        function obterUsuarioAtual() {
+
+            // Primeiro usa a identificação principal já utilizada
+            // pelo ApostaXBet.
+            const chaves = [
+                "apostaXBet_userId",
+                "user_id",
+                "userId",
+                "USER_ID",
+                "supabase_user_id"
+            ];
+
+            for (const chave of chaves) {
+
+                const valor =
+                    localStorage.getItem(chave);
+
+                if (
+                    valor &&
+                    valor !== "nao_identificado" &&
+                    valor !== "null" &&
+                    valor !== "undefined"
+                ) {
+                    return valor;
+                }
+            }
+
+
+            // Verifica também sessionStorage.
+            for (const chave of chaves) {
+
+                const valor =
+                    sessionStorage.getItem(chave);
+
+                if (
+                    valor &&
+                    valor !== "nao_identificado" &&
+                    valor !== "null" &&
+                    valor !== "undefined"
+                ) {
+                    return valor;
+                }
+            }
+
+
+            // Compatibilidade com o SistemaSaldo.
+            try {
+
+                if (
+                    window.SistemaSaldo &&
+                    typeof window.SistemaSaldo.getUserId === "function"
+                ) {
+
+                    const id =
+                        window.SistemaSaldo.getUserId();
+
+                    if (id) {
+                        return id;
+                    }
+                }
+
+            } catch (erro) {
+                console.warn(
+                    "Não foi possível obter usuário pelo SistemaSaldo.",
+                    erro
+                );
+            }
+
+
+            return null;
+        }
 
 
         // =====================================================
@@ -384,13 +406,44 @@
 
         function carregarSaldo() {
 
-            const saldo =
-                localStorage.getItem(
-                    "apostaXBet_saldo"
-                ) || "0";
+            let saldo = null;
+
+            try {
+
+                if (
+                    window.SistemaSaldo &&
+                    typeof window.SistemaSaldo.get === "function"
+                ) {
+
+                    saldo =
+                        window.SistemaSaldo.get();
+                }
+
+            } catch (erro) {
+
+                console.warn(
+                    "Erro ao obter saldo pelo SistemaSaldo:",
+                    erro
+                );
+            }
+
+
+            if (
+                saldo === null ||
+                saldo === undefined ||
+                isNaN(parseFloat(saldo))
+            ) {
+
+                saldo =
+                    localStorage.getItem(
+                        "apostaXBet_saldo"
+                    ) || "0";
+            }
+
 
             const numero =
                 parseFloat(saldo) || 0;
+
 
             document.getElementById(
                 "displaySaldo"
@@ -405,26 +458,18 @@
         // ESCOLHER VALOR
         // =====================================================
 
-        function selecionarValor(
-            botao,
-            valor
-        ) {
+        function selecionarValor(botao, valor) {
 
             document
                 .querySelectorAll(".btn-valor")
                 .forEach(
                     b =>
-                        b.classList.remove(
-                            "ativo"
-                        )
+                        b.classList.remove("ativo")
                 );
 
-            botao.classList.add(
-                "ativo"
-            );
+            botao.classList.add("ativo");
 
-            valorAtual =
-                Number(valor);
+            valorAtual = Number(valor);
 
             const btn =
                 document.getElementById(
@@ -477,19 +522,15 @@
                 );
 
 
-            modal.style.display =
-                "flex";
+            modal.style.display = "flex";
 
-            qr.style.display =
-                "none";
+            qr.style.display = "none";
 
             qr.src = "";
 
-            texto.innerText =
-                "";
+            texto.innerText = "";
 
-            carregando.style.display =
-                "block";
+            carregando.style.display = "block";
 
             carregando.innerText =
                 "Criando PIX...";
@@ -504,19 +545,14 @@
 
 
             // =================================================
-            // PEGAR USUÁRIO
+            // PEGAR O MESMO USUÁRIO DO SITE
             // =================================================
 
             const userId =
-                localStorage.getItem(
-                    "apostaXBet_userId"
-                );
+                obterUsuarioAtual();
 
 
-            if (
-                !userId ||
-                userId === "nao_identificado"
-            ) {
+            if (!userId) {
 
                 mostrarErro(
                     "Usuário não identificado. Faça login novamente."
@@ -526,6 +562,12 @@
 
                 return;
             }
+
+
+            console.log(
+                "ApostaXBet - usuário utilizado no depósito:",
+                userId
+            );
 
 
             // =================================================
@@ -613,9 +655,7 @@
                     dados.qr_code;
 
 
-                if (
-                    !codigoPix
-                ) {
+                if (!codigoPix) {
 
                     throw new Error(
                         "O Mercado Pago não retornou o código PIX."
@@ -628,12 +668,10 @@
 
 
                 // =================================================
-                // MOSTRAR QR CODE
+                // QR CODE
                 // =================================================
 
-                if (
-                    dados.qr_code_base64
-                ) {
+                if (dados.qr_code_base64) {
 
                     qr.src =
                         `data:image/png;base64,${dados.qr_code_base64}`;
@@ -646,26 +684,24 @@
                 }
 
 
-                qr.onload =
-                    function() {
+                qr.onload = function() {
 
-                        carregando.style.display =
-                            "none";
+                    carregando.style.display =
+                        "none";
 
-                        qr.style.display =
-                            "block";
-                    };
+                    qr.style.display =
+                        "block";
+                };
 
 
-                qr.onerror =
-                    function() {
+                qr.onerror = function() {
 
-                        carregando.innerText =
-                            "QR Code não pôde ser exibido. Use o código PIX abaixo.";
+                    carregando.innerText =
+                        "QR Code não pôde ser exibido. Use o código PIX abaixo.";
 
-                        qr.style.display =
-                            "none";
-                    };
+                    qr.style.display =
+                        "none";
+                };
 
 
             } catch (erro) {
@@ -679,8 +715,7 @@
                     erro.message ||
                     "Não foi possível criar o PIX.";
 
-                texto.innerText =
-                    "";
+                texto.innerText = "";
 
                 mostrarErro(
                     erro.message ||
@@ -773,9 +808,7 @@
         // MENSAGEM DE ERRO
         // =====================================================
 
-        function mostrarErro(
-            mensagem
-        ) {
+        function mostrarErro(mensagem) {
 
             const elemento =
                 document.getElementById(
