@@ -4,126 +4,525 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Roleta Cassino - ApostaXBet</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module" src="../saldo.js"></script>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#050505;color:white;font-family:Arial,sans-serif;padding-bottom:20px}
-.top{height:52px;background:#111;border-bottom:2px solid #b88925;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:12px}
+
+body{
+    background:#050505;
+    color:white;
+    font-family:Arial,sans-serif;
+    padding-bottom:20px
+}
+
+.top{
+    height:52px;
+    background:#111;
+    border-bottom:2px solid #b88925;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 12px;
+    font-size:12px
+}
+
 .online{color:#45df7d}
-.area{width:100%;max-width:900px;margin:auto}
-.mesa{position:relative;height:450px;overflow:hidden;background:linear-gradient(135deg,#06152d,#123d94,#071936)}
-.roleta-area{position:absolute;left:8px;top:55px;width:155px;height:155px;z-index:5}
-.ponteiro{position:absolute;top:-14px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-top:30px solid #ffd43b;filter:drop-shadow(0 2px 3px #000);z-index:30}
-.roleta{position:relative;width:155px;height:155px;border-radius:50%;border:8px solid #a86b32;background:conic-gradient(#087c3d 0deg 9.73deg,#b51e24 9.73deg 19.46deg,#111 19.46deg 29.19deg,#b51e24 29.19deg 38.92deg,#111 38.92deg 48.65deg,#b51e24 48.65deg 58.38deg,#111 58.38deg 68.11deg,#b51e24 68.11deg 77.84deg,#111 77.84deg 87.57deg,#b51e24 87.57deg 97.30deg,#111 97.30deg 107.03deg,#b51e24 107.03deg 116.76deg,#111 116.76deg 126.49deg,#b51e24 126.49deg 136.22deg,#111 136.22deg 145.95deg,#b51e24 145.95deg 155.68deg,#111 155.68deg 165.41deg,#b51e24 165.41deg 175.14deg,#111 175.14deg 184.87deg,#b51e24 184.87deg 194.60deg,#111 194.60deg 204.33deg,#b51e24 204.33deg 214.06deg,#111 214.06deg 223.79deg,#b51e24 223.79deg 233.52deg,#111 233.52deg 243.25deg,#b51e24 243.25deg 252.98deg,#111 252.98deg 262.71deg,#b51e24 262.71deg 272.44deg,#111 272.44deg 282.17deg,#b51e24 282.17deg 291.90deg,#111 291.90deg 301.63deg,#b51e24 301.63deg 311.36deg,#111 311.36deg 321.09deg,#b51e24 321.09deg 330.82deg,#111 330.82deg 340.55deg,#b51e24 340.55deg 350.28deg,#111 350.28deg 360deg);box-shadow:0 0 0 3px #d09a50,0 10px 25px #000;transition:transform 7s cubic-bezier(.08,.55,.15,1);overflow:hidden}
-.numeros-roleta{position:absolute;inset:5px;border-radius:50%;pointer-events:none}
-.numero-roleta{position:absolute;left:50%;top:50%;width:18px;height:18px;margin-left:-9px;margin-top:-9px;color:#fff;font-size:9px;font-weight:bold;text-align:center;line-height:18px;text-shadow:0 1px 2px #000}
-.centro-roleta{position:absolute;left:50%;top:50%;width:43px;height:43px;margin-left:-21.5px;margin-top:-21.5px;border-radius:50%;background:radial-gradient(circle,#e0ad65 0 15%,#5a2a0d 16% 35%,#111 36% 62%,#d09a50 63% 70%,#222 71%);border:2px solid #e0ad65;z-index:5}
-.mesa-jogo{position:absolute;left:23%;right:-10%;top:55px;height:345px;background:#12419a;border:3px solid white;box-shadow:0 0 0 3px #152d68,0 15px 30px #000;padding:15px}
-.grade{display:grid;grid-template-columns:repeat(12,1fr);margin-left:7%}
-.numero{height:39px;border:1px solid white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;cursor:pointer;user-select:none}
-.vermelho{background:#b51e25}.preto{background:#111}
-.zero{position:absolute;left:9px;top:15px;width:6%;height:77%;background:#087d3d;border:1px solid white;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;cursor:pointer}
-.faixas{margin-left:7%;margin-top:3px;display:grid;grid-template-columns:repeat(6,1fr)}
-.faixa{height:45px;background:#12377d;border:1px solid white;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:bold;cursor:pointer}
+
+.area{
+    width:100%;
+    max-width:900px;
+    margin:auto
+}
+
+.mesa{
+    position:relative;
+    height:450px;
+    overflow:hidden;
+    background:linear-gradient(135deg,#06152d,#123d94,#071936)
+}
+
+.roleta-area{
+    position:absolute;
+    left:8px;
+    top:55px;
+    width:155px;
+    height:155px;
+    z-index:5
+}
+
+.ponteiro{
+    position:absolute;
+    top:-14px;
+    left:50%;
+    transform:translateX(-50%);
+    width:0;
+    height:0;
+    border-left:11px solid transparent;
+    border-right:11px solid transparent;
+    border-top:30px solid #ffd43b;
+    filter:drop-shadow(0 2px 3px #000);
+    z-index:30
+}
+
+.roleta{
+    position:relative;
+    width:155px;
+    height:155px;
+    border-radius:50%;
+    border:8px solid #a86b32;
+    background:conic-gradient(
+        #087c3d 0deg 9.73deg,
+        #b51e24 9.73deg 19.46deg,
+        #111 19.46deg 29.19deg,
+        #b51e24 29.19deg 38.92deg,
+        #111 38.92deg 48.65deg,
+        #b51e24 48.65deg 58.38deg,
+        #111 58.38deg 68.11deg,
+        #b51e24 68.11deg 77.84deg,
+        #111 77.84deg 87.57deg,
+        #b51e24 87.57deg 97.30deg,
+        #111 97.30deg 107.03deg,
+        #b51e24 107.03deg 116.76deg,
+        #111 116.76deg 126.49deg,
+        #b51e24 126.49deg 136.22deg,
+        #111 136.22deg 145.95deg,
+        #b51e24 145.95deg 155.68deg,
+        #111 155.68deg 165.41deg,
+        #b51e24 165.41deg 175.14deg,
+        #111 175.14deg 184.87deg,
+        #b51e24 184.87deg 194.60deg,
+        #111 194.60deg 204.33deg,
+        #b51e24 204.33deg 214.06deg,
+        #111 214.06deg 223.79deg,
+        #b51e24 223.79deg 233.52deg,
+        #111 233.52deg 243.25deg,
+        #b51e24 243.25deg 252.98deg,
+        #111 252.98deg 262.71deg,
+        #b51e24 262.71deg 272.44deg,
+        #111 272.44deg 282.17deg,
+        #b51e24 282.17deg 291.90deg,
+        #111 291.90deg 301.63deg,
+        #b51e24 301.63deg 311.36deg,
+        #111 311.36deg 321.09deg,
+        #b51e24 321.09deg 330.82deg,
+        #111 330.82deg 340.55deg,
+        #b51e24 340.55deg 350.28deg,
+        #111 350.28deg 360deg
+    );
+    box-shadow:
+        0 0 0 3px #d09a50,
+        0 10px 25px #000;
+    transition:transform 7s cubic-bezier(.08,.55,.15,1);
+    overflow:hidden
+}
+
+.numeros-roleta{
+    position:absolute;
+    inset:5px;
+    border-radius:50%;
+    pointer-events:none
+}
+
+.numero-roleta{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:18px;
+    height:18px;
+    margin-left:-9px;
+    margin-top:-9px;
+    color:#fff;
+    font-size:9px;
+    font-weight:bold;
+    text-align:center;
+    line-height:18px;
+    text-shadow:0 1px 2px #000
+}
+
+.centro-roleta{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:43px;
+    height:43px;
+    margin-left:-21.5px;
+    margin-top:-21.5px;
+    border-radius:50%;
+    background:
+        radial-gradient(
+            circle,
+            #e0ad65 0 15%,
+            #5a2a0d 16% 35%,
+            #111 36% 62%,
+            #d09a50 63% 70%,
+            #222 71%
+        );
+    border:2px solid #e0ad65;
+    z-index:5
+}
+
+.mesa-jogo{
+    position:absolute;
+    left:23%;
+    right:-10%;
+    top:55px;
+    height:345px;
+    background:#12419a;
+    border:3px solid white;
+    box-shadow:
+        0 0 0 3px #152d68,
+        0 15px 30px #000;
+    padding:15px
+}
+
+.grade{
+    display:grid;
+    grid-template-columns:repeat(12,1fr);
+    margin-left:7%
+}
+
+.numero{
+    height:39px;
+    border:1px solid white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    font-weight:bold;
+    cursor:pointer;
+    user-select:none
+}
+
+.vermelho{background:#b51e25}
+.preto{background:#111}
+
+.zero{
+    position:absolute;
+    left:9px;
+    top:15px;
+    width:6%;
+    height:77%;
+    background:#087d3d;
+    border:1px solid white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+    font-weight:bold;
+    cursor:pointer
+}
+
+.faixas{
+    margin-left:7%;
+    margin-top:3px;
+    display:grid;
+    grid-template-columns:repeat(6,1fr)
+}
+
+.faixa{
+    height:45px;
+    background:#12377d;
+    border:1px solid white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:9px;
+    font-weight:bold;
+    cursor:pointer
+}
+
 .faixa.vermelho{background:#a91d25}
-.selecionado{box-shadow:inset 0 0 0 3px #ffd43b;filter:brightness(1.4)}
-.aviso{position:absolute;left:8px;bottom:8px;background:rgba(0,0,0,.9);padding:9px 12px;border-radius:5px;font-size:10px;z-index:10}
-.controles{background:#0d0d0d;border-top:2px solid #444;padding:12px}
-.linha{display:flex;justify-content:space-between;margin-bottom:12px;font-size:13px;color:#aaa}
+
+.selecionado{
+    box-shadow:inset 0 0 0 3px #ffd43b;
+    filter:brightness(1.4)
+}
+
+.aviso{
+    position:absolute;
+    left:8px;
+    bottom:8px;
+    background:rgba(0,0,0,.9);
+    padding:9px 12px;
+    border-radius:5px;
+    font-size:10px;
+    z-index:10
+}
+
+.controles{
+    background:#0d0d0d;
+    border-top:2px solid #444;
+    padding:12px
+}
+
+.linha{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:12px;
+    font-size:13px;
+    color:#aaa
+}
+
 .linha b{color:#6fe38b}
-.fichas{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px}
-.ficha{min-width:44px;height:44px;border-radius:50%;border:3px solid white;background:#8b3030;color:white;font-weight:bold;cursor:pointer}
-.ficha.ativa{outline:3px solid #ffd43b}
-.botoes{display:flex;gap:8px}
-button{flex:1;padding:14px;border-radius:8px;background:#191919;border:1px solid #666;color:white;font-weight:bold;font-size:14px;cursor:pointer}
-#btnGirar{background:#087642;border-color:#39d97b}
-#btnGirar:disabled{opacity:.45}
-#mensagem{text-align:center;margin-top:10px;min-height:20px;font-size:12px}
-.nota{text-align:center;color:#777;font-size:9px;margin-top:8px}
-#carregando{position:fixed;inset:0;background:#050505;display:flex;align-items:center;justify-content:center;z-index:999;font-size:18px}
-@media(max-width:600px){.mesa{height:450px}.roleta-area{left:3px}.mesa-jogo{left:21%;right:-20%}.numero{height:37px;font-size:10px}.faixa{height:43px;font-size:8px}.numero-roleta{font-size:8px}}
+
+.fichas{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding-bottom:12px
+}
+
+.ficha{
+    min-width:44px;
+    height:44px;
+    border-radius:50%;
+    border:3px solid white;
+    background:#8b3030;
+    color:white;
+    font-weight:bold;
+    cursor:pointer
+}
+
+.ficha.ativa{
+    outline:3px solid #ffd43b
+}
+
+.botoes{
+    display:flex;
+    gap:8px
+}
+
+button{
+    flex:1;
+    padding:14px;
+    border-radius:8px;
+    background:#191919;
+    border:1px solid #666;
+    color:white;
+    font-weight:bold;
+    font-size:14px;
+    cursor:pointer
+}
+
+#btnGirar{
+    background:#087642;
+    border-color:#39d97b
+}
+
+#btnGirar:disabled{
+    opacity:.45
+}
+
+#mensagem{
+    text-align:center;
+    margin-top:10px;
+    min-height:20px;
+    font-size:12px
+}
+
+.nota{
+    text-align:center;
+    color:#777;
+    font-size:9px;
+    margin-top:8px
+}
+
+#carregando{
+    position:fixed;
+    inset:0;
+    background:#050505;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:999;
+    font-size:18px
+}
+
+@media(max-width:600px){
+    .mesa{height:450px}
+    .roleta-area{left:3px}
+    .mesa-jogo{
+        left:21%;
+        right:-20%
+    }
+    .numero{
+        height:37px;
+        font-size:10px
+    }
+    .faixa{
+        height:43px;
+        font-size:8px
+    }
+    .numero-roleta{
+        font-size:8px
+    }
+}
 </style>
 </head>
+
 <body>
-<audio id="musicaFundo" src="./musica-roleta-cassino.mp3" loop preload="auto"></audio>
+
+<audio
+    id="musicaFundo"
+    src="./musica-roleta-cassino.mp3"
+    loop
+    preload="auto">
+</audio>
+
 <div id="carregando">🔐 Verificando conta...</div>
-<div class="top"><span> Roleta Cassino — ApostaXBet</span><span class="online">● ONLINE</span></div>
+
+<div class="top">
+    <span>Roleta Cassino — ApostaXBet</span>
+    <span class="online">● ONLINE</span>
+</div>
+
 <div class="area">
+
 <div class="mesa">
+
 <div class="roleta-area">
+
 <div class="ponteiro"></div>
+
 <div id="roleta" class="roleta">
+
 <div id="numerosRoleta" class="numeros-roleta"></div>
+
 <div class="centro-roleta"></div>
+
 </div>
 </div>
+
 <div class="mesa-jogo">
+
 <div id="zero" class="zero">0</div>
+
 <div id="grade" class="grade"></div>
+
 <div class="faixas">
+
 <div class="faixa" data-bet="baixo">1-18</div>
+
 <div class="faixa" data-bet="par">PAR</div>
-<div class="faixa vermelho" data-bet="vermelho">VERMELHO</div>
-<div class="faixa" data-bet="preto">PRETO</div>
-<div class="faixa" data-bet="impar">ÍMPAR</div>
-<div class="faixa" data-bet="alto">19-36</div>
+
+<div class="faixa vermelho" data-bet="vermelho">
+VERMELHO
+</div>
+
+<div class="faixa" data-bet="preto">
+PRETO
+</div>
+
+<div class="faixa" data-bet="impar">
+ÍMPAR
+</div>
+
+<div class="faixa" data-bet="alto">
+19-36
+</div>
+
 </div>
 </div>
-<div id="aviso" class="aviso">PREPARANDO RODADA...</div>
+
+<div id="aviso" class="aviso">
+PREPARANDO RODADA...
 </div>
+
+</div>
+
 <div class="controles">
-<div class="linha"><span>Saldo virtual:<b>R$ <span id="saldo">0,00</span></b></span><span>Ficha:<b id="valor">1,00</b></span></div>
+
+<div class="linha">
+
+<span>
+Saldo:
+<b>R$ <span id="saldo">0,00</span></b>
+</span>
+
+<span>
+Ficha:
+<b id="valor">1,00</b>
+</span>
+
+</div>
+
 <div class="fichas">
+
 <button class="ficha ativa" data-valor="1">1</button>
+
 <button class="ficha" data-valor="5">5</button>
+
 <button class="ficha" data-valor="10">10</button>
+
 <button class="ficha" data-valor="25">25</button>
+
 <button class="ficha" data-valor="50">50</button>
+
 </div>
+
 <div class="botoes">
-<button id="limpar">LIMPAR</button>
-<button id="btnGirar" disabled>AGUARDE</button>
+
+<button id="limpar">
+LIMPAR
+</button>
+
+<button id="btnGirar" disabled>
+AGUARDE
+</button>
+
 </div>
+
 <div id="mensagem"></div>
-<div class="nota">Modo demonstrativo com saldo virtual persistente.</div>
+
+<div class="nota">
+Saldo conectado à conta ApostaXBet.
 </div>
+
 </div>
+
+</div>
+
 <script>
-const SUPABASE_URL = 'https://jxbzjiwmajjzxgihfjgt.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ';
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 const TAXA_CASA = 0.30;
 
-const grade = document.getElementById("grade");
-const numerosRoleta = document.getElementById("numerosRoleta");
-const roleta = document.getElementById("roleta");
-const saldoEl = document.getElementById("saldo");
-const valorEl = document.getElementById("valor");
-const mensagem = document.getElementById("mensagem");
-const aviso = document.getElementById("aviso");
-const btnGirar = document.getElementById("btnGirar");
-const carregando = document.getElementById("carregando");
-const musicaFundo = document.getElementById("musicaFundo");
+const grade =
+    document.getElementById("grade");
+
+const numerosRoleta =
+    document.getElementById("numerosRoleta");
+
+const roleta =
+    document.getElementById("roleta");
+
+const saldoEl =
+    document.getElementById("saldo");
+
+const valorEl =
+    document.getElementById("valor");
+
+const mensagem =
+    document.getElementById("mensagem");
+
+const aviso =
+    document.getElementById("aviso");
+
+const btnGirar =
+    document.getElementById("btnGirar");
+
+const carregando =
+    document.getElementById("carregando");
+
+const musicaFundo =
+    document.getElementById("musicaFundo");
+
 
 musicaFundo.volume = 0.10;
 musicaFundo.loop = true;
-let musicaIniciada = false;
 
-async function iniciarMusica(){
-    try{
-        musicaFundo.volume = 0.10;
-        if(musicaFundo.paused){await musicaFundo.play()}
-        musicaIniciada = true;
-    }catch(error){console.log("Aguardando interação para iniciar música:",error)}
-}
-
-document.addEventListener("pointerdown",function(){iniciarMusica();iniciarAudio()},{passive:true});
-
-const vermelhos = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
-const ordemRoleta = [0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
-
-let usuarioAtual = null;
-let dinheiro = 0;
 let ficha = 1;
 let apostas = [];
 let girando = false;
@@ -135,187 +534,1348 @@ let rotacao = 0;
 let audioContext = null;
 let audioLiberado = false;
 
-function iniciarAudio(){
-    try{
-        if(!audioContext){const AudioCtx = window.AudioContext || window.webkitAudioContext;if(!AudioCtx)return;audioContext = new AudioCtx()}
-        if(audioContext.state === "suspended"){audioContext.resume()}
-        audioLiberado = true;
-    }catch(error){console.log("Áudio indisponível:",error)}
-}
+let sistemaPronto = false;
 
-function somFicha(){if(!audioLiberado)iniciarAudio();if(!audioContext)return;try{const agora=audioContext.currentTime;const osc=audioContext.createOscillator();const ganho=audioContext.createGain();osc.type="sine";osc.frequency.setValueAtTime(620,agora);osc.frequency.exponentialRampToValueAtTime(900,agora+0.055);ganho.gain.setValueAtTime(0.0001,agora);ganho.gain.exponentialRampToValueAtTime(0.22,agora+0.008);ganho.gain.exponentialRampToValueAtTime(0.0001,agora+0.075);osc.connect(ganho);ganho.connect(audioContext.destination);osc.start(agora);osc.stop(agora+0.08)}catch(error){console.log(error)}}
-function somContagem(){if(!audioLiberado)iniciarAudio();if(!audioContext)return;try{const agora=audioContext.currentTime;const osc=audioContext.createOscillator();const ganho=audioContext.createGain();osc.type="sine";osc.frequency.setValueAtTime(480,agora);osc.frequency.exponentialRampToValueAtTime(320,agora+0.09);ganho.gain.setValueAtTime(0.0001,agora);ganho.gain.exponentialRampToValueAtTime(0.18,agora+0.01);ganho.gain.exponentialRampToValueAtTime(0.0001,agora+0.12);osc.connect(ganho);ganho.connect(audioContext.destination);osc.start(agora);osc.stop(agora+0.13)}catch(error){console.log(error)}}
-function somTicRoleta(){if(!audioLiberado)iniciarAudio();if(!audioContext)return;try{const agora=audioContext.currentTime;const osc=audioContext.createOscillator();const ganho=audioContext.createGain();osc.type="square";osc.frequency.setValueAtTime(1450,agora);osc.frequency.exponentialRampToValueAtTime(650,agora+0.035);ganho.gain.setValueAtTime(0.0001,agora);ganho.gain.exponentialRampToValueAtTime(0.16,agora+0.003);ganho.gain.exponentialRampToValueAtTime(0.0001,agora+0.045);osc.connect(ganho);ganho.connect(audioContext.destination);osc.start(agora);osc.stop(agora+0.05)}catch(error){console.log(error)}}
 
-let timerSomRoleta = null;
-function iniciarSomRoleta(){if(!audioLiberado)iniciarAudio();pararSomRoleta();let intervalo=125;let quantidade=0;function tic(){if(!girando)return;somTicRoleta();quantidade++;if(quantidade<25){intervalo+=7}else if(quantidade<40){intervalo+=12}else{intervalo+=20}timerSomRoleta=setTimeout(tic,intervalo)}tic()}
-function pararSomRoleta(){if(timerSomRoleta){clearTimeout(timerSomRoleta);timerSomRoleta=null}}
+/* =====================================================
+   ESPERAR SISTEMA DE SALDO REAL
+===================================================== */
 
-function somResultado(){if(!audioLiberado)iniciarAudio();if(!audioContext)return;try{const agora=audioContext.currentTime;const osc=audioContext.createOscillator();const ganho=audioContext.createGain();osc.type="sine";osc.frequency.setValueAtTime(520,agora);osc.frequency.setValueAtTime(700,agora+0.08);osc.frequency.setValueAtTime(900,agora+0.16);ganho.gain.setValueAtTime(0.0001,agora);ganho.gain.exponentialRampToValueAtTime(0.20,agora+0.02);ganho.gain.exponentialRampToValueAtTime(0.0001,agora+0.30);osc.connect(ganho);ganho.connect(audioContext.destination);osc.start(agora);osc.stop(agora+0.32)}catch(error){console.log(error)}}
+async function esperarSistemaSaldo(){
 
-function formatar(valor){return Number(valor||0).toFixed(2).replace(".",",")}
+    for(let i = 0; i < 100; i++){
 
-// FUNÇÕES DE SALDO CORRIGIDAS E SEGURAS
-async function obterUsuario(){const {data,error}=await supabaseClient.auth.getSession();if(error){console.error(error);return null}return data?.session?.user||null}
-async function carregarSaldo(){if(!usuarioAtual)return false;const {data,error}=await supabaseClient.from("saldos").select("valor").eq("user_id",usuarioAtual.id).single();if(error){console.error("Erro ao carregar saldo:",error);mensagem.textContent="Não foi possível carregar seu saldo: "+error.message;return false}dinheiro=Number(data?.valor||0);atualizar();return true}
-async function salvarSaldo(){if(!usuarioAtual)return false;const {error}=await supabaseClient.from("saldos").update({valor:dinheiro}).eq("user_id",usuarioAtual.id);if(error){console.error("Erro ao salvar saldo:",error);mensagem.textContent="Erro ao atualizar o saldo: "+error.message;return false}return true}
-async function debitarAposta(total){if(!usuarioAtual)return false;if(dinheiro<total){return false}const novoSaldo=Number((dinheiro-total).toFixed(2));const {error}=await supabaseClient.from("saldos").update({valor:novoSaldo}).eq("user_id",usuarioAtual.id);if(error){console.error("Erro ao debitar apostas:",error);return false}dinheiro=novoSaldo;atualizar();return true}
+        if(
+            window.SistemaSaldo &&
+            typeof window.SistemaSaldo.get === "function" &&
+            typeof window.SistemaSaldo.debitar === "function" &&
+            typeof window.SistemaSaldo.creditar === "function"
+        ){
 
-function atualizar(){saldoEl.textContent=formatar(dinheiro)}
+            sistemaPronto = true;
+            return true;
+        }
 
-ordemRoleta.forEach(function(numero,index){
-    const el=document.createElement("div");el.className="numero-roleta";el.textContent=numero;
-    const angulo=index*(360/37);const raio=61;const rad=(angulo-90)*Math.PI/180;
-    const x=Math.cos(rad)*raio;const y=Math.sin(rad)*raio;
-    el.style.transform="translate("+x+"px,"+y+"px)";
-    if(numero===0){el.style.color="#63e58d"}
-    numerosRoleta.appendChild(el);
-});
+        await new Promise(
+            resolver => setTimeout(resolver,100)
+        );
+    }
 
-for(let n=1;n<=36;n++){
-    const numero=document.createElement("div");numero.className="numero "+(vermelhos.includes(n)?"vermelho":"preto");
-    numero.textContent=n;numero.onclick=function(){fazerAposta(n,this)};grade.appendChild(numero);
-}
-
-document.getElementById("zero").onclick=function(){fazerAposta(0,this)};
-
-document.querySelectorAll(".faixa").forEach(function(botao){botao.onclick=function(){fazerAposta(botao.dataset.bet,this)}});
-
-document.querySelectorAll(".ficha").forEach(function(botao){
-    botao.onclick=function(){
-        if(!apostasAbertas)return;somFicha();
-        document.querySelectorAll(".ficha").forEach(function(x){x.classList.remove("ativa")});
-        botao.classList.add("ativa");ficha=Number(botao.dataset.valor);valorEl.textContent=formatar(ficha);
-    };
-});
-
-function fazerAposta(tipo,elemento){
-    if(!apostasAbertas){mensagem.textContent="🔒 As apostas estão fechadas.";return}
-    if(girando)return;
-    if(dinheiro<ficha){mensagem.textContent="Saldo insuficiente.";return}
-    somFicha();
-    // Não debita aqui, apenas registra. O débito ocorre no giro para evitar race condition
-    apostas.push({tipo:tipo,valor:ficha});
-    elemento.classList.add("selecionado");
-    atualizar();
-    mensagem.textContent="Aposta adicionada.";
-}
-
-function ganhou(tipo,numero){
-    if(typeof tipo==="number"){return tipo===numero}
-    if(tipo==="vermelho"){return vermelhos.includes(numero)}
-    if(tipo==="preto"){return(numero!==0&&!vermelhos.includes(numero))}
-    if(tipo==="baixo"){return(numero>=1&&numero<=18)}
-    if(tipo==="alto"){return(numero>=19&&numero<=36)}
-    if(tipo==="par"){return(numero!==0&&numero%2===0)}
-    if(tipo==="impar"){return numero%2===1}
     return false;
 }
 
-document.getElementById("limpar").onclick=function(){
-    if(!apostasAbertas)return;somFicha();
-    apostas=[];
-    document.querySelectorAll(".selecionado").forEach(function(el){el.classList.remove("selecionado")});
-    atualizar();mensagem.textContent="Apostas limpas.";
-};
+
+/* =====================================================
+   SALDO REAL
+===================================================== */
+
+async function carregarSaldoReal(){
+
+    if(!sistemaPronto){
+        return false;
+    }
+
+    try{
+
+        const saldo =
+            await window.SistemaSaldo.get();
+
+        saldoEl.textContent =
+            formatar(saldo);
+
+        return true;
+
+    }catch(error){
+
+        console.error(
+            "Erro ao consultar saldo real:",
+            error
+        );
+
+        mensagem.textContent =
+            "Não foi possível carregar seu saldo.";
+
+        return false;
+    }
+}
+
+
+async function atualizarSaldoReal(){
+
+    if(!sistemaPronto){
+        return 0;
+    }
+
+    try{
+
+        const saldo =
+            await window.SistemaSaldo.get();
+
+        saldoEl.textContent =
+            formatar(saldo);
+
+        return Number(saldo || 0);
+
+    }catch(error){
+
+        console.error(
+            "Erro ao atualizar saldo:",
+            error
+        );
+
+        return 0;
+    }
+}
+
+
+/* =====================================================
+   MÚSICA
+===================================================== */
+
+async function iniciarMusica(){
+
+    try{
+
+        musicaFundo.volume = 0.10;
+
+        if(musicaFundo.paused){
+            await musicaFundo.play();
+        }
+
+    }catch(error){
+
+        console.log(
+            "Aguardando interação para iniciar música:",
+            error
+        );
+    }
+}
+
+
+/* =====================================================
+   ÁUDIO
+===================================================== */
+
+document.addEventListener(
+    "pointerdown",
+    function(){
+
+        iniciarMusica();
+        iniciarAudio();
+
+    },
+    {passive:true}
+);
+
+
+function iniciarAudio(){
+
+    try{
+
+        if(!audioContext){
+
+            const AudioCtx =
+                window.AudioContext ||
+                window.webkitAudioContext;
+
+            if(!AudioCtx)return;
+
+            audioContext =
+                new AudioCtx();
+        }
+
+        if(
+            audioContext.state === "suspended"
+        ){
+            audioContext.resume();
+        }
+
+        audioLiberado = true;
+
+    }catch(error){
+
+        console.log(
+            "Áudio indisponível:",
+            error
+        );
+    }
+}
+
+
+function somFicha(){
+
+    if(!audioLiberado)
+        iniciarAudio();
+
+    if(!audioContext)return;
+
+    try{
+
+        const agora =
+            audioContext.currentTime;
+
+        const osc =
+            audioContext.createOscillator();
+
+        const ganho =
+            audioContext.createGain();
+
+        osc.type = "sine";
+
+        osc.frequency.setValueAtTime(
+            620,
+            agora
+        );
+
+        osc.frequency.exponentialRampToValueAtTime(
+            900,
+            agora + 0.055
+        );
+
+        ganho.gain.setValueAtTime(
+            0.0001,
+            agora
+        );
+
+        ganho.gain.exponentialRampToValueAtTime(
+            0.22,
+            agora + 0.008
+        );
+
+        ganho.gain.exponentialRampToValueAtTime(
+            0.0001,
+            agora + 0.075
+        );
+
+        osc.connect(ganho);
+        ganho.connect(audioContext.destination);
+
+        osc.start(agora);
+        osc.stop(agora + 0.08);
+
+    }catch(error){
+
+        console.log(error);
+    }
+}
+
+
+function somContagem(){
+
+    if(!audioLiberado)
+        iniciarAudio();
+
+    if(!audioContext)return;
+
+    try{
+
+        const agora =
+            audioContext.currentTime;
+
+        const osc =
+            audioContext.createOscillator();
+
+        const ganho =
+            audioContext.createGain();
+
+        osc.type = "sine";
+
+        osc.frequency.setValueAtTime(
+            480,
+            agora
+        );
+
+        osc.frequency.exponentialRampToValueAtTime(
+            320,
+            agora + 0.09
+        );
+
+        ganho.gain.setValueAtTime(
+            0.0001,
+            agora
+        );
+
+        ganho.gain.exponentialRampToValueAtTime(
+            0.18,
+            agora + 0.01
+        );
+
+        ganho.gain.exponentialRampToValueAtTime(
+            0.0001,
+            agora + 0.12
+        );
+
+        osc.connect(ganho);
+        ganho.connect(audioContext.destination);
+
+        osc.start(agora);
+        osc.stop(agora + 0.13);
+
+    }catch(error){
+
+        console.log(error);
+    }
+}
+
+
+function somTicRoleta(){
+
+    if(!audioLiberado)
+        iniciarAudio();
+
+    if(!audioContext)return;
+
+    try{
+
+        const agora =
+            audioContext.currentTime;
+
+        const osc =
+            audioContext.createOscillator();
+
+        const ganho =
+            audioContext.createGain();
+
+        osc.type = "square";
+
+        osc.frequency.setValueAtTime(
+            1450,
+            agora
+        );
+
+        osc.frequency.exponentialRampToValueAtTime(
+            650,
+            agora + 0.035
+        );
+
+        ganho.gain.setValueAtTime(
+            0.0001,
+            agora
+        );
+
+        ganho.gain.exponentialRampToValueAtTime(
+            0.16,
+            agora + 0.003
+        );
+
+        ganho.gain.exponentialRampToValueAtTime(
+            0.0001,
+            agora + 0.045
+        );
+
+        osc.connect(ganho);
+        ganho.connect(audioContext.destination);
+
+        osc.start(agora);
+        osc.stop(agora + 0.05);
+
+    }catch(error){
+
+        console.log(error);
+    }
+}
+
+
+let timerSomRoleta = null;
+
+
+function iniciarSomRoleta(){
+
+    if(!audioLiberado)
+        iniciarAudio();
+
+    pararSomRoleta();
+
+    let intervalo = 125;
+    let quantidade = 0;
+
+    function tic(){
+
+        if(!girando)return;
+
+        somTicRoleta();
+
+        quantidade++;
+
+        if(quantidade < 25){
+
+            intervalo += 7;
+
+        }else if(quantidade < 40){
+
+            intervalo += 12;
+
+        }else{
+
+            intervalo += 20;
+        }
+
+        timerSomRoleta =
+            setTimeout(tic,intervalo);
+    }
+
+    tic();
+}
+
+
+function pararSomRoleta(){
+
+    if(timerSomRoleta){
+
+        clearTimeout(
+            timerSomRoleta
+        );
+
+        timerSomRoleta = null;
+    }
+}
+
+
+function somResultado(){
+
+    if(!audioLiberado)
+        iniciarAudio();
+
+    if(!audioContext)return;
+
+    try{
+
+        const agora =
+            audioContext.currentTime;
+
+        const osc =
+            audioContext.createOscillator();
+
+        const ganho =
+            audioContext.createGain();
+
+        osc.type = "sine";
+
+        osc.frequency.setValueAtTime(
+            520,
+            agora
+        );
+
+        osc.frequency.setValueAtTime(
+            700,
+            agora + 0.08
+        );
+
+        osc.frequency.setValueAtTime(
+            900,
+            agora + 0.16
+        );
+
+        ganho.gain.setValueAtTime(
+            0.0001,
+            agora
+        );
+
+        ganho.gain.exponentialRampToValueAtTime(
+            0.20,
+            agora + 0.02
+        );
+
+        ganho.gain.exponentialRampToValueAtTime(
+            0.0001,
+            agora + 0.30
+        );
+
+        osc.connect(ganho);
+        ganho.connect(audioContext.destination);
+
+        osc.start(agora);
+        osc.stop(agora + 0.32);
+
+    }catch(error){
+
+        console.log(error);
+    }
+}
+
+
+/* =====================================================
+   DADOS DA ROLETA
+===================================================== */
+
+const vermelhos = [
+    1,3,5,7,9,12,14,16,18,
+    19,21,23,25,27,30,32,34,36
+];
+
+const ordemRoleta = [
+    0,32,15,19,4,21,2,25,17,34,
+    6,27,13,36,11,30,8,23,10,
+    5,24,16,33,1,20,14,31,9,
+    22,18,29,7,28,12,35,3,26
+];
+
+
+/* =====================================================
+   FORMATAÇÃO
+===================================================== */
+
+function formatar(valor){
+
+    return Number(valor || 0)
+        .toFixed(2)
+        .replace(".",",");
+}
+
+
+/* =====================================================
+   NÚMEROS DA ROLETA
+===================================================== */
+
+ordemRoleta.forEach(
+    function(numero,index){
+
+        const el =
+            document.createElement("div");
+
+        el.className =
+            "numero-roleta";
+
+        el.textContent =
+            numero;
+
+        const angulo =
+            index * (360 / 37);
+
+        const raio = 61;
+
+        const rad =
+            (angulo - 90) *
+            Math.PI / 180;
+
+        const x =
+            Math.cos(rad) * raio;
+
+        const y =
+            Math.sin(rad) * raio;
+
+        el.style.transform =
+            "translate(" +
+            x +
+            "px," +
+            y +
+            "px)";
+
+        if(numero === 0){
+            el.style.color =
+                "#63e58d";
+        }
+
+        numerosRoleta.appendChild(el);
+    }
+);
+
+
+/* =====================================================
+   TABELA
+===================================================== */
+
+for(let n = 1; n <= 36; n++){
+
+    const numero =
+        document.createElement("div");
+
+    numero.className =
+        "numero " +
+        (
+            vermelhos.includes(n)
+            ? "vermelho"
+            : "preto"
+        );
+
+    numero.textContent = n;
+
+    numero.onclick =
+        function(){
+
+            fazerAposta(
+                n,
+                this
+            );
+        };
+
+    grade.appendChild(numero);
+}
+
+
+document.getElementById("zero").onclick =
+    function(){
+
+        fazerAposta(
+            0,
+            this
+        );
+    };
+
+
+document.querySelectorAll(".faixa")
+.forEach(
+    function(botao){
+
+        botao.onclick =
+            function(){
+
+                fazerAposta(
+                    botao.dataset.bet,
+                    this
+                );
+            };
+    }
+);
+
+
+/* =====================================================
+   FICHAS
+===================================================== */
+
+document.querySelectorAll(".ficha")
+.forEach(
+    function(botao){
+
+        botao.onclick =
+            function(){
+
+                if(!apostasAbertas)
+                    return;
+
+                somFicha();
+
+                document
+                    .querySelectorAll(".ficha")
+                    .forEach(
+                        function(x){
+                            x.classList.remove(
+                                "ativa"
+                            );
+                        }
+                    );
+
+                botao.classList.add(
+                    "ativa"
+                );
+
+                ficha =
+                    Number(
+                        botao.dataset.valor
+                    );
+
+                valorEl.textContent =
+                    formatar(ficha);
+            };
+    }
+);
+
+
+/* =====================================================
+   FAZER APOSTA
+===================================================== */
+
+async function fazerAposta(
+    tipo,
+    elemento
+){
+
+    if(!apostasAbertas){
+
+        mensagem.textContent =
+            "🔒 As apostas estão fechadas.";
+
+        return;
+    }
+
+    if(girando)return;
+
+
+    /*
+       CONSULTA O SALDO REAL
+       ANTES DE ACEITAR A APOSTA
+    */
+
+    const saldoAtual =
+        await atualizarSaldoReal();
+
+
+    if(saldoAtual < ficha){
+
+        mensagem.textContent =
+            "Saldo insuficiente.";
+
+        return;
+    }
+
+
+    somFicha();
+
+
+    /*
+       APOSTA FICA REGISTRADA.
+       O DESCONTO REAL ACONTECE
+       QUANDO A RODADA COMEÇA.
+    */
+
+    apostas.push({
+        tipo:tipo,
+        valor:ficha
+    });
+
+
+    elemento.classList.add(
+        "selecionado"
+    );
+
+
+    mensagem.textContent =
+        "Aposta adicionada.";
+}
+
+
+/* =====================================================
+   VERIFICAR VITÓRIA
+===================================================== */
+
+function ganhou(tipo,numero){
+
+    if(typeof tipo === "number"){
+
+        return tipo === numero;
+    }
+
+    if(tipo === "vermelho"){
+
+        return vermelhos.includes(
+            numero
+        );
+    }
+
+    if(tipo === "preto"){
+
+        return (
+            numero !== 0 &&
+            !vermelhos.includes(numero)
+        );
+    }
+
+    if(tipo === "baixo"){
+
+        return (
+            numero >= 1 &&
+            numero <= 18
+        );
+    }
+
+    if(tipo === "alto"){
+
+        return (
+            numero >= 19 &&
+            numero <= 36
+        );
+    }
+
+    if(tipo === "par"){
+
+        return (
+            numero !== 0 &&
+            numero % 2 === 0
+        );
+    }
+
+    if(tipo === "impar"){
+
+        return numero % 2 === 1;
+    }
+
+    return false;
+}
+
+
+/* =====================================================
+   LIMPAR APOSTAS
+===================================================== */
+
+document.getElementById("limpar")
+.onclick =
+    function(){
+
+        if(!apostasAbertas)
+            return;
+
+        somFicha();
+
+        apostas = [];
+
+        document
+            .querySelectorAll(".selecionado")
+            .forEach(
+                function(el){
+
+                    el.classList.remove(
+                        "selecionado"
+                    );
+                }
+            );
+
+        mensagem.textContent =
+            "Apostas limpas.";
+    };
+
+
+/* =====================================================
+   INICIAR RODADA
+===================================================== */
 
 function iniciarRodada(){
-    clearInterval(contador);tempoAposta=10;apostasAbertas=true;girando=false;pararSomRoleta();
-    btnGirar.disabled=true;btnGirar.textContent="AGUARDE";
-    aviso.innerHTML="⏱️ APOSTAS: <b>10s</b>";mensagem.textContent="Faça suas apostas.";
-    iniciarMusica();somContagem();
-    contador=setInterval(function(){
-        tempoAposta--;
-        if(tempoAposta>0){somContagem();aviso.innerHTML="️ APOSTAS: <b>"+tempoAposta+"s</b>"}
-        if(tempoAposta<=0){clearInterval(contador);fecharApostas()}
-    },1000);
+
+    clearInterval(contador);
+
+    tempoAposta = 10;
+
+    apostasAbertas = true;
+
+    girando = false;
+
+    pararSomRoleta();
+
+    btnGirar.disabled = true;
+
+    btnGirar.textContent =
+        "AGUARDE";
+
+    aviso.innerHTML =
+        "⏱️ APOSTAS: <b>10s</b>";
+
+    mensagem.textContent =
+        "Faça suas apostas.";
+
+    iniciarMusica();
+
+    somContagem();
+
+
+    contador =
+        setInterval(
+            function(){
+
+                tempoAposta--;
+
+                if(tempoAposta > 0){
+
+                    somContagem();
+
+                    aviso.innerHTML =
+                        "️ APOSTAS: <b>" +
+                        tempoAposta +
+                        "s</b>";
+                }
+
+
+                if(tempoAposta <= 0){
+
+                    clearInterval(contador);
+
+                    fecharApostas();
+                }
+
+            },
+            1000
+        );
 }
+
+
+/* =====================================================
+   FECHAR APOSTAS
+===================================================== */
 
 function fecharApostas(){
-    apostasAbertas=false;
-    document.querySelectorAll(".ficha").forEach(function(el){el.classList.remove("ativa")});
-    aviso.innerHTML="🔒 <b>APOSTAS ENCERRADAS</b>";mensagem.textContent="🎰 Preparando o giro...";
-    setTimeout(girarAutomaticamente,800);
+
+    apostasAbertas = false;
+
+    document
+        .querySelectorAll(".ficha")
+        .forEach(
+            function(el){
+
+                el.classList.remove(
+                    "ativa"
+                );
+            }
+        );
+
+    aviso.innerHTML =
+        "🔒 <b>APOSTAS ENCERRADAS</b>";
+
+    mensagem.textContent =
+        "🎰 Preparando o giro...";
+
+    setTimeout(
+        girarAutomaticamente,
+        800
+    );
 }
+
+
+/* =====================================================
+   GIRAR
+===================================================== */
 
 async function girarAutomaticamente(){
+
     if(girando)return;
-    
-    if(apostas.length===0){
-        mensagem.textContent="Nenhuma aposta feita. Aguardando próxima rodada...";
-        setTimeout(iniciarRodada,3000);
+
+
+    if(apostas.length === 0){
+
+        mensagem.textContent =
+            "Nenhuma aposta feita. Aguardando próxima rodada...";
+
+        setTimeout(
+            iniciarRodada,
+            3000
+        );
+
         return;
     }
-    
-    girando=true;btnGirar.disabled=true;
-    aviso.innerHTML="🎰 <b>ROLETA GIRANDO...</b>";mensagem.textContent="Aguarde o resultado...";
-    iniciarMusica();iniciarSomRoleta();
-    
-    const totalAposta=apostas.reduce((sum,a)=>sum+a.valor,0);
-    const debitado=await debitarAposta(totalAposta);
+
+
+    girando = true;
+
+    btnGirar.disabled = true;
+
+    aviso.innerHTML =
+        "🎰 <b>ROLETA GIRANDO...</b>";
+
+    mensagem.textContent =
+        "Aguarde o resultado...";
+
+    iniciarMusica();
+
+    iniciarSomRoleta();
+
+
+    /*
+       =================================================
+       SALDO REAL
+       =================================================
+
+       O valor agora é debitado pelo
+       SistemaSaldo da plataforma.
+
+       NÃO existe mais dinheiro local.
+       NÃO existe mais salvarSaldo local.
+    */
+
+    const totalAposta =
+        apostas.reduce(
+            function(sum,a){
+
+                return sum + a.valor;
+
+            },
+            0
+        );
+
+
+    const saldoAntes =
+        await atualizarSaldoReal();
+
+
+    if(saldoAntes < totalAposta){
+
+        pararSomRoleta();
+
+        girando = false;
+
+        btnGirar.disabled = false;
+
+        apostas = [];
+
+        document
+            .querySelectorAll(".selecionado")
+            .forEach(
+                function(el){
+
+                    el.classList.remove(
+                        "selecionado"
+                    );
+                }
+            );
+
+        mensagem.textContent =
+            "❌ Saldo insuficiente para processar as apostas.";
+
+        setTimeout(
+            iniciarRodada,
+            3000
+        );
+
+        return;
+    }
+
+
+    /*
+       DEBITA O SALDO REAL
+    */
+
+    const debitado =
+        await window.SistemaSaldo.debitar(
+            totalAposta
+        );
+
+
     if(!debitado){
-        girando=false;btnGirar.disabled=false;
-        mensagem.textContent="❌ Erro ao processar aposta. Tente novamente.";
-        setTimeout(iniciarRodada,3000);
+
+        pararSomRoleta();
+
+        girando = false;
+
+        btnGirar.disabled = false;
+
+        mensagem.textContent =
+            "❌ Erro ao processar aposta. Tente novamente.";
+
+        setTimeout(
+            iniciarRodada,
+            3000
+        );
+
         return;
     }
-    
-    const resultado=Math.floor(Math.random()*37);
-    const indice=ordemRoleta.indexOf(resultado);
-    const setor=360/37;
-    const alvo=-(indice*setor);
-    rotacao+=360*8;
-    const atualModulo=rotacao%360;
-    const ajuste=alvo-atualModulo;
-    rotacao+=ajuste;
-    roleta.style.transform="rotate("+rotacao+"deg)";
-    
-    setTimeout(function(){finalizarRodada(resultado)},7050);
+
+
+    await atualizarSaldoReal();
+
+
+    /*
+       RESULTADO
+    */
+
+    const resultado =
+        Math.floor(
+            Math.random() * 37
+        );
+
+
+    const indice =
+        ordemRoleta.indexOf(
+            resultado
+        );
+
+    const setor =
+        360 / 37;
+
+    const alvo =
+        -(indice * setor);
+
+    rotacao += 360 * 8;
+
+    const atualModulo =
+        rotacao % 360;
+
+    const ajuste =
+        alvo - atualModulo;
+
+    rotacao += ajuste;
+
+    roleta.style.transform =
+        "rotate(" +
+        rotacao +
+        "deg)";
+
+
+    setTimeout(
+        function(){
+
+            finalizarRodada(
+                resultado
+            );
+
+        },
+        7050
+    );
 }
 
-async function finalizarRodada(resultado){
-    pararSomRoleta();somResultado();
-    let premioBruto=0;
-    apostas.forEach(function(aposta){
-        if(ganhou(aposta.tipo,resultado)){
-            if(typeof aposta.tipo==="number"){premioBruto+=aposta.valor*36}
-            else{premioBruto+=aposta.valor*2}
+
+/* =====================================================
+   FINALIZAR RODADA
+===================================================== */
+
+async function finalizarRodada(
+    resultado
+){
+
+    pararSomRoleta();
+
+    somResultado();
+
+
+    let premioBruto = 0;
+
+
+    apostas.forEach(
+        function(aposta){
+
+            if(
+                ganhou(
+                    aposta.tipo,
+                    resultado
+                )
+            ){
+
+                if(
+                    typeof aposta.tipo === "number"
+                ){
+
+                    premioBruto +=
+                        aposta.valor * 36;
+
+                }else{
+
+                    premioBruto +=
+                        aposta.valor * 2;
+                }
+            }
         }
-    });
-    
-    const premioFinal=premioBruto*TAXA_CASA;
-    dinheiro+=premioFinal;
-    await salvarSaldo();
-    
-    let cor;if(resultado===0){cor="VERDE"}else if(vermelhos.includes(resultado)){cor="VERMELHO"}else{cor="PRETO"}
-    
-    if(premioFinal>0){mensagem.textContent="🏆 Resultado: "+resultado+" — "+cor+" | Prêmio: "+formatar(premioFinal)}
-    else{mensagem.textContent="Resultado: "+resultado+" — "+cor+" | Sem prêmio."}
-    
-    aviso.innerHTML="🎯 RESULTADO: <b>"+resultado+"</b> — "+cor;
-    apostas=[];
-    document.querySelectorAll(".selecionado").forEach(function(el){el.classList.remove("selecionado")});
-    atualizar();girando=false;
-    setTimeout(function(){iniciarRodada()},3000);
+    );
+
+
+    /*
+       MANTIDO O MESMO CÁLCULO
+       DA ROLETA ORIGINAL.
+
+       Apenas a forma de colocar
+       o prêmio no saldo mudou:
+       agora usa SistemaSaldo.
+    */
+
+    const premioFinal =
+        premioBruto * TAXA_CASA;
+
+
+    /*
+       CREDITA NO SALDO REAL
+    */
+
+    if(premioFinal > 0){
+
+        const creditado =
+            await window.SistemaSaldo.creditar(
+                premioFinal
+            );
+
+
+        if(!creditado){
+
+            console.error(
+                "Erro ao creditar prêmio no saldo real."
+            );
+
+            mensagem.textContent =
+                "⚠️ Resultado saiu, mas houve erro ao creditar o prêmio.";
+
+        }
+    }
+
+
+    await atualizarSaldoReal();
+
+
+    let cor;
+
+
+    if(resultado === 0){
+
+        cor = "VERDE";
+
+    }else if(
+        vermelhos.includes(resultado)
+    ){
+
+        cor = "VERMELHO";
+
+    }else{
+
+        cor = "PRETO";
+    }
+
+
+    if(premioFinal > 0){
+
+        mensagem.textContent =
+            "🏆 Resultado: " +
+            resultado +
+            " — " +
+            cor +
+            " | Prêmio: R$ " +
+            formatar(premioFinal);
+
+    }else{
+
+        mensagem.textContent =
+            "Resultado: " +
+            resultado +
+            " — " +
+            cor +
+            " | Sem prêmio.";
+    }
+
+
+    aviso.innerHTML =
+        "🎯 RESULTADO: <b>" +
+        resultado +
+        "</b> — " +
+        cor;
+
+
+    apostas = [];
+
+
+    document
+        .querySelectorAll(".selecionado")
+        .forEach(
+            function(el){
+
+                el.classList.remove(
+                    "selecionado"
+                );
+            }
+        );
+
+
+    await atualizarSaldoReal();
+
+
+    girando = false;
+
+
+    setTimeout(
+        function(){
+
+            iniciarRodada();
+
+        },
+        3000
+    );
 }
+
+
+/* =====================================================
+   INICIAR JOGO
+===================================================== */
 
 async function iniciar(){
+
     try{
-        const {data,error}=await supabaseClient.auth.getSession();
-        if(error)throw error;
-        const sessao=data?.session;
-        if(!sessao){alert("Você precisa estar logado para acessar este jogo.");window.location.href="../index.html";return}
-        usuarioAtual=sessao.user;
-        const carregou=await carregarSaldo();
-        if(!carregou)return;
-        carregando.style.display="none";
+
+        /*
+           ESPERA O saldo.js
+           CARREGAR PRIMEIRO
+        */
+
+        const pronto =
+            await esperarSistemaSaldo();
+
+
+        if(!pronto){
+
+            console.error(
+                "SistemaSaldo não foi carregado."
+            );
+
+            alert(
+                "Não foi possível carregar o sistema de saldo."
+            );
+
+            window.location.href =
+                "../index.html";
+
+            return;
+        }
+
+
+        /*
+           CONSULTA O SALDO REAL
+        */
+
+        const carregou =
+            await carregarSaldoReal();
+
+
+        if(!carregou){
+
+            alert(
+                "Não foi possível carregar seu saldo."
+            );
+
+            window.location.href =
+                "../index.html";
+
+            return;
+        }
+
+
+        /*
+           TUDO OK
+        */
+
+        carregando.style.display =
+            "none";
+
         iniciarMusica();
-        setTimeout(iniciarRodada,500);
-    }catch(error){console.error(error);alert("Não foi possível verificar sua conta.");window.location.href="../index.html"}
+
+
+        setTimeout(
+            iniciarRodada,
+            500
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Erro ao iniciar roleta:",
+            error
+        );
+
+        alert(
+            "Não foi possível verificar sua conta."
+        );
+
+        window.location.href =
+            "../index.html";
+    }
 }
 
-supabaseClient.auth.onAuthStateChange(function(event,session){if(!session){window.location.href="../index.html"}});
-iniciar();
+
+/* =====================================================
+   PROTEÇÃO DE SESSÃO
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        iniciar();
+
+    }
+);
+
+
+if(
+    window.supabase &&
+    typeof window.supabase.createClient === "function"
+){
+
+    /*
+       O saldo.js já controla a sessão.
+       Aqui não criamos outro sistema de saldo.
+    */
+}
+
 </script>
+
 </body>
 </html>
