@@ -1079,7 +1079,7 @@ ENVIAR LINK
 <div id="mensagemRecuperacao" class="mensagem"></div>
 </form>
 
-<button class="voltar" onclick="voltarLogin()">
+<button class="voltar" onclick="voltarLogin">
 ← Voltar para o login
 </button>
 
@@ -1209,10 +1209,6 @@ COMPARTILHE O LINK DO AGENTE E GANHE BÔNUS EXCLUSIVOS NO APOSTAXBET!
 
 <div class="games-grid" id="gamesGrid">
 
-<!-- IMPORTANTE:
-     TODAS AS CAPAS ESTÃO NA PASTA jogos/
--->
-
 <div class="game-card"
 data-cat="popular slots"
 data-jogo="Roleta"
@@ -1233,7 +1229,6 @@ Roleta<br>
 <span class="provider-tag">AX</span>
 </div>
 </div>
-
 
 <div class="game-card"
 data-cat="popular slots"
@@ -1256,7 +1251,6 @@ Roleta Premium<br>
 </div>
 </div>
 
-
 <div class="game-card"
 data-cat="slots"
 data-jogo="Roleta Cassino"
@@ -1277,7 +1271,6 @@ Roleta Cassino<br>
 <span class="provider-tag">AX</span>
 </div>
 </div>
-
 
 <div class="game-card"
 data-cat="popular mini"
@@ -1300,7 +1293,6 @@ Mines<br>
 </div>
 </div>
 
-
 <div class="game-card"
 data-cat="popular slots"
 data-jogo="Crash"
@@ -1321,7 +1313,6 @@ Crash<br>
 <span class="provider-tag">AX</span>
 </div>
 </div>
-
 
 <div class="game-card"
 data-cat="mini"
@@ -1344,7 +1335,6 @@ Plinko<br>
 </div>
 </div>
 
-
 <div class="game-card"
 data-cat="slots"
 data-jogo="Dice"
@@ -1366,7 +1356,6 @@ Dice<br>
 </div>
 </div>
 
-
 <div class="game-card"
 data-cat="popular"
 data-jogo="Lobby"
@@ -1387,7 +1376,6 @@ Lobby<br>
 <span class="provider-tag">AX</span>
 </div>
 </div>
-
 
 <div class="game-card"
 data-cat="slots"
@@ -1411,7 +1399,6 @@ Night Monsters<br>
 <span class="provider-tag">AX</span>
 </div>
 </div>
-
 
 <div class="game-card"
 data-cat="popular slots"
@@ -1645,6 +1632,31 @@ const JACKPOT_INICIAL=15617132.96;
 let jackpotAtual=JACKPOT_INICIAL;
 let jackpotSubindo=false;
 
+/*
+    O número amarelo agora faz um movimento natural:
+
+    15.617.132,96
+    ↓
+    sobe um pouquinho
+    ↓
+    para
+    ↓
+    sobe novamente devagar
+    ↓
+    dá uma pequena oscilada para cima
+    ↓
+    desce um pouco
+    ↓
+    sobe novamente
+    ↓
+    para
+
+    Depois fica parado por aproximadamente 30 minutos
+    antes de iniciar outro ciclo.
+
+    Não altera saldo, pagamentos ou qualquer outro sistema.
+*/
+
 function formatarJackpot(valor){
     return Number(valor).toLocaleString("pt-BR",{
         minimumFractionDigits:2,
@@ -1654,19 +1666,24 @@ function formatarJackpot(valor){
 
 function atualizarTextoJackpot(){
     const elemento=document.getElementById("jackpotValue");
+
     if(elemento){
         elemento.textContent=formatarJackpot(jackpotAtual);
     }
 }
 
-/*
-    O Jackpot fica parado.
-    Depois sobe um pequeno valor.
-    Para novamente.
-    Só volta a subir depois de aproximadamente 30 minutos.
-*/
+function alterarJackpotPara(valor){
 
-function pequenoMovimentoJackpot(){
+    jackpotAtual=Number(valor);
+
+    atualizarTextoJackpot();
+}
+
+function esperar(ms){
+    return new Promise(resolve=>setTimeout(resolve,ms));
+}
+
+async function pequenoMovimentoJackpot(){
 
     if(jackpotSubindo)return;
 
@@ -1674,31 +1691,105 @@ function pequenoMovimentoJackpot(){
 
     const elemento=document.getElementById("jackpotValue");
 
-    const aumento=Number(
-        (Math.random()*0.35+0.10).toFixed(2)
-    );
-
-    jackpotAtual+=aumento;
-
-    if(elemento){
-        elemento.classList.add("subindo");
+    if(!elemento){
+        jackpotSubindo=false;
+        return;
     }
 
-    atualizarTextoJackpot();
+    /*
+       Guarda o valor inicial do ciclo.
+    */
 
-    setTimeout(()=>{
-        if(elemento){
-            elemento.classList.remove("subindo");
-        }
-
-        jackpotSubindo=false;
-
-    },450);
+    const inicio=jackpotAtual;
 
     /*
-       30 minutos + pequena variação aleatória.
-       Portanto ele não fica contando.
+       Pequenos movimentos.
+       Os valores são pequenos de propósito,
+       para parecer que o Jackpot está vivo,
+       sem ficar correndo na tela.
     */
+
+    const movimentos=[
+        {variacao:0.15,tempo:850},
+        {variacao:0.30,tempo:1050},
+        {variacao:0.40,tempo:1200},
+        {variacao:0.58,tempo:1400},
+
+        /* pequena subida */
+        {variacao:0.72,tempo:1550},
+        {variacao:0.88,tempo:1750},
+
+        /* pequena queda */
+        {variacao:0.78,tempo:1300},
+        {variacao:0.64,tempo:1250},
+        {variacao:0.70,tempo:1450},
+
+        /* sobe novamente bem devagar */
+        {variacao:0.92,tempo:1800},
+        {variacao:1.08,tempo:2100},
+        {variacao:1.26,tempo:2300}
+    ];
+
+    for(const movimento of movimentos){
+
+        await esperar(movimento.tempo);
+
+        /*
+           Se a página mudou ou o elemento não existe,
+           interrompe o movimento.
+        */
+
+        const atual=document.getElementById("jackpotValue");
+
+        if(!atual){
+            jackpotSubindo=false;
+            return;
+        }
+
+        /*
+           O número não fica pulando.
+           Ele simplesmente troca lentamente para o próximo valor.
+        */
+
+        alterarJackpotPara(
+            Number(
+                (inicio+movimento.variacao)
+                .toFixed(2)
+            )
+        );
+
+        atual.classList.add("subindo");
+
+        await esperar(350);
+
+        atual.classList.remove("subindo");
+    }
+
+    /*
+       Pequena pausa no valor final.
+    */
+
+    await esperar(1800);
+
+    /*
+       Garante que o número continue mostrando
+       exatamente o valor final do ciclo.
+    */
+
+    alterarJackpotPara(
+        Number(
+            (inicio+1.26)
+            .toFixed(2)
+        )
+    );
+
+    jackpotSubindo=false;
+
+    /*
+       Aproximadamente 30 minutos parado
+       antes do próximo movimento.
+    */
+
     setTimeout(
         pequenoMovimentoJackpot,
         1800000 + Math.random()*300000
@@ -2525,11 +2616,6 @@ function ativarEventosJogos(){
                 loaderIconeNormal.style.display="none";
             };
 
-            /*
-               IMPORTANTE:
-               data-capa já contém jogos/
-            */
-
             if(capa){
 
                 loaderImagem.style.display="block";
@@ -3105,7 +3191,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     console.log("✅ ApostaXBet carregado.");
     console.log("✅ Capas dos jogos usando a pasta jogos/.");
     console.log("✅ Botão Jogos corrigido.");
-    console.log("✅ Jackpot com movimento pausado.");
+    console.log("✅ Jackpot com movimento lento e pausado.");
     console.log("✅ Sistema de saldo preservado.");
 
     configurarTodasAsCapas();
@@ -3115,7 +3201,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     atualizarTextoJackpot();
 
     /*
-       Primeiro aumento somente depois de 30 minutos.
+       Primeiro movimento somente depois de 30 minutos.
     */
 
     setTimeout(
