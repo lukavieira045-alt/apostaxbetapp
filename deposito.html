@@ -8,6 +8,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+    <!-- MESMO SISTEMA DE SALDO DO SITE -->
+    <script src="saldo.js"></script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -316,7 +319,7 @@
     <script>
 
         // =====================================================
-        // SUPABASE — MESMA IDENTIFICAÇÃO DA PÁGINA PRINCIPAL
+        // SUPABASE
         // =====================================================
 
         const SUPABASE_URL =
@@ -347,8 +350,38 @@
 
 
         // =====================================================
-        // CARREGAR USUÁRIO E SALDO
-        // MESMA LÓGICA DO INDEX
+        // FORMATAR SALDO
+        // =====================================================
+
+        function formatarSaldo(valor) {
+
+            const numero =
+                Number(valor) || 0;
+
+            return numero
+                .toFixed(2)
+                .replace(".", ",");
+        }
+
+
+        // =====================================================
+        // ATUALIZAR SALDO NA TELA
+        // =====================================================
+
+        function atualizarSaldoVisual() {
+
+            const numero =
+                Number(saldoAtual) || 0;
+
+            document.getElementById(
+                "displaySaldo"
+            ).innerText =
+                `Saldo: R$ ${formatarSaldo(numero)}`;
+        }
+
+
+        // =====================================================
+        // CARREGAR USUÁRIO
         // =====================================================
 
         async function carregarUsuarioESaldo() {
@@ -377,7 +410,6 @@
                 }
 
 
-                // MESMO USER.ID DO SISTEMA PRINCIPAL
                 usuarioAtual = user;
 
 
@@ -388,7 +420,63 @@
 
 
                 // =================================================
-                // BUSCAR SALDO NA MESMA TABELA DO SITE PRINCIPAL
+                // PRIMEIRO: USAR O MESMO SISTEMA DO SITE/JOGOS
+                // =================================================
+
+                let saldoSistema = null;
+
+                try {
+
+                    if (
+                        window.SistemaSaldo &&
+                        typeof window.SistemaSaldo.get === "function"
+                    ) {
+
+                        saldoSistema =
+                            await window.SistemaSaldo.get();
+
+                        console.log(
+                            "Saldo obtido pelo SistemaSaldo:",
+                            saldoSistema
+                        );
+                    }
+
+                } catch (erroSistema) {
+
+                    console.warn(
+                        "Não foi possível obter saldo pelo SistemaSaldo:",
+                        erroSistema
+                    );
+                }
+
+
+                // =================================================
+                // SE O SISTEMASALDO RETORNOU UM VALOR,
+                // ELE TEM PRIORIDADE
+                // =================================================
+
+                if (
+                    saldoSistema !== null &&
+                    saldoSistema !== undefined &&
+                    !isNaN(Number(saldoSistema))
+                ) {
+
+                    saldoAtual =
+                        Number(saldoSistema);
+
+                    atualizarSaldoVisual();
+
+                    console.log(
+                        "ApostaXBet - saldo final pelo SistemaSaldo:",
+                        saldoAtual
+                    );
+
+                    return;
+                }
+
+
+                // =================================================
+                // SEGUNDO MÉTODO: TABELA SALDOS
                 // =================================================
 
                 const {
@@ -427,7 +515,7 @@
 
 
                 console.log(
-                    "ApostaXBet - saldo encontrado:",
+                    "ApostaXBet - saldo encontrado na tabela:",
                     saldoAtual
                 );
 
@@ -442,25 +530,6 @@
                     "Erro ao carregar sua conta."
                 );
             }
-        }
-
-
-        // =====================================================
-        // MOSTRAR SALDO
-        // =====================================================
-
-        function atualizarSaldoVisual() {
-
-            const numero =
-                Number(saldoAtual) || 0;
-
-
-            document.getElementById(
-                "displaySaldo"
-            ).innerText =
-                `Saldo: R$ ${numero
-                    .toFixed(2)
-                    .replace(".", ",")}`;
         }
 
 
@@ -500,9 +569,7 @@
 
 
             btn.innerHTML =
-                `💰 Depositar R$ ${valor
-                    .toFixed(2)
-                    .replace(".", ",")} via PIX`;
+                `💰 Depositar R$ ${formatarSaldo(valor)} via PIX`;
         }
 
 
@@ -568,13 +635,11 @@
             document.getElementById(
                 "valorDisplay"
             ).innerText =
-                `Valor: R$ ${valorAtual
-                    .toFixed(2)
-                    .replace(".", ",")}`;
+                `Valor: R$ ${formatarSaldo(valorAtual)}`;
 
 
             // =================================================
-            // USAR O MESMO USUÁRIO AUTENTICADO
+            // GARANTIR USUÁRIO AUTENTICADO
             // =================================================
 
             if (!usuarioAtual) {
@@ -846,7 +911,7 @@
 
 
         // =====================================================
-        // FECHAR
+        // FECHAR MODAL
         // =====================================================
 
         function fecharModal() {
@@ -900,7 +965,11 @@
 
         window.addEventListener(
             "load",
-            carregarUsuarioESaldo
+            function() {
+
+                carregarUsuarioESaldo();
+
+            }
         );
 
     </script>
