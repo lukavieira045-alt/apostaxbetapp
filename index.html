@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>ApostaXBet</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -22,7 +23,7 @@ body {
     overflow-x: hidden;
 }
 
-/* ========================= LOGIN / RECUPERAÇÃO / NOVA SENHA ========================= */
+/* ========================= LOGIN ========================= */
 
 #telaLogin,
 #telaRecuperacao,
@@ -270,7 +271,7 @@ input:focus {
     border: 1px solid #facc15;
 }
 
-/* ========================= MINI SAQUE / DEPÓSITO ========================= */
+/* ========================= MINI FINANCEIRO ========================= */
 
 .mini-financeiro {
     margin: 8px 15px 0;
@@ -474,24 +475,15 @@ input:focus {
     text-shadow:
         0 2px 6px rgba(0,0,0,0.5),
         0 0 12px rgba(250,204,21,0.35);
-    animation: jackpotNumero 1.8s ease-in-out infinite;
     font-variant-numeric: tabular-nums;
+    transition: transform 0.35s ease, text-shadow 0.35s ease;
 }
 
-@keyframes jackpotNumero {
-    0%, 100% {
-        transform: scale(1);
-        text-shadow:
-            0 2px 6px rgba(0,0,0,0.5),
-            0 0 10px rgba(250,204,21,0.25);
-    }
-
-    50% {
-        transform: scale(1.035);
-        text-shadow:
-            0 2px 8px rgba(0,0,0,0.5),
-            0 0 22px rgba(250,204,21,0.65);
-    }
+.jackpot-value.subindo {
+    transform: scale(1.035);
+    text-shadow:
+        0 2px 8px rgba(0,0,0,0.5),
+        0 0 22px rgba(250,204,21,0.65);
 }
 
 .providers {
@@ -514,6 +506,10 @@ input:focus {
 }
 
 /* ========================= JOGOS ========================= */
+
+.games-section {
+    scroll-margin-top: 75px;
+}
 
 .games-grid {
     display: grid;
@@ -544,7 +540,7 @@ input:focus {
     transform: scale(0.95);
 }
 
-/* CORREÇÃO DAS CAPAS */
+/* ========================= CAPAS DOS JOGOS ========================= */
 
 .game-img {
     width: 100%;
@@ -562,6 +558,11 @@ input:focus {
 
 .game-card:hover .game-img {
     transform: scale(1.025);
+}
+
+/* Impede que a capa desapareça enquanto carrega */
+.game-img[src=""] {
+    display: none;
 }
 
 .game-overlay {
@@ -623,8 +624,6 @@ input:focus {
     text-align: center;
     line-height: 1.2;
 }
-
-/* Capa alternativa quando uma imagem não existir */
 
 .game-card.imagem-falhou {
     background:
@@ -709,7 +708,7 @@ input:focus {
     justify-content: center;
 }
 
-/* ========================= BOTÃO TOPO ========================= */
+/* ========================= TOPO ========================= */
 
 .btn-topo {
     position: fixed;
@@ -729,7 +728,7 @@ input:focus {
     display: none;
 }
 
-/* ========================= PÁGINA CONTA ========================= */
+/* ========================= CONTA ========================= */
 
 #paginaConta {
     display: none;
@@ -1032,7 +1031,9 @@ input:focus {
     border-radius: 18px;
     background: #08000f;
     border: 2px solid rgba(255,215,0,.75);
-    box-shadow: 0 0 20px rgba(255,215,0,.35), 0 0 50px rgba(145,0,255,.35);
+    box-shadow:
+        0 0 20px rgba(255,215,0,.35),
+        0 0 50px rgba(145,0,255,.35);
     animation: bannerCarregando 1.4s ease-in-out infinite alternate;
 }
 
@@ -1196,12 +1197,14 @@ input:focus {
             <input id="emailCadastro" type="email" placeholder="Digite seu e-mail" required>
 
             <label>Criar senha</label>
+
             <div class="campo-senha">
                 <input id="senhaCadastro" type="password" placeholder="Mínimo de 6 caracteres" minlength="6" required>
                 <span class="olho" onclick="mostrarSenha('senhaCadastro')">👁️</span>
             </div>
 
             <label>Confirmar senha</label>
+
             <div class="campo-senha">
                 <input id="confirmarSenha" type="password" placeholder="Digite a senha novamente" minlength="6" required>
                 <span class="olho" onclick="mostrarSenha('confirmarSenha')">👁️</span>
@@ -1212,6 +1215,7 @@ input:focus {
             </button>
 
             <div id="mensagemCadastro" class="mensagem"></div>
+
         </form>
 
         <form id="formLogin" class="form" onsubmit="entrar(event)">
@@ -1220,6 +1224,7 @@ input:focus {
             <input id="emailLogin" type="email" placeholder="Digite seu e-mail" required>
 
             <label>Senha</label>
+
             <div class="campo-senha">
                 <input id="senhaLogin" type="password" placeholder="Digite sua senha" required>
                 <span class="olho" onclick="mostrarSenha('senhaLogin')">👁️</span>
@@ -1234,6 +1239,7 @@ input:focus {
             </button>
 
             <div id="mensagemLogin" class="mensagem"></div>
+
         </form>
 
         <div class="termos">
@@ -1273,6 +1279,7 @@ input:focus {
             </button>
 
             <div id="mensagemRecuperacao" class="mensagem"></div>
+
         </form>
 
         <button class="voltar" type="button" onclick="voltarLogin()">
@@ -1323,364 +1330,382 @@ input:focus {
             </button>
 
             <div id="mensagemNovaSenha" class="mensagem"></div>
+
         </form>
 
     </div>
 </div>
 </section>
 
-<!-- ========================= SITE PRINCIPAL ========================= -->
+<!-- ========================= SITE ========================= -->
 
 <section id="site">
 
-    <header class="site-header">
+<header class="site-header">
 
-        <div class="site-logo">
-            Aposta<span>X</span>Bet
-        </div>
-
-        <div class="site-saldo">
-            💰 R$ <span id="saldoValor">0,00</span>
-        </div>
-
-    </header>
-
-    <div class="mini-financeiro">
-        <a href="saque.html">💵 SAQUE</a>
-        <a href="deposito.html">💰 DEPÓSITO</a>
+    <div class="site-logo">
+        Aposta<span>X</span>Bet
     </div>
 
-    <div class="quick-actions">
+    <div class="site-saldo">
+        💰 R$ <span id="saldoValor">0,00</span>
+    </div>
 
-        <a href="#" class="action-btn">
-            <span class="icon">👑</span>
-            VIP
-        </a>
+</header>
 
-        <a href="#" class="action-btn">
-            <span class="icon">🤝</span>
-            CONVITE
-        </a>
+<div class="mini-financeiro">
+    <a href="saque.html">💵 SAQUE</a>
+    <a href="deposito.html">💰 DEPÓSITO</a>
+</div>
 
-        <a href="#" class="action-btn">
-            <span class="icon">🎟️</span>
-            CÓDIGO
-        </a>
+<div class="quick-actions">
 
-        <a href="#" class="action-btn">
-            <span class="icon">📋</span>
-            MISSÃO
-        </a>
+    <a href="#" class="action-btn">
+        <span class="icon">👑</span>
+        VIP
+    </a>
 
-        <a href="#" class="action-btn">
-            <span class="icon">🎁</span>
-            COLEÇÃO
-        </a>
+    <a href="#" class="action-btn">
+        <span class="icon">🤝</span>
+        CONVITE
+    </a>
 
-        <a href="#" class="action-btn">
-            <span class="icon">🏷️</span>
-            DESCONTO
-        </a>
+    <a href="#" class="action-btn">
+        <span class="icon">🎟️</span>
+        CÓDIGO
+    </a>
+
+    <a href="#" class="action-btn">
+        <span class="icon">📋</span>
+        MISSÃO
+    </a>
+
+    <a href="#" class="action-btn">
+        <span class="icon">🎁</span>
+        COLEÇÃO
+    </a>
+
+    <a href="#" class="action-btn">
+        <span class="icon">🏷️</span>
+        DESCONTO
+    </a>
+
+</div>
+
+<div class="marquee-bar">
+
+    <span>🔥</span>
+
+    <div class="marquee-text">
+        COMPARTILHE O LINK DO AGENTE E GANHE BÔNUS EXCLUSIVOS NO APOSTAXBET!
+        🔥 CADASTRE-SE AGORA E RECEBA SEU BÔNUS DE BOAS-VINDAS! 🎁
+    </div>
+
+</div>
+
+<div class="nav-categories">
+
+    <div class="cat-item active" onclick="filtrarJogos('todos', this)">
+        <span class="cat-icon">🔍</span>
+        <span>Pesquisar</span>
+    </div>
+
+    <div class="cat-item" onclick="filtrarJogos('popular', this)">
+        <span class="cat-icon">🔥</span>
+        <span>Popular</span>
+    </div>
+
+    <div class="cat-item" onclick="filtrarJogos('slots', this)">
+        <span class="cat-icon">🎰</span>
+        <span>Slots</span>
+    </div>
+
+    <div class="cat-item" onclick="filtrarJogos('mini', this)">
+        <span class="cat-icon">🎮</span>
+        <span>Minijogos</span>
+    </div>
+
+</div>
+
+<!-- ========================= JACKPOT ========================= -->
+
+<div class="jackpot-banner">
+
+    <div class="jackpot-label">
+        JACKPOT
+    </div>
+
+    <div class="jackpot-value" id="jackpotValue">
+        15.617.132,96
+    </div>
+
+    <div class="providers">
+
+        <div class="prov-badge">PG Slots</div>
+        <div class="prov-badge">JDB Slots</div>
+        <div class="prov-badge">WG Slots</div>
+        <div class="prov-badge">2J Slots</div>
 
     </div>
 
-    <div class="marquee-bar">
-        <span>🔥</span>
+</div>
 
-        <div class="marquee-text">
-            COMPARTILHE O LINK DO AGENTE E GANHE BÔNUS EXCLUSIVOS NO APOSTAXBET!
-            🔥 CADASTRE-SE AGORA E RECEBA SEU BÔNUS DE BOAS-VINDAS! 🎁
-        </div>
-    </div>
+<!-- ========================= JOGOS ========================= -->
 
-    <div class="nav-categories">
+<div id="areaJogos" class="games-section">
 
-        <div class="cat-item active" onclick="filtrarJogos('todos', this)">
-            <span class="cat-icon">🔍</span>
-            <span>Pesquisar</span>
-        </div>
+<div class="games-grid" id="gamesGrid">
 
-        <div class="cat-item" onclick="filtrarJogos('popular', this)">
-            <span class="cat-icon">🔥</span>
-            <span>Popular</span>
-        </div>
+    <div class="game-card"
+         data-cat="popular slots"
+         data-jogo="Roleta"
+         data-capa="banner-roleta.png"
+         data-icon="🎰"
+         data-link="jogos/roleta.html">
 
-        <div class="cat-item" onclick="filtrarJogos('slots', this)">
-            <span class="cat-icon">🎰</span>
-            <span>Slots</span>
-        </div>
+        <img class="game-img"
+             src="banner-roleta.png"
+             alt="Roleta"
+             loading="eager"
+             decoding="async">
 
-        <div class="cat-item" onclick="filtrarJogos('mini', this)">
-            <span class="cat-icon">🎮</span>
-            <span>Minijogos</span>
-        </div>
+        <span class="like-icon">👍</span>
+        <span class="fav-icon">⭐</span>
 
-    </div>
-
-    <!-- ========================= JACKPOT ========================= -->
-
-    <div class="jackpot-banner">
-
-        <div class="jackpot-label">
-            JACKPOT
-        </div>
-
-        <div class="jackpot-value" id="jackpotValue">
-            15.617.132,96
-        </div>
-
-        <div class="providers">
-            <div class="prov-badge">PG Slots</div>
-            <div class="prov-badge">JDB Slots</div>
-            <div class="prov-badge">WG Slots</div>
-            <div class="prov-badge">2J Slots</div>
-        </div>
-
-    </div>
-
-    <!-- ========================= GRID DE JOGOS ========================= -->
-
-    <div class="games-grid" id="gamesGrid">
-
-        <div class="game-card"
-             data-cat="popular slots"
-             data-jogo="Roleta"
-             data-capa="banner-roleta.png"
-             data-icon="🎰"
-             data-link="jogos/roleta.html">
-
-            <img class="game-img"
-                 src="banner-roleta.png"
-                 alt="Roleta"
-                 loading="eager"
-                 decoding="async">
-
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-
-            <div class="game-overlay">
-                Roleta
-                <br>
-                <span class="provider-tag">AX</span>
-            </div>
-        </div>
-
-        <div class="game-card"
-             data-cat="popular slots"
-             data-jogo="Roleta Premium"
-             data-capa="banner-roleta-premium.png"
-             data-icon="🎡"
-             data-link="jogos/roleta2.html">
-
-            <img class="game-img"
-                 src="banner-roleta-premium.png"
-                 alt="Roleta Premium"
-                 loading="eager"
-                 decoding="async">
-
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-
-            <div class="game-overlay">
-                Roleta Premium
-                <br>
-                <span class="provider-tag">AX</span>
-            </div>
-        </div>
-
-        <div class="game-card"
-             data-cat="slots"
-             data-jogo="Roleta Cassino"
-             data-capa="banner-roleta-cassino.png"
-             data-icon="🎰"
-             data-link="jogos/roleta-cassino.html">
-
-            <img class="game-img"
-                 src="banner-roleta-cassino.png"
-                 alt="Roleta Cassino"
-                 loading="lazy"
-                 decoding="async">
-
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-
-            <div class="game-overlay">
-                Roleta Cassino
-                <br>
-                <span class="provider-tag">AX</span>
-            </div>
-        </div>
-
-        <div class="game-card"
-             data-cat="popular mini"
-             data-jogo="Mines"
-             data-capa="banner-mines.png"
-             data-icon="💣"
-             data-link="jogos/mines.html">
-
-            <img class="game-img"
-                 src="banner-mines.png"
-                 alt="Mines"
-                 loading="lazy"
-                 decoding="async">
-
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-
-            <div class="game-overlay">
-                Mines
-                <br>
-                <span class="provider-tag">AX</span>
-            </div>
-        </div>
-
-        <div class="game-card"
-             data-cat="popular slots"
-             data-jogo="Crash"
-             data-capa="banner-crash.png"
-             data-icon="🚀"
-             data-link="jogos/crash.html">
-
-            <img class="game-img"
-                 src="banner-crash.png"
-                 alt="Crash"
-                 loading="lazy"
-                 decoding="async">
-
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-
-            <div class="game-overlay">
-                Crash
-                <br>
-                <span class="provider-tag">AX</span>
-            </div>
-        </div>
-
-        <div class="game-card"
-             data-cat="mini"
-             data-jogo="Plinko"
-             data-capa="banner-plinko.png"
-             data-icon="🎯"
-             data-link="jogos/plinko.html">
-
-            <img class="game-img"
-                 src="banner-plinko.png"
-                 alt="Plinko"
-                 loading="lazy"
-                 decoding="async">
-
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-
-            <div class="game-overlay">
-                Plinko
-                <br>
-                <span class="provider-tag">AX</span>
-            </div>
-        </div>
-
-        <div class="game-card"
-             data-cat="slots"
-             data-jogo="Dice"
-             data-capa="banner-dice.png"
-             data-icon="🎲"
-             data-link="jogos/dice.html">
-
-            <img class="game-img"
-                 src="banner-dice.png"
-                 alt="Dice"
-                 loading="lazy"
-                 decoding="async">
-
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-
-            <div class="game-overlay">
-                Dice
-                <br>
-                <span class="provider-tag">AX</span>
-            </div>
-        </div>
-
-        <div class="game-card"
-             data-cat="popular"
-             data-jogo="Lobby"
-             data-capa="banner-lobby.png"
-             data-icon="🐺"
-             data-link="jogos/lobby.html">
-
-            <img class="game-img"
-                 src="banner-lobby.png"
-                 alt="Lobby"
-                 loading="lazy"
-                 decoding="async">
-
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-
-            <div class="game-overlay">
-                Lobby
-                <br>
-                <span class="provider-tag">AX</span>
-            </div>
-        </div>
-
-        <div class="game-card"
-             data-cat="slots"
-             data-jogo="Night Monsters"
-             data-capa="banner-night-monsters.png"
-             data-icon="🧛"
-             data-link="jogos/hotel-transylvania/index.html">
-
-            <img class="game-img"
-                 src="banner-night-monsters.png"
-                 alt="Night Monsters"
-                 loading="lazy"
-                 decoding="async">
-
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-
-            <div class="bonus-badge">
-                Novo
-            </div>
-
-            <div class="game-overlay">
-                Night Monsters
-                <br>
-                <span class="provider-tag">AX</span>
-            </div>
-        </div>
-
-        <div class="game-card"
-             data-cat="popular slots"
-             data-jogo="Fortune Snake"
-             data-capa="banner-fortune-snake.png"
-             data-icon="🐍"
-             data-link="jogos/fortune-snake.html">
-
-            <img class="game-img"
-                 src="banner-fortune-snake.png"
-                 alt="Fortune Snake"
-                 loading="lazy"
-                 decoding="async">
-
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-
-            <div class="bonus-badge">
-                Bônus R$20,00
-            </div>
-
-            <div class="game-overlay">
-                Fortune Snake
-                <br>
-                <span class="provider-tag">AX</span>
-            </div>
+        <div class="game-overlay">
+            Roleta
+            <br>
+            <span class="provider-tag">AX</span>
         </div>
 
     </div>
+
+    <div class="game-card"
+         data-cat="popular slots"
+         data-jogo="Roleta Premium"
+         data-capa="banner-roleta-premium.png"
+         data-icon="🎡"
+         data-link="jogos/roleta2.html">
+
+        <img class="game-img"
+             src="banner-roleta-premium.png"
+             alt="Roleta Premium"
+             loading="eager"
+             decoding="async">
+
+        <span class="like-icon">👍</span>
+        <span class="fav-icon">⭐</span>
+
+        <div class="game-overlay">
+            Roleta Premium
+            <br>
+            <span class="provider-tag">AX</span>
+        </div>
+
+    </div>
+
+    <div class="game-card"
+         data-cat="slots"
+         data-jogo="Roleta Cassino"
+         data-capa="banner-roleta-cassino.png"
+         data-icon="🎰"
+         data-link="jogos/roleta-cassino.html">
+
+        <img class="game-img"
+             src="banner-roleta-cassino.png"
+             alt="Roleta Cassino"
+             loading="lazy"
+             decoding="async">
+
+        <span class="like-icon">👍</span>
+        <span class="fav-icon">⭐</span>
+
+        <div class="game-overlay">
+            Roleta Cassino
+            <br>
+            <span class="provider-tag">AX</span>
+        </div>
+
+    </div>
+
+    <div class="game-card"
+         data-cat="popular mini"
+         data-jogo="Mines"
+         data-capa="banner-mines.png"
+         data-icon="💣"
+         data-link="jogos/mines.html">
+
+        <img class="game-img"
+             src="banner-mines.png"
+             alt="Mines"
+             loading="lazy"
+             decoding="async">
+
+        <span class="like-icon">👍</span>
+        <span class="fav-icon">⭐</span>
+
+        <div class="game-overlay">
+            Mines
+            <br>
+            <span class="provider-tag">AX</span>
+        </div>
+
+    </div>
+
+    <div class="game-card"
+         data-cat="popular slots"
+         data-jogo="Crash"
+         data-capa="banner-crash.png"
+         data-icon="🚀"
+         data-link="jogos/crash.html">
+
+        <img class="game-img"
+             src="banner-crash.png"
+             alt="Crash"
+             loading="lazy"
+             decoding="async">
+
+        <span class="like-icon">👍</span>
+        <span class="fav-icon">⭐</span>
+
+        <div class="game-overlay">
+            Crash
+            <br>
+            <span class="provider-tag">AX</span>
+        </div>
+
+    </div>
+
+    <div class="game-card"
+         data-cat="mini"
+         data-jogo="Plinko"
+         data-capa="banner-plinko.png"
+         data-icon="🎯"
+         data-link="jogos/plinko.html">
+
+        <img class="game-img"
+             src="banner-plinko.png"
+             alt="Plinko"
+             loading="lazy"
+             decoding="async">
+
+        <span class="like-icon">👍</span>
+        <span class="fav-icon">⭐</span>
+
+        <div class="game-overlay">
+            Plinko
+            <br>
+            <span class="provider-tag">AX</span>
+        </div>
+
+    </div>
+
+    <div class="game-card"
+         data-cat="slots"
+         data-jogo="Dice"
+         data-capa="banner-dice.png"
+         data-icon="🎲"
+         data-link="jogos/dice.html">
+
+        <img class="game-img"
+             src="banner-dice.png"
+             alt="Dice"
+             loading="lazy"
+             decoding="async">
+
+        <span class="like-icon">👍</span>
+        <span class="fav-icon">⭐</span>
+
+        <div class="game-overlay">
+            Dice
+            <br>
+            <span class="provider-tag">AX</span>
+        </div>
+
+    </div>
+
+    <div class="game-card"
+         data-cat="popular"
+         data-jogo="Lobby"
+         data-capa="banner-lobby.png"
+         data-icon="🐺"
+         data-link="jogos/lobby.html">
+
+        <img class="game-img"
+             src="banner-lobby.png"
+             alt="Lobby"
+             loading="lazy"
+             decoding="async">
+
+        <span class="like-icon">👍</span>
+        <span class="fav-icon">⭐</span>
+
+        <div class="game-overlay">
+            Lobby
+            <br>
+            <span class="provider-tag">AX</span>
+        </div>
+
+    </div>
+
+    <div class="game-card"
+         data-cat="slots"
+         data-jogo="Night Monsters"
+         data-capa="banner-night-monsters.png"
+         data-icon="🧛"
+         data-link="jogos/hotel-transylvania/index.html">
+
+        <img class="game-img"
+             src="banner-night-monsters.png"
+             alt="Night Monsters"
+             loading="lazy"
+             decoding="async">
+
+        <span class="like-icon">👍</span>
+        <span class="fav-icon">⭐</span>
+
+        <div class="bonus-badge">
+            Novo
+        </div>
+
+        <div class="game-overlay">
+            Night Monsters
+            <br>
+            <span class="provider-tag">AX</span>
+        </div>
+
+    </div>
+
+    <div class="game-card"
+         data-cat="popular slots"
+         data-jogo="Fortune Snake"
+         data-capa="banner-fortune-snake.png"
+         data-icon="🐍"
+         data-link="jogos/fortune-snake.html">
+
+        <img class="game-img"
+             src="banner-fortune-snake.png"
+             alt="Fortune Snake"
+             loading="lazy"
+             decoding="async">
+
+        <span class="like-icon">👍</span>
+        <span class="fav-icon">⭐</span>
+
+        <div class="bonus-badge">
+            Bônus R$20,00
+        </div>
+
+        <div class="game-overlay">
+            Fortune Snake
+            <br>
+            <span class="provider-tag">AX</span>
+        </div>
+
+    </div>
+
+</div>
+</div>
 
 </section>
 
@@ -1728,7 +1753,7 @@ input:focus {
 
 </section>
 
-<!-- ========================= MENU INFERIOR ========================= -->
+<!-- ========================= MENU ========================= -->
 
 <nav class="bottom-nav" id="menuPrincipal">
 
@@ -1737,7 +1762,8 @@ input:focus {
         <span>Início</span>
     </div>
 
-    <div class="nav-link" onclick="mostrarInicio()">
+    <!-- CORRIGIDO: AGORA VAI PARA OS JOGOS -->
+    <div class="nav-link" onclick="abrirJogos()">
         <span class="nav-icon">🎮</span>
         <span>Jogos</span>
     </div>
@@ -1905,7 +1931,8 @@ input:focus {
 
 /* ========================= SUPABASE ========================= */
 
-const SUPABASE_URL = "https://jxbzjiwmajjzxgihfjgt.supabase.co";
+const SUPABASE_URL =
+    "https://jxbzjiwmajjzxgihfjgt.supabase.co";
 
 const SUPABASE_KEY =
     "sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ";
@@ -1974,12 +2001,25 @@ const loaderIconeNormal =
 
 let carregando = false;
 
-/* ========================= JACKPOT ANIMADO ========================= */
+/* ========================= JACKPOT ========================= */
 
 const JACKPOT_INICIAL = 15617132.96;
 
-let jackpotAtual = JACKPOT_INICIAL;
-let jackpotUltimoTempo = Date.now();
+let jackpotAtual =
+    JACKPOT_INICIAL;
+
+/*
+    O Jackpot NÃO sobe continuamente.
+
+    Ele:
+    1. fica parado;
+    2. sobe um pequeno valor;
+    3. para novamente;
+    4. espera;
+    5. repete.
+*/
+
+let jackpotSubindo = false;
 
 function formatarJackpot(valor) {
 
@@ -1991,53 +2031,79 @@ function formatarJackpot(valor) {
 
 }
 
-function animarJackpot() {
-
-    const agora = Date.now();
-
-    /*
-       O número sobe de forma contínua e suave.
-       A velocidade é pequena para não disparar
-       visualmente de forma exagerada.
-    */
-
-    const decorrido =
-        Math.min(
-            agora - jackpotUltimoTempo,
-            100
-        );
-
-    jackpotUltimoTempo = agora;
-
-    /*
-       Aproximadamente alguns centavos por atualização.
-       O valor continua subindo enquanto a página
-       estiver aberta.
-    */
-
-    jackpotAtual +=
-        (decorrido / 1000) * 0.37;
+function atualizarTextoJackpot() {
 
     const elemento =
         document.getElementById("jackpotValue");
 
+    if (!elemento) return;
+
+    elemento.textContent =
+        formatarJackpot(jackpotAtual);
+}
+
+function pequenoMovimentoJackpot() {
+
+    if (jackpotSubindo) return;
+
+    jackpotSubindo = true;
+
+    const elemento =
+        document.getElementById("jackpotValue");
+
+    /*
+       Pequeno aumento.
+       Não fica contando continuamente.
+    */
+
+    const aumento =
+        Number(
+            (Math.random() * 0.35 + 0.10)
+                .toFixed(2)
+        );
+
+    jackpotAtual += aumento;
+
     if (elemento) {
-
-        elemento.textContent =
-            formatarJackpot(jackpotAtual);
-
+        elemento.classList.add("subindo");
     }
 
-    requestAnimationFrame(
-        animarJackpot
+    atualizarTextoJackpot();
+
+    /*
+       A animação visual dura pouco.
+    */
+
+    setTimeout(() => {
+
+        if (elemento) {
+            elemento.classList.remove("subindo");
+        }
+
+        jackpotSubindo = false;
+
+    }, 450);
+
+    /*
+       Depois de subir, espera bastante
+       antes de fazer o próximo movimento.
+    */
+
+    setTimeout(
+        pequenoMovimentoJackpot,
+        30000 + Math.random() * 15000
     );
 }
 
-/* ========================= IMAGENS DAS CAPAS ========================= */
+/* ========================= CAPAS ========================= */
 
 function configurarImagemCapa(img) {
 
     if (!img) return;
+
+    /*
+       Remove eventos antigos quando necessário.
+    */
 
     img.addEventListener(
         "error",
@@ -2056,9 +2122,6 @@ function configurarImagemCapa(img) {
 
             img.style.display = "none";
 
-        },
-        {
-            once: true
         }
     );
 
@@ -2079,12 +2142,36 @@ function configurarImagemCapa(img) {
 
             img.style.display = "block";
 
-        },
-        {
-            once: true
         }
     );
 
+    /*
+       Se a imagem já estiver carregada
+       quando a função for chamada.
+    */
+
+    if (img.complete) {
+
+        if (img.naturalWidth > 0) {
+
+            img.style.display =
+                "block";
+
+        } else if (img.src) {
+
+            const card =
+                img.closest(".game-card");
+
+            if (card) {
+                card.classList.add(
+                    "imagem-falhou"
+                );
+            }
+
+            img.style.display =
+                "none";
+        }
+    }
 }
 
 function configurarTodasAsCapas() {
@@ -2094,29 +2181,136 @@ function configurarTodasAsCapas() {
         .forEach(
             configurarImagemCapa
         );
-
 }
 
 /* ========================= SCROLL ========================= */
 
-window.addEventListener("scroll", () => {
+window.addEventListener(
+    "scroll",
+    () => {
 
-    if (window.scrollY > 300) {
-        btnTopo.style.display = "block";
-    } else {
-        btnTopo.style.display = "none";
+        if (window.scrollY > 300) {
+
+            btnTopo.style.display =
+                "block";
+
+        } else {
+
+            btnTopo.style.display =
+                "none";
+        }
+
     }
-
-});
+);
 
 /* ========================= MENU ========================= */
 
 function mostrarMenu() {
-    menuPrincipal.style.display = "flex";
+
+    menuPrincipal.style.display =
+        "flex";
 }
 
 function esconderMenu() {
-    menuPrincipal.style.display = "none";
+
+    menuPrincipal.style.display =
+        "none";
+}
+
+/* ========================= IR PARA JOGOS ========================= */
+
+function abrirJogos() {
+
+    /*
+       Garante que a página principal esteja visível.
+    */
+
+    site.style.display =
+        "block";
+
+    paginaConta.style.display =
+        "none";
+
+    mostrarMenu();
+
+    /*
+       Fecha suporte se estiver aberto.
+    */
+
+    fecharSuporte();
+
+    /*
+       Remove active de todos.
+    */
+
+    document
+        .querySelectorAll(".nav-link")
+        .forEach(
+            l => l.classList.remove("active")
+        );
+
+    /*
+       Marca o botão Jogos como ativo.
+    */
+
+    const links =
+        document.querySelectorAll(".nav-link");
+
+    if (links[1]) {
+        links[1].classList.add("active");
+    }
+
+    /*
+       Mostra todos os jogos.
+    */
+
+    document
+        .querySelectorAll(".game-card")
+        .forEach(
+            card => {
+                card.style.display = "flex";
+            }
+        );
+
+    /*
+       Categoria "Pesquisar/Todos".
+    */
+
+    document
+        .querySelectorAll(".cat-item")
+        .forEach(
+            c => c.classList.remove("active")
+        );
+
+    const primeiraCategoria =
+        document.querySelector(
+            ".cat-item"
+        );
+
+    if (primeiraCategoria) {
+        primeiraCategoria.classList.add("active");
+    }
+
+    /*
+       Leva exatamente para os cards.
+    */
+
+    const area =
+        document.getElementById(
+            "areaJogos"
+        );
+
+    if (area) {
+
+        setTimeout(() => {
+
+            area.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        }, 80);
+    }
 }
 
 /* ========================= SUPORTE ========================= */
@@ -2124,10 +2318,14 @@ function esconderMenu() {
 function resetarSuporte() {
 
     const mensagens =
-        document.getElementById("suporteMensagens");
+        document.getElementById(
+            "suporteMensagens"
+        );
 
     const campo =
-        document.getElementById("entradaSuporte");
+        document.getElementById(
+            "entradaSuporte"
+        );
 
     removerDigitando();
 
@@ -2158,15 +2356,16 @@ function resetarSuporte() {
 function mostrarBotaoSuporte() {
 
     if (botaoSuporte) {
-        botaoSuporte.style.display = "none";
+        botaoSuporte.style.display =
+            "none";
     }
-
 }
 
 function esconderBotaoSuporte() {
 
     if (botaoSuporte) {
-        botaoSuporte.style.display = "none";
+        botaoSuporte.style.display =
+            "none";
     }
 
     fecharSuporte();
@@ -2176,12 +2375,15 @@ function abrirSuporte() {
 
     resetarSuporte();
 
-    janelaSuporte.style.display = "block";
+    janelaSuporte.style.display =
+        "block";
 
     setTimeout(() => {
 
         const c =
-            document.getElementById("entradaSuporte");
+            document.getElementById(
+                "entradaSuporte"
+            );
 
         if (c) {
             c.focus();
@@ -2194,7 +2396,8 @@ function fecharSuporte() {
 
     removerDigitando();
 
-    janelaSuporte.style.display = "none";
+    janelaSuporte.style.display =
+        "none";
 }
 
 function adicionarMensagemSuporte(
@@ -2203,7 +2406,9 @@ function adicionarMensagemSuporte(
 ) {
 
     const mensagens =
-        document.getElementById("suporteMensagens");
+        document.getElementById(
+            "suporteMensagens"
+        );
 
     if (!mensagens) return;
 
@@ -2226,7 +2431,9 @@ function adicionarMensagemSuporte(
 function mostrarDigitando() {
 
     const mensagens =
-        document.getElementById("suporteMensagens");
+        document.getElementById(
+            "suporteMensagens"
+        );
 
     if (!mensagens) return;
 
@@ -2253,7 +2460,9 @@ function mostrarDigitando() {
 function removerDigitando() {
 
     const d =
-        document.getElementById("mensagemDigitando");
+        document.getElementById(
+            "mensagemDigitando"
+        );
 
     if (d) {
         d.remove();
@@ -2344,7 +2553,8 @@ function responderComDigitacao(pergunta) {
     setTimeout(() => {
 
         if (
-            janelaSuporte.style.display === "none"
+            janelaSuporte.style.display ===
+            "none"
         ) {
 
             removerDigitando();
@@ -2402,7 +2612,9 @@ function perguntaSuporte(tipo) {
 function enviarPerguntaSuporte() {
 
     const campo =
-        document.getElementById("entradaSuporte");
+        document.getElementById(
+            "entradaSuporte"
+        );
 
     if (!campo) return;
 
@@ -2491,7 +2703,8 @@ function mensagem(
 
     if (!el) return;
 
-    el.style.display = "block";
+    el.style.display =
+        "block";
 
     el.className =
         "mensagem " + tipo;
@@ -2510,11 +2723,20 @@ function mostrarRecuperacao() {
             .value
             .trim();
 
-    telaLogin.style.display = "none";
-    telaRecuperacao.style.display = "block";
-    telaNovaSenha.style.display = "none";
-    site.style.display = "none";
-    paginaConta.style.display = "none";
+    telaLogin.style.display =
+        "none";
+
+    telaRecuperacao.style.display =
+        "block";
+
+    telaNovaSenha.style.display =
+        "none";
+
+    site.style.display =
+        "none";
+
+    paginaConta.style.display =
+        "none";
 
     esconderMenu();
     esconderBotaoSuporte();
@@ -2522,16 +2744,24 @@ function mostrarRecuperacao() {
     if (emailLogin) {
 
         document
-            .getElementById("emailRecuperacao")
-            .value = emailLogin;
+            .getElementById(
+                "emailRecuperacao"
+            )
+            .value =
+            emailLogin;
     }
 }
 
 function voltarLogin() {
 
-    telaRecuperacao.style.display = "none";
-    telaNovaSenha.style.display = "none";
-    telaLogin.style.display = "block";
+    telaRecuperacao.style.display =
+        "none";
+
+    telaNovaSenha.style.display =
+        "none";
+
+    telaLogin.style.display =
+        "block";
 
     mostrarLogin();
 
@@ -2545,12 +2775,16 @@ async function enviarRecuperacao(event) {
 
     const email =
         document
-            .getElementById("emailRecuperacao")
+            .getElementById(
+                "emailRecuperacao"
+            )
             .value
             .trim();
 
     const botao =
-        document.getElementById("btnRecuperacao");
+        document.getElementById(
+            "btnRecuperacao"
+        );
 
     botao.disabled = true;
     botao.innerText = "ENVIANDO...";
@@ -2595,13 +2829,19 @@ async function salvarNovaSenha(event) {
     event.preventDefault();
 
     const senha =
-        document.getElementById("novaSenha").value;
+        document.getElementById(
+            "novaSenha"
+        ).value;
 
     const confirmar =
-        document.getElementById("confirmarNovaSenha").value;
+        document.getElementById(
+            "confirmarNovaSenha"
+        ).value;
 
     const botao =
-        document.getElementById("btnNovaSenha");
+        document.getElementById(
+            "btnNovaSenha"
+        );
 
     if (senha.length < 6) {
 
@@ -2652,8 +2892,11 @@ async function salvarNovaSenha(event) {
                     .auth
                     .signOut();
 
-                telaNovaSenha.style.display = "none";
-                telaLogin.style.display = "block";
+                telaNovaSenha.style.display =
+                    "none";
+
+                telaLogin.style.display =
+                    "block";
 
                 mostrarLogin();
 
@@ -2671,7 +2914,8 @@ async function salvarNovaSenha(event) {
     }
 
     botao.disabled = false;
-    botao.innerText = "SALVAR NOVA SENHA";
+    botao.innerText =
+        "SALVAR NOVA SENHA";
 }
 
 /* ========================= CADASTRO ========================= */
@@ -2693,13 +2937,19 @@ async function cadastrar(event) {
             .trim();
 
     const senha =
-        document.getElementById("senhaCadastro").value;
+        document.getElementById(
+            "senhaCadastro"
+        ).value;
 
     const confirmar =
-        document.getElementById("confirmarSenha").value;
+        document.getElementById(
+            "confirmarSenha"
+        ).value;
 
     const botao =
-        document.getElementById("btnCadastro");
+        document.getElementById(
+            "btnCadastro"
+        );
 
     if (senha !== confirmar) {
 
@@ -2724,7 +2974,8 @@ async function cadastrar(event) {
     }
 
     botao.disabled = true;
-    botao.innerText = "CRIANDO CONTA...";
+    botao.innerText =
+        "CRIANDO CONTA...";
 
     try {
 
@@ -2757,7 +3008,10 @@ async function cadastrar(event) {
             );
 
             setTimeout(
-                () => mostrarSite(data.session.user),
+                () =>
+                    mostrarSite(
+                        data.session.user
+                    ),
                 800
             );
 
@@ -2780,7 +3034,8 @@ async function cadastrar(event) {
     }
 
     botao.disabled = false;
-    botao.innerText = "CRIAR CONTA";
+    botao.innerText =
+        "CRIAR CONTA";
 }
 
 /* ========================= LOGIN ========================= */
@@ -2801,10 +3056,13 @@ async function entrar(event) {
             .value;
 
     const botao =
-        document.getElementById("btnLogin");
+        document.getElementById(
+            "btnLogin"
+        );
 
     botao.disabled = true;
-    botao.innerText = "ENTRANDO...";
+    botao.innerText =
+        "ENTRANDO...";
 
     try {
 
@@ -2829,7 +3087,10 @@ async function entrar(event) {
         );
 
         setTimeout(
-            () => mostrarSite(data.user),
+            () =>
+                mostrarSite(
+                    data.user
+                ),
             700
         );
 
@@ -2843,7 +3104,8 @@ async function entrar(event) {
     }
 
     botao.disabled = false;
-    botao.innerText = "ENTRAR";
+    botao.innerText =
+        "ENTRAR";
 }
 
 /* ========================= MOSTRAR SITE ========================= */
@@ -2851,16 +3113,26 @@ async function entrar(event) {
 function mostrarSite(user) {
 
     if (!user) {
+
         mostrarLoginTela();
+
         return;
     }
 
-    telaLogin.style.display = "none";
-    telaRecuperacao.style.display = "none";
-    telaNovaSenha.style.display = "none";
-    paginaConta.style.display = "none";
+    telaLogin.style.display =
+        "none";
 
-    site.style.display = "block";
+    telaRecuperacao.style.display =
+        "none";
+
+    telaNovaSenha.style.display =
+        "none";
+
+    paginaConta.style.display =
+        "none";
+
+    site.style.display =
+        "block";
 
     mostrarMenu();
 
@@ -2873,15 +3145,18 @@ function mostrarSite(user) {
     configurarTodasAsCapas();
 
     const idUsuario =
-        user.id || "ID indisponível";
+        user.id ||
+        "ID indisponível";
 
     document
         .getElementById("contaNome")
-        .innerText = idUsuario;
+        .innerText =
+        idUsuario;
 
     document
         .getElementById("contaEmail")
-        .innerText = user.email || "";
+        .innerText =
+        user.email || "";
 
     atualizarSaldoVisual();
 }
@@ -2890,15 +3165,21 @@ function mostrarSite(user) {
 
 function mostrarInicio() {
 
-    site.style.display = "block";
-    paginaConta.style.display = "none";
+    site.style.display =
+        "block";
+
+    paginaConta.style.display =
+        "none";
 
     mostrarBotaoSuporte();
 
     document
         .querySelectorAll(".nav-link")
         .forEach(
-            l => l.classList.remove("active")
+            l =>
+                l.classList.remove(
+                    "active"
+                )
         );
 
     const inicio =
@@ -2909,14 +3190,22 @@ function mostrarInicio() {
     if (inicio) {
         inicio.classList.add("active");
     }
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 }
 
 /* ========================= CONTA ========================= */
 
 function mostrarConta() {
 
-    site.style.display = "none";
-    paginaConta.style.display = "block";
+    site.style.display =
+        "none";
+
+    paginaConta.style.display =
+        "block";
 
     esconderBotaoSuporte();
 
@@ -2925,7 +3214,10 @@ function mostrarConta() {
     document
         .querySelectorAll(".nav-link")
         .forEach(
-            l => l.classList.remove("active")
+            l =>
+                l.classList.remove(
+                    "active"
+                )
         );
 }
 
@@ -2933,23 +3225,29 @@ function mostrarConta() {
 
 function ativarEventosJogos() {
 
-    const cards =
-        document.querySelectorAll(".game-card");
+    /*
+       Remove os eventos anteriores
+       sem destruir as capas.
+    */
 
-    cards.forEach(card => {
+    document
+        .querySelectorAll(".game-card")
+        .forEach(card => {
 
-        card.replaceWith(
-            card.cloneNode(true)
-        );
+            const novoCard =
+                card.cloneNode(true);
 
-    });
+            card.replaceWith(novoCard);
+        });
 
     document
         .querySelectorAll(".game-card")
         .forEach(card => {
 
             const imagem =
-                card.querySelector(".game-img");
+                card.querySelector(
+                    ".game-img"
+                );
 
             configurarImagemCapa(
                 imagem
@@ -2961,24 +3259,50 @@ function ativarEventosJogos() {
 
                     e.preventDefault();
 
-                    if (carregando) return;
+                    if (carregando) {
+                        return;
+                    }
 
                     carregando = true;
 
                     const destino =
-                        this.getAttribute("data-link");
+                        this.getAttribute(
+                            "data-link"
+                        );
 
                     const nome =
-                        this.getAttribute("data-jogo");
+                        this.getAttribute(
+                            "data-jogo"
+                        );
 
                     const icone =
-                        this.getAttribute("data-icon");
+                        this.getAttribute(
+                            "data-icon"
+                        );
 
                     const capa =
-                        this.getAttribute("data-capa");
+                        this.getAttribute(
+                            "data-capa"
+                        );
 
                     loaderNome.textContent =
-                        nome || "Carregando...";
+                        nome ||
+                        "Carregando...";
+
+                    /*
+                       Limpa handlers anteriores.
+                    */
+
+                    loaderImagem.onload =
+                        null;
+
+                    loaderImagem.onerror =
+                        null;
+
+                    /*
+                       Fallback caso a capa
+                       do loader não exista.
+                    */
 
                     loaderImagem.onerror =
                         function() {
@@ -2987,11 +3311,16 @@ function ativarEventosJogos() {
                                 "none";
 
                             loaderIconeNormal.textContent =
-                                icone || "🎮";
+                                icone ||
+                                "🎮";
 
                             loaderIconeNormal.style.display =
                                 "flex";
                         };
+
+                    /*
+                       Mostra a capa no loader.
+                    */
 
                     loaderImagem.onload =
                         function() {
@@ -3011,24 +3340,39 @@ function ativarEventosJogos() {
                         loaderIconeNormal.style.display =
                             "none";
 
+                        /*
+                           A capa usada no card
+                           é a mesma usada no loader.
+                        */
+
                         loaderImagem.src =
                             capa;
 
                     } else {
 
-                        loaderImagem.src = "";
+                        loaderImagem.removeAttribute(
+                            "src"
+                        );
 
                         loaderImagem.style.display =
                             "none";
 
                         loaderIconeNormal.textContent =
-                            icone || "🎮";
+                            icone ||
+                            "🎮";
 
                         loaderIconeNormal.style.display =
                             "flex";
                     }
 
-                    loader.classList.add("ativo");
+                    loader.classList.add(
+                        "ativo"
+                    );
+
+                    /*
+                       Aguarda o carregamento
+                       visual antes de abrir.
+                    */
 
                     setTimeout(
                         function() {
@@ -3047,29 +3391,43 @@ function ativarEventosJogos() {
 
 /* ========================= FILTRO ========================= */
 
-function filtrarJogos(cat, el) {
+function filtrarJogos(
+    cat,
+    el
+) {
 
     document
         .querySelectorAll(".cat-item")
         .forEach(
-            c => c.classList.remove("active")
+            c =>
+                c.classList.remove(
+                    "active"
+                )
         );
 
-    el.classList.add("active");
+    if (el) {
+        el.classList.add("active");
+    }
 
     const cards =
-        document.querySelectorAll(".game-card");
+        document.querySelectorAll(
+            ".game-card"
+        );
 
     cards.forEach(card => {
 
         if (cat === "todos") {
 
-            card.style.display = "flex";
+            card.style.display =
+                "flex";
+
             return;
         }
 
         const cats =
-            card.getAttribute("data-cat") || "";
+            card.getAttribute(
+                "data-cat"
+            ) || "";
 
         card.style.display =
             cats.includes(cat)
@@ -3099,7 +3457,8 @@ async function getUsuarioLogado() {
             return null;
         }
 
-        return data?.session?.user || null;
+        return data?.session?.user ||
+            null;
 
     } catch (error) {
 
@@ -3127,7 +3486,10 @@ async function buscarSaldo() {
             await clienteSupabase()
                 .from("saldos")
                 .select("valor")
-                .eq("user_id", user.id)
+                .eq(
+                    "user_id",
+                    user.id
+                )
                 .maybeSingle();
 
         if (error) {
@@ -3160,7 +3522,9 @@ async function buscarSaldo() {
     }
 }
 
-async function salvarSaldo(novoValor) {
+async function salvarSaldo(
+    novoValor
+) {
 
     const user =
         await getUsuarioLogado();
@@ -3192,7 +3556,8 @@ async function salvarSaldo(novoValor) {
                         valor
                     },
                     {
-                        onConflict: "user_id"
+                        onConflict:
+                            "user_id"
                     }
                 );
 
@@ -3225,18 +3590,23 @@ async function atualizarSaldoVisual() {
         await buscarSaldo();
 
     const vf =
-        saldo.toFixed(2)
-             .replace(".", ",");
+        saldo
+            .toFixed(2)
+            .replace(".", ",");
 
     const sv =
-        document.getElementById("saldoValor");
+        document.getElementById(
+            "saldoValor"
+        );
 
     if (sv) {
         sv.innerText = vf;
     }
 
     const cs =
-        document.getElementById("contaSaldo");
+        document.getElementById(
+            "contaSaldo"
+        );
 
     if (cs) {
         cs.innerText = vf;
@@ -3249,7 +3619,9 @@ async function carregarSaldoDisplay() {
     return await atualizarSaldoVisual();
 }
 
-async function descontarSaldo(valor) {
+async function descontarSaldo(
+    valor
+) {
 
     const vn =
         Number(valor);
@@ -3299,7 +3671,8 @@ async function processarVitoria(
     }
 
     const ganho =
-        (an * mn) * CASA_VANTAGEM;
+        (an * mn) *
+        CASA_VANTAGEM;
 
     const atual =
         await buscarSaldo();
@@ -3371,7 +3744,8 @@ async function processarSaque(
                     "quick-endpoint",
                     {
                         body: {
-                            userId: user.id,
+                            userId:
+                                user.id,
                             valor: vn,
                             chavePix
                         }
@@ -3383,13 +3757,15 @@ async function processarSaque(
         if (data?.mensagem) {
 
             alert(
-                "✅ " + data.mensagem
+                "✅ " +
+                data.mensagem
             );
 
         } else if (data?.erro) {
 
             alert(
-                "❌ " + data.erro
+                "❌ " +
+                data.erro
             );
 
             return false;
@@ -3414,7 +3790,10 @@ async function processarSaque(
 
         alert(
             "❌ Erro ao processar saque:\n" +
-            (error?.message || String(error))
+            (
+                error?.message ||
+                String(error)
+            )
         );
 
         return false;
@@ -3432,8 +3811,11 @@ async function sair() {
 
     fecharSuporte();
 
-    site.style.display = "none";
-    paginaConta.style.display = "none";
+    site.style.display =
+        "none";
+
+    paginaConta.style.display =
+        "none";
 
     esconderMenu();
     esconderBotaoSuporte();
@@ -3457,11 +3839,20 @@ async function sair() {
 
 function mostrarLoginTela() {
 
-    telaLogin.style.display = "block";
-    telaRecuperacao.style.display = "none";
-    telaNovaSenha.style.display = "none";
-    site.style.display = "none";
-    paginaConta.style.display = "none";
+    telaLogin.style.display =
+        "block";
+
+    telaRecuperacao.style.display =
+        "none";
+
+    telaNovaSenha.style.display =
+        "none";
+
+    site.style.display =
+        "none";
+
+    paginaConta.style.display =
+        "none";
 
     esconderMenu();
     esconderBotaoSuporte();
@@ -3553,6 +3944,7 @@ async function verificarSessao() {
     ) {
 
         mostrarLoginTela();
+
         return;
     }
 
@@ -3588,9 +3980,7 @@ async function verificarSessao() {
 
     } catch (error) {
 
-        console.error(
-            error
-        );
+        console.error(error);
 
         mostrarLoginTela();
     }
@@ -3601,7 +3991,10 @@ async function verificarSessao() {
 clienteSupabase()
     .auth
     .onAuthStateChange(
-        function(event, session) {
+        function(
+            event,
+            session
+        ) {
 
             if (
                 event ===
@@ -3673,7 +4066,6 @@ window.SistemaSaldo = {
 
     salvar:
         salvarSaldo
-
 };
 
 /* ========================= API APOSTAXBET ========================= */
@@ -3711,7 +4103,8 @@ window.ApostaXBet = {
                             options: {
                                 data: {
                                     nome,
-                                    full_name: nome
+                                    full_name:
+                                        nome
                                 }
                             }
                         });
@@ -3779,7 +4172,19 @@ document.addEventListener(
     function() {
 
         console.log(
-            "✅ ApostaXBet carregado com jogos estáticos, capas protegidas e Jackpot animado."
+            "✅ ApostaXBet carregado."
+        );
+
+        console.log(
+            "✅ Capas dos jogos ativadas."
+        );
+
+        console.log(
+            "✅ Jackpot em movimento pausado."
+        );
+
+        console.log(
+            "✅ Botão Jogos corrigido."
         );
 
         console.log(
@@ -3790,12 +4195,24 @@ document.addEventListener(
         configurarTodasAsCapas();
 
         /*
-           Inicia a animação do Jackpot.
+           Começa com o valor exato.
         */
-        jackpotUltimoTempo =
-            Date.now();
 
-        animarJackpot();
+        jackpotAtual =
+            JACKPOT_INICIAL;
+
+        atualizarTextoJackpot();
+
+        /*
+           Primeiro movimento só depois de
+           um bom tempo, para o número não
+           ficar subindo assim que abrir.
+        */
+
+        setTimeout(
+            pequenoMovimentoJackpot,
+            30000
+        );
 
         verificarSessao();
     }
