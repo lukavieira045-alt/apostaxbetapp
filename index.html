@@ -316,6 +316,50 @@ input:focus{
     gap:8px;
 }
 
+/* ID DO USUÁRIO - ÚNICA ALTERAÇÃO VISUAL */
+.usuario-id-barra{
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    gap:5px;
+    background:#145a38;
+    border:1px solid #1e7a4d;
+    border-radius:8px;
+    padding:5px 7px;
+    color:#facc15;
+    font-size:11px;
+    font-weight:bold;
+    z-index:2;
+}
+
+.usuario-id-barra strong{
+    color:#fff;
+    max-width:145px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:10px;
+}
+
+.btn-copiar-id{
+    width:25px;
+    height:25px;
+    padding:0;
+    border:1px solid #facc15;
+    border-radius:6px;
+    background:#0b3b24;
+    color:#facc15;
+    font-size:13px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.btn-copiar-id:active{
+    transform:scale(.9);
+}
+
 .marquee-text{
     animation:scrollMarquee 20s linear infinite;
 }
@@ -374,7 +418,7 @@ input:focus{
     pointer-events:none;
 }
 
-@keyframesjackpotBrilho{
+@keyframes jackpotBrilho{
     0%,100%{
         transform:scale(.8) rotate(0deg);
         opacity:.4;
@@ -1113,7 +1157,7 @@ ENVIAR LINK
 <div id="mensagemRecuperacao" class="mensagem"></div>
 </form>
 
-<button class="voltar" onclick="voltarLogin">
+<button class="voltar" onclick="voltarLogin()">
 ← Voltar para o login
 </button>
 
@@ -1207,7 +1251,23 @@ SALVAR NOVA SENHA
 </div>
 
 <div class="marquee-bar">
+
+<div class="usuario-id-barra">
 <span>🔥</span>
+<span>ID:</span>
+
+<strong id="usuarioIdDisplay">
+Carregando...
+</strong>
+
+<button
+type="button"
+class="btn-copiar-id"
+onclick="copiarIdUsuario()"
+title="Copiar ID">
+📋
+</button>
+</div>
 
 <div class="marquee-text">
 COMPARTILHE O LINK DO AGENTE E GANHE BÔNUS EXCLUSIVOS NO APOSTAXBET!
@@ -2547,6 +2607,105 @@ async function entrar(event){
     botao.innerText="ENTRAR";
 }
 
+/* ========================= ID DO USUÁRIO ========================= */
+/* NOVO: somente exibição e cópia do ID real do usuário */
+
+function atualizarIdUsuario(user){
+
+    const elemento=
+        document.getElementById(
+            "usuarioIdDisplay"
+        );
+
+    if(!elemento)return;
+
+    if(user && user.id){
+
+        elemento.textContent=user.id;
+
+    }else{
+
+        elemento.textContent="ID indisponível";
+
+    }
+}
+
+async function copiarIdUsuario(){
+
+    const elemento=
+        document.getElementById(
+            "usuarioIdDisplay"
+        );
+
+    if(!elemento)return;
+
+    const id=
+        elemento.textContent.trim();
+
+    if(
+        !id ||
+        id==="Carregando..." ||
+        id==="ID indisponível"
+    ){
+        return;
+    }
+
+    try{
+
+        await navigator.clipboard.writeText(id);
+
+    }catch(error){
+
+        console.error(
+            "Erro ao copiar ID:",
+            error
+        );
+
+        const campo=
+            document.createElement("textarea");
+
+        campo.value=id;
+        campo.style.position="fixed";
+        campo.style.opacity="0";
+
+        document.body.appendChild(campo);
+
+        campo.focus();
+        campo.select();
+
+        try{
+
+            document.execCommand("copy");
+
+        }catch(e){
+
+            console.error(e);
+
+        }
+
+        campo.remove();
+    }
+
+    const botao=
+        document.querySelector(
+            ".btn-copiar-id"
+        );
+
+    if(botao){
+
+        const original=
+            botao.innerText;
+
+        botao.innerText="✅";
+
+        setTimeout(()=>{
+
+            botao.innerText=original;
+
+        },1200);
+    }
+}
+
 /* ========================= SITE ========================= */
 
 function mostrarSite(user){
@@ -2579,6 +2738,9 @@ function mostrarSite(user){
         "contaEmail"
     ).innerText=
         user.email||"";
+
+    /* NOVO: mostra o mesmo ID real do usuário na barra */
+    atualizarIdUsuario(user);
 
     atualizarSaldoVisual();
 }
@@ -3085,12 +3247,6 @@ async function sair(){
         console.error(error);
     }
 
-    /*
-     * CORREÇÃO:
-     * Depois de sair, cria uma nova entrada de login
-     * no histórico. O popstate abaixo impede que o
-     * botão Voltar retorne para o jogo anterior.
-     */
     history.pushState(
         {
             apostaxbetLogin:true,
@@ -3383,11 +3539,6 @@ clienteSupabase()
 
 /* ========================= VOLTAR APÓS LOGOUT ========================= */
 
-/*
- * Se o usuário saiu da conta e apertar Voltar,
- * permanece no login em vez de voltar para o jogo
- * que estava aberto anteriormente.
- */
 window.addEventListener("popstate",function(){
 
     if(
@@ -3452,11 +3603,6 @@ document.addEventListener(
             2000
         );
 
-        /*
-         * Cria o primeiro estado de login para que,
-         * depois de um logout, o histórico seja tratado
-         * pelo controle de popstate acima.
-         */
         if(
             sessionStorage.getItem(
                 "apostaxbet_logout"
