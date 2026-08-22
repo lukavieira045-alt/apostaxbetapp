@@ -6,6 +6,8 @@
 
     <title>Depositar - ApostaXBet</title>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -311,16 +313,27 @@
 
     </div>
 
-    <!--
-        MESMO SISTEMA DE SALDO DO APOSTAXBET
-        O arquivo saldo.js precisa estar na raiz do site.
-    -->
-    <script src="saldo.js"></script>
-
     <script>
 
         // =====================================================
-        // CONFIGURAÇÃO
+        // SUPABASE — MESMA IDENTIFICAÇÃO DA PÁGINA PRINCIPAL
+        // =====================================================
+
+        const SUPABASE_URL =
+            "https://jxbzjiwmajjzxgihfjgt.supabase.co";
+
+        const SUPABASE_ANON_KEY =
+            "<SECRET>";
+
+        const supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_ANON_KEY
+            );
+
+
+        // =====================================================
+        // CONFIGURAÇÃO DO DEPÓSITO
         // =====================================================
 
         const WEBHOOK_DEPOSITO_URL =
@@ -328,122 +341,119 @@
 
         let valorAtual = 0;
 
+        let usuarioAtual = null;
+
+        let saldoAtual = 0;
+
 
         // =====================================================
-        // IDENTIFICAÇÃO DO MESMO USUÁRIO DO SITE
+        // CARREGAR USUÁRIO E SALDO
+        // MESMA LÓGICA DO INDEX
         // =====================================================
 
-        function obterUsuarioAtual() {
+        async function carregarUsuarioESaldo() {
 
-            const chaves = [
-                "apostaXBet_userId",
-                "user_id",
-                "userId",
-                "USER_ID",
-                "supabase_user_id"
-            ];
-
-            // Primeiro localStorage
-            for (const chave of chaves) {
-
-                const valor =
-                    localStorage.getItem(chave);
-
-                if (
-                    valor &&
-                    valor !== "nao_identificado" &&
-                    valor !== "null" &&
-                    valor !== "undefined"
-                ) {
-                    return valor;
-                }
-            }
-
-            // Depois sessionStorage
-            for (const chave of chaves) {
-
-                const valor =
-                    sessionStorage.getItem(chave);
-
-                if (
-                    valor &&
-                    valor !== "nao_identificado" &&
-                    valor !== "null" &&
-                    valor !== "undefined"
-                ) {
-                    return valor;
-                }
-            }
-
-            // SistemaSaldo
             try {
 
-                if (
-                    window.SistemaSaldo &&
-                    typeof window.SistemaSaldo.getUserId === "function"
-                ) {
+                const {
+                    data: { user },
+                    error: erroUsuario
+                } =
+                    await supabaseClient.auth.getUser();
 
-                    const id =
-                        window.SistemaSaldo.getUserId();
 
-                    if (id) {
-                        return id;
-                    }
+                if (erroUsuario || !user) {
+
+                    console.error(
+                        "Usuário não encontrado:",
+                        erroUsuario
+                    );
+
+                    mostrarErro(
+                        "Usuário não identificado. Faça login novamente."
+                    );
+
+                    return;
                 }
+
+
+                // MESMO USER.ID DO SISTEMA PRINCIPAL
+                usuarioAtual = user;
+
+
+                console.log(
+                    "ApostaXBet - usuário autenticado:",
+                    user.id
+                );
+
+
+                // =================================================
+                // BUSCAR SALDO NA MESMA TABELA DO SITE PRINCIPAL
+                // =================================================
+
+                const {
+                    data: saldo,
+                    error: erroSaldo
+                } =
+                    await supabaseClient
+                        .from("saldos")
+                        .select("valor")
+                        .eq("user_id", user.id)
+                        .maybeSingle();
+
+
+                if (erroSaldo) {
+
+                    console.error(
+                        "Erro ao carregar saldo:",
+                        erroSaldo
+                    );
+
+                    mostrarErro(
+                        "Não foi possível carregar seu saldo."
+                    );
+
+                    return;
+                }
+
+
+                saldoAtual =
+                    Number(
+                        saldo?.valor || 0
+                    );
+
+
+                atualizarSaldoVisual();
+
+
+                console.log(
+                    "ApostaXBet - saldo encontrado:",
+                    saldoAtual
+                );
 
             } catch (erro) {
 
-                console.warn(
-                    "Erro ao obter usuário pelo SistemaSaldo:",
+                console.error(
+                    "Erro inesperado ao carregar usuário:",
                     erro
                 );
-            }
 
-            return null;
+                mostrarErro(
+                    "Erro ao carregar sua conta."
+                );
+            }
         }
 
 
         // =====================================================
-        // SALDO
+        // MOSTRAR SALDO
         // =====================================================
 
-        function carregarSaldo() {
-
-            let saldo = null;
-
-            try {
-
-                if (
-                    window.SistemaSaldo &&
-                    typeof window.SistemaSaldo.get === "function"
-                ) {
-
-                    saldo =
-                        window.SistemaSaldo.get();
-                }
-
-            } catch (erro) {
-
-                console.warn(
-                    "Erro ao obter saldo pelo SistemaSaldo:",
-                    erro
-                );
-            }
-
-            if (
-                saldo === null ||
-                saldo === undefined ||
-                isNaN(parseFloat(saldo))
-            ) {
-
-                saldo =
-                    localStorage.getItem(
-                        "apostaXBet_saldo"
-                    ) || "0";
-            }
+        function atualizarSaldoVisual() {
 
             const numero =
-                parseFloat(saldo) || 0;
+                Number(saldoAtual) || 0;
+
 
             document.getElementById(
                 "displaySaldo"
@@ -467,18 +477,27 @@
                         b.classList.remove("ativo")
                 );
 
+
             botao.classList.add("ativo");
 
-            valorAtual = Number(valor);
+
+            valorAtual =
+                Number(valor);
+
 
             const btn =
                 document.getElementById(
                     "btnDepositar"
                 );
 
-            btn.disabled = false;
 
-            btn.style.opacity = "1";
+            btn.disabled =
+                false;
+
+
+            btn.style.opacity =
+                "1";
+
 
             btn.innerHTML =
                 `💰 Depositar R$ ${valor
@@ -500,6 +519,7 @@
                 return;
             }
 
+
             const modal =
                 document.getElementById(
                     "modalPix"
@@ -520,18 +540,30 @@
                     "carregandoPix"
                 );
 
-            modal.style.display = "flex";
 
-            qr.style.display = "none";
+            modal.style.display =
+                "flex";
 
-            qr.src = "";
 
-            texto.innerText = "";
+            qr.style.display =
+                "none";
 
-            carregando.style.display = "block";
+
+            qr.src =
+                "";
+
+
+            texto.innerText =
+                "";
+
+
+            carregando.style.display =
+                "block";
+
 
             carregando.innerText =
                 "Criando PIX...";
+
 
             document.getElementById(
                 "valorDisplay"
@@ -542,22 +574,38 @@
 
 
             // =================================================
-            // MESMO USUÁRIO DO SITE
+            // USAR O MESMO USUÁRIO AUTENTICADO
             // =================================================
 
-            const userId =
-                obterUsuarioAtual();
+            if (!usuarioAtual) {
 
-            if (!userId) {
+                const {
+                    data: { user },
+                    error
+                } =
+                    await supabaseClient.auth.getUser();
 
-                mostrarErro(
-                    "Usuário não identificado. Faça login novamente."
-                );
 
-                fecharModal();
+                if (error || !user) {
 
-                return;
+                    mostrarErro(
+                        "Usuário não identificado. Faça login novamente."
+                    );
+
+                    fecharModal();
+
+                    return;
+                }
+
+
+                usuarioAtual =
+                    user;
             }
+
+
+            const userId =
+                usuarioAtual.id;
+
 
             console.log(
                 "ApostaXBet - usuário utilizado no depósito:",
@@ -607,7 +655,9 @@
                 const textoResposta =
                     await resposta.text();
 
+
                 let dados;
+
 
                 try {
 
@@ -648,12 +698,14 @@
                 let codigoPix =
                     dados.qr_code;
 
+
                 if (!codigoPix) {
 
                     throw new Error(
                         "O Mercado Pago não retornou o código PIX."
                     );
                 }
+
 
                 texto.innerText =
                     codigoPix;
@@ -676,24 +728,26 @@
                 }
 
 
-                qr.onload = function() {
+                qr.onload =
+                    function() {
 
-                    carregando.style.display =
-                        "none";
+                        carregando.style.display =
+                            "none";
 
-                    qr.style.display =
-                        "block";
-                };
+                        qr.style.display =
+                            "block";
+                    };
 
 
-                qr.onerror = function() {
+                qr.onerror =
+                    function() {
 
-                    carregando.innerText =
-                        "QR Code não pôde ser exibido. Use o código PIX abaixo.";
+                        carregando.innerText =
+                            "QR Code não pôde ser exibido. Use o código PIX abaixo.";
 
-                    qr.style.display =
-                        "none";
-                };
+                        qr.style.display =
+                            "none";
+                    };
 
 
             } catch (erro) {
@@ -703,11 +757,15 @@
                     erro
                 );
 
+
                 carregando.innerText =
                     erro.message ||
                     "Não foi possível criar o PIX.";
 
-                texto.innerText = "";
+
+                texto.innerText =
+                    "";
+
 
                 mostrarErro(
                     erro.message ||
@@ -728,6 +786,7 @@
                     "textoPix"
                 ).innerText.trim();
 
+
             if (!texto) {
 
                 alert(
@@ -737,25 +796,31 @@
                 return;
             }
 
+
             try {
 
                 await navigator.clipboard.writeText(
                     texto
                 );
 
+
                 const btn =
                     document.querySelector(
                         ".btn-copiar"
                     );
 
+
                 const original =
                     btn.innerHTML;
+
 
                 btn.innerHTML =
                     "✅ Copiado!";
 
+
                 btn.style.background =
                     "#28a745";
+
 
                 setTimeout(
                     () => {
@@ -769,6 +834,7 @@
                     },
                     2000
                 );
+
 
             } catch {
 
@@ -803,14 +869,18 @@
                     "mensagemDeposito"
                 );
 
+
             elemento.className =
                 "mensagem-erro";
+
 
             elemento.innerText =
                 mensagem;
 
+
             elemento.style.display =
                 "block";
+
 
             setTimeout(
                 () => {
@@ -830,19 +900,7 @@
 
         window.addEventListener(
             "load",
-            function() {
-
-                carregarSaldo();
-
-                // Dá uma segunda atualização depois
-                // para garantir que o SistemaSaldo
-                // terminou de carregar o usuário.
-                setTimeout(
-                    carregarSaldo,
-                    500
-                );
-
-            }
+            carregarUsuarioESaldo
         );
 
     </script>
