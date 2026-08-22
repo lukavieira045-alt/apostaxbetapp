@@ -1,162 +1,677 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Depositar - ApostaXBet</title>
-    <style>
-        * { box-sizing: border-box; }
-        body { margin: 0; background: #000; color: white; font-family: Arial, sans-serif; padding-bottom: 90px; }
-        .topo { text-align: center; padding: 25px 10px; background: #111; border-bottom: 2px solid #d9b21f; }
-        .topo h1 { margin: 0; color: #e6c229; font-size: 28px; }
-        .saldo { margin-top: 8px; color: #00ed91; font-weight: bold; font-size: 18px; }
-        .container { width: 94%; max-width: 600px; margin: 25px auto; }
-        .valores-rapidos { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .btn-valor { flex: 1; min-width: 70px; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.2s; }
-        .btn-valor:hover, .btn-valor.ativo { background: #e6c229; color: #000; border-color: #e6c229; }
-        .btn-pix { display: block; width: 100%; padding: 18px; font-size: 18px; background-color: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .btn-pix:active { transform: scale(0.98); }
-        .modal-pix { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; }
-        .modal-conteudo { background: white; padding: 30px; border-radius: 15px; text-align: center; width: 90%; max-width: 350px; color: #333; position: relative; }
-        .modal-conteudo h3 { margin-top: 0; color: #111; }
-        .modal-conteudo img { max-width: 100%; height: auto; border-radius: 8px; margin: 15px 0; }
-        .valor-selecionado { font-size: 20px; color: #28a745; font-weight: bold; margin-bottom: 10px; display: block; }
-        .area-copia { background: #f0f0f0; padding: 10px; border-radius: 8px; margin: 15px 0; word-break: break-all; font-family: monospace; font-size: 12px; color: #555; max-height: 60px; overflow-y: auto; border: 1px dashed #ccc; }
-        .btn-copiar { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px; width: 100%; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 5px; }
-        .btn-copiar:active { transform: scale(0.98); }
-        .btn-fechar { background: #dc3545; color: white; border: none; padding: 10px 25px; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Depositar - ApostaXBet</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #000;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    padding-bottom: 90px;
+}
+
+.topo {
+    text-align: center;
+    padding: 25px 10px;
+    background: #111;
+    border-bottom: 2px solid #d9b21f;
+}
+
+.topo h1 {
+    margin: 0;
+    color: #e6c229;
+    font-size: 28px;
+}
+
+.saldo {
+    margin-top: 8px;
+    color: #00ed91;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.container {
+    width: 94%;
+    max-width: 600px;
+    margin: 25px auto;
+}
+
+.valores-rapidos {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.btn-valor {
+    flex: 1;
+    min-width: 70px;
+    padding: 12px;
+    background: #222;
+    border: 1px solid #444;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-valor.ativo {
+    background: #e6c229;
+    color: #000;
+    border-color: #e6c229;
+}
+
+.btn-pix {
+    display: block;
+    width: 100%;
+    padding: 18px;
+    font-size: 18px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-pix:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.modal-pix {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.85);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.modal-conteudo {
+    background: #fff;
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+    width: 100%;
+    max-width: 370px;
+    color: #333;
+}
+
+.modal-conteudo h3 {
+    margin-top: 0;
+}
+
+.qr {
+    width: 250px;
+    max-width: 100%;
+    height: 250px;
+    object-fit: contain;
+    margin: 15px auto;
+    display: block;
+}
+
+.valor-selecionado {
+    display: block;
+    font-size: 20px;
+    color: #28a745;
+    font-weight: bold;
+}
+
+.area-copia {
+    background: #f0f0f0;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 15px 0;
+    word-break: break-all;
+    font-family: monospace;
+    font-size: 11px;
+    color: #555;
+    max-height: 90px;
+    overflow-y: auto;
+    border: 1px dashed #ccc;
+}
+
+.btn-copiar {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 15px;
+}
+
+.btn-fechar {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 11px 25px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.status {
+    margin-top: 12px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.carregando {
+    display: none;
+    margin: 15px 0;
+}
+</style>
 </head>
+
 <body>
-    <div class="topo">
-        <h1>ApostaXBet</h1>
-        <div class="saldo" id="displaySaldo">Saldo: R$ 0,00</div>
+
+<div class="topo">
+    <h1>ApostaXBet</h1>
+    <div class="saldo" id="displaySaldo">
+        Saldo: R$ 0,00
     </div>
-    <div class="container">
-        <h2>Recarregar Saldo</h2>
-        <p>Escolha um valor para depositar via PIX:</p>
-        <div class="valores-rapidos">
-            <button class="btn-valor" onclick="selecionarValor(this, 10)">R$ 10</button>
-            <button class="btn-valor" onclick="selecionarValor(this, 20)">R$ 20</button>
-            <button class="btn-valor" onclick="selecionarValor(this, 50)">R$ 50</button>
-            <button class="btn-valor" onclick="selecionarValor(this, 100)">R$ 100</button>
-            <button class="btn-valor" onclick="selecionarValor(this, 200)">R$ 200</button>
+</div>
+
+<div class="container">
+
+    <h2>Recarregar Saldo</h2>
+
+    <p>
+        Escolha um valor para depositar via PIX:
+    </p>
+
+    <div class="valores-rapidos">
+
+        <button
+            class="btn-valor"
+            onclick="selecionarValor(this, 10)">
+            R$ 10
+        </button>
+
+        <button
+            class="btn-valor"
+            onclick="selecionarValor(this, 20)">
+            R$ 20
+        </button>
+
+        <button
+            class="btn-valor"
+            onclick="selecionarValor(this, 50)">
+            R$ 50
+        </button>
+
+        <button
+            class="btn-valor"
+            onclick="selecionarValor(this, 100)">
+            R$ 100
+        </button>
+
+        <button
+            class="btn-valor"
+            onclick="selecionarValor(this, 200)">
+            R$ 200
+        </button>
+
+    </div>
+
+    <button
+        id="btnDepositar"
+        class="btn-pix"
+        onclick="criarPix()"
+        disabled>
+
+        Escolha um valor
+
+    </button>
+
+    <div
+        id="carregando"
+        class="carregando">
+        Gerando PIX...
+    </div>
+
+</div>
+
+
+<div
+    id="modalPix"
+    class="modal-pix">
+
+    <div class="modal-conteudo">
+
+        <h3>PIX para pagamento</h3>
+
+        <span
+            id="valorDisplay"
+            class="valor-selecionado">
+        </span>
+
+        <img
+            id="qrCode"
+            class="qr"
+            alt="QR Code PIX">
+
+        <p>
+            Escaneie o QR Code no aplicativo do seu banco.
+        </p>
+
+        <div
+            id="textoPix"
+            class="area-copia">
         </div>
-        <button id="btnDepositar" class="btn-pix" onclick="abrirModal()" disabled style="opacity: 0.6;">Depositar via PIX</button>
-    </div>
-    <div id="modalPix" class="modal-pix" onclick="if(event.target === this) fecharModal()">
-        <div class="modal-conteudo">
-            <h3>Escaneie ou Copie</h3>
-            <span id="valorDisplay" class="valor-selecionado"></span>
-            <img src="img/qrcode.png" alt="QR Code PIX">
-            <div class="area-copia" id="textoPix"></div>
-            <button class="btn-copiar" onclick="copiarChave()"> Copiar Código PIX</button>
-            <p style="font-size: 12px; color: #888; margin: 10px 0;">O saldo será creditado automaticamente após a compensação bancária.</p>
-            <button class="btn-fechar" onclick="fecharModal()">Fechar</button>
+
+        <button
+            class="btn-copiar"
+            onclick="copiarPix()">
+
+            📋 Copiar código PIX
+
+        </button>
+
+        <div
+            id="statusPagamento"
+            class="status">
+
+            Aguardando pagamento...
+
         </div>
+
+        <button
+            class="btn-fechar"
+            onclick="fecharModal()">
+
+            Fechar
+
+        </button>
+
     </div>
 
-    <script>
-        let valorAtual = 0;
-        
-        // CONFIGURAÇÃO DO SUPABASE
-        const WEBHOOK_DEPOSITO_URL = 'https://jxbzjiwmajjzxgihfjgt.supabase.co/functions/v1/swift-action';
-        const SECRET_KEY = 'L3'; 
-        
-        // DADOS DA SUA CONTA (Para gerar o Pix Dinâmico internamente)
-        const CHAVE_PIX = "lukavieira045@gmail.com";
-        const NOME_BENEFICIARIO = "Lucas Vieira Campos de Je"; 
-        const CIDADE_BENEFICIARIO = "SAO PAULO";
+</div>
 
-        // --- GERADOR DE PAYLOAD PIX COM VALOR FIXO (SEM API EXTERNA) ---
-        function gerarPayloadPix(chave, nome, cidade, valor, txid) {
-            const formatar = (id, val) => {
-                const tam = val.length.toString().padStart(2, '0');
-                return `${id}${tam}${val}`;
-            };
 
-            let payload = 
-                formatar('00', '01') +
-                formatar('26', formatar('00', 'BR.GOV.BCB.PIX') + formatar('01', chave) + formatar('02', txid || '***')) +
-                formatar('52', '0000') +
-                formatar('53', '986') +
-                formatar('54', valor.toFixed(2)) + // AQUI TRAVA O VALOR
-                formatar('58', 'BR') +
-                formatar('59', nome.substring(0, 25)) +
-                formatar('60', cidade.substring(0, 15)) +
-                formatar('62', formatar('05', txid || '***'));
+<script type="module">
 
-            payload += '6304';
-            
-            // Cálculo CRC16
-            let crc = 0xFFFF;
-            for (let i = 0; i < payload.length; i++) {
-                crc ^= payload.charCodeAt(i) << 8;
-                for (let j = 0; j < 8; j++) {
-                    crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
-                    crc &= 0xFFFF;
-                }
+import {
+    createClient
+} from
+'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+
+const SUPABASE_URL =
+'https://jxbzjiwmajjzxgihfjgt.supabase.co';
+
+const SUPABASE_KEY =
+'sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ';
+
+
+const supabase =
+createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+const FUNCTION_URL =
+`${SUPABASE_URL}/functions/v1/swift-action`;
+
+
+let valorAtual = 0;
+
+
+/*
+=====================================================
+SALDO
+=====================================================
+*/
+
+async function carregarSaldo() {
+
+    const {
+        data: sessionData
+    } =
+    await supabase.auth.getSession();
+
+    const user =
+        sessionData?.session?.user;
+
+    if (!user) {
+
+        document.getElementById(
+            "displaySaldo"
+        ).innerText =
+        "Faça login para ver o saldo";
+
+        return;
+    }
+
+    const {
+        data,
+        error
+    } =
+    await supabase
+        .from("saldos")
+        .select("valor")
+        .eq(
+            "user_id",
+            user.id
+        )
+        .maybeSingle();
+
+    if (error) {
+
+        console.error(
+            "Erro saldo:",
+            error
+        );
+
+        return;
+    }
+
+    const saldo =
+        Number(
+            data?.valor || 0
+        );
+
+    document.getElementById(
+        "displaySaldo"
+    ).innerText =
+    `Saldo: R$ ${saldo.toFixed(2).replace(".", ",")}`;
+}
+
+
+/*
+=====================================================
+ESCOLHER VALOR
+=====================================================
+*/
+
+window.selecionarValor =
+function(botao, valor) {
+
+    document
+        .querySelectorAll(".btn-valor")
+        .forEach(
+            b =>
+            b.classList.remove("ativo")
+        );
+
+    botao.classList.add("ativo");
+
+    valorAtual = valor;
+
+    const btn =
+        document.getElementById(
+            "btnDepositar"
+        );
+
+    btn.disabled = false;
+
+    btn.innerText =
+        `💰 Depositar R$ ${valor.toFixed(2).replace(".", ",")} via PIX`;
+};
+
+
+/*
+=====================================================
+CRIAR PIX REAL
+=====================================================
+*/
+
+window.criarPix =
+async function() {
+
+    if (valorAtual <= 0) {
+        return;
+    }
+
+    const btn =
+        document.getElementById(
+            "btnDepositar"
+        );
+
+    const carregando =
+        document.getElementById(
+            "carregando"
+        );
+
+    btn.disabled = true;
+
+    carregando.style.display =
+        "block";
+
+    try {
+
+        const {
+            data: sessionData
+        } =
+        await supabase.auth.getSession();
+
+        const session =
+            sessionData?.session;
+
+        if (!session) {
+
+            alert(
+                "Você precisa estar logado."
+            );
+
+            return;
+        }
+
+
+        const response =
+        await fetch(
+            FUNCTION_URL,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json",
+
+                    "Authorization":
+                        `Bearer ${session.access_token}`
+                },
+
+                body: JSON.stringify({
+                    action:
+                        "criar_pix",
+
+                    valor:
+                        valorAtual
+                })
             }
-            return payload + crc.toString(16).toUpperCase().padStart(4, '0');
+        );
+
+
+        const resultado =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            console.error(
+                "Erro criando PIX:",
+                resultado
+            );
+
+            alert(
+                resultado.error ||
+                "Não foi possível criar o PIX."
+            );
+
+            return;
         }
 
-        function carregarSaldo() {
-            let saldo = localStorage.getItem('apostaXBet_saldo');
-            if (!saldo) { saldo = 0; localStorage.setItem('apostaXBet_saldo', 0); }
-            document.getElementById('displaySaldo').innerText = `Saldo: R$ ${parseFloat(saldo).toFixed(2).replace('.', ',')}`;
+
+        /*
+         * QR CODE
+         */
+
+        if (
+            resultado.qr_code_base64
+        ) {
+
+            document.getElementById(
+                "qrCode"
+            ).src =
+            `data:image/png;base64,${resultado.qr_code_base64}`;
+
+        } else {
+
+            document.getElementById(
+                "qrCode"
+            ).style.display =
+                "none";
         }
 
-        function selecionarValor(botao, valor) {
-            document.querySelectorAll('.btn-valor').forEach(b => b.classList.remove('ativo'));
-            botao.classList.add('ativo');
-            valorAtual = valor;
-            const btnDepositar = document.getElementById('btnDepositar');
-            btnDepositar.disabled = false;
-            btnDepositar.style.opacity = '1';
-            btnDepositar.innerHTML = `💰 Depositar R$ ${valor},00 via PIX`;
-        }
 
-        async function abrirModal() {
-            if (valorAtual > 0) {
-                document.getElementById('modalPix').style.display = 'flex';
-                document.getElementById('valorDisplay').innerText = `Valor: R$ ${valorAtual},00`;
-                
-                // GERA O PIX DINÂMICO NA HORA (SEM ERRO DE TOKEN)
-                const txid = 'APOSTA' + Date.now();
-                const pixDinamico = gerarPayloadPix(CHAVE_PIX, NOME_BENEFICIARIO, CIDADE_BENEFICIARIO, valorAtual, txid);
-                
-                document.getElementById('textoPix').innerText = pixDinamico;
-                
-                // Atualiza o QR Code visualmente
-                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixDinamico)}`;
-                document.querySelector('.modal-conteudo img').src = qrUrl;
+        /*
+         * CÓDIGO COPIA E COLA
+         */
 
-                // Envia registro para o Supabase
-                try {
-                    const userId = localStorage.getItem('apostaXBet_userId') || 'nao_identificado';
-                    await fetch(WEBHOOK_DEPOSITO_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'X-Betting-Secret': SECRET_KEY },
-                        body: JSON.stringify({ tipo: 'deposito_pix', valor: valorAtual, userId: userId, data: new Date().toISOString(), status: 'pendente' })
-                    });
-                } catch (e) { console.error('Erro Supabase:', e); }
-            }
-        }
+        document.getElementById(
+            "textoPix"
+        ).innerText =
+            resultado.qr_code ||
+            "";
 
-        function fecharModal() { document.getElementById('modalPix').style.display = 'none'; }
 
-        function copiarChave() {
-            const texto = document.getElementById('textoPix').innerText;
-            navigator.clipboard.writeText(texto).then(() => {
-                const btn = document.querySelector('.btn-copiar');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = "✅ Copiado!";
-                btn.style.background = "#28a745";
-                setTimeout(() => { btn.innerHTML = originalText; btn.style.background = "#007bff"; }, 2000);
-            }).catch(() => alert("Erro ao copiar. Tente manualmente."));
-        }
+        document.getElementById(
+            "valorDisplay"
+        ).innerText =
+            `Valor: R$ ${Number(valorAtual).toFixed(2).replace(".", ",")}`;
 
-        window.onload = carregarSaldo;
-    </script>
+
+        document.getElementById(
+            "statusPagamento"
+        ).innerText =
+            "⏳ Aguardando pagamento...";
+
+
+        document.getElementById(
+            "modalPix"
+        ).style.display =
+            "flex";
+
+
+    } catch (erro) {
+
+        console.error(
+            erro
+        );
+
+        alert(
+            "Erro de comunicação com o servidor."
+        );
+
+    } finally {
+
+        carregando.style.display =
+            "none";
+
+        btn.disabled =
+            false;
+    }
+};
+
+
+/*
+=====================================================
+COPIAR PIX
+=====================================================
+*/
+
+window.copiarPix =
+async function() {
+
+    const texto =
+        document.getElementById(
+            "textoPix"
+        ).innerText;
+
+    if (!texto) {
+        return;
+    }
+
+    try {
+
+        await navigator.clipboard.writeText(
+            texto
+        );
+
+        const botao =
+            document.querySelector(
+                ".btn-copiar"
+            );
+
+        const original =
+            botao.innerText;
+
+        botao.innerText =
+            "✅ Copiado!";
+
+        setTimeout(
+            () => {
+                botao.innerText =
+                    original;
+            },
+            2000
+        );
+
+    } catch {
+
+        alert(
+            "Não foi possível copiar automaticamente."
+        );
+    }
+};
+
+
+/*
+=====================================================
+FECHAR
+=====================================================
+*/
+
+window.fecharModal =
+function() {
+
+    document.getElementById(
+        "modalPix"
+    ).style.display =
+        "none";
+};
+
+
+/*
+=====================================================
+INICIALIZAÇÃO
+=====================================================
+*/
+
+carregarSaldo();
+
+</script>
+
 </body>
 </html>
