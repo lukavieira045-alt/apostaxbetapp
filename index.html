@@ -425,7 +425,34 @@ input:focus {
     overflow: hidden;
 }
 
+.jackpot-banner::before {
+    content: "";
+    position: absolute;
+    inset: -50%;
+    background: radial-gradient(
+        circle,
+        rgba(250,204,21,0.08) 0%,
+        transparent 55%
+    );
+    animation: jackpotBrilho 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes jackpotBrilho {
+    0%, 100% {
+        transform: scale(0.8) rotate(0deg);
+        opacity: 0.4;
+    }
+
+    50% {
+        transform: scale(1.2) rotate(180deg);
+        opacity: 1;
+    }
+}
+
 .jackpot-label {
+    position: relative;
+    z-index: 2;
     background: #0b3b24;
     border: 1px solid #22c55e;
     color: white;
@@ -438,14 +465,38 @@ input:focus {
 }
 
 .jackpot-value {
+    position: relative;
+    z-index: 2;
     font-size: 26px;
     font-weight: 900;
     color: #facc15;
     margin: 8px 0;
-    text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    text-shadow:
+        0 2px 6px rgba(0,0,0,0.5),
+        0 0 12px rgba(250,204,21,0.35);
+    animation: jackpotNumero 1.8s ease-in-out infinite;
+    font-variant-numeric: tabular-nums;
+}
+
+@keyframes jackpotNumero {
+    0%, 100% {
+        transform: scale(1);
+        text-shadow:
+            0 2px 6px rgba(0,0,0,0.5),
+            0 0 10px rgba(250,204,21,0.25);
+    }
+
+    50% {
+        transform: scale(1.035);
+        text-shadow:
+            0 2px 8px rgba(0,0,0,0.5),
+            0 0 22px rgba(250,204,21,0.65);
+    }
 }
 
 .providers {
+    position: relative;
+    z-index: 2;
     display: flex;
     justify-content: center;
     gap: 8px;
@@ -493,14 +544,24 @@ input:focus {
     transform: scale(0.95);
 }
 
+/* CORREÇÃO DAS CAPAS */
+
 .game-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center center;
     position: absolute;
-    top: 0;
-    left: 0;
+    inset: 0;
     border-radius: 10px;
+    display: block;
+    z-index: 0;
+    background: #145a38;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.game-card:hover .game-img {
+    transform: scale(1.025);
 }
 
 .game-overlay {
@@ -508,7 +569,11 @@ input:focus {
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(transparent, rgba(0,0,0,0.85));
+    z-index: 2;
+    background: linear-gradient(
+        transparent,
+        rgba(0,0,0,0.85)
+    );
     padding: 25px 6px 6px;
     font-size: 10px;
     font-weight: bold;
@@ -532,7 +597,7 @@ input:focus {
     left: 5px;
     font-size: 13px;
     opacity: 0.8;
-    z-index: 2;
+    z-index: 3;
 }
 
 .fav-icon {
@@ -541,7 +606,7 @@ input:focus {
     right: 5px;
     font-size: 13px;
     opacity: 0.8;
-    z-index: 2;
+    z-index: 3;
 }
 
 .bonus-badge {
@@ -554,9 +619,36 @@ input:focus {
     font-weight: 900;
     padding: 3px 6px;
     border-radius: 6px;
-    z-index: 3;
+    z-index: 4;
     text-align: center;
     line-height: 1.2;
+}
+
+/* Capa alternativa quando uma imagem não existir */
+
+.game-card.imagem-falhou {
+    background:
+        radial-gradient(
+            circle at center,
+            #246b47 0%,
+            #0a2e1c 75%
+        );
+}
+
+.game-card.imagem-falhou::before {
+    content: attr(data-icon);
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    background: radial-gradient(
+        circle,
+        rgba(250,204,21,0.12),
+        transparent 65%
+    );
 }
 
 /* ========================= MENU INFERIOR ========================= */
@@ -729,10 +821,6 @@ input:focus {
 
 /* ========================= SUPORTE ========================= */
 
-/*
-   O botão flutuante foi mantido apenas como elemento invisível
-   para preservar a estrutura JavaScript existente.
-*/
 #botaoSuporte {
     display: none !important;
 }
@@ -1031,6 +1119,7 @@ input:focus {
 }
 
 @media(max-width: 360px) {
+
     .logo {
         font-size: 34px;
     }
@@ -1256,14 +1345,10 @@ input:focus {
 
     </header>
 
-    <!-- ========================= NOVA JANELINHA ========================= -->
-
     <div class="mini-financeiro">
         <a href="saque.html">💵 SAQUE</a>
         <a href="deposito.html">💰 DEPÓSITO</a>
     </div>
-
-    <!-- ========================= AÇÕES RÁPIDAS ========================= -->
 
     <div class="quick-actions">
 
@@ -1299,8 +1384,6 @@ input:focus {
 
     </div>
 
-    <!-- ========================= MARQUEE ========================= -->
-
     <div class="marquee-bar">
         <span>🔥</span>
 
@@ -1309,8 +1392,6 @@ input:focus {
             🔥 CADASTRE-SE AGORA E RECEBA SEU BÔNUS DE BOAS-VINDAS! 🎁
         </div>
     </div>
-
-    <!-- ========================= CATEGORIAS ========================= -->
 
     <div class="nav-categories">
 
@@ -1368,7 +1449,11 @@ input:focus {
              data-icon="🎰"
              data-link="jogos/roleta.html">
 
-            <img class="game-img" src="banner-roleta.png" alt="Roleta">
+            <img class="game-img"
+                 src="banner-roleta.png"
+                 alt="Roleta"
+                 loading="eager"
+                 decoding="async">
 
             <span class="like-icon">👍</span>
             <span class="fav-icon">⭐</span>
@@ -1387,7 +1472,11 @@ input:focus {
              data-icon="🎡"
              data-link="jogos/roleta2.html">
 
-            <img class="game-img" src="banner-roleta-premium.png" alt="Roleta Premium">
+            <img class="game-img"
+                 src="banner-roleta-premium.png"
+                 alt="Roleta Premium"
+                 loading="eager"
+                 decoding="async">
 
             <span class="like-icon">👍</span>
             <span class="fav-icon">⭐</span>
@@ -1406,7 +1495,11 @@ input:focus {
              data-icon="🎰"
              data-link="jogos/roleta-cassino.html">
 
-            <img class="game-img" src="banner-roleta-cassino.png" alt="Roleta Cassino">
+            <img class="game-img"
+                 src="banner-roleta-cassino.png"
+                 alt="Roleta Cassino"
+                 loading="lazy"
+                 decoding="async">
 
             <span class="like-icon">👍</span>
             <span class="fav-icon">⭐</span>
@@ -1425,7 +1518,11 @@ input:focus {
              data-icon="💣"
              data-link="jogos/mines.html">
 
-            <img class="game-img" src="banner-mines.png" alt="Mines">
+            <img class="game-img"
+                 src="banner-mines.png"
+                 alt="Mines"
+                 loading="lazy"
+                 decoding="async">
 
             <span class="like-icon">👍</span>
             <span class="fav-icon">⭐</span>
@@ -1444,7 +1541,11 @@ input:focus {
              data-icon="🚀"
              data-link="jogos/crash.html">
 
-            <img class="game-img" src="banner-crash.png" alt="Crash">
+            <img class="game-img"
+                 src="banner-crash.png"
+                 alt="Crash"
+                 loading="lazy"
+                 decoding="async">
 
             <span class="like-icon">👍</span>
             <span class="fav-icon">⭐</span>
@@ -1463,7 +1564,11 @@ input:focus {
              data-icon="🎯"
              data-link="jogos/plinko.html">
 
-            <img class="game-img" src="banner-plinko.png" alt="Plinko">
+            <img class="game-img"
+                 src="banner-plinko.png"
+                 alt="Plinko"
+                 loading="lazy"
+                 decoding="async">
 
             <span class="like-icon">👍</span>
             <span class="fav-icon">⭐</span>
@@ -1482,7 +1587,11 @@ input:focus {
              data-icon="🎲"
              data-link="jogos/dice.html">
 
-            <img class="game-img" src="banner-dice.png" alt="Dice">
+            <img class="game-img"
+                 src="banner-dice.png"
+                 alt="Dice"
+                 loading="lazy"
+                 decoding="async">
 
             <span class="like-icon">👍</span>
             <span class="fav-icon">⭐</span>
@@ -1501,7 +1610,11 @@ input:focus {
              data-icon="🐺"
              data-link="jogos/lobby.html">
 
-            <img class="game-img" src="banner-lobby.png" alt="Lobby">
+            <img class="game-img"
+                 src="banner-lobby.png"
+                 alt="Lobby"
+                 loading="lazy"
+                 decoding="async">
 
             <span class="like-icon">👍</span>
             <span class="fav-icon">⭐</span>
@@ -1520,7 +1633,11 @@ input:focus {
              data-icon="🧛"
              data-link="jogos/hotel-transylvania/index.html">
 
-            <img class="game-img" src="banner-night-monsters.png" alt="Night Monsters">
+            <img class="game-img"
+                 src="banner-night-monsters.png"
+                 alt="Night Monsters"
+                 loading="lazy"
+                 decoding="async">
 
             <span class="like-icon">👍</span>
             <span class="fav-icon">⭐</span>
@@ -1543,7 +1660,11 @@ input:focus {
              data-icon="🐍"
              data-link="jogos/fortune-snake.html">
 
-            <img class="game-img" src="banner-fortune-snake.png" alt="Fortune Snake">
+            <img class="game-img"
+                 src="banner-fortune-snake.png"
+                 alt="Fortune Snake"
+                 loading="lazy"
+                 decoding="async">
 
             <span class="like-icon">👍</span>
             <span class="fav-icon">⭐</span>
@@ -1616,7 +1737,6 @@ input:focus {
         <span>Início</span>
     </div>
 
-    <!-- ALTERADO: não abre mais jogos/jogos.html -->
     <div class="nav-link" onclick="mostrarInicio()">
         <span class="nav-icon">🎮</span>
         <span>Jogos</span>
@@ -1631,7 +1751,6 @@ input:focus {
 
     </div>
 
-    <!-- SUPORTE PERMANECE SOMENTE AQUI -->
     <div class="nav-link" onclick="abrirSuporte()">
 
         <span class="nav-icon">🎧</span>
@@ -1658,10 +1777,6 @@ input:focus {
 
 <!-- ========================= SUPORTE ========================= -->
 
-<!--
-     O botão flutuante antigo não aparece mais.
-     O suporte agora é aberto pelo menu inferior.
--->
 <button id="botaoSuporte"
         type="button"
         style="display:none !important;">
@@ -1797,8 +1912,6 @@ const SUPABASE_KEY =
 
 const CASA_VANTAGEM = 0.95;
 
-/* Cliente Supabase único */
-
 if (
     !window.supabase ||
     typeof window.supabase.createClient !== "function"
@@ -1847,8 +1960,6 @@ const janelaSuporte =
 const btnTopo =
     document.getElementById("btnTopo");
 
-/* Loader */
-
 const loader =
     document.getElementById("loader");
 
@@ -1862,6 +1973,129 @@ const loaderIconeNormal =
     document.getElementById("loaderIconeNormal");
 
 let carregando = false;
+
+/* ========================= JACKPOT ANIMADO ========================= */
+
+const JACKPOT_INICIAL = 15617132.96;
+
+let jackpotAtual = JACKPOT_INICIAL;
+let jackpotUltimoTempo = Date.now();
+
+function formatarJackpot(valor) {
+
+    return Number(valor)
+        .toLocaleString("pt-BR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+}
+
+function animarJackpot() {
+
+    const agora = Date.now();
+
+    /*
+       O número sobe de forma contínua e suave.
+       A velocidade é pequena para não disparar
+       visualmente de forma exagerada.
+    */
+
+    const decorrido =
+        Math.min(
+            agora - jackpotUltimoTempo,
+            100
+        );
+
+    jackpotUltimoTempo = agora;
+
+    /*
+       Aproximadamente alguns centavos por atualização.
+       O valor continua subindo enquanto a página
+       estiver aberta.
+    */
+
+    jackpotAtual +=
+        (decorrido / 1000) * 0.37;
+
+    const elemento =
+        document.getElementById("jackpotValue");
+
+    if (elemento) {
+
+        elemento.textContent =
+            formatarJackpot(jackpotAtual);
+
+    }
+
+    requestAnimationFrame(
+        animarJackpot
+    );
+}
+
+/* ========================= IMAGENS DAS CAPAS ========================= */
+
+function configurarImagemCapa(img) {
+
+    if (!img) return;
+
+    img.addEventListener(
+        "error",
+        function() {
+
+            const card =
+                img.closest(".game-card");
+
+            if (card) {
+
+                card.classList.add(
+                    "imagem-falhou"
+                );
+
+            }
+
+            img.style.display = "none";
+
+        },
+        {
+            once: true
+        }
+    );
+
+    img.addEventListener(
+        "load",
+        function() {
+
+            const card =
+                img.closest(".game-card");
+
+            if (card) {
+
+                card.classList.remove(
+                    "imagem-falhou"
+                );
+
+            }
+
+            img.style.display = "block";
+
+        },
+        {
+            once: true
+        }
+    );
+
+}
+
+function configurarTodasAsCapas() {
+
+    document
+        .querySelectorAll(".game-img")
+        .forEach(
+            configurarImagemCapa
+        );
+
+}
 
 /* ========================= SCROLL ========================= */
 
@@ -2630,15 +2864,13 @@ function mostrarSite(user) {
 
     mostrarMenu();
 
-    /*
-       O suporte flutuante continua desligado.
-       O suporte é aberto pelo menu inferior.
-    */
     mostrarBotaoSuporte();
 
     resetarSuporte();
 
     ativarEventosJogos();
+
+    configurarTodasAsCapas();
 
     const idUsuario =
         user.id || "ID indisponível";
@@ -2716,6 +2948,13 @@ function ativarEventosJogos() {
         .querySelectorAll(".game-card")
         .forEach(card => {
 
+            const imagem =
+                card.querySelector(".game-img");
+
+            configurarImagemCapa(
+                imagem
+            );
+
             card.addEventListener(
                 "click",
                 function(e) {
@@ -2741,16 +2980,39 @@ function ativarEventosJogos() {
                     loaderNome.textContent =
                         nome || "Carregando...";
 
-                    if (capa) {
+                    loaderImagem.onerror =
+                        function() {
 
-                        loaderImagem.src =
-                            capa;
+                            loaderImagem.style.display =
+                                "none";
+
+                            loaderIconeNormal.textContent =
+                                icone || "🎮";
+
+                            loaderIconeNormal.style.display =
+                                "flex";
+                        };
+
+                    loaderImagem.onload =
+                        function() {
+
+                            loaderImagem.style.display =
+                                "block";
+
+                            loaderIconeNormal.style.display =
+                                "none";
+                        };
+
+                    if (capa) {
 
                         loaderImagem.style.display =
                             "block";
 
                         loaderIconeNormal.style.display =
                             "none";
+
+                        loaderImagem.src =
+                            capa;
 
                     } else {
 
@@ -3517,13 +3779,23 @@ document.addEventListener(
     function() {
 
         console.log(
-            "✅ ApostaXBet carregado com jogos estáticos e loader."
+            "✅ ApostaXBet carregado com jogos estáticos, capas protegidas e Jackpot animado."
         );
 
         console.log(
             "✅ Supabase Client único:",
             window.supabaseClient
         );
+
+        configurarTodasAsCapas();
+
+        /*
+           Inicia a animação do Jackpot.
+        */
+        jackpotUltimoTempo =
+            Date.now();
+
+        animarJackpot();
 
         verificarSessao();
     }
