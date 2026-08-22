@@ -1113,7 +1113,7 @@ ENVIAR LINK
 <div id="mensagemRecuperacao" class="mensagem"></div>
 </form>
 
-<button class="voltar" onclick="voltarLogin()">
+<button class="voltar" onclick="voltarLogin">
 ← Voltar para o login
 </button>
 
@@ -1711,10 +1711,6 @@ function atualizarTextoJackpot(){
     }
 }
 
-/*
- * Faz o número amarelo dar um pequeno
- * movimento visual toda vez que muda.
- */
 function efeitoJackpot(){
 
     const elemento=
@@ -1731,26 +1727,12 @@ function efeitoJackpot(){
     },600);
 }
 
-/*
- * Jackpot:
- *
- * - movimenta aproximadamente a cada 2 segundos;
- * - normalmente sobe;
- * - ocasionalmente desce um pouco;
- * - usa valores pequenos para o movimento
- *   parecer natural;
- * - nunca mexe no sistema de saldo.
- */
 function pequenoMovimentoJackpot(){
 
     if(jackpotAnimacao)return;
 
     jackpotAnimacao=true;
 
-    /*
-     * Aproximadamente 18% das vezes
-     * o Jackpot dá uma pequena descida.
-     */
     const chanceDescer=Math.random();
 
     let variacao;
@@ -1788,10 +1770,6 @@ function pequenoMovimentoJackpot(){
 
     },600);
 
-    /*
-     * Próximo movimento aproximadamente
-     * a cada 2 segundos.
-     */
     setTimeout(
         pequenoMovimentoJackpot,
         1800+Math.random()*500
@@ -3107,6 +3085,21 @@ async function sair(){
         console.error(error);
     }
 
+    /*
+     * CORREÇÃO:
+     * Depois de sair, cria uma nova entrada de login
+     * no histórico. O popstate abaixo impede que o
+     * botão Voltar retorne para o jogo anterior.
+     */
+    history.pushState(
+        {
+            apostaxbetLogin:true,
+            aposLogout:true
+        },
+        "",
+        window.location.href
+    );
+
     mostrarLoginTela();
 }
 
@@ -3388,6 +3381,35 @@ clienteSupabase()
     }
 );
 
+/* ========================= VOLTAR APÓS LOGOUT ========================= */
+
+/*
+ * Se o usuário saiu da conta e apertar Voltar,
+ * permanece no login em vez de voltar para o jogo
+ * que estava aberto anteriormente.
+ */
+window.addEventListener("popstate",function(){
+
+    if(
+        sessionStorage.getItem(
+            "apostaxbet_logout"
+        )==="1"
+    ){
+
+        history.pushState(
+            {
+                apostaxbetLogin:true,
+                aposLogout:true
+            },
+            "",
+            window.location.href
+        );
+
+        mostrarLoginTela();
+    }
+
+});
+
 /* ========================= INICIAR ========================= */
 
 document.addEventListener(
@@ -3425,14 +3447,40 @@ document.addEventListener(
 
         atualizarTextoJackpot();
 
-        /*
-         * Começa o movimento do Jackpot
-         * depois de aproximadamente 2 segundos.
-         */
         setTimeout(
             pequenoMovimentoJackpot,
             2000
         );
+
+        /*
+         * Cria o primeiro estado de login para que,
+         * depois de um logout, o histórico seja tratado
+         * pelo controle de popstate acima.
+         */
+        if(
+            sessionStorage.getItem(
+                "apostaxbet_logout"
+            )==="1"
+        ){
+
+            history.replaceState(
+                {
+                    apostaxbetLogin:true,
+                    aposLogout:true
+                },
+                "",
+                window.location.href
+            );
+
+            history.pushState(
+                {
+                    apostaxbetLogin:true,
+                    aposLogout:true
+                },
+                "",
+                window.location.href
+            );
+        }
 
         verificarSessao();
     }
