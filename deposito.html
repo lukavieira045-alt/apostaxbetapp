@@ -7,6 +7,7 @@
     <title>Depositar - ApostaXBet</title>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="saldo.js"></script>
 
     <style>
         * {
@@ -333,113 +334,31 @@
 
 
         // =====================================================
-        // CONFIGURAÇÃO DO DEPÓSITO
+        // DEPÓSITO
         // =====================================================
 
         const WEBHOOK_DEPOSITO_URL =
             "https://jxbzjiwmajjzxgihfjgt.supabase.co/functions/v1/swift-action";
 
         let valorAtual = 0;
+
         let usuarioAtual = null;
+
         let saldoAtual = 0;
 
 
         // =====================================================
-        // CARREGAR USUÁRIO E SALDO
-        // MESMA LÓGICA DA PÁGINA PRINCIPAL
+        // FORMATAR SALDO
         // =====================================================
 
-        async function carregarUsuarioESaldo() {
+        function formatarReais(valor) {
 
-            try {
+            const numero =
+                Number(valor) || 0;
 
-                const {
-                    data: { user },
-                    error: erroUsuario
-                } =
-                    await supabaseClient.auth.getUser();
-
-
-                if (erroUsuario || !user) {
-
-                    console.error(
-                        "Usuário não encontrado:",
-                        erroUsuario
-                    );
-
-                    mostrarErro(
-                        "Usuário não identificado. Faça login novamente."
-                    );
-
-                    return;
-                }
-
-
-                usuarioAtual = user;
-
-
-                console.log(
-                    "ApostaXBet - usuário autenticado:",
-                    user.id
-                );
-
-
-                // =================================================
-                // IMPORTANTE:
-                // A PÁGINA PRINCIPAL USA A COLUNA "saldo"
-                // =================================================
-
-                const {
-                    data,
-                    error: erroSaldo
-                } =
-                    await supabaseClient
-                        .from("saldos")
-                        .select("saldo")
-                        .eq("user_id", user.id)
-                        .maybeSingle();
-
-
-                if (erroSaldo) {
-
-                    console.error(
-                        "Erro ao carregar saldo:",
-                        erroSaldo
-                    );
-
-                    mostrarErro(
-                        "Não foi possível carregar seu saldo."
-                    );
-
-                    return;
-                }
-
-
-                saldoAtual =
-                    Number(
-                        data?.saldo || 0
-                    );
-
-
-                atualizarSaldoVisual();
-
-
-                console.log(
-                    "ApostaXBet - saldo encontrado:",
-                    saldoAtual
-                );
-
-            } catch (erro) {
-
-                console.error(
-                    "Erro inesperado ao carregar usuário:",
-                    erro
-                );
-
-                mostrarErro(
-                    "Erro ao carregar sua conta."
-                );
-            }
+            return numero
+                .toFixed(2)
+                .replace(".", ",");
         }
 
 
@@ -452,18 +371,276 @@
             const numero =
                 Number(saldoAtual) || 0;
 
-
             document.getElementById(
                 "displaySaldo"
             ).innerText =
-                `Saldo: R$ ${numero
-                    .toFixed(2)
-                    .replace(".", ",")}`;
+                `Saldo: R$ ${formatarReais(numero)}`;
         }
 
 
         // =====================================================
-        // ESCOLHER VALOR DO DEPÓSITO
+        // CARREGAR USUÁRIO
+        // =====================================================
+
+        async function carregarUsuario() {
+
+            try {
+
+                /*
+                 * PRIMEIRO:
+                 * usa a sessão atual do mesmo Supabase
+                 * utilizado pelo site principal.
+                 */
+
+                const {
+                    data: sessionData,
+                    error: sessionError
+                } =
+                    await supabaseClient.auth.getSession();
+
+
+                if (sessionError) {
+
+                    console.error(
+                        "Erro ao obter sessão:",
+                        sessionError
+                    );
+
+                    throw new Error(
+                        "Não foi possível verificar sua sessão."
+                    );
+                }
+
+
+                const session =
+                    sessionData?.session;
+
+
+                if (!session?.user) {
+
+                    mostrarErro(
+                        "Usuário não identificado. Faça login novamente."
+                    );
+
+                    return null;
+                }
+
+
+                usuarioAtual =
+                    session.user;
+
+
+                console.log(
+                    "ApostaXBet - usuário:",
+                    usuarioAtual.id
+                );
+
+
+                return usuarioAtual;
+
+
+            } catch (erro) {
+
+                console.error(
+                    "Erro ao carregar usuário:",
+                    erro
+                );
+
+                mostrarErro(
+                    erro.message ||
+                    "Erro ao carregar sua conta."
+                );
+
+                return null;
+            }
+        }
+
+
+        // =====================================================
+        // CARREGAR O MESMO SALDO DA PÁGINA PRINCIPAL
+        // =====================================================
+
+        async function carregarSaldo() {
+
+            try {
+
+                /*
+                 * TENTA PRIMEIRO O SISTEMA DE SALDO GLOBAL.
+                 *
+                 * É o mesmo SistemaSaldo utilizado pelos jogos
+                 * e pela página principal.
+                 */
+
+                if (
+                    window.SistemaSaldo &&
+                    typeof window.SistemaSaldo.get === "function"
+                ) {
+
+                    let resultado =
+                        window.SistemaSaldo.get();
+
+                    if (
+                        resultado &&
+                        typeof resultado.then === "function"
+                    ) {
+                        resultado =
+                            await resultado;
+                    }
+
+                    /*
+                     * O SistemaSaldo pode retornar diretamente
+                     * o número ou um objeto contendo o saldo.
+                     */
+
+                    if (
+                        typeof resultado === "number"
+                    ) {
+
+                        saldoAtual =
+                            resultado;
+
+                        atualizarSaldoVisual();
+
+                        console.log(
+                            "Saldo carregado pelo SistemaSaldo:",
+                            saldoAtual
+                        );
+
+                        return;
+                    }
+
+
+                    if (
+                        resultado &&
+                        typeof resultado === "object"
+                    ) {
+
+                        const possivelSaldo =
+                            resultado.valor ??
+                            resultado.saldo ??
+                            resultado.balance;
+
+                        if (
+                            possivelSaldo !== undefined &&
+                            possivelSaldo !== null
+                        ) {
+
+                            saldoAtual =
+                                Number(possivelSaldo) || 0;
+
+                            atualizarSaldoVisual();
+
+                            console.log(
+                                "Saldo carregado pelo SistemaSaldo:",
+                                saldoAtual
+                            );
+
+                            return;
+                        }
+                    }
+                }
+
+
+                /*
+                 * FALLBACK:
+                 * caso o saldo.js ainda não esteja disponível,
+                 * busca diretamente a mesma tabela "saldos".
+                 */
+
+                if (!usuarioAtual) {
+
+                    const usuario =
+                        await carregarUsuario();
+
+                    if (!usuario) {
+                        return;
+                    }
+                }
+
+
+                const {
+                    data,
+                    error
+                } =
+                    await supabaseClient
+                        .from("saldos")
+                        .select("valor")
+                        .eq(
+                            "user_id",
+                            usuarioAtual.id
+                        )
+                        .maybeSingle();
+
+
+                if (error) {
+
+                    console.error(
+                        "Erro ao consultar saldo:",
+                        error
+                    );
+
+                    throw new Error(
+                        "Não foi possível carregar seu saldo."
+                    );
+                }
+
+
+                saldoAtual =
+                    Number(data?.valor) || 0;
+
+
+                atualizarSaldoVisual();
+
+
+                console.log(
+                    "Saldo carregado da tabela saldos:",
+                    saldoAtual
+                );
+
+
+            } catch (erro) {
+
+                console.error(
+                    "Erro ao carregar saldo:",
+                    erro
+                );
+
+                /*
+                 * NÃO transforma um erro de leitura em
+                 * um falso saldo de R$ 0,00 silenciosamente.
+                 */
+
+                document.getElementById(
+                    "displaySaldo"
+                ).innerText =
+                    "Saldo: --";
+
+                mostrarErro(
+                    erro.message ||
+                    "Erro ao carregar seu saldo."
+                );
+            }
+        }
+
+
+        // =====================================================
+        // ATUALIZAR SALDO
+        // =====================================================
+
+        async function atualizarSaldo() {
+
+            await carregarUsuario();
+
+            if (!usuarioAtual) {
+                return;
+            }
+
+            await carregarSaldo();
+        }
+
+
+        // =====================================================
+        // ESCOLHER VALOR
         // =====================================================
 
         function selecionarValor(botao, valor) {
@@ -498,14 +675,12 @@
 
 
             btn.innerHTML =
-                `💰 Depositar R$ ${valor
-                    .toFixed(2)
-                    .replace(".", ",")} via PIX`;
+                `💰 Depositar R$ ${formatarReais(valor)} via PIX`;
         }
 
 
         // =====================================================
-        // ABRIR MODAL E CRIAR PIX
+        // ABRIR MODAL / CRIAR PIX
         // =====================================================
 
         async function abrirModal() {
@@ -566,38 +741,21 @@
             document.getElementById(
                 "valorDisplay"
             ).innerText =
-                `Valor: R$ ${valorAtual
-                    .toFixed(2)
-                    .replace(".", ",")}`;
+                `Valor: R$ ${formatarReais(valorAtual)}`;
 
 
-            // =================================================
             // GARANTIR USUÁRIO AUTENTICADO
-            // =================================================
 
             if (!usuarioAtual) {
 
-                const {
-                    data: { user },
-                    error
-                } =
-                    await supabaseClient.auth.getUser();
+                await carregarUsuario();
 
-
-                if (error || !user) {
-
-                    mostrarErro(
-                        "Usuário não identificado. Faça login novamente."
-                    );
+                if (!usuarioAtual) {
 
                     fecharModal();
 
                     return;
                 }
-
-
-                usuarioAtual =
-                    user;
             }
 
 
@@ -613,7 +771,6 @@
 
             // =================================================
             // CHAMAR EDGE FUNCTION
-            // O VALOR DO NOVO DEPÓSITO CONTINUA SENDO valorAtual
             // =================================================
 
             try {
@@ -667,6 +824,11 @@
 
                 } catch {
 
+                    console.error(
+                        "Resposta recebida:",
+                        textoResposta
+                    );
+
                     throw new Error(
                         "A função retornou uma resposta inválida."
                     );
@@ -694,7 +856,7 @@
                 // PIX RECEBIDO
                 // =================================================
 
-                let codigoPix =
+                const codigoPix =
                     dados.qr_code;
 
 
@@ -899,7 +1061,15 @@
 
         window.addEventListener(
             "load",
-            carregarUsuarioESaldo
+            async function() {
+
+                await carregarUsuario();
+
+                if (usuarioAtual) {
+                    await carregarSaldo();
+                }
+
+            }
         );
 
     </script>
