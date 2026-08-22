@@ -678,6 +678,68 @@ header p{
         );
 }
 
+/* === OS 3 NOVOS ILUSTRATIVOS === */
+
+.dragon{
+    --glow:#ffbe0b;
+    --light:#ff4500;
+    background:
+        radial-gradient(
+            circle at 80% 20%,
+            rgba(255,190,11,.65),
+            transparent 30%
+        ),
+        linear-gradient(
+            145deg,
+            #b51d00,
+            #74105c,
+            #35105c
+        );
+}
+
+.touro-ox{
+    --glow:#00ff88;
+    --light:#ffd166;
+    background:
+        radial-gradient(
+            circle at 80% 20%,
+            rgba(255,209,102,.65),
+            transparent 30%
+        ),
+        linear-gradient(
+            145deg,
+            #8b5a00,
+            #315b16,
+            #24105c
+        );
+}
+
+.rabbit{
+    --glow:#ff8bd1;
+    --light:#ffbe0b;
+    background:
+        radial-gradient(
+            circle at 80% 20%,
+            rgba(255,139,209,.65),
+            transparent 30%
+        ),
+        linear-gradient(
+            145deg,
+            #d51b82,
+            #7436b5,
+            #24105c
+        );
+}
+
+/* Os ilustrativos não são links */
+.ilustrativo{
+    cursor:default;
+}
+
+.ilustrativo:active{
+    transform:none;
+}
+
 .jogo:nth-child(2){animation-delay:.4s;}
 .jogo:nth-child(3){animation-delay:.8s;}
 .jogo:nth-child(4){animation-delay:1.2s;}
@@ -1510,14 +1572,13 @@ setInterval(
 
         </a>
 
-        <!-- NOVO JOGO ILUSTRATIVO: FORTUNE DRAGON -->
+        <!-- =================================================
+             3 JOGOS NOVOS — SOMENTE ILUSTRATIVOS
+             ================================================= -->
 
-        <a
-            class="jogo snake"
-            href="#"
-            data-jogo="Fortune Dragon"
-            data-icone="🐉"
-            data-capa="fortune-dragon.png">
+        <div
+            class="jogo dragon ilustrativo"
+            data-jogo="Fortune Dragon">
 
             <div class="imagem-jogo">
 
@@ -1537,16 +1598,11 @@ setInterval(
                 Em breve
             </div>
 
-        </a>
+        </div>
 
-        <!-- NOVO JOGO ILUSTRATIVO: FORTUNE TOURO OX -->
-
-        <a
-            class="jogo roleta-cassino"
-            href="#"
-            data-jogo="Fortune Touro Ox"
-            data-icone="🐂"
-            data-capa="fortune-touro-ox.png">
+        <div
+            class="jogo touro-ox ilustrativo"
+            data-jogo="Fortune Touro Ox">
 
             <div class="imagem-jogo">
 
@@ -1566,16 +1622,11 @@ setInterval(
                 Em breve
             </div>
 
-        </a>
+        </div>
 
-        <!-- NOVO JOGO ILUSTRATIVO: FORTUNE RABBIT -->
-
-        <a
-            class="jogo mines"
-            href="#"
-            data-jogo="Fortune Rabbit"
-            data-icone="🐇"
-            data-capa="fortune-rabbit.png">
+        <div
+            class="jogo rabbit ilustrativo"
+            data-jogo="Fortune Rabbit">
 
             <div class="imagem-jogo">
 
@@ -1595,7 +1646,7 @@ setInterval(
                 Em breve
             </div>
 
-        </a>
+        </div>
 
     </div>
 
@@ -1689,7 +1740,7 @@ const loaderIconeNormal =
 let carregando = false;
 
 document
-.querySelectorAll(".jogo")
+.querySelectorAll("a.jogo")
 .forEach(function(card){
 
     card.addEventListener(
@@ -1702,6 +1753,8 @@ document
                 return;
             }
 
+            carregando = true;
+
             const destino =
                 card.getAttribute("href");
 
@@ -1713,67 +1766,6 @@ document
 
             const capa =
                 card.getAttribute("data-capa");
-
-            /*
-             * Os três novos cards são apenas ilustrativos.
-             * Não abrem nenhum jogo ainda.
-             */
-
-            if(
-                destino === "#" &&
-                (
-                    nome === "Fortune Dragon" ||
-                    nome === "Fortune Touro Ox" ||
-                    nome === "Fortune Rabbit"
-                )
-            ){
-
-                loaderNome.textContent =
-                    nome || "Em breve";
-
-                if(capa){
-
-                    loaderImagem.src =
-                        capa;
-
-                    loaderImagem.style.display =
-                        "block";
-
-                    loaderIconeNormal.style.display =
-                        "none";
-
-                }else{
-
-                    loaderImagem.src =
-                        "";
-
-                    loaderImagem.style.display =
-                        "none";
-
-                    loaderIconeNormal.textContent =
-                        icone || "🎮";
-
-                    loaderIconeNormal.style.display =
-                        "flex";
-
-                }
-
-                loader.classList.add("ativo");
-
-                setTimeout(
-                    function(){
-
-                        loader.classList.remove("ativo");
-                        carregando = false;
-
-                    },
-                    1800
-                );
-
-                return;
-            }
-
-            carregando = true;
 
             loaderNome.textContent =
                 nome || "Carregando...";
