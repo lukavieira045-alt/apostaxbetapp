@@ -407,11 +407,11 @@ input:focus{
     margin:8px 0;
     text-shadow:0 2px 6px rgba(0,0,0,.5),0 0 12px rgba(250,204,21,.35);
     font-variant-numeric:tabular-nums;
-    transition:transform .35s ease,text-shadow .35s ease;
+    transition:transform .7s ease,text-shadow .7s ease;
 }
 
 .jackpot-value.subindo{
-    transform:scale(1.035);
+    transform:translateY(-4px) scale(1.035);
     text-shadow:0 2px 8px rgba(0,0,0,.5),0 0 22px rgba(250,204,21,.65);
 }
 
@@ -1630,170 +1630,122 @@ let carregando=false;
 
 const JACKPOT_INICIAL=15617132.96;
 let jackpotAtual=JACKPOT_INICIAL;
-let jackpotSubindo=false;
-
-/*
-    O número amarelo agora faz um movimento natural:
-
-    15.617.132,96
-    ↓
-    sobe um pouquinho
-    ↓
-    para
-    ↓
-    sobe novamente devagar
-    ↓
-    dá uma pequena oscilada para cima
-    ↓
-    desce um pouco
-    ↓
-    sobe novamente
-    ↓
-    para
-
-    Depois fica parado por aproximadamente 30 minutos
-    antes de iniciar outro ciclo.
-
-    Não altera saldo, pagamentos ou qualquer outro sistema.
-*/
+let jackpotAnimando=false;
 
 function formatarJackpot(valor){
+
     return Number(valor).toLocaleString("pt-BR",{
         minimumFractionDigits:2,
         maximumFractionDigits:2
     });
+
 }
 
 function atualizarTextoJackpot(){
-    const elemento=document.getElementById("jackpotValue");
+
+    const elemento=
+        document.getElementById("jackpotValue");
 
     if(elemento){
-        elemento.textContent=formatarJackpot(jackpotAtual);
+        elemento.textContent=
+            formatarJackpot(jackpotAtual);
     }
+
 }
 
-function alterarJackpotPara(valor){
+function animarNumeroJackpot(){
 
-    jackpotAtual=Number(valor);
+    const elemento=
+        document.getElementById("jackpotValue");
+
+    if(!elemento)return;
+
+    elemento.classList.add("subindo");
+
+    setTimeout(()=>{
+
+        elemento.classList.remove("subindo");
+
+    },700);
+
+}
+
+function moverJackpot(){
+
+    if(jackpotAnimando)return;
+
+    jackpotAnimando=true;
+
+    let movimento;
+
+    /*
+       Na maior parte das vezes sobe.
+       Às vezes desce um pouquinho.
+    */
+
+    if(Math.random()<0.18){
+
+        movimento=
+            -(Math.floor(Math.random()*3)+1)/100;
+
+    }else{
+
+        movimento=
+            (Math.floor(Math.random()*5)+1)/100;
+
+    }
+
+    jackpotAtual+=movimento;
+
+    /*
+       Não deixa o valor ficar abaixo
+       do valor inicial.
+    */
+
+    if(jackpotAtual<JACKPOT_INICIAL){
+
+        jackpotAtual=JACKPOT_INICIAL;
+
+    }
 
     atualizarTextoJackpot();
-}
 
-function esperar(ms){
-    return new Promise(resolve=>setTimeout(resolve,ms));
-}
+    animarNumeroJackpot();
 
-async function pequenoMovimentoJackpot(){
+    setTimeout(()=>{
 
-    if(jackpotSubindo)return;
+        jackpotAnimando=false;
 
-    jackpotSubindo=true;
-
-    const elemento=document.getElementById("jackpotValue");
-
-    if(!elemento){
-        jackpotSubindo=false;
-        return;
-    }
+    },750);
 
     /*
-       Guarda o valor inicial do ciclo.
-    */
-
-    const inicio=jackpotAtual;
-
-    /*
-       Pequenos movimentos.
-       Os valores são pequenos de propósito,
-       para parecer que o Jackpot está vivo,
-       sem ficar correndo na tela.
-    */
-
-    const movimentos=[
-        {variacao:0.15,tempo:850},
-        {variacao:0.30,tempo:1050},
-        {variacao:0.40,tempo:1200},
-        {variacao:0.58,tempo:1400},
-
-        /* pequena subida */
-        {variacao:0.72,tempo:1550},
-        {variacao:0.88,tempo:1750},
-
-        /* pequena queda */
-        {variacao:0.78,tempo:1300},
-        {variacao:0.64,tempo:1250},
-        {variacao:0.70,tempo:1450},
-
-        /* sobe novamente bem devagar */
-        {variacao:0.92,tempo:1800},
-        {variacao:1.08,tempo:2100},
-        {variacao:1.26,tempo:2300}
-    ];
-
-    for(const movimento of movimentos){
-
-        await esperar(movimento.tempo);
-
-        /*
-           Se a página mudou ou o elemento não existe,
-           interrompe o movimento.
-        */
-
-        const atual=document.getElementById("jackpotValue");
-
-        if(!atual){
-            jackpotSubindo=false;
-            return;
-        }
-
-        /*
-           O número não fica pulando.
-           Ele simplesmente troca lentamente para o próximo valor.
-        */
-
-        alterarJackpotPara(
-            Number(
-                (inicio+movimento.variacao)
-                .toFixed(2)
-            )
-        );
-
-        atual.classList.add("subindo");
-
-        await esperar(350);
-
-        atual.classList.remove("subindo");
-    }
-
-    /*
-       Pequena pausa no valor final.
-    */
-
-    await esperar(1800);
-
-    /*
-       Garante que o número continue mostrando
-       exatamente o valor final do ciclo.
-    */
-
-    alterarJackpotPara(
-        Number(
-            (inicio+1.26)
-            .toFixed(2)
-        )
-    );
-
-    jackpotSubindo=false;
-
-    /*
-       Aproximadamente 30 minutos parado
-       antes do próximo movimento.
+       Próximo movimento aproximadamente
+       a cada 2 segundos.
     */
 
     setTimeout(
-        pequenoMovimentoJackpot,
-        1800000 + Math.random()*300000
+        moverJackpot,
+        2000+Math.random()*450
     );
+
+}
+
+function iniciarJackpot(){
+
+    jackpotAtual=JACKPOT_INICIAL;
+
+    atualizarTextoJackpot();
+
+    /*
+       Primeiro movimento depois de 2 segundos.
+    */
+
+    setTimeout(()=>{
+
+        moverJackpot();
+
+    },2000);
+
 }
 
 /* ========================= CAPAS ========================= */
@@ -1953,7 +1905,10 @@ function abrirSuporte(){
 }
 
 function fecharSuporte(){
-    const d=document.getElementById("mensagemDigitando");
+
+    const d=
+        document.getElementById("mensagemDigitando");
+
     if(d)d.remove();
 
     janelaSuporte.style.display="none";
@@ -1977,7 +1932,8 @@ function adicionarMensagemSuporte(texto,usuario=false){
 
     mensagens.appendChild(div);
 
-    mensagens.scrollTop=mensagens.scrollHeight;
+    mensagens.scrollTop=
+        mensagens.scrollHeight;
 }
 
 function mostrarDigitando(){
@@ -2000,7 +1956,8 @@ function mostrarDigitando(){
     div.innerHTML="⌛ Digitando...";
 
     mensagens.appendChild(div);
-    mensagens.scrollTop=mensagens.scrollHeight;
+    mensagens.scrollTop=
+        mensagens.scrollHeight;
 }
 
 function responderSuporte(texto){
@@ -3191,7 +3148,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     console.log("✅ ApostaXBet carregado.");
     console.log("✅ Capas dos jogos usando a pasta jogos/.");
     console.log("✅ Botão Jogos corrigido.");
-    console.log("✅ Jackpot com movimento lento e pausado.");
+    console.log("✅ Jackpot com movimento contínuo.");
     console.log("✅ Sistema de saldo preservado.");
 
     configurarTodasAsCapas();
@@ -3201,13 +3158,12 @@ document.addEventListener("DOMContentLoaded",()=>{
     atualizarTextoJackpot();
 
     /*
-       Primeiro movimento somente depois de 30 minutos.
+       O Jackpot começa a se movimentar
+       automaticamente a cada aproximadamente
+       2 segundos.
     */
 
-    setTimeout(
-        pequenoMovimentoJackpot,
-        1800000
-    );
+    iniciarJackpot();
 
     verificarSessao();
 });
