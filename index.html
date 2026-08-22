@@ -2,1009 +2,480 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aposta X Bet</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ApostaXBet</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Segoe UI',Arial,sans-serif;
+/* ========================= RESET & BASE ========================= */
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { 
+    background: #0b3b24; 
+    color: white; 
+    font-family: 'Segoe UI', Arial, sans-serif; 
+    padding-bottom: 85px; 
+    overflow-x: hidden;
 }
 
-body{
-    background:#0b3b24;
-    color:white;
-    padding-bottom:78px;
-    overflow-x:hidden;
+/* ========================= LOGIN / RECUPERAÇÃO / NOVA SENHA ========================= */
+#telaLogin, #telaRecuperacao, #telaNovaSenha {
+    min-height: 100vh;
+    padding: 15px;
+    background: linear-gradient(180deg, #0d4a30 0%, #0b3b24 100%);
+}
+.login-container, .recuperacao-container, .nova-senha-container { max-width: 600px; margin: auto; }
+
+.logo { text-align: center; padding: 30px 0 20px; font-size: 40px; font-weight: 900; letter-spacing: -1px; }
+.logo span { color: #facc15; }
+
+.banner-login {
+    padding: 25px 20px; margin-bottom: 20px; text-align: center; border-radius: 16px;
+    background: linear-gradient(135deg, #16a34a, #14532d);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+.banner-login .brasil { font-size: 50px; margin-bottom: 5px; }
+.banner-login h2 { font-size: 22px; margin: 5px 0; }
+.banner-login p { color: #bbf7d0; font-size: 14px; }
+.banner-login strong { display: block; margin-top: 10px; color: #facc15; font-size: 20px; }
+
+.login-box, .recuperacao-box, .nova-senha-box {
+    padding: 20px; border-radius: 16px;
+    background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);
 }
 
-/* HEADER */
-.header{
-    text-align:center;
-    padding:15px 0 10px;
-    background:#0b3b24;
-    position:relative;
+.tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.15); margin-bottom: 20px; }
+.tab { width: 50%; padding: 14px; text-align: center; font-size: 16px; font-weight: bold; color: #86efac; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; }
+.tab.active { color: #facc15; border-bottom-color: #facc15; }
+
+.form { display: none; }
+.form.active { display: block; }
+
+label { display: block; margin: 12px 0 6px; font-size: 14px; color: #bbf7d0; }
+input {
+    width: 100%; height: 50px; padding: 0 14px; border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 10px; outline: none; background: rgba(0,0,0,0.25); color: white; font-size: 15px;
+}
+input::placeholder { color: #6ee7b7; opacity: 0.6; }
+input:focus { border-color: #facc15; box-shadow: 0 0 0 2px rgba(250,204,21,0.15); }
+
+.campo-senha { position: relative; }
+.olho { position: absolute; right: 14px; top: 14px; cursor: pointer; font-size: 20px; opacity: 0.7; }
+
+.btn-principal {
+    width: 100%; height: 52px; margin-top: 20px; border: 0; border-radius: 10px;
+    background: linear-gradient(135deg, #facc15, #eab308); color: #0b3b24;
+    font-size: 16px; font-weight: 800; cursor: pointer; letter-spacing: 0.5px;
+}
+.btn-principal:disabled { opacity: 0.5; }
+
+.esqueci { display: block; margin: 15px auto 0; background: none; border: 0; color: #facc15; text-decoration: underline; font-size: 14px; cursor: pointer; }
+.mensagem { display: none; margin-top: 12px; padding: 10px; border-radius: 8px; text-align: center; font-size: 13px; background: rgba(0,0,0,0.2); }
+.mensagem.sucesso { color: #86efac; }
+.mensagem.erro { color: #fca5a5; }
+.termos { margin-top: 15px; color: #6ee7b7; font-size: 11px; line-height: 1.5; text-align: center; opacity: 0.7; }
+
+.voltar { display: block; margin: 15px auto 0; padding: 10px; background: none; border: 0; color: #bbf7d0; text-decoration: underline; cursor: pointer; font-size: 14px; }
+
+/* ========================= SITE PRINCIPAL ========================= */
+#site { display: none; }
+
+/* Header com Logo e Saldo */
+.site-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 15px; background: #0a2e1c; border-bottom: 1px solid #145a38;
+    position: sticky; top: 0; z-index: 50;
+}
+.site-logo { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
+.site-logo span { color: #facc15; }
+.site-saldo {
+    background: #145a38; padding: 6px 14px; border-radius: 20px;
+    font-size: 14px; font-weight: bold; color: #facc15; border: 1px solid #facc15;
 }
 
-.logo{
-    font-size:32px;
-    font-weight:900;
-    letter-spacing:1px;
+/* Barra de Ações Rápidas */
+.quick-actions {
+    display: flex; gap: 10px; overflow-x: auto; padding: 12px 15px;
+    scrollbar-width: none; -ms-overflow-style: none;
+}
+.quick-actions::-webkit-scrollbar { display: none; }
+.action-btn {
+    min-width: 75px; height: 70px; background: #145a38; border-radius: 12px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: bold; border: 1px solid #1e7a4d; gap: 6px; flex-shrink: 0;
+}
+.action-btn .icon { font-size: 24px; }
+.action-btn.deposit { position: relative; }
+.action-btn.deposit::after {
+    content: "+1%"; position: absolute; top: -4px; right: -4px;
+    background: #ef4444; color: white; font-size: 8px; padding: 2px 5px; border-radius: 6px; font-weight: bold;
 }
 
-.logo span{
-    color:#facc15;
+/* Marquee */
+.marquee-bar {
+    background: #072a1a; padding: 8px 15px; font-size: 12px;
+    white-space: nowrap; overflow: hidden; color: #facc15;
+    display: flex; align-items: center; gap: 8px;
+}
+.marquee-text { animation: scrollMarquee 20s linear infinite; }
+@keyframes scrollMarquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+/* Navegação Categorias */
+.nav-categories {
+    display: flex; justify-content: space-around; background: #145a38;
+    padding: 10px; margin: 12px 15px; border-radius: 14px;
+}
+.cat-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; opacity: 0.6; cursor: pointer; }
+.cat-item.active { opacity: 1; color: #facc15; }
+.cat-icon { font-size: 22px; }
+
+/* Jackpot Banner */
+.jackpot-banner {
+    margin: 0 15px; background: linear-gradient(180deg, #145a38 0%, #0b3b24 100%);
+    border-radius: 16px; padding: 20px 15px; text-align: center;
+    border: 1px solid #22c55e; position: relative; overflow: hidden;
+}
+.jackpot-label {
+    background: #0b3b24; border: 1px solid #22c55e; color: white;
+    padding: 4px 18px; border-radius: 20px; display: inline-block;
+    margin-bottom: 8px; font-weight: bold; font-size: 13px;
+}
+.jackpot-value { font-size: 26px; font-weight: 900; color: #facc15; margin: 8px 0; text-shadow: 0 2px 6px rgba(0,0,0,0.5); }
+.providers { display: flex; justify-content: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.prov-badge { background: #0a2e1c; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: bold; border: 1px solid #1e7a4d; }
+
+/* Grid de Jogos */
+.games-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 12px 15px; }
+.game-card {
+    aspect-ratio: 3/4; background: #1e7a4d; border-radius: 10px;
+    position: relative; overflow: hidden; display: flex; align-items: flex-end;
+    cursor: pointer; transition: transform 0.15s;
+}
+.game-card:active { transform: scale(0.95); }
+.game-img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
+.game-overlay {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.85));
+    padding: 25px 6px 6px; font-size: 10px; font-weight: bold; line-height: 1.3;
+}
+.provider-tag {
+    position: absolute; bottom: 4px; left: 4px; font-size: 8px;
+    background: rgba(0,0,0,0.7); padding: 2px 5px; border-radius: 4px; font-weight: bold;
+}
+.like-icon { position: absolute; top: 5px; left: 5px; font-size: 13px; opacity: 0.8; z-index: 2; }
+.fav-icon { position: absolute; top: 5px; right: 5px; font-size: 13px; opacity: 0.8; z-index: 2; }
+.bonus-badge {
+    position: absolute; top: 5px; right: 5px; background: #facc15; color: #0b3b24;
+    font-size: 8px; font-weight: 900; padding: 3px 6px; border-radius: 6px; z-index: 3;
+    text-align: center; line-height: 1.2;
 }
 
-/* ÍCONES RÁPIDOS */
-.quick-icons{
-    display:flex;
-    gap:10px;
-    overflow-x:auto;
-    padding:10px 15px;
-    scrollbar-width:none;
+/* Bottom Navigation */
+.bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0; height: 70px;
+    background: #0a2e1c; border-top: 1px solid #145a38;
+    display: flex; justify-content: space-around; align-items: center;
+    z-index: 100; padding-bottom: env(safe-area-inset-bottom);
+}
+.nav-link {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    font-size: 10px; opacity: 0.5; cursor: pointer; min-width: 55px;
+}
+.nav-link.active { opacity: 1; color: #facc15; }
+.nav-icon { font-size: 22px; }
+.nav-link.has-badge { position: relative; }
+.nav-link.has-badge::after {
+    content: attr(data-badge); position: absolute; top: -2px; right: 12px;
+    background: #ef4444; color: white; font-size: 9px; font-weight: bold;
+    width: 16px; height: 16px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center;
 }
 
-.quick-icons::-webkit-scrollbar{
-    display:none;
+/* Botão Topo Flutuante */
+.btn-topo {
+    position: fixed; right: 15px; bottom: 85px; width: 40px; height: 40px;
+    background: #facc15; color: #0b3b24; border: 0; border-radius: 50%;
+    font-size: 18px; font-weight: bold; cursor: pointer; z-index: 90;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4); display: none;
 }
 
-.icon-box{
-    min-width:70px;
-    height:70px;
-    background:#145a38;
-    border-radius:12px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    font-size:10px;
-    font-weight:bold;
-    border:1px solid #1e7a4d;
-    box-shadow:0 4px 12px rgba(0,0,0,.2);
+/* ========================= PÁGINA CONTA ========================= */
+#paginaConta { display: none; min-height: 100vh; padding: 20px 15px 110px; }
+.conta-container { max-width: 600px; margin: auto; }
+.conta-titulo { text-align: center; color: #facc15; font-size: 24px; margin: 10px 0 20px; }
+.conta-card {
+    padding: 25px 20px; background: #0a2e1c; border: 1px solid #145a38;
+    border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+.avatar {
+    width: 70px; height: 70px; margin: 0 auto 12px; border-radius: 50%;
+    background: #facc15; display: flex; align-items: center; justify-content: center;
+    font-size: 32px; color: #0b3b24;
+}
+.conta-nome { text-align: center; font-size: 15px; font-weight: bold; word-break: break-all; }
+.conta-email { text-align: center; color: #86efac; margin-top: 5px; font-size: 13px; word-break: break-word; }
+.conta-item { margin-top: 18px; padding: 14px; border-radius: 10px; background: #072a1a; border: 1px solid #145a38; }
+.conta-item strong { display: block; color: #facc15; margin-bottom: 4px; font-size: 13px; }
+.conta-saldo { color: #4ade80; font-size: 22px; font-weight: 900; }
+.btn-sair-conta {
+    width: 100%; margin-top: 18px; padding: 14px; border: 0; border-radius: 10px;
+    background: #dc2626; color: white; font-size: 15px; font-weight: bold; cursor: pointer;
 }
 
-.icon-box .icon{
-    font-size:27px;
-    margin-bottom:5px;
+/* ========================= SUPORTE ========================= */
+#botaoSuporte {
+    display: none; position: fixed; right: 15px; bottom: 85px; z-index: 150;
+    border: 0; border-radius: 50px; padding: 12px 16px;
+    background: linear-gradient(135deg, #facc15, #eab308); color: #0b3b24;
+    font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.4); cursor: pointer;
+}
+#janelaSuporte {
+    display: none; position: fixed; right: 10px; bottom: 140px;
+    width: calc(100% - 20px); max-width: 380px; height: 480px; z-index: 200;
+    background: #0a2e1c; border: 1px solid #145a38; border-radius: 16px;
+    overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+.suporte-topo {
+    height: 55px; padding: 10px 14px; background: #145a38;
+    border-bottom: 1px solid #1e7a4d; display: flex; align-items: center; justify-content: space-between;
+}
+.suporte-titulo { font-weight: bold; font-size: 15px; }
+.suporte-status { color: #4ade80; font-size: 11px; margin-top: 2px; }
+.fechar-suporte {
+    width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50%; color: white; font-size: 20px; line-height: 28px; cursor: pointer; text-align: center;
+}
+#suporteMensagens { height: 280px; padding: 12px; overflow-y: auto; }
+.msg-suporte { max-width: 85%; padding: 10px 12px; margin-bottom: 8px; border-radius: 12px; line-height: 1.4; font-size: 13px; white-space: pre-line; }
+.msg-bot { background: #072a1a; border: 1px solid #145a38; margin-right: auto; }
+.msg-usuario { background: #facc15; color: #0b3b24; margin-left: auto; }
+.msg-digitando { display: flex; align-items: center; gap: 4px; width: max-content; min-width: 55px; }
+.msg-digitando span { width: 6px; height: 6px; border-radius: 50%; background: #86efac; animation: digitando 1.2s infinite; }
+.msg-digitando span:nth-child(2) { animation-delay: 0.2s; }
+.msg-digitando span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes digitando { 0%,60%,100% { opacity:0.3; transform:translateY(0); } 30% { opacity:1; transform:translateY(-3px); } }
+.suporte-opcoes { display: flex; flex-wrap: wrap; gap: 5px; padding: 8px 10px; border-top: 1px solid #145a38; }
+.suporte-opcoes button {
+    flex: 1 1 30%; padding: 8px 4px; border: 1px solid #1e7a4d; border-radius: 8px;
+    background: #072a1a; color: #bbf7d0; cursor: pointer; font-size: 11px;
+}
+.suporte-escrever { display: flex; gap: 6px; padding: 8px; background: #072a1a; border-top: 1px solid #145a38; }
+#entradaSuporte { height: 40px; flex: 1; min-width: 0; margin: 0; font-size: 13px; }
+#enviarSuporte {
+    width: 44px; height: 40px; border: 0; border-radius: 8px;
+    background: #22c55e; color: white; font-size: 18px; cursor: pointer; flex-shrink: 0;
 }
 
-/* MARQUEE */
-.marquee{
-    background:#0a2e1c;
-    padding:8px;
-    font-size:12px;
-    white-space:nowrap;
-    overflow:hidden;
-    color:#facc15;
-}
-
-/* PAINEL */
-.user-panel{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:12px;
-    padding:15px;
-    background:#0b3b24;
-}
-
-.user-info{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    min-width:0;
-}
-
-.user-name{
-    font-size:13px;
-    white-space:nowrap;
-}
-
-.balance{
-    background:#145a38;
-    padding:5px 12px;
-    border-radius:20px;
-    font-weight:bold;
-    color:#facc15;
-    border:1px solid #facc15;
-    white-space:nowrap;
-}
-
-.actions{
-    display:flex;
-    gap:12px;
-    font-size:10px;
-    text-align:center;
-    flex-shrink:0;
-}
-
-.action-item{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:4px;
-    white-space:nowrap;
-}
-
-.deposit-btn{
-    position:relative;
-}
-
-.badge-plus{
-    position:absolute;
-    top:-7px;
-    right:-5px;
-    background:#ef4444;
-    color:white;
-    font-size:8px;
-    padding:2px 4px;
-    border-radius:4px;
-}
-
-/* CATEGORIAS */
-.nav-categories{
-    display:flex;
-    justify-content:space-around;
-    background:#145a38;
-    padding:10px;
-    margin:10px 15px;
-    border-radius:15px;
-    border:1px solid #1e7a4d;
-}
-
-.cat-item{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:5px;
-    font-size:11px;
-    opacity:.7;
-}
-
-.cat-item.active{
-    opacity:1;
-    color:#facc15;
-}
-
-.cat-icon{
-    font-size:20px;
-}
-
-/* JACKPOT */
-.jackpot-banner{
-    margin:15px;
-    background:
-        radial-gradient(circle at 20% 30%,rgba(250,204,21,.16),transparent 25%),
-        linear-gradient(180deg,#145a38 0%,#0b3b24 100%);
-    border-radius:15px;
-    padding:20px;
-    text-align:center;
-    border:1px solid #22c55e;
-    position:relative;
-    overflow:hidden;
-    box-shadow:0 7px 22px rgba(0,0,0,.25);
-}
-
-.jackpot-label{
-    background:#0b3b24;
-    border:1px solid #22c55e;
-    color:white;
-    padding:5px 20px;
-    border-radius:20px;
-    display:inline-block;
-    margin-bottom:10px;
-    font-weight:bold;
-}
-
-.jackpot-value{
-    font-size:28px;
-    font-weight:900;
-    color:#facc15;
-    margin:10px 0;
-    text-shadow:0 2px 4px rgba(0,0,0,.5);
-}
-
-.providers{
-    display:flex;
-    justify-content:center;
-    gap:10px;
-    margin-top:10px;
-    flex-wrap:wrap;
-}
-
-.prov-badge{
-    background:#0a2e1c;
-    padding:5px 10px;
-    border-radius:5px;
-    font-size:10px;
-    font-weight:bold;
-}
-
-/* TÍTULOS */
-.section-title{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:8px 15px 10px;
-}
-
-.section-title h2{
-    font-size:20px;
-}
-
-.section-title span{
-    color:#facc15;
-    font-size:10px;
-}
-
-/* GRID */
-.games-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:8px;
-    padding:0 15px;
-}
-
-.game-card{
-    aspect-ratio:3/4;
-    background:#1e7a4d;
-    border-radius:10px;
-    position:relative;
-    overflow:hidden;
-    display:flex;
-    align-items:flex-end;
-    text-decoration:none;
-    color:white;
-    border:1px solid rgba(255,255,255,.08);
-    box-shadow:0 4px 12px rgba(0,0,0,.3);
-    transition:.2s ease;
-}
-
-.game-card:active{
-    transform:scale(.96);
-}
-
-.game-img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
-    background:#333;
-}
-
-.game-overlay{
-    position:absolute;
-    bottom:0;
-    left:0;
-    right:0;
-    background:linear-gradient(
-        transparent,
-        rgba(0,0,0,.92)
-    );
-    padding:20px 5px 7px;
-    font-size:10px;
-    font-weight:bold;
-    z-index:2;
-}
-
-.provider-tag{
-    position:relative;
-    display:inline-block;
-    margin-top:3px;
-    font-size:8px;
-    background:rgba(0,0,0,.7);
-    padding:2px 5px;
-    border-radius:3px;
-    color:#facc15;
-}
-
-.like-icon{
-    position:absolute;
-    top:5px;
-    left:5px;
-    font-size:12px;
-    z-index:3;
-}
-
-.fav-icon{
-    position:absolute;
-    top:5px;
-    right:5px;
-    font-size:12px;
-    z-index:3;
-}
-
-/* SEÇÃO DOS SEUS JOGOS */
-.my-games-title{
-    margin-top:18px;
-}
-
-.my-games-title h2{
-    color:#facc15;
-}
-
-/* SEÇÃO EXEMPLOS */
-.example-section{
-    margin-top:28px;
-}
-
-.example-section .section-title{
-    border-top:1px solid rgba(255,255,255,.08);
-    padding-top:18px;
-}
-
-.example-card{
-    cursor:default;
-}
-
-/* BOTTOM NAV */
-.bottom-nav{
-    position:fixed;
-    bottom:0;
-    left:0;
-    right:0;
-    height:70px;
-    background:#0b3b24;
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-    padding:6px 0;
-    border-top:1px solid #145a38;
-    z-index:100;
-    box-shadow:0 -4px 15px rgba(0,0,0,.35);
-}
-
-.nav-link{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:3px;
-    font-size:10px;
-    opacity:.6;
-    min-width:60px;
-}
-
-.nav-link.active{
-    opacity:1;
-    color:#facc15;
-}
-
-.nav-icon{
-    font-size:20px;
-}
-
-/* RESPONSIVO */
-@media(max-width:650px){
-    .games-grid{
-        grid-template-columns:repeat(3,1fr);
-    }
-
-    .actions{
-        gap:7px;
-    }
-
-    .user-panel{
-        align-items:flex-start;
-    }
-
-    .user-info{
-        flex-wrap:wrap;
-    }
-}
-
-@media(max-width:500px){
-    .games-grid{
-        grid-template-columns:repeat(3,1fr);
-        gap:7px;
-        padding:0 10px;
-    }
-
-    .section-title{
-        padding-left:10px;
-        padding-right:10px;
-    }
-
-    .user-panel{
-        overflow-x:auto;
-    }
-
-    .actions{
-        min-width:max-content;
-    }
-
-    .logo{
-        font-size:29px;
-    }
-
-    .jackpot-value{
-        font-size:24px;
-    }
-}
-
-@media(max-width:380px){
-    .games-grid{
-        grid-template-columns:repeat(3,1fr);
-        gap:5px;
-        padding:0 7px;
-    }
-
-    .game-overlay{
-        font-size:8px;
-        padding:18px 4px 5px;
-    }
-
-    .provider-tag{
-        font-size:7px;
-    }
-
-    .quick-icons{
-        padding-left:10px;
-        padding-right:10px;
-    }
-
-    .nav-categories{
-        margin-left:8px;
-        margin-right:8px;
-    }
+/* ========================= RESPONSIVO ========================= */
+@media(max-width: 360px) {
+    .logo { font-size: 34px; }
+    .jackpot-value { font-size: 22px; }
+    .games-grid { gap: 6px; padding: 10px 12px; }
+    .game-overlay { font-size: 9px; }
+    .nav-link { font-size: 9px; min-width: 48px; }
+    .nav-icon { font-size: 20px; }
 }
 </style>
 </head>
-
 <body>
 
-<!-- HEADER -->
-<div class="header">
-    <div class="logo">APOSTA <span>X BET</span></div>
+<!-- ==================== TELA LOGIN ==================== -->
+<section id="telaLogin">
+<div class="login-container">
+    <div class="logo">Aposta<span>X</span>Bet</div>
+    <div class="banner-login">
+        <div class="brasil">🇧🇷</div>
+        <h2>Bem-vindo ao ApostaXBet</h2>
+        <p>Cadastre-se agora e comece a jogar</p>
+        <strong>🎁 BÔNUS DE BOAS-VINDAS</strong>
+    </div>
+    <div class="login-box">
+        <div class="tabs">
+            <div class="tab active" id="tabCadastro" onclick="mostrarCadastro()">Cadastro</div>
+            <div class="tab" id="tabLogin" onclick="mostrarLogin()">Login</div>
+        </div>
+        <form id="formCadastro" class="form active" onsubmit="cadastrar(event)">
+            <label>Seu nome</label>
+            <input id="nomeCadastro" type="text" placeholder="Digite seu nome" required>
+            <label>E-mail</label>
+            <input id="emailCadastro" type="email" placeholder="Digite seu e-mail" required>
+            <label>Criar senha</label>
+            <div class="campo-senha">
+                <input id="senhaCadastro" type="password" placeholder="Mínimo de 6 caracteres" minlength="6" required>
+                <span class="olho" onclick="mostrarSenha('senhaCadastro')">👁️</span>
+            </div>
+            <label>Confirmar senha</label>
+            <div class="campo-senha">
+                <input id="confirmarSenha" type="password" placeholder="Digite a senha novamente" minlength="6" required>
+                <span class="olho" onclick="mostrarSenha('confirmarSenha')">👁️</span>
+            </div>
+            <button class="btn-principal" type="submit" id="btnCadastro">CRIAR CONTA</button>
+            <div id="mensagemCadastro" class="mensagem"></div>
+        </form>
+        <form id="formLogin" class="form" onsubmit="entrar(event)">
+            <label>E-mail</label>
+            <input id="emailLogin" type="email" placeholder="Digite seu e-mail" required>
+            <label>Senha</label>
+            <div class="campo-senha">
+                <input id="senhaLogin" type="password" placeholder="Digite sua senha" required>
+                <span class="olho" onclick="mostrarSenha('senhaLogin')">️</span>
+            </div>
+            <button class="btn-principal" type="submit" id="btnLogin">ENTRAR</button>
+            <button type="button" class="esqueci" onclick="mostrarRecuperacao()">Esqueci minha senha?</button>
+            <div id="mensagemLogin" class="mensagem"></div>
+        </form>
+        <div class="termos">Ao criar uma conta, você concorda com os termos de uso e política de privacidade do ApostaXBet.</div>
+    </div>
 </div>
+</section>
 
-<!-- ÍCONES RÁPIDOS -->
-<div class="quick-icons">
-
-    <div class="icon-box">
-        <div class="icon">👑</div>
-        VIP
+<!-- ==================== TELA RECUPERAÇÃO ==================== -->
+<section id="telaRecuperacao">
+<div class="recuperacao-container">
+    <div class="logo">Aposta<span>X</span>Bet</div>
+    <div class="recuperacao-box">
+        <h2 style="text-align:center;color:#facc15;margin-bottom:10px;">🔐 Recuperar senha</h2>
+        <p style="text-align:center;color:#bbf7d0;line-height:1.5;margin-bottom:15px;">Digite o e-mail usado no cadastro. Vamos enviar um link para você criar uma nova senha.</p>
+        <form onsubmit="enviarRecuperacao(event)">
+            <label>E-mail</label>
+            <input id="emailRecuperacao" type="email" placeholder="Digite seu e-mail" required>
+            <button class="btn-principal" type="submit" id="btnRecuperacao">ENVIAR LINK</button>
+            <div id="mensagemRecuperacao" class="mensagem"></div>
+        </form>
+        <button class="voltar" type="button" onclick="voltarLogin()">← Voltar para o login</button>
     </div>
-
-    <div class="icon-box">
-        <div class="icon">🤝</div>
-        CONVITE
-    </div>
-
-    <div class="icon-box">
-        <div class="icon">🎟️</div>
-        CÓDIGO
-    </div>
-
-    <div class="icon-box">
-        <div class="icon">🎯</div>
-        MISSÃO
-    </div>
-
-    <div class="icon-box">
-        <div class="icon">🎁</div>
-        COLEÇÃO
-    </div>
-
-    <div class="icon-box">
-        <div class="icon">🏷️</div>
-        DESCONTO
-    </div>
-
 </div>
+</section>
 
-<!-- MARQUEE -->
-<div class="marquee">
-    🔥 COMPARTILHE O LINK DO AGENTE E GANHE BÔNUS EXCLUSIVOS NO APOSTA X BET! 🔥
+<!-- ==================== TELA NOVA SENHA ==================== -->
+<section id="telaNovaSenha">
+<div class="nova-senha-container">
+    <div class="logo">Aposta<span>X</span>Bet</div>
+    <div class="nova-senha-box">
+        <h2 style="text-align:center;color:#facc15;margin-bottom:10px;"> Criar nova senha</h2>
+        <p style="text-align:center;color:#bbf7d0;margin-bottom:15px;">Digite sua nova senha abaixo.</p>
+        <form onsubmit="salvarNovaSenha(event)">
+            <label>Nova senha</label>
+            <div class="campo-senha">
+                <input id="novaSenha" type="password" placeholder="Mínimo de 6 caracteres" minlength="6" required>
+                <span class="olho" onclick="mostrarSenha('novaSenha')">👁️</span>
+            </div>
+            <label>Confirmar nova senha</label>
+            <div class="campo-senha">
+                <input id="confirmarNovaSenha" type="password" placeholder="Digite novamente" minlength="6" required>
+                <span class="olho" onclick="mostrarSenha('confirmarNovaSenha')">👁️</span>
+            </div>
+            <button class="btn-principal" type="submit" id="btnNovaSenha">SALVAR NOVA SENHA</button>
+            <div id="mensagemNovaSenha" class="mensagem"></div>
+        </form>
+    </div>
 </div>
+</section>
 
-<!-- PAINEL USUÁRIO -->
-<div class="user-panel">
+<!-- ==================== SITE PRINCIPAL ==================== -->
+<section id="site">
+    <!-- Header Sticky -->
+    <header class="site-header">
+        <div class="site-logo">Aposta<span>X</span>Bet</div>
+        <div class="site-saldo">💰 R$ <span id="saldoValor">0,00</span></div>
+    </header>
 
-    <div class="user-info">
-
-        <div style="
-            background:#facc15;
-            color:#000;
-            padding:2px 5px;
-            border-radius:3px;
-            font-size:10px;
-            font-weight:bold;
-        ">
-            V2
-        </div>
-
-        <span class="user-name">
-            usuario123
-        </span>
-
-        <div class="balance">
-            R$ 0,38
-        </div>
-
+    <!-- Ações Rápidas -->
+    <div class="quick-actions">
+        <div class="action-btn"><span class="icon">👑</span>VIP</div>
+        <div class="action-btn"><span class="icon">🤝</span>CONVITE</div>
+        <div class="action-btn"><span class="icon">🎟️</span>CÓDIGO</div>
+        <div class="action-btn"><span class="icon"></span>MISSÃO</div>
+        <div class="action-btn"><span class="icon"></span>COLEÇÃO</div>
+        <div class="action-btn"><span class="icon">🏷️</span>DESCONTO</div>
     </div>
 
-    <div class="actions">
-
-        <div class="action-item deposit-btn">
-            <span class="badge-plus">+1%</span>
-            <span>💰</span>
-            <span>Depósito</span>
-        </div>
-
-        <div class="action-item">
-            <span>💸</span>
-            <span>Saques</span>
-        </div>
-
-        <div class="action-item">
-            <span>🎁</span>
-            <span>Promoções</span>
-        </div>
-
-        <div class="action-item">
-            <span>⋮</span>
-            <span>Mais</span>
-        </div>
-
+    <!-- Marquee -->
+    <div class="marquee-bar">
+        <span>🔥</span>
+        <div class="marquee-text">COMPARTILHE O LINK DO AGENTE E GANHE BÔNUS EXCLUSIVOS NO APOSTAXBET! 🔥 CADASTRE-SE AGORA E RECEBA SEU BÔNUS DE BOAS-VINDAS! 🎁</div>
     </div>
 
-</div>
-
-<!-- CATEGORIAS -->
-<div class="nav-categories">
-
-    <div class="cat-item">
-        <span class="cat-icon">🔍</span>
-        <span>Pesquisar</span>
+    <!-- Navegação Categorias -->
+    <div class="nav-categories">
+        <div class="cat-item" onclick="filtrarJogos('todos')"><span class="cat-icon">🔍</span><span>Pesquisar</span></div>
+        <div class="cat-item active" onclick="filtrarJogos('popular')"><span class="cat-icon"></span><span>Popular</span></div>
+        <div class="cat-item" onclick="filtrarJogos('slots')"><span class="cat-icon">🎰</span><span>Slots</span></div>
+        <div class="cat-item" onclick="filtrarJogos('mini')"><span class="cat-icon">🎲</span><span>Minijogos</span></div>
     </div>
 
-    <div class="cat-item active">
-        <span class="cat-icon">🔥</span>
-        <span>Popular</span>
+    <!-- Jackpot Banner -->
+    <div class="jackpot-banner">
+        <div class="jackpot-label">JACKPOT</div>
+        <div class="jackpot-value" id="jackpotValue">15.617.132,96</div>
+        <div class="providers">
+            <div class="prov-badge">PG Slots</div>
+            <div class="prov-badge">JDB Slots</div>
+            <div class="prov-badge">WG Slots</div>
+            <div class="prov-badge">2J Slots</div>
+        </div>
     </div>
 
-    <div class="cat-item">
-        <span class="cat-icon">🎰</span>
-        <span>Slots</span>
+    <!-- Grid de Jogos -->
+    <div class="games-grid" id="gamesGrid">
+        <div class="game-card" data-cat="popular slots" onclick="abrirJogo('fortune-rabbit-pg')">
+            <div class="game-img" style="background:linear-gradient(135deg,#ff6b6b,#feca57);"></div>
+            <span class="like-icon">👍</span><span class="fav-icon">⭐</span>
+            <div class="game-overlay">Fortune Rabbit<br><span class="provider-tag">PG</span></div>
+        </div>
+        <div class="game-card" data-cat="popular slots" onclick="abrirJogo('fortune-dragon-pg')">
+            <div class="game-img" style="background:linear-gradient(135deg,#48dbfb,#0abde3);"></div>
+            <span class="like-icon"></span><span class="fav-icon">⭐</span>
+            <div class="game-overlay">Fortune Dragon<br><span class="provider-tag">PG</span></div>
+        </div>
+        <div class="game-card" data-cat="popular slots" onclick="abrirJogo('treasure-bowl-jdb')">
+            <div class="game-img" style="background:linear-gradient(135deg,#ff9ff3,#f368e0);"></div>
+            <span class="like-icon">👍</span><span class="fav-icon">⭐</span>
+            <div class="game-overlay">Treasure Bowl X-Huge<br><span class="provider-tag">JDB</span></div>
+        </div>
+        <div class="game-card" data-cat="popular slots" onclick="abrirJogo('fortune-ox-pg')">
+            <div class="game-img" style="background:linear-gradient(135deg,#54a0ff,#2e86de);"></div>
+            <span class="like-icon"></span><span class="fav-icon">⭐</span>
+            <div class="bonus-badge">Bônus<br>R$66,66</div>
+            <div class="game-overlay">Fortune Ox<br><span class="provider-tag">PG</span></div>
+        </div>
+        <div class="game-card" data-cat="popular mini" onclick="abrirJogo('tiger-pg')">
+            <div class="game-img" style="background:linear-gradient(135deg,#1dd1a1,#10ac84);"></div>
+            <span class="like-icon">👍</span><span class="fav-icon">⭐</span>
+            <div class="bonus-badge">Convide 1<br>pessoa ganhe<br>R$20,00</div>
+            <div class="game-overlay">Tiger<br><span class="provider-tag">PG</span></div>
+        </div>
+        <div class="game-card" data-cat="slots" onclick="abrirJogo('fortune-snake-pg')">
+            <div class="game-img" style="background:linear-gradient(135deg,#5f27cd,#341f97);"></div>
+            <span class="like-icon"></span><span class="fav-icon">⭐</span>
+            <div class="game-overlay">Fortune Snake<br><span class="provider-tag">PG</span></div>
+        </div>
+        <div class="game-card" data-cat="popular slots" onclick="abrirJogo('fortune-mouse-pg')">
+            <div class="game-img" style="background:linear-gradient(135deg,#ff9f43,#ee5253);"></div>
+            <span class="like-icon"></span><span class="fav-icon">⭐</span>
+            <div class="game-overlay">Fortune Mouse<br><span class="provider-tag">PG</span></div>
+        </div>
+        <div class="game-card" data-cat="mini" onclick="abrirJogo('mahjong-ways-pg')">
+            <div class="game-img" style="background:linear-gradient(135deg,#00d2d3,#01a3a4);"></div>
+            <span class="like-icon">👍</span><span class="fav-icon">⭐</span>
+            <div class="bonus-badge">Bônus<br>R$666,66</div>
+            <div class="game-overlay">Mahjong Ways<br><span class="provider-tag">PG</span></div>
+        </div>
     </div>
 
-    <div class="cat-item">
-        <span class="cat-icon">🎲</span>
-        <span>Minijogos</span>
+    <!-- Botões Depósito/Saque (mantidos para compatibilidade) -->
+    <div style="padding:0 15px;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:5px;">
+        <a href="deposito.html" style="padding:16px;border-radius:12px;background:linear-gradient(135deg,#facc15,#eab308);color:#0b3b24;text-decoration:none;text-align:center;font-size:15px;font-weight:800;">💰 Depositar</a>
+        <a href="saque.html" style="padding:16px;border-radius:12px;background:#22c55e;color:white;text-decoration:none;text-align:center;font-size:15px;font-weight:800;">💵 Sacar</a>
     </div>
-
-</div>
-
-<!-- JACKPOT -->
-<div class="jackpot-banner">
-
-    <div class="jackpot-label">
-        JACKPOT
-    </div>
-
-    <div class="jackpot-value">
-        15.617.132,96
-    </div>
-
-    <div class="providers">
-
-        <div class="prov-badge">
-            PG Slots
-        </div>
-
-        <div class="prov-badge">
-            JDB Slots
-        </div>
-
-        <div class="prov-badge">
-            WG Slots
-        </div>
-
-    </div>
-
-</div>
-
-<!-- SEUS JOGOS -->
-<div class="section-title my-games-title">
-
-    <h2>🎮 Meus Jogos</h2>
-
-    <span>10 jogos</span>
-
-</div>
-
-<div class="games-grid">
-
-    <!-- ROLETA -->
-    <a class="game-card" href="jogos/roleta.html">
-
-        <img
-            class="game-img"
-            src="jogos/banner-roleta.png"
-            alt="Roleta"
-        >
-
-        <span class="like-icon">👍</span>
-        <span class="fav-icon">⭐</span>
-
-        <div class="game-overlay">
-            Roleta<br>
-            <span class="provider-tag">APOSTAXBET</span>
-        </div>
-
-    </a>
-
-    <!-- ROLETA PREMIUM -->
-    <a class="game-card" href="jogos/roleta2.html">
-
-        <img
-            class="game-img"
-            src="jogos/banner-roleta-premium.png"
-            alt="Roleta Premium"
-        >
-
-        <span class="like-icon">👍</span>
-        <span class="fav-icon">⭐</span>
-
-        <div class="game-overlay">
-            Roleta Premium<br>
-            <span class="provider-tag">APOSTAXBET</span>
-        </div>
-
-    </a>
-
-    <!-- ROLETA CASSINO -->
-    <a class="game-card" href="jogos/roleta-cassino.html">
-
-        <img
-            class="game-img"
-            src="jogos/banner-roleta-cassino.png"
-            alt="Roleta Cassino"
-        >
-
-        <span class="like-icon">👍</span>
-        <span class="fav-icon">⭐</span>
-
-        <div class="game-overlay">
-            Roleta Cassino<br>
-            <span class="provider-tag">APOSTAXBET</span>
-        </div>
-
-    </a>
-
-    <!-- MINES -->
-    <a class="game-card" href="jogos/mines.html">
-
-        <img
-            class="game-img"
-            src="jogos/banner-mines.png"
-            alt="Mines"
-        >
-
-        <span class="like-icon">👍</span>
-        <span class="fav-icon">⭐</span>
-
-        <div class="game-overlay">
-            Mines<br>
-            <span class="provider-tag">APOSTAXBET</span>
-        </div>
-
-    </a>
-
-    <!-- CRASH -->
-    <a class="game-card" href="jogos/crash.html">
-
-        <img
-            class="game-img"
-            src="jogos/banner-crash.png"
-            alt="Crash"
-        >
-
-        <span class="like-icon">👍</span>
-        <span class="fav-icon">⭐</span>
-
-        <div class="game-overlay">
-            Crash<br>
-            <span class="provider-tag">APOSTAXBET</span>
-        </div>
-
-    </a>
-
-    <!-- PLINKO -->
-    <a class="game-card" href="jogos/plinko.html">
-
-        <img
-            class="game-img"
-            src="jogos/banner-plinko.png"
-            alt="Plinko"
-        >
-
-        <span class="like-icon">👍</span>
-        <span class="fav-icon">⭐</span>
-
-        <div class="game-overlay">
-            Plinko<br>
-            <span class="provider-tag">APOSTAXBET</span>
-        </div>
-
-    </a>
-
-    <!-- DICE -->
-    <a class="game-card" href="jogos/dice.html">
-
-        <img
-            class="game-img"
-            src="jogos/banner-dice.png"
-            alt="Dice"
-        >
-
-        <span class="like-icon">👍</span>
-        <span class="fav-icon">⭐</span>
-
-        <div class="game-overlay">
-            Dice<br>
-            <span class="provider-tag">APOSTAXBET</span>
-        </div>
-
-    </a>
-
-    <!-- LOBBY -->
-    <a class="game-card" href="jogos/lobby.html">
-
-        <img
-            class="game-img"
-            src="jogos/banner-lobby.png"
-            alt="Lobby"
-        >
-
-        <span class="like-icon">👍</span>
-        <span class="fav-icon">⭐</span>
-
-        <div class="game-overlay">
-            Lobby<br>
-            <span class="provider-tag">APOSTAXBET</span>
-        </div>
-
-    </a>
-
-    <!-- NIGHT MONSTERS -->
-    <a class="game-card" href="jogos/hotel-transylvania/index.html">
-
-        <img
-            class="game-img"
-            src="jogos/banner-night-monsters.png"
-            alt="Night Monsters"
-        >
-
-        <span class="like-icon">👍</span>
-        <span class="fav-icon">⭐</span>
-
-        <div class="game-overlay">
-            Night Monsters<br>
-            <span class="provider-tag">APOSTAXBET</span>
-        </div>
-
-    </a>
-
-    <!-- FORTUNE SNAKE -->
-    <a class="game-card" href="jogos/fortune-snake.html">
-
-        <img
-            class="game-img"
-            src="jogos/banner-fortune-snake.png"
-            alt="Fortune Snake"
-        >
-
-        <span class="like-icon">👍</span>
-        <span class="fav-icon">⭐</span>
-
-        <div class="game-overlay">
-            Fortune Snake<br>
-            <span class="provider-tag">APOSTAXBET</span>
-        </div>
-
-    </a>
-
-</div>
-
-<!-- JOGOS DE EXEMPLO -->
-<div class="example-section">
-
-    <div class="section-title">
-
-        <h2>🎰 Mais Jogos</h2>
-
-        <span>Em destaque</span>
-
-    </div>
-
-    <div class="games-grid">
-
-        <!-- FORTUNE RABBIT -->
-        <div class="game-card example-card">
-
-            <div
-                class="game-img"
-                style="
-                    background:
-                    linear-gradient(
-                        45deg,
-                        #ff6b6b,
-                        #feca57
-                    );
-                ">
-            </div>
-
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-
-            <div class="game-overlay">
-                Fortune Rabbit<br>
-                <span class="provider-tag">PG</span>
-            </div>
-
-        </div>
-
-        <!-- FORTUNE DRAGON -->
-        <div class="game-card example-card">
-
-            <div
-                class="game-img"
-                style="
-                    background:
-                    linear-gradient(
-                        45deg,
-                        #48dbfb,
-                        #0abde3
-                    );
-                ">
-            </div>
-
-            <span class="fav-icon">⭐</span>
-
-            <div class="game-overlay">
-                Fortune Dragon<br>
-                <span class="provider-tag">PG</span>
-            </div>
-
-        </div>
-
-        <!-- TREASURE BOWL -->
-        <div class="game-card example-card">
-
-            <div
-                class="game-img"
-                style="
-                    background:
-                    linear-gradient(
-                        45deg,
-                        #ff9ff3,
-                        #f368e0
-                    );
-                ">
-            </div>
-
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-
-            <div class="game-overlay">
-                Treasure Bowl<br>
-                <span class="provider-tag">JDB</span>
-            </div>
-
-        </div>
-
-        <!-- FORTUNE OX -->
-        <div class="game-card example-card">
-
-            <div
-                class="game-img"
-                style="
-                    background:
-                    linear-gradient(
-                        45deg,
-                        #54a0ff,
-                        #2e86de
-                    );
-                ">
-            </div>
-
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-
-            <div class="game-overlay">
-                Fortune Ox<br>
-                <span class="provider-tag">PG</span>
-            </div>
-
-        </div>
-
-        <!-- TIGER -->
-        <div class="game-card example-card">
-
-            <div
-                class="game-img"
-                style="
-                    background:
-                    linear-gradient(
-                        45deg,
-                        #1dd1a1,
-                        #10ac84
-                    );
-                ">
-            </div>
-
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-
-            <div class="game-overlay">
-                Tiger<br>
-                <span class="provider-tag">PG</span>
-            </div>
-
-        </div>
-
-        <!-- MAHJONG WAYS -->
-        <div class="game-card example-card">
-
-            <div
-                class="game-img"
-                style="
-                    background:
-                    linear-gradient(
-                        45deg,
-                        #00d2d3,
-                        #01a3a4
-                    );
-                ">
-            </div>
-
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-
-            <div class="game-overlay">
-                Mahjong Ways<br>
-                <span class="provider-tag">PG</span>
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- NAVEGAÇÃO INFERIOR -->
-<div class="bottom-nav">
-
-    <div class="nav-link">
-        <span class="nav-icon">⋮</span>
-        <span>Mais</span>
-    </div>
-
-    <div class="nav-link">
-        <span class="nav-icon">🎁</span>
-        <span>Ofertas</span>
-    </div>
-
-    <div class="nav-link active">
-        <span class="nav-icon">🏠</span>
-        <span>Começar</span>
-    </div>
-
-    <div class="nav-link">
-        <span class="nav-icon">🎧</span>
-        <span>Suporte</span>
-    </div>
-
-    <div class="nav-link">
-        <span class="nav-icon">👤</span>
-        <span>Perfil</span>
-    </div>
-
-</div>
-
-</body>
-</html>
+</section>
+
+<!-- ==================== PÁGINA CONTA ==================== -->
+<section id="paginaConta">
+<div class="conta-container">
+    <h2 class="conta-titulo">👤 Minha Conta</h2>
+    <div class="conta-card">
+        <div class="avatar">👤</div>
+        <div class="conta-nome" id="contaNome">ID do usuário</div>
+        <div class="conta-email" id="contaEmail"></div>
+        <div class="conta-item">
+            <strong>💰 Seu saldo</strong>
+            <div class="conta-saldo">R
