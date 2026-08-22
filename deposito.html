@@ -8,9 +8,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- MESMO SISTEMA DE SALDO DO SITE -->
-    <script src="saldo.js"></script>
-
     <style>
         * {
             box-sizing: border-box;
@@ -343,45 +340,13 @@
             "https://jxbzjiwmajjzxgihfjgt.supabase.co/functions/v1/swift-action";
 
         let valorAtual = 0;
-
         let usuarioAtual = null;
-
         let saldoAtual = 0;
 
 
         // =====================================================
-        // FORMATAR SALDO
-        // =====================================================
-
-        function formatarSaldo(valor) {
-
-            const numero =
-                Number(valor) || 0;
-
-            return numero
-                .toFixed(2)
-                .replace(".", ",");
-        }
-
-
-        // =====================================================
-        // ATUALIZAR SALDO NA TELA
-        // =====================================================
-
-        function atualizarSaldoVisual() {
-
-            const numero =
-                Number(saldoAtual) || 0;
-
-            document.getElementById(
-                "displaySaldo"
-            ).innerText =
-                `Saldo: R$ ${formatarSaldo(numero)}`;
-        }
-
-
-        // =====================================================
-        // CARREGAR USUÁRIO
+        // CARREGAR USUÁRIO E SALDO
+        // MESMA LÓGICA DA PÁGINA PRINCIPAL
         // =====================================================
 
         async function carregarUsuarioESaldo() {
@@ -420,72 +385,17 @@
 
 
                 // =================================================
-                // PRIMEIRO: USAR O MESMO SISTEMA DO SITE/JOGOS
-                // =================================================
-
-                let saldoSistema = null;
-
-                try {
-
-                    if (
-                        window.SistemaSaldo &&
-                        typeof window.SistemaSaldo.get === "function"
-                    ) {
-
-                        saldoSistema =
-                            await window.SistemaSaldo.get();
-
-                        console.log(
-                            "Saldo obtido pelo SistemaSaldo:",
-                            saldoSistema
-                        );
-                    }
-
-                } catch (erroSistema) {
-
-                    console.warn(
-                        "Não foi possível obter saldo pelo SistemaSaldo:",
-                        erroSistema
-                    );
-                }
-
-
-                // =================================================
-                // SE O SISTEMASALDO RETORNOU UM VALOR,
-                // ELE TEM PRIORIDADE
-                // =================================================
-
-                if (
-                    saldoSistema !== null &&
-                    saldoSistema !== undefined &&
-                    !isNaN(Number(saldoSistema))
-                ) {
-
-                    saldoAtual =
-                        Number(saldoSistema);
-
-                    atualizarSaldoVisual();
-
-                    console.log(
-                        "ApostaXBet - saldo final pelo SistemaSaldo:",
-                        saldoAtual
-                    );
-
-                    return;
-                }
-
-
-                // =================================================
-                // SEGUNDO MÉTODO: TABELA SALDOS
+                // IMPORTANTE:
+                // A PÁGINA PRINCIPAL USA A COLUNA "saldo"
                 // =================================================
 
                 const {
-                    data: saldo,
+                    data,
                     error: erroSaldo
                 } =
                     await supabaseClient
                         .from("saldos")
-                        .select("valor")
+                        .select("saldo")
                         .eq("user_id", user.id)
                         .maybeSingle();
 
@@ -507,7 +417,7 @@
 
                 saldoAtual =
                     Number(
-                        saldo?.valor || 0
+                        data?.saldo || 0
                     );
 
 
@@ -515,7 +425,7 @@
 
 
                 console.log(
-                    "ApostaXBet - saldo encontrado na tabela:",
+                    "ApostaXBet - saldo encontrado:",
                     saldoAtual
                 );
 
@@ -534,7 +444,26 @@
 
 
         // =====================================================
-        // ESCOLHER VALOR
+        // MOSTRAR SALDO
+        // =====================================================
+
+        function atualizarSaldoVisual() {
+
+            const numero =
+                Number(saldoAtual) || 0;
+
+
+            document.getElementById(
+                "displaySaldo"
+            ).innerText =
+                `Saldo: R$ ${numero
+                    .toFixed(2)
+                    .replace(".", ",")}`;
+        }
+
+
+        // =====================================================
+        // ESCOLHER VALOR DO DEPÓSITO
         // =====================================================
 
         function selecionarValor(botao, valor) {
@@ -569,7 +498,9 @@
 
 
             btn.innerHTML =
-                `💰 Depositar R$ ${formatarSaldo(valor)} via PIX`;
+                `💰 Depositar R$ ${valor
+                    .toFixed(2)
+                    .replace(".", ",")} via PIX`;
         }
 
 
@@ -635,7 +566,9 @@
             document.getElementById(
                 "valorDisplay"
             ).innerText =
-                `Valor: R$ ${formatarSaldo(valorAtual)}`;
+                `Valor: R$ ${valorAtual
+                    .toFixed(2)
+                    .replace(".", ",")}`;
 
 
             // =================================================
@@ -680,6 +613,7 @@
 
             // =================================================
             // CHAMAR EDGE FUNCTION
+            // O VALOR DO NOVO DEPÓSITO CONTINUA SENDO valorAtual
             // =================================================
 
             try {
@@ -965,11 +899,7 @@
 
         window.addEventListener(
             "load",
-            function() {
-
-                carregarUsuarioESaldo();
-
-            }
+            carregarUsuarioESaldo
         );
 
     </script>
