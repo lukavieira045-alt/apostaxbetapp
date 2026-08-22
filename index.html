@@ -374,7 +374,7 @@ input:focus{
     pointer-events:none;
 }
 
-@keyframes jackpotBrilho{
+@keyframesjackpotBrilho{
     0%,100%{
         transform:scale(.8) rotate(0deg);
         opacity:.4;
@@ -407,7 +407,7 @@ input:focus{
     margin:8px 0;
     text-shadow:0 2px 6px rgba(0,0,0,.5),0 0 12px rgba(250,204,21,.35);
     font-variant-numeric:tabular-nums;
-    transition:transform .35s ease,text-shadow .35s ease;
+    transition:transform .6s ease,text-shadow .6s ease;
 }
 
 .jackpot-value.subindo{
@@ -484,7 +484,6 @@ input:focus{
     transform:scale(1.025);
 }
 
-/* NOME DO JOGO - AJUSTADO */
 .game-overlay{
     position:absolute;
     bottom:0;
@@ -503,7 +502,6 @@ input:focus{
     min-height:42px;
 }
 
-/* NOME PRINCIPAL SEMPRE VISÍVEL */
 .game-name{
     display:block;
     width:100%;
@@ -1115,7 +1113,7 @@ ENVIAR LINK
 <div id="mensagemRecuperacao" class="mensagem"></div>
 </form>
 
-<button class="voltar" onclick="voltarLogin">
+<button class="voltar" onclick="voltarLogin()">
 ← Voltar para o login
 </button>
 
@@ -1269,7 +1267,6 @@ JACKPOT
 
 <div class="games-grid" id="gamesGrid">
 
-<!-- ROLETА -->
 <div class="game-card"
 data-cat="popular slots"
 data-jogo="Roleta"
@@ -1289,11 +1286,8 @@ loading="eager">
 <span class="game-name">Roleta</span>
 <span class="provider-tag">AX</span>
 </div>
-
 </div>
 
-
-<!-- ROLETA PREMIUM -->
 <div class="game-card"
 data-cat="popular slots"
 data-jogo="Roleta Premium"
@@ -1313,11 +1307,8 @@ loading="eager">
 <span class="game-name">Roleta Premium</span>
 <span class="provider-tag">AX</span>
 </div>
-
 </div>
 
-
-<!-- ROLETA CASSINO -->
 <div class="game-card"
 data-cat="slots"
 data-jogo="Roleta Cassino"
@@ -1337,11 +1328,8 @@ loading="lazy">
 <span class="game-name">Roleta Cassino</span>
 <span class="provider-tag">AX</span>
 </div>
-
 </div>
 
-
-<!-- MINES -->
 <div class="game-card"
 data-cat="popular mini"
 data-jogo="Mines"
@@ -1361,11 +1349,8 @@ loading="lazy">
 <span class="game-name">Mines</span>
 <span class="provider-tag">AX</span>
 </div>
-
 </div>
 
-
-<!-- CRASH -->
 <div class="game-card"
 data-cat="popular slots"
 data-jogo="Crash"
@@ -1385,11 +1370,8 @@ loading="lazy">
 <span class="game-name">Crash</span>
 <span class="provider-tag">AX</span>
 </div>
-
 </div>
 
-
-<!-- PLINKO -->
 <div class="game-card"
 data-cat="mini"
 data-jogo="Plinko"
@@ -1409,11 +1391,8 @@ loading="lazy">
 <span class="game-name">Plinko</span>
 <span class="provider-tag">AX</span>
 </div>
-
 </div>
 
-
-<!-- DICE -->
 <div class="game-card"
 data-cat="slots"
 data-jogo="Dice"
@@ -1433,11 +1412,8 @@ loading="lazy">
 <span class="game-name">Dice</span>
 <span class="provider-tag">AX</span>
 </div>
-
 </div>
 
-
-<!-- LOBBY -->
 <div class="game-card"
 data-cat="popular"
 data-jogo="Lobby"
@@ -1457,11 +1433,8 @@ loading="lazy">
 <span class="game-name">Lobby</span>
 <span class="provider-tag">AX</span>
 </div>
-
 </div>
 
-
-<!-- NIGHT MONSTERS -->
 <div class="game-card"
 data-cat="slots"
 data-jogo="Night Monsters"
@@ -1477,19 +1450,14 @@ loading="lazy">
 <span class="like-icon">👍</span>
 <span class="fav-icon">⭐</span>
 
-<div class="bonus-badge">
-Novo
-</div>
+<div class="bonus-badge">Novo</div>
 
 <div class="game-overlay">
 <span class="game-name">Night Monsters</span>
 <span class="provider-tag">AX</span>
 </div>
-
 </div>
 
-
-<!-- FORTUNE SNAKE -->
 <div class="game-card"
 data-cat="popular slots"
 data-jogo="Fortune Snake"
@@ -1505,15 +1473,12 @@ loading="lazy">
 <span class="like-icon">👍</span>
 <span class="fav-icon">⭐</span>
 
-<div class="bonus-badge">
-Bônus R$20,00
-</div>
+<div class="bonus-badge">Bônus R$20,00</div>
 
 <div class="game-overlay">
 <span class="game-name">Fortune Snake</span>
 <span class="provider-tag">AX</span>
 </div>
-
 </div>
 
 </div>
@@ -1723,7 +1688,7 @@ let carregando=false;
 
 const JACKPOT_INICIAL=15617132.96;
 let jackpotAtual=JACKPOT_INICIAL;
-let jackpotSubindo=false;
+let jackpotAnimacao=false;
 
 function formatarJackpot(valor){
 
@@ -1739,46 +1704,97 @@ function atualizarTextoJackpot(){
         document.getElementById("jackpotValue");
 
     if(elemento){
+
         elemento.textContent=
             formatarJackpot(jackpotAtual);
+
     }
 }
 
-function pequenoMovimentoJackpot(){
-
-    if(jackpotSubindo)return;
-
-    jackpotSubindo=true;
+/*
+ * Faz o número amarelo dar um pequeno
+ * movimento visual toda vez que muda.
+ */
+function efeitoJackpot(){
 
     const elemento=
         document.getElementById("jackpotValue");
 
-    const aumento=
-        Number(
-            (Math.random()*0.35+0.10).toFixed(2)
-        );
+    if(!elemento)return;
 
-    jackpotAtual+=aumento;
+    elemento.classList.add("subindo");
 
-    if(elemento){
-        elemento.classList.add("subindo");
+    setTimeout(()=>{
+
+        elemento.classList.remove("subindo");
+
+    },600);
+}
+
+/*
+ * Jackpot:
+ *
+ * - movimenta aproximadamente a cada 2 segundos;
+ * - normalmente sobe;
+ * - ocasionalmente desce um pouco;
+ * - usa valores pequenos para o movimento
+ *   parecer natural;
+ * - nunca mexe no sistema de saldo.
+ */
+function pequenoMovimentoJackpot(){
+
+    if(jackpotAnimacao)return;
+
+    jackpotAnimacao=true;
+
+    /*
+     * Aproximadamente 18% das vezes
+     * o Jackpot dá uma pequena descida.
+     */
+    const chanceDescer=Math.random();
+
+    let variacao;
+
+    if(chanceDescer<0.18){
+
+        variacao=
+            -(Math.random()*1.50+0.20);
+
+    }else{
+
+        variacao=
+            Math.random()*3.50+0.50;
+
     }
+
+    jackpotAtual+=variacao;
+
+    if(jackpotAtual<JACKPOT_INICIAL){
+
+        jackpotAtual=JACKPOT_INICIAL;
+
+    }
+
+    jackpotAtual=
+        Number(jackpotAtual.toFixed(2));
+
+    efeitoJackpot();
 
     atualizarTextoJackpot();
 
     setTimeout(()=>{
 
-        if(elemento){
-            elemento.classList.remove("subindo");
-        }
+        jackpotAnimacao=false;
 
-        jackpotSubindo=false;
+    },600);
 
-    },450);
-
+    /*
+     * Próximo movimento aproximadamente
+     * a cada 2 segundos.
+     */
     setTimeout(
         pequenoMovimentoJackpot,
-        1800000+Math.random()*300000
+        1800+Math.random()*500
     );
 }
 
@@ -3395,7 +3411,7 @@ document.addEventListener(
         );
 
         console.log(
-            "✅ Jackpot preservado."
+            "✅ Jackpot com movimento suave."
         );
 
         console.log(
@@ -3409,9 +3425,13 @@ document.addEventListener(
 
         atualizarTextoJackpot();
 
+        /*
+         * Começa o movimento do Jackpot
+         * depois de aproximadamente 2 segundos.
+         */
         setTimeout(
             pequenoMovimentoJackpot,
-            1800000
+            2000
         );
 
         verificarSessao();
