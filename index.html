@@ -237,7 +237,6 @@ input:focus{
     font-weight:900;
 }
 
-/* NOVO: APOSTAXBET NO ESPAÇO AO LADO DO SAQUE/DEPÓSITO */
 .topo-apostaxbet{
     flex:1;
     text-align:center;
@@ -457,6 +456,26 @@ input:focus{
     font-size:13px;
 }
 
+/* NOVO: TIGRINHO E TOURO AO LADO DO JACKPOT */
+.jackpot-numero-area{
+    position:relative;
+    z-index:2;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    width:100%;
+}
+
+.jackpot-animal{
+    width:58px;
+    height:58px;
+    object-fit:contain;
+    display:block;
+    flex-shrink:0;
+    filter:drop-shadow(0 2px 5px rgba(0,0,0,.7));
+}
+
 .jackpot-value{
     position:relative;
     z-index:2;
@@ -467,6 +486,7 @@ input:focus{
     text-shadow:0 2px 6px rgba(0,0,0,.5),0 0 12px rgba(250,204,21,.35);
     font-variant-numeric:tabular-nums;
     transition:transform .6s ease,text-shadow .6s ease;
+    white-space:nowrap;
 }
 
 .jackpot-value.subindo{
@@ -525,6 +545,15 @@ input:focus{
     transform:scale(.95);
 }
 
+/* NOVO: QUADRADOS ILUSTRATIVOS NÃO SÃO CLICÁVEIS */
+.game-card.ilustrativo{
+    cursor:default;
+}
+
+.game-card.ilustrativo:active{
+    transform:none;
+}
+
 .game-img{
     width:100%;
     height:100%;
@@ -540,6 +569,10 @@ input:focus{
 }
 
 .game-card:hover .game-img{
+    transform:scale(1.025);
+}
+
+.game-card.ilustrativo:hover .game-img{
     transform:scale(1.025);
 }
 
@@ -1038,6 +1071,19 @@ input:focus{
         font-size:14px;
         margin:0 5px;
     }
+
+    .jackpot-numero-area{
+        gap:8px;
+    }
+
+    .jackpot-animal{
+        width:52px;
+        height:52px;
+    }
+
+    .jackpot-value{
+        font-size:24px;
+    }
 }
 
 @media(max-width:360px){
@@ -1047,7 +1093,16 @@ input:focus{
     }
 
     .jackpot-value{
-        font-size:22px;
+        font-size:20px;
+    }
+
+    .jackpot-animal{
+        width:46px;
+        height:46px;
+    }
+
+    .jackpot-numero-area{
+        gap:5px;
     }
 
     .games-grid{
@@ -1182,7 +1237,7 @@ ENVIAR LINK
 <div id="mensagemRecuperacao" class="mensagem"></div>
 </form>
 
-<button class="voltar" onclick="voltarLogin()">
+<button class="voltar" onclick="voltarLogin">
 ← Voltar para o login
 </button>
 
@@ -1345,8 +1400,23 @@ COMPARTILHE O LINK DO AGENTE E GANHE BÔNUS EXCLUSIVOS NO APOSTAXBET!
 JACKPOT
 </div>
 
+<!-- TIGRINHO + NÚMERO + TOURO -->
+<div class="jackpot-numero-area">
+
+<img
+class="jackpot-animal"
+src="jogos/tigrinho.png"
+alt="Tigrinho">
+
 <div class="jackpot-value" id="jackpotValue">
 15.617.132,96
+</div>
+
+<img
+class="jackpot-animal"
+src="jogos/touro.png"
+alt="Touro">
+
 </div>
 
 <div class="providers">
@@ -1575,6 +1645,49 @@ loading="lazy">
 
 <div class="game-overlay">
 <span class="game-name">Fortune Snake</span>
+<span class="provider-tag">AX</span>
+</div>
+</div>
+
+<!-- QUADRADOS ILUSTRATIVOS -->
+<div class="game-card ilustrativo"
+data-cat="popular slots"
+data-jogo="Tigrinho"
+data-capa="jogos/tigrinho.png"
+data-icon="🐯"
+data-ilustrativo="true">
+
+<img class="game-img"
+src="jogos/tigrinho.png"
+alt="Tigrinho"
+loading="lazy">
+
+<span class="like-icon">👍</span>
+<span class="fav-icon">⭐</span>
+
+<div class="game-overlay">
+<span class="game-name">Tigrinho</span>
+<span class="provider-tag">AX</span>
+</div>
+</div>
+
+<div class="game-card ilustrativo"
+data-cat="popular slots"
+data-jogo="Touro"
+data-capa="jogos/touro.png"
+data-icon="🐂"
+data-ilustrativo="true">
+
+<img class="game-img"
+src="jogos/touro.png"
+alt="Touro"
+loading="lazy">
+
+<span class="like-icon">👍</span>
+<span class="fav-icon">⭐</span>
+
+<div class="game-overlay">
+<span class="game-name">Touro</span>
 <span class="provider-tag">AX</span>
 </div>
 </div>
@@ -2842,6 +2955,13 @@ function ativarEventosJogos(){
 
                 e.preventDefault();
 
+                /* QUADRADOS ILUSTRATIVOS NÃO ABREM JOGO */
+                if(
+                    this.getAttribute("data-ilustrativo")==="true"
+                ){
+                    return;
+                }
+
                 if(carregando)return;
 
                 carregando=true;
@@ -2923,6 +3043,7 @@ function ativarEventosJogos(){
         );
 
     });
+
 }
 
 /* ========================= FILTRO ========================= */
