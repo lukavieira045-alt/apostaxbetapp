@@ -266,6 +266,20 @@ input:focus{
     white-space:nowrap;
 }
 
+/* BÔNUS ABAIXO DO APOSTAXBET */
+.topo-bonus{
+    margin-top:4px;
+    color:#86efac;
+    font-size:10px;
+    font-weight:800;
+    white-space:nowrap;
+    text-shadow:0 1px 3px rgba(0,0,0,.5);
+}
+
+.topo-bonus strong{
+    color:#facc15;
+}
+
 .topo-apostaxbet span{
     color:#fff;
 }
@@ -793,7 +807,7 @@ input:focus{
     text-align:center;
     font-size:15px;
     font-weight:bold;
-    word-break:break-all;
+    word-break:break-word;
 }
 
 .conta-email{
@@ -801,6 +815,7 @@ input:focus{
     color:#86efac;
     margin-top:5px;
     font-size:13px;
+    word-break:break-word;
 }
 
 .conta-item{
@@ -815,6 +830,20 @@ input:focus{
     display:block;
     color:#facc15;
     margin-bottom:4px;
+}
+
+.conta-dado{
+    color:#fff;
+    font-size:15px;
+    font-weight:700;
+    word-break:break-word;
+}
+
+.conta-id{
+    color:#bbf7d0;
+    font-size:12px;
+    font-weight:600;
+    word-break:break-all;
 }
 
 .conta-saldo{
@@ -1079,6 +1108,10 @@ input:focus{
         margin:0 5px;
     }
 
+    .topo-bonus{
+        font-size:8px;
+    }
+
     .jackpot-numero-area{
         gap:8px;
     }
@@ -1149,6 +1182,10 @@ input:focus{
         margin:0 3px;
     }
 
+    .topo-bonus{
+        font-size:7px;
+    }
+
     .site-saldo{
         font-size:8px;
         padding:1px 2px;
@@ -1190,6 +1227,12 @@ input:focus{
 
 <label>E-mail</label>
 <input id="emailCadastro" type="email" placeholder="Digite seu e-mail" required>
+
+<label>Telefone</label>
+<input id="telefoneCadastro" type="tel" placeholder="Digite seu telefone" required>
+
+<label>CPF</label>
+<input id="cpfCadastro" type="text" inputmode="numeric" maxlength="14" placeholder="Digite seu CPF" required>
 
 <label>Criar senha</label>
 <div class="campo-senha">
@@ -1262,7 +1305,7 @@ ENVIAR LINK
 <div id="mensagemRecuperacao" class="mensagem"></div>
 </form>
 
-<button class="voltar" onclick="voltarLogin()">
+<button class="voltar" onclick="voltarLogin">
 ← Voltar para o login
 </button>
 
@@ -1334,7 +1377,8 @@ Aposta<span>X</span>Bet
 </div>
 
 <div class="topo-apostaxbet">
-Aposta<span>X</span>Bet
+<div>Aposta<span>X</span>Bet</div>
+<div class="topo-bonus">🎁 GANHE BÔNUS DE <strong>ATÉ R$ 100,00</strong></div>
 </div>
 
 </div>
@@ -1489,7 +1533,7 @@ data-link="jogos/roleta2.html">
 <img class="game-img"
 src="jogos/banner-roleta-premium.png"
 alt="Roleta Premium"
-loading="eager">
+loading="lazy">
 
 <span class="like-icon">👍</span>
 <span class="fav-icon">⭐</span>
@@ -1836,10 +1880,45 @@ loading="lazy">
 <div class="avatar">👤</div>
 
 <div class="conta-nome" id="contaNome">
-ID do usuário
+Nome do usuário
 </div>
 
 <div class="conta-email" id="contaEmail"></div>
+
+<div class="conta-item">
+<strong>👤 Nome completo</strong>
+<div class="conta-dado" id="contaNomeCompleto">
+Não informado
+</div>
+</div>
+
+<div class="conta-item">
+<strong>📧 E-mail</strong>
+<div class="conta-dado" id="contaEmailDetalhe">
+Não informado
+</div>
+</div>
+
+<div class="conta-item">
+<strong>📱 Telefone</strong>
+<div class="conta-dado" id="contaTelefone">
+Não informado
+</div>
+</div>
+
+<div class="conta-item">
+<strong>🪪 CPF</strong>
+<div class="conta-dado" id="contaCpf">
+Não informado
+</div>
+</div>
+
+<div class="conta-item">
+<strong>🆔 ID do usuário</strong>
+<div class="conta-id" id="contaId">
+Não informado
+</div>
+</div>
 
 <div class="conta-item">
 
@@ -2535,6 +2614,53 @@ function mensagem(id,texto,tipo){
     el.innerText=texto;
 }
 
+/* ========================= MÁSCARA CPF ========================= */
+
+const campoCpfCadastro=
+    document.getElementById("cpfCadastro");
+
+if(campoCpfCadastro){
+
+    campoCpfCadastro.addEventListener(
+        "input",
+        function(){
+
+            let valor=
+                this.value.replace(/\D/g,"");
+
+            valor=
+                valor.substring(0,11);
+
+            if(valor.length>9){
+
+                valor=
+                    valor.replace(
+                        /(\d{3})(\d{3})(\d{3})(\d{1,2})/,
+                        "$1.$2.$3-$4"
+                    );
+
+            }else if(valor.length>6){
+
+                valor=
+                    valor.replace(
+                        /(\d{3})(\d{3})(\d{1,3})/,
+                        "$1.$2.$3"
+                    );
+
+            }else if(valor.length>3){
+
+                valor=
+                    valor.replace(
+                        /(\d{3})(\d{1,3})/,
+                        "$1.$2"
+                    );
+            }
+
+            this.value=valor;
+        }
+    );
+}
+
 /* ========================= RECUPERAÇÃO ========================= */
 
 function mostrarRecuperacao(){
@@ -2724,6 +2850,16 @@ async function cadastrar(event){
             "emailCadastro"
         ).value.trim();
 
+    const telefone=
+        document.getElementById(
+            "telefoneCadastro"
+        ).value.trim();
+
+    const cpf=
+        document.getElementById(
+            "cpfCadastro"
+        ).value.trim();
+
     const senha=
         document.getElementById(
             "senhaCadastro"
@@ -2761,6 +2897,31 @@ async function cadastrar(event){
         return;
     }
 
+    if(!telefone){
+
+        mensagem(
+            "mensagemCadastro",
+            "Digite seu telefone.",
+            "erro"
+        );
+
+        return;
+    }
+
+    const cpfNumeros=
+        cpf.replace(/\D/g,"");
+
+    if(cpfNumeros.length!==11){
+
+        mensagem(
+            "mensagemCadastro",
+            "Digite um CPF válido com 11 números.",
+            "erro"
+        );
+
+        return;
+    }
+
     botao.disabled=true;
     botao.innerText="CRIANDO CONTA...";
 
@@ -2775,7 +2936,10 @@ async function cadastrar(event){
                 options:{
                     data:{
                         nome,
-                        full_name:nome
+                        full_name:nome,
+                        telefone,
+                        phone:telefone,
+                        cpf:cpfNumeros
                     }
                 }
             });
@@ -2883,6 +3047,114 @@ async function entrar(event){
 
     botao.disabled=false;
     botao.innerText="ENTRAR";
+}
+
+/* ========================= DADOS DA CONTA ========================= */
+
+function textoSeguro(valor){
+
+    if(
+        valor===undefined||
+        valor===null||
+        String(valor).trim()===""
+    ){
+
+        return "Não informado";
+    }
+
+    return String(valor).trim();
+}
+
+function atualizarDadosConta(user){
+
+    if(!user)return;
+
+    const meta=
+        user.user_metadata||{};
+
+    const nome=
+        meta.nome||
+        meta.full_name||
+        meta.name||
+        "Não informado";
+
+    const email=
+        user.email||
+        "Não informado";
+
+    const telefone=
+        meta.telefone||
+        meta.phone||
+        meta.celular||
+        meta.telefone_celular||
+        "Não informado";
+
+    const cpf=
+        meta.cpf||
+        meta.CPF||
+        "Não informado";
+
+    const contaNome=
+        document.getElementById("contaNome");
+
+    const contaEmail=
+        document.getElementById("contaEmail");
+
+    const contaNomeCompleto=
+        document.getElementById("contaNomeCompleto");
+
+    const contaEmailDetalhe=
+        document.getElementById("contaEmailDetalhe");
+
+    const contaTelefone=
+        document.getElementById("contaTelefone");
+
+    const contaCpf=
+        document.getElementById("contaCpf");
+
+    const contaId=
+        document.getElementById("contaId");
+
+    if(contaNome)
+        contaNome.innerText=textoSeguro(nome);
+
+    if(contaEmail)
+        contaEmail.innerText=textoSeguro(email);
+
+    if(contaNomeCompleto)
+        contaNomeCompleto.innerText=textoSeguro(nome);
+
+    if(contaEmailDetalhe)
+        contaEmailDetalhe.innerText=textoSeguro(email);
+
+    if(contaTelefone)
+        contaTelefone.innerText=textoSeguro(telefone);
+
+    if(contaCpf){
+
+        const cpfTexto=
+            textoSeguro(cpf);
+
+        if(
+            cpfTexto!=="Não informado" &&
+            cpfTexto.length===11
+        ){
+
+            contaCpf.innerText=
+                cpfTexto.replace(
+                    /(\d{3})(\d{3})(\d{3})(\d{2})/,
+                    "$1.$2.$3-$4"
+                );
+
+        }else{
+
+            contaCpf.innerText=cpfTexto;
+        }
+    }
+
+    if(contaId)
+        contaId.innerText=
+            textoSeguro(user.id);
 }
 
 /* ========================= ID DO USUÁRIO ========================= */
@@ -3006,16 +3278,7 @@ function mostrarSite(user){
     ativarEventosJogos();
     configurarTodasAsCapas();
 
-    document.getElementById(
-        "contaNome"
-    ).innerText=
-        user.id||"ID indisponível";
-
-    document.getElementById(
-        "contaEmail"
-    ).innerText=
-        user.email||"";
-
+    atualizarDadosConta(user);
     atualizarIdUsuario(user);
 
     atualizarSaldoVisual();
@@ -3049,10 +3312,23 @@ function mostrarConta(){
     site.style.display="none";
     paginaConta.style.display="block";
 
-    atualizarSaldoVisual();
-
     document.querySelectorAll(".nav-link")
     .forEach(l=>l.classList.remove("active"));
+
+    fecharSuporte();
+
+    getUsuarioLogado().then(user=>{
+
+        if(user){
+
+            atualizarDadosConta(user);
+            atualizarIdUsuario(user);
+
+        }
+
+        atualizarSaldoVisual();
+
+    });
 }
 
 /* ========================= EVENTOS DOS JOGOS ========================= */
@@ -3705,7 +3981,9 @@ window.ApostaXBet={
     cadastrar:async(
         nome,
         email,
-        senha
+        senha,
+        telefone="",
+        cpf=""
     )=>{
 
         try{
@@ -3719,7 +3997,10 @@ window.ApostaXBet={
                     options:{
                         data:{
                             nome,
-                            full_name:nome
+                            full_name:nome,
+                            telefone,
+                            phone:telefone,
+                            cpf:cpf.replace(/\D/g,"")
                         }
                     }
                 });
@@ -3872,6 +4153,18 @@ document.addEventListener(
 
         console.log(
             "✅ Sistema de saldo preservado."
+        );
+
+        console.log(
+            "✅ Cadastro com nome, telefone e CPF."
+        );
+
+        console.log(
+            "✅ Minha Conta com dados completos."
+        );
+
+        console.log(
+            "✅ Bônus de até R$ 100,00 adicionado."
         );
 
         configurarTodasAsCapas();
