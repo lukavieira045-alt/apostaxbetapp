@@ -260,6 +260,51 @@ input:focus { border-color: #facc15; box-shadow: 0 0 0 2px rgba(250,204,21,0.15)
     background: #22c55e; color: white; font-size: 18px; cursor: pointer; flex-shrink: 0;
 }
 
+/* ========================= LOADER DE JOGOS (RESTAURADO) ========================= */
+#loader {
+    position: fixed; inset: 0; z-index: 99999;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 20px; background: radial-gradient(circle at 50% 40%, #35105d, #12001f 55%, #08000f 100%);
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity .45s ease, visibility .45s ease;
+}
+#loader.ativo { opacity: 1; visibility: visible; pointer-events: auto; }
+
+.loader-card {
+    width: 350px; max-width: 94vw; padding: 0; text-align: center;
+    background: transparent; border: 0; box-shadow: none;
+}
+.loader-icone {
+    width: 350px; max-width: 94vw; height: auto; min-height: 0;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+    border-radius: 18px; background: #08000f; border: 2px solid rgba(255,215,0,.75);
+    box-shadow: 0 0 20px rgba(255,215,0,.35), 0 0 50px rgba(145,0,255,.35);
+    animation: bannerCarregando 1.4s ease-in-out infinite alternate;
+}
+@keyframes bannerCarregando { from { transform:scale(.97); opacity:.82; } to { transform:scale(1); opacity:1; } }
+
+.loader-icone img {
+    width: 100%; height: auto; max-height: none; object-fit: contain;
+    display: none; border-radius: 16px;
+}
+.loader-icone .icone-normal {
+    width: 100%; min-height: 180px; display: flex; align-items: center; justify-content: center;
+    font-size: 65px;
+}
+#loaderNome {
+    margin-top: 22px; color: #ffd700; font-size: 21px; font-weight: bold;
+    text-align: center; text-shadow: 0 0 10px rgba(255,215,0,.6);
+}
+.loader-status { margin-top: 9px; color: #cdbce0; font-size: 14px; text-align: center; }
+.loader-dots { margin-top: 15px; display: flex; justify-content: center; gap: 7px; }
+.loader-dots span {
+    width: 9px; height: 9px; border-radius: 50%; background: #ffd700;
+    box-shadow: 0 0 8px rgba(255,215,0,.7); animation: loadingDot 1s infinite;
+}
+.loader-dots span:nth-child(2) { animation-delay: .15s; }
+.loader-dots span:nth-child(3) { animation-delay: .30s; }
+@keyframes loadingDot { 0%,100% { transform:scale(.65); opacity:.35; } 50% { transform:scale(1); opacity:1; } }
+
 @media(max-width: 360px) {
     .logo { font-size: 34px; }
     .jackpot-value { font-size: 22px; }
@@ -267,6 +312,9 @@ input:focus { border-color: #facc15; box-shadow: 0 0 0 2px rgba(250,204,21,0.15)
     .game-overlay { font-size: 9px; }
     .nav-link { font-size: 9px; min-width: 48px; }
     .nav-icon { font-size: 20px; }
+    .loader-icone { width: 94vw; }
+    .loader-icone .icone-normal { min-height: 160px; font-size: 52px; }
+    .loader-card { width: 94vw; }
 }
 </style>
 </head>
@@ -276,7 +324,7 @@ input:focus { border-color: #facc15; box-shadow: 0 0 0 2px rgba(250,204,21,0.15)
 <div class="login-container">
     <div class="logo">Aposta<span>X</span>Bet</div>
     <div class="banner-login">
-        <div class="brasil">🇧</div>
+        <div class="brasil">🇧🇷</div>
         <h2>Bem-vindo ao ApostaXBet</h2>
         <p>Cadastre-se agora e comece a jogar</p>
         <strong>🎁 BÔNUS DE BOAS-VINDAS</strong>
@@ -294,7 +342,7 @@ input:focus { border-color: #facc15; box-shadow: 0 0 0 2px rgba(250,204,21,0.15)
             <label>Criar senha</label>
             <div class="campo-senha">
                 <input id="senhaCadastro" type="password" placeholder="Mínimo de 6 caracteres" minlength="6" required>
-                <span class="olho" onclick="mostrarSenha('senhaCadastro')">️</span>
+                <span class="olho" onclick="mostrarSenha('senhaCadastro')">👁️</span>
             </div>
             <label>Confirmar senha</label>
             <div class="campo-senha">
@@ -369,11 +417,11 @@ input:focus { border-color: #facc15; box-shadow: 0 0 0 2px rgba(250,204,21,0.15)
     </header>
 
     <div class="quick-actions">
-        <a href="#" class="action-btn"><span class="icon"></span>VIP</a>
-        <a href="#" class="action-btn"><span class="icon">🤝</span>CONVITE</a>
+        <a href="#" class="action-btn"><span class="icon">👑</span>VIP</a>
+        <a href="#" class="action-btn"><span class="icon"></span>CONVITE</a>
         <a href="#" class="action-btn"><span class="icon">🎟️</span>CÓDIGO</a>
-        <a href="#" class="action-btn"><span class="icon"></span>MISSÃO</a>
-        <a href="#" class="action-btn"><span class="icon">🏆</span>COLEÇÃO</a>
+        <a href="#" class="action-btn"><span class="icon">📋</span>MISSÃO</a>
+        <a href="#" class="action-btn"><span class="icon"></span>COLEÇÃO</a>
         <a href="#" class="action-btn"><span class="icon">🏷️</span>DESCONTO</a>
     </div>
 
@@ -401,13 +449,11 @@ input:focus { border-color: #facc15; box-shadow: 0 0 0 2px rgba(250,204,21,0.15)
     </div>
 
     <!-- GRID DE JOGOS DINÂMICO -->
-    <div class="games-grid" id="gamesGrid">
-        <!-- Os jogos serão inseridos aqui via JavaScript -->
-    </div>
+    <div class="games-grid" id="gamesGrid"></div>
 
     <div style="padding:0 15px;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:5px;">
         <a href="deposito.html" style="padding:16px;border-radius:12px;background:linear-gradient(135deg,#facc15,#eab308);color:#0b3b24;text-decoration:none;text-align:center;font-size:15px;font-weight:800;">💰 Depositar</a>
-        <a href="saque.html" style="padding:16px;border-radius:12px;background:#22c55e;color:white;text-decoration:none;text-align:center;font-size:15px;font-weight:800;"> Sacar</a>
+        <a href="saque.html" style="padding:16px;border-radius:12px;background:#22c55e;color:white;text-decoration:none;text-align:center;font-size:15px;font-weight:800;">💵 Sacar</a>
     </div>
 </section>
 
@@ -415,7 +461,7 @@ input:focus { border-color: #facc15; box-shadow: 0 0 0 2px rgba(250,204,21,0.15)
 <div class="conta-container">
     <h2 class="conta-titulo">👤 Minha Conta</h2>
     <div class="conta-card">
-        <div class="avatar">👤</div>
+        <div class="avatar"></div>
         <div class="conta-nome" id="contaNome">ID do usuário</div>
         <div class="conta-email" id="contaEmail"></div>
         <div class="conta-item">
@@ -429,7 +475,7 @@ input:focus { border-color: #facc15; box-shadow: 0 0 0 2px rgba(250,204,21,0.15)
 
 <nav class="bottom-nav" id="menuPrincipal">
     <div class="nav-link active" onclick="mostrarInicio()"><span class="nav-icon">🏠</span><span>Início</span></div>
-    <div class="nav-link" onclick="window.location.href='jogos/jogos.html'"><span class="nav-icon">🎮</span><span>Jogos</span></div>
+    <div class="nav-link" onclick="window.location.href='jogos/jogos.html'"><span class="nav-icon"></span><span>Jogos</span></div>
     <div class="nav-link has-badge" data-badge="5" onclick="mostrarConta()"><span class="nav-icon">🎁</span><span>Ofertas</span></div>
     <div class="nav-link" onclick="abrirSuporte()"><span class="nav-icon">🎧</span><span>Suporte</span></div>
     <div class="nav-link" onclick="mostrarConta()"><span class="nav-icon">👤</span><span>Perfil</span></div>
@@ -455,11 +501,24 @@ input:focus { border-color: #facc15; box-shadow: 0 0 0 2px rgba(250,204,21,0.15)
         <button type="button" onclick="perguntaSuporte('deposito')">💵 Depósito</button>
         <button type="button" onclick="perguntaSuporte('saque')">🏦 Saque</button>
         <button type="button" onclick="perguntaSuporte('conta')">👤 Conta</button>
-        <button type="button" onclick="perguntaSuporte('problema')">❓ Problema</button>
+        <button type="button" onclick="perguntaSuporte('problema')"> Problema</button>
     </div>
     <div class="suporte-escrever">
         <input id="entradaSuporte" type="text" placeholder="Digite sua pergunta..." autocomplete="off" onkeydown="if(event.key==='Enter')enviarPerguntaSuporte()">
         <button id="enviarSuporte" type="button" onclick="enviarPerguntaSuporte()">➤</button>
+    </div>
+</div>
+
+<!-- LOADER DE JOGOS RESTAURADO -->
+<div id="loader">
+    <div class="loader-card">
+        <div id="loaderIcone" class="loader-icone">
+            <img id="loaderImagem" src="" alt="Capa do jogo">
+            <div id="loaderIconeNormal" class="icone-normal">🎮</div>
+        </div>
+        <div id="loaderNome">Carregando...</div>
+        <div class="loader-status">Carregando jogo...</div>
+        <div class="loader-dots"><span></span><span></span><span></span></div>
     </div>
 </div>
 
@@ -489,6 +548,13 @@ const menuPrincipal = document.getElementById("menuPrincipal");
 const botaoSuporte = document.getElementById("botaoSuporte");
 const janelaSuporte = document.getElementById("janelaSuporte");
 const btnTopo = document.getElementById("btnTopo");
+
+// Loader Elements
+const loader = document.getElementById("loader");
+const loaderNome = document.getElementById("loaderNome");
+const loaderImagem = document.getElementById("loaderImagem");
+const loaderIconeNormal = document.getElementById("loaderIconeNormal");
+let carregando = false;
 
 // Scroll to top button visibility
 window.addEventListener("scroll", () => {
@@ -547,13 +613,13 @@ function responderSuporte(texto) {
     if (p.includes("saldo") || p.includes("dinheiro") || p.includes("quanto tenho"))
         return "💰 Para consultar seu saldo, veja o valor que aparece no topo da página inicial. Você também pode entrar em 👤 Perfil para consultar.";
     if (p.includes("jogo") || p.includes("jogar") || p.includes("games") || p.includes("jogos"))
-        return "🎮 Para jogar, toque em  Jogos no menu inferior. Lá você encontrará todos os jogos disponíveis no ApostaXBet.";
+        return " Para jogar, toque em 🎮 Jogos no menu inferior. Lá você encontrará todos os jogos disponíveis no ApostaXBet.";
     if (p.includes("deposit") || p.includes("pix") || p.includes("colocar dinheiro"))
         return "💵 Para fazer um depósito, toque em 💰 Depositar na página inicial e siga as instruções apresentadas.";
     if (p.includes("saque") || p.includes("sacar") || p.includes("retirar"))
-        return "🏦 Para solicitar um saque, toque em 💵 Sacar na página inicial e preencha as informações solicitadas.";
+        return "🏦 Para solicitar um saque, toque em  Sacar na página inicial e preencha as informações solicitadas.";
     if (p.includes("conta") || p.includes("cadastro") || p.includes("login") || p.includes("senha"))
-        return "👤 Para acessar sua conta, use o botão 👤 Perfil no menu inferior. Se esqueceu sua senha, use \"Esqueci minha senha?\" na tela de login.";
+        return " Para acessar sua conta, use o botão 👤 Perfil no menu inferior. Se esqueceu sua senha, use \"Esqueci minha senha?\" na tela de login.";
     if (p.includes("erro") || p.includes("problema") || p.includes("não funciona") || p.includes("bug"))
         return "❓ Entendi. Tente sair da conta e entrar novamente. Se o problema continuar, descreva aqui o que aconteceu para receber uma orientação.";
     return "🤖 Ainda não tenho uma resposta cadastrada para essa pergunta. Tente explicar um pouco mais ou pergunte sobre saldo, jogos, depósito, saque, conta ou algum problema no site.";
@@ -743,16 +809,16 @@ function mostrarConta() {
 
 // ==================== RENDERIZAÇÃO DOS JOGOS NA HOME ====================
 const jogosHome = [
-    { nome: "Roleta", img: "banner-roleta.png", link: "jogos/roleta.html", cat: "popular slots", badge: null },
-    { nome: "Roleta Premium", img: "banner-roleta-premium.png", link: "jogos/roleta2.html", cat: "popular slots", badge: null },
-    { nome: "Roleta Cassino", img: "banner-roleta-cassino.png", link: "jogos/roleta-cassino.html", cat: "slots", badge: null },
-    { nome: "Mines", img: "banner-mines.png", link: "jogos/mines.html", cat: "popular mini", badge: null },
-    { nome: "Crash", img: "banner-crash.png", link: "jogos/crash.html", cat: "popular slots", badge: null },
-    { nome: "Plinko", img: "banner-plinko.png", link: "jogos/plinko.html", cat: "mini", badge: null },
-    { nome: "Dice", img: "banner-dice.png", link: "jogos/dice.html", cat: "slots", badge: null },
-    { nome: "Lobby", img: "banner-lobby.png", link: "jogos/lobby.html", cat: "popular", badge: null },
-    { nome: "Night Monsters", img: "banner-night-monsters.png", link: "jogos/hotel-transylvania/index.html", cat: "slots", badge: "Novo" },
-    { nome: "Fortune Snake", img: "banner-fortune-snake.png", link: "jogos/fortune-snake.html", cat: "popular slots", badge: "Bônus R$20,00" }
+    { nome: "Roleta", img: "banner-roleta.png", link: "jogos/roleta.html", cat: "popular slots", badge: null, icon: "🎰" },
+    { nome: "Roleta Premium", img: "banner-roleta-premium.png", link: "jogos/roleta2.html", cat: "popular slots", badge: null, icon: "🎡" },
+    { nome: "Roleta Cassino", img: "banner-roleta-cassino.png", link: "jogos/roleta-cassino.html", cat: "slots", badge: null, icon: "🎰" },
+    { nome: "Mines", img: "banner-mines.png", link: "jogos/mines.html", cat: "popular mini", badge: null, icon: "" },
+    { nome: "Crash", img: "banner-crash.png", link: "jogos/crash.html", cat: "popular slots", badge: null, icon: "🚀" },
+    { nome: "Plinko", img: "banner-plinko.png", link: "jogos/plinko.html", cat: "mini", badge: null, icon: "🎯" },
+    { nome: "Dice", img: "banner-dice.png", link: "jogos/dice.html", cat: "slots", badge: null, icon: "" },
+    { nome: "Lobby", img: "banner-lobby.png", link: "jogos/lobby.html", cat: "popular", badge: null, icon: "🐺" },
+    { nome: "Night Monsters", img: "banner-night-monsters.png", link: "jogos/hotel-transylvania/index.html", cat: "slots", badge: "Novo", icon: "🧛" },
+    { nome: "Fortune Snake", img: "banner-fortune-snake.png", link: "jogos/fortune-snake.html", cat: "popular slots", badge: "Bônus R$20,00", icon: "🐍" }
 ];
 
 function renderizarJogosHome() {
@@ -760,14 +826,47 @@ function renderizarJogosHome() {
     if (!grid) return;
     
     grid.innerHTML = jogosHome.map(jogo => `
-        <a href="${jogo.link}" class="game-card" data-cat="${jogo.cat}" ontouchstart="" onclick="">
-            <img class="game-img" src="${jogo.img}" alt="${jogo.nome}" onerror="this.style.background='linear-gradient(135deg,#1e7a4d,#0b3b24)'">
+        <div class="game-card" data-cat="${jogo.cat}" data-jogo="${jogo.nome}" data-capa="${jogo.img}" data-icon="${jogo.icon}" data-link="${jogo.link}">
+            <img class="game-img" src="${jogo.img}" alt="${jogo.nome}" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #ff006e, #8338ec)'">
             <span class="like-icon">👍</span>
             <span class="fav-icon">⭐</span>
             ${jogo.badge ? `<div class="bonus-badge">${jogo.badge}</div>` : ''}
             <div class="game-overlay">${jogo.nome}<br><span class="provider-tag">AX</span></div>
-        </a>
+        </div>
     `).join('');
+
+    // Adicionar evento de clique com loader
+    grid.querySelectorAll('.game-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            e.preventDefault();
+            if(carregando) return;
+            
+            carregando = true;
+            const destino = this.getAttribute('data-link');
+            const nome = this.getAttribute('data-jogo');
+            const icone = this.getAttribute('data-icon');
+            const capa = this.getAttribute('data-capa');
+
+            loaderNome.textContent = nome || "Carregando...";
+
+            if(capa){
+                loaderImagem.src = capa;
+                loaderImagem.style.display = "block";
+                loaderIconeNormal.style.display = "none";
+            }else{
+                loaderImagem.src = "";
+                loaderImagem.style.display = "none";
+                loaderIconeNormal.textContent = icone || "🎮";
+                loaderIconeNormal.style.display = "flex";
+            }
+
+            loader.classList.add("ativo");
+
+            setTimeout(function(){
+                window.location.href = destino;
+            }, 1800);
+        });
+    });
 }
 
 function filtrarJogos(cat, el) {
@@ -849,7 +948,7 @@ async function processarVitoria(aposta, multiplicador) {
 
 async function processarSaque(valor, chavePix) {
     const user = await getUsuarioLogado();
-    if (!user) { alert("️ Você precisa estar logado para sacar!"); return false; }
+    if (!user) { alert("⚠️ Você precisa estar logado para sacar!"); return false; }
     const vn = Number(valor);
     if (!Number.isFinite(vn) || vn <= 0) { alert("❌ Valor de saque inválido."); return false; }
     if (!chavePix) { alert("❌ Informe sua chave Pix."); return false; }
@@ -857,7 +956,7 @@ async function processarSaque(valor, chavePix) {
         const { data, error } = await clienteSupabase().functions.invoke("quick-endpoint", { body: { userId: user.id, valor: vn, chavePix } });
         if (error) throw error;
         if (data?.mensagem) alert("✅ " + data.mensagem);
-        else if (data?.erro) { alert(" " + data.erro); return false; }
+        else if (data?.erro) { alert("❌ " + data.erro); return false; }
         else alert("✅ Solicitação enviada para análise!");
         await carregarSaldoDisplay();
         return true;
@@ -959,7 +1058,7 @@ window.ApostaXBet = {
 
 // Iniciar
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("✅ ApostaXBet carregado com seus jogos integrados.");
+    console.log("✅ ApostaXBet carregado com Loader e Imagens restaurados.");
     console.log("✅ Supabase Client único:", window.supabaseClient);
     verificarSessao();
 });
