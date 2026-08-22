@@ -6,365 +6,1000 @@
 <title>ApostaXBet</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-/* ========================= RESET & BASE ========================= */
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body { 
-    background: #0b3b24; 
-    color: white; 
-    font-family: 'Segoe UI', Arial, sans-serif; 
-    padding-bottom: 85px; 
+
+body {
+    background: #0b3b24;
+    color: white;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    padding-bottom: 85px;
     overflow-x: hidden;
 }
 
-/* ========================= LOGIN / RECUPERAÇÃO / NOVA SENHA ========================= */
 #telaLogin, #telaRecuperacao, #telaNovaSenha {
     min-height: 100vh;
     padding: 15px;
     background: linear-gradient(180deg, #0d4a30 0%, #0b3b24 100%);
 }
-.login-container, .recuperacao-container, .nova-senha-container { max-width: 600px; margin: auto; }
 
-.logo { text-align: center; padding: 30px 0 20px; font-size: 40px; font-weight: 900; letter-spacing: -1px; }
+.login-container, .recuperacao-container, .nova-senha-container {
+    max-width: 600px;
+    margin: auto;
+}
+
+.logo {
+    text-align: center;
+    padding: 30px 0 20px;
+    font-size: 40px;
+    font-weight: 900;
+    letter-spacing: -1px;
+}
+
 .logo span { color: #facc15; }
 
 .banner-login {
-    padding: 25px 20px; margin-bottom: 20px; text-align: center; border-radius: 16px;
+    padding: 25px 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    border-radius: 16px;
     background: linear-gradient(135deg, #16a34a, #14532d);
     box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
-.banner-login .brasil { font-size: 50px; margin-bottom: 5px; }
-.banner-login h2 { font-size: 22px; margin: 5px 0; }
-.banner-login p { color: #bbf7d0; font-size: 14px; }
-.banner-login strong { display: block; margin-top: 10px; color: #facc15; font-size: 20px; }
 
-.login-box, .recuperacao-box, .nova-senha-box {
-    padding: 20px; border-radius: 16px;
-    background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);
+.banner-login .brasil {
+    font-size: 50px;
+    margin-bottom: 5px;
 }
 
-.tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.15); margin-bottom: 20px; }
-.tab { width: 50%; padding: 14px; text-align: center; font-size: 16px; font-weight: bold; color: #86efac; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; }
-.tab.active { color: #facc15; border-bottom-color: #facc15; }
+.banner-login h2 { font-size: 22px; margin: 5px 0; }
+.banner-login p { color: #bbf7d0; font-size: 14px; }
+
+.banner-login strong {
+    display: block;
+    margin-top: 10px;
+    color: #facc15;
+    font-size: 20px;
+}
+
+.login-box, .recuperacao-box, .nova-senha-box {
+    padding: 20px;
+    border-radius: 16px;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    margin-bottom: 20px;
+}
+
+.tab {
+    width: 50%;
+    padding: 14px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: #86efac;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+}
+
+.tab.active {
+    color: #facc15;
+    border-bottom-color: #facc15;
+}
 
 .form { display: none; }
 .form.active { display: block; }
 
-label { display: block; margin: 12px 0 6px; font-size: 14px; color: #bbf7d0; }
-input {
-    width: 100%; height: 50px; padding: 0 14px; border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 10px; outline: none; background: rgba(0,0,0,0.25); color: white; font-size: 15px;
+label {
+    display: block;
+    margin: 12px 0 6px;
+    font-size: 14px;
+    color: #bbf7d0;
 }
-input::placeholder { color: #6ee7b7; opacity: 0.6; }
-input:focus { border-color: #facc15; box-shadow: 0 0 0 2px rgba(250,204,21,0.15); }
+
+input {
+    width: 100%;
+    height: 50px;
+    padding: 0 14px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 10px;
+    outline: none;
+    background: rgba(0,0,0,0.25);
+    color: white;
+    font-size: 15px;
+}
+
+input::placeholder {
+    color: #6ee7b7;
+    opacity: 0.6;
+}
+
+input:focus {
+    border-color: #facc15;
+    box-shadow: 0 0 0 2px rgba(250,204,21,0.15);
+}
 
 .campo-senha { position: relative; }
-.olho { position: absolute; right: 14px; top: 14px; cursor: pointer; font-size: 20px; opacity: 0.7; }
+
+.olho {
+    position: absolute;
+    right: 14px;
+    top: 14px;
+    cursor: pointer;
+    font-size: 20px;
+    opacity: 0.7;
+}
 
 .btn-principal {
-    width: 100%; height: 52px; margin-top: 20px; border: 0; border-radius: 10px;
-    background: linear-gradient(135deg, #facc15, #eab308); color: #0b3b24;
-    font-size: 16px; font-weight: 800; cursor: pointer; letter-spacing: 0.5px;
+    width: 100%;
+    height: 52px;
+    margin-top: 20px;
+    border: 0;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #facc15, #eab308);
+    color: #0b3b24;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    letter-spacing: 0.5px;
 }
+
 .btn-principal:disabled { opacity: 0.5; }
 
-.esqueci { display: block; margin: 15px auto 0; background: none; border: 0; color: #facc15; text-decoration: underline; font-size: 14px; cursor: pointer; }
-.mensagem { display: none; margin-top: 12px; padding: 10px; border-radius: 8px; text-align: center; font-size: 13px; background: rgba(0,0,0,0.2); }
+.esqueci {
+    display: block;
+    margin: 15px auto 0;
+    background: none;
+    border: 0;
+    color: #facc15;
+    text-decoration: underline;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.mensagem {
+    display: none;
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 13px;
+    background: rgba(0,0,0,0.2);
+}
+
 .mensagem.sucesso { color: #86efac; }
 .mensagem.erro { color: #fca5a5; }
-.termos { margin-top: 15px; color: #6ee7b7; font-size: 11px; line-height: 1.5; text-align: center; opacity: 0.7; }
 
-.voltar { display: block; margin: 15px auto 0; padding: 10px; background: none; border: 0; color: #bbf7d0; text-decoration: underline; cursor: pointer; font-size: 14px; }
+.termos {
+    margin-top: 15px;
+    color: #6ee7b7;
+    font-size: 11px;
+    line-height: 1.5;
+    text-align: center;
+    opacity: 0.7;
+}
 
-/* ========================= SITE PRINCIPAL ========================= */
+.voltar {
+    display: block;
+    margin: 15px auto 0;
+    padding: 10px;
+    background: none;
+    border: 0;
+    color: #bbf7d0;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 14px;
+}
+
 #site { display: none; }
 
 .site-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 15px; background: #0a2e1c; border-bottom: 1px solid #145a38;
-    position: sticky; top: 0; z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 15px;
+    background: #0a2e1c;
+    border-bottom: 1px solid #145a38;
+    position: sticky;
+    top: 0;
+    z-index: 50;
 }
-.site-logo { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
+
+.site-logo {
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+}
+
 .site-logo span { color: #facc15; }
+
 .site-saldo {
-    background: #145a38; padding: 6px 14px; border-radius: 20px;
-    font-size: 14px; font-weight: bold; color: #facc15; border: 1px solid #facc15;
+    background: #145a38;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #facc15;
+    border: 1px solid #facc15;
 }
 
 .quick-actions {
-    display: flex; gap: 10px; overflow-x: auto; padding: 12px 15px;
-    scrollbar-width: none; -ms-overflow-style: none;
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 12px 15px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
+
 .quick-actions::-webkit-scrollbar { display: none; }
+
 .action-btn {
-    min-width: 75px; height: 70px; background: #145a38; border-radius: 12px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    font-size: 10px; font-weight: bold; border: 1px solid #1e7a4d; gap: 6px; flex-shrink: 0;
-    text-decoration: none; color: white;
+    min-width: 75px;
+    height: 70px;
+    background: #145a38;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    border: 1px solid #1e7a4d;
+    gap: 6px;
+    flex-shrink: 0;
+    text-decoration: none;
+    color: white;
 }
+
 .action-btn .icon { font-size: 24px; }
+
 .action-btn.deposit { position: relative; }
+
 .action-btn.deposit::after {
-    content: "+1%"; position: absolute; top: -4px; right: -4px;
-    background: #ef4444; color: white; font-size: 8px; padding: 2px 5px; border-radius: 6px; font-weight: bold;
+    content: "+1%";
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #ef4444;
+    color: white;
+    font-size: 8px;
+    padding: 2px 5px;
+    border-radius: 6px;
+    font-weight: bold;
 }
 
 .marquee-bar {
-    background: #072a1a; padding: 8px 15px; font-size: 12px;
-    white-space: nowrap; overflow: hidden; color: #facc15;
-    display: flex; align-items: center; gap: 8px;
+    background: #072a1a;
+    padding: 8px 15px;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    color: #facc15;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
-.marquee-text { animation: scrollMarquee 20s linear infinite; }
-@keyframes scrollMarquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+.marquee-text {
+    animation: scrollMarquee 20s linear infinite;
+}
+
+@keyframes scrollMarquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
 
 .nav-categories {
-    display: flex; justify-content: space-around; background: #145a38;
-    padding: 10px; margin: 12px 15px; border-radius: 14px;
+    display: flex;
+    justify-content: space-around;
+    background: #145a38;
+    padding: 10px;
+    margin: 12px 15px;
+    border-radius: 14px;
 }
-.cat-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; opacity: 0.6; cursor: pointer; }
-.cat-item.active { opacity: 1; color: #facc15; }
+
+.cat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+.cat-item.active {
+    opacity: 1;
+    color: #facc15;
+}
+
 .cat-icon { font-size: 22px; }
 
 .jackpot-banner {
-    margin: 0 15px; background: linear-gradient(180deg, #145a38 0%, #0b3b24 100%);
-    border-radius: 16px; padding: 20px 15px; text-align: center;
-    border: 1px solid #22c55e; position: relative; overflow: hidden;
+    margin: 0 15px;
+    background: linear-gradient(180deg, #145a38 0%, #0b3b24 100%);
+    border-radius: 16px;
+    padding: 20px 15px;
+    text-align: center;
+    border: 1px solid #22c55e;
+    position: relative;
+    overflow: hidden;
 }
-.jackpot-label {
-    background: #0b3b24; border: 1px solid #22c55e; color: white;
-    padding: 4px 18px; border-radius: 20px; display: inline-block;
-    margin-bottom: 8px; font-weight: bold; font-size: 13px;
-}
-.jackpot-value { font-size: 26px; font-weight: 900; color: #facc15; margin: 8px 0; text-shadow: 0 2px 6px rgba(0,0,0,0.5); }
-.providers { display: flex; justify-content: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-.prov-badge { background: #0a2e1c; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: bold; border: 1px solid #1e7a4d; }
 
-.games-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 12px 15px; }
+.jackpot-label {
+    background: #0b3b24;
+    border: 1px solid #22c55e;
+    color: white;
+    padding: 4px 18px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.jackpot-value {
+    font-size: 26px;
+    font-weight: 900;
+    color: #facc15;
+    margin: 8px 0;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+
+.providers {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.prov-badge {
+    background: #0a2e1c;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: bold;
+    border: 1px solid #1e7a4d;
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding: 12px 15px;
+}
+
 .game-card {
-    aspect-ratio: 3/4; background: #1e7a4d; border-radius: 10px;
-    position: relative; overflow: hidden; display: flex; align-items: flex-end;
-    cursor: pointer; transition: transform 0.15s;
-    -webkit-user-select: none; user-select: none;
-    -webkit-touch-callout: none; touch-action: manipulation;
-    text-decoration: none; color: white;
+    aspect-ratio: 3/4;
+    background: #1e7a4d;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    cursor: pointer;
+    transition: transform 0.15s;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
+    text-decoration: none;
+    color: white;
 }
-.game-card:active { transform: scale(0.95); }
-.game-img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; border-radius: 10px; }
+
+.game-card:active {
+    transform: scale(0.95);
+}
+
+.game-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 10px;
+    display: block;
+}
+
 .game-overlay {
-    position: absolute; bottom: 0; left: 0; right: 0;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
     background: linear-gradient(transparent, rgba(0,0,0,0.85));
-    padding: 25px 6px 6px; font-size: 10px; font-weight: bold; line-height: 1.3;
+    padding: 25px 6px 6px;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 1.3;
 }
+
 .provider-tag {
-    position: absolute; bottom: 4px; left: 4px; font-size: 8px;
-    background: rgba(0,0,0,0.7); padding: 2px 5px; border-radius: 4px; font-weight: bold;
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    font-size: 8px;
+    background: rgba(0,0,0,0.7);
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-weight: bold;
 }
-.like-icon { position: absolute; top: 5px; left: 5px; font-size: 13px; opacity: 0.8; z-index: 2; }
-.fav-icon { position: absolute; top: 5px; right: 5px; font-size: 13px; opacity: 0.8; z-index: 2; }
+
+.like-icon {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    font-size: 13px;
+    opacity: 0.8;
+    z-index: 2;
+}
+
+.fav-icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 13px;
+    opacity: 0.8;
+    z-index: 2;
+}
+
 .bonus-badge {
-    position: absolute; top: 5px; right: 5px; background: #facc15; color: #0b3b24;
-    font-size: 8px; font-weight: 900; padding: 3px 6px; border-radius: 6px; z-index: 3;
-    text-align: center; line-height: 1.2;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #facc15;
+    color: #0b3b24;
+    font-size: 8px;
+    font-weight: 900;
+    padding: 3px 6px;
+    border-radius: 6px;
+    z-index: 3;
+    text-align: center;
+    line-height: 1.2;
 }
 
 .bottom-nav {
-    position: fixed; bottom: 0; left: 0; right: 0; height: 70px;
-    background: #0a2e1c; border-top: 1px solid #145a38;
-    display: flex; justify-content: space-around; align-items: center;
-    z-index: 100; padding-bottom: env(safe-area-inset-bottom);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: #0a2e1c;
+    border-top: 1px solid #145a38;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 100;
+    padding-bottom: env(safe-area-inset-bottom);
 }
+
 .nav-link {
-    display: flex; flex-direction: column; align-items: center; gap: 3px;
-    font-size: 10px; opacity: 0.5; cursor: pointer; min-width: 55px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    opacity: 0.5;
+    cursor: pointer;
+    min-width: 55px;
 }
-.nav-link.active { opacity: 1; color: #facc15; }
+
+.nav-link.active {
+    opacity: 1;
+    color: #facc15;
+}
+
 .nav-icon { font-size: 22px; }
+
 .nav-link.has-badge { position: relative; }
+
 .nav-link.has-badge::after {
-    content: attr(data-badge); position: absolute; top: -2px; right: 12px;
-    background: #ef4444; color: white; font-size: 9px; font-weight: bold;
-    width: 16px; height: 16px; border-radius: 50%; display: flex;
-    align-items: center; justify-content: center;
+    content: attr(data-badge);
+    position: absolute;
+    top: -2px;
+    right: 12px;
+    background: #ef4444;
+    color: white;
+    font-size: 9px;
+    font-weight: bold;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-topo {
-    position: fixed; right: 15px; bottom: 85px; width: 40px; height: 40px;
-    background: #facc15; color: #0b3b24; border: 0; border-radius: 50%;
-    font-size: 18px; font-weight: bold; cursor: pointer; z-index: 90;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4); display: none;
+    position: fixed;
+    right: 15px;
+    bottom: 85px;
+    width: 40px;
+    height: 40px;
+    background: #facc15;
+    color: #0b3b24;
+    border: 0;
+    border-radius: 50%;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 90;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    display: none;
 }
 
-/* ========================= PÁGINA CONTA ========================= */
-#paginaConta { display: none; min-height: 100vh; padding: 20px 15px 110px; }
-.conta-container { max-width: 600px; margin: auto; }
-.conta-titulo { text-align: center; color: #facc15; font-size: 24px; margin: 10px 0 20px; }
+#paginaConta {
+    display: none;
+    min-height: 100vh;
+    padding: 20px 15px 110px;
+}
+
+.conta-container {
+    max-width: 600px;
+    margin: auto;
+}
+
+.conta-titulo {
+    text-align: center;
+    color: #facc15;
+    font-size: 24px;
+    margin: 10px 0 20px;
+}
+
 .conta-card {
-    padding: 25px 20px; background: #0a2e1c; border: 1px solid #145a38;
-    border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
-.avatar {
-    width: 70px; height: 70px; margin: 0 auto 12px; border-radius: 50%;
-    background: #facc15; display: flex; align-items: center; justify-content: center;
-    font-size: 32px; color: #0b3b24;
-}
-.conta-nome { text-align: center; font-size: 15px; font-weight: bold; word-break: break-all; }
-.conta-email { text-align: center; color: #86efac; margin-top: 5px; font-size: 13px; word-break: break-word; }
-.conta-item { margin-top: 18px; padding: 14px; border-radius: 10px; background: #072a1a; border: 1px solid #145a38; }
-.conta-item strong { display: block; color: #facc15; margin-bottom: 4px; font-size: 13px; }
-.conta-saldo { color: #4ade80; font-size: 22px; font-weight: 900; }
-.btn-sair-conta {
-    width: 100%; margin-top: 18px; padding: 14px; border: 0; border-radius: 10px;
-    background: #dc2626; color: white; font-size: 15px; font-weight: bold; cursor: pointer;
+    padding: 25px 20px;
+    background: #0a2e1c;
+    border: 1px solid #145a38;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
 
-/* ========================= SUPORTE ========================= */
+.avatar {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 12px;
+    border-radius: 50%;
+    background: #facc15;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: #0b3b24;
+}
+
+.conta-nome {
+    text-align: center;
+    font-size: 15px;
+    font-weight: bold;
+    word-break: break-all;
+}
+
+.conta-email {
+    text-align: center;
+    color: #86efac;
+    margin-top: 5px;
+    font-size: 13px;
+    word-break: break-word;
+}
+
+.conta-item {
+    margin-top: 18px;
+    padding: 14px;
+    border-radius: 10px;
+    background: #072a1a;
+    border: 1px solid #145a38;
+}
+
+.conta-item strong {
+    display: block;
+    color: #facc15;
+    margin-bottom: 4px;
+    font-size: 13px;
+}
+
+.conta-saldo {
+    color: #4ade80;
+    font-size: 22px;
+    font-weight: 900;
+}
+
+.btn-sair-conta {
+    width: 100%;
+    margin-top: 18px;
+    padding: 14px;
+    border: 0;
+    border-radius: 10px;
+    background: #dc2626;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
 #botaoSuporte {
-    display: none; position: fixed; right: 15px; bottom: 85px; z-index: 150;
-    border: 0; border-radius: 50px; padding: 12px 16px;
-    background: linear-gradient(135deg, #facc15, #eab308); color: #0b3b24;
-    font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.4); cursor: pointer;
+    display: none;
+    position: fixed;
+    right: 15px;
+    bottom: 85px;
+    z-index: 150;
+    border: 0;
+    border-radius: 50px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #facc15, #eab308);
+    color: #0b3b24;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    cursor: pointer;
 }
+
 #janelaSuporte {
-    display: none; position: fixed; right: 10px; bottom: 140px;
-    width: calc(100% - 20px); max-width: 380px; height: 480px; z-index: 200;
-    background: #0a2e1c; border: 1px solid #145a38; border-radius: 16px;
-    overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    display: none;
+    position: fixed;
+    right: 10px;
+    bottom: 140px;
+    width: calc(100% - 20px);
+    max-width: 380px;
+    height: 480px;
+    z-index: 200;
+    background: #0a2e1c;
+    border: 1px solid #145a38;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
 }
+
 .suporte-topo {
-    height: 55px; padding: 10px 14px; background: #145a38;
-    border-bottom: 1px solid #1e7a4d; display: flex; align-items: center; justify-content: space-between;
+    height: 55px;
+    padding: 10px 14px;
+    background: #145a38;
+    border-bottom: 1px solid #1e7a4d;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
-.suporte-titulo { font-weight: bold; font-size: 15px; }
-.suporte-status { color: #4ade80; font-size: 11px; margin-top: 2px; }
+
+.suporte-titulo {
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.suporte-status {
+    color: #4ade80;
+    font-size: 11px;
+    margin-top: 2px;
+}
+
 .fechar-suporte {
-    width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 50%; color: white; font-size: 20px; line-height: 28px; cursor: pointer; text-align: center;
+    width: 32px;
+    height: 32px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    color: white;
+    font-size: 20px;
+    line-height: 28px;
+    cursor: pointer;
+    text-align: center;
 }
-#suporteMensagens { height: 280px; padding: 12px; overflow-y: auto; }
-.msg-suporte { max-width: 85%; padding: 10px 12px; margin-bottom: 8px; border-radius: 12px; line-height: 1.4; font-size: 13px; white-space: pre-line; }
-.msg-bot { background: #072a1a; border: 1px solid #145a38; margin-right: auto; }
-.msg-usuario { background: #facc15; color: #0b3b24; margin-left: auto; }
-.msg-digitando { display: flex; align-items: center; gap: 4px; width: max-content; min-width: 55px; }
-.msg-digitando span { width: 6px; height: 6px; border-radius: 50%; background: #86efac; animation: digitando 1.2s infinite; }
+
+#suporteMensagens {
+    height: 280px;
+    padding: 12px;
+    overflow-y: auto;
+}
+
+.msg-suporte {
+    max-width: 85%;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    line-height: 1.4;
+    font-size: 13px;
+    white-space: pre-line;
+}
+
+.msg-bot {
+    background: #072a1a;
+    border: 1px solid #145a38;
+    margin-right: auto;
+}
+
+.msg-usuario {
+    background: #facc15;
+    color: #0b3b24;
+    margin-left: auto;
+}
+
+.msg-digitando {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: max-content;
+    min-width: 55px;
+}
+
+.msg-digitando span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #86efac;
+    animation: digitando 1.2s infinite;
+}
+
 .msg-digitando span:nth-child(2) { animation-delay: 0.2s; }
 .msg-digitando span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes digitando { 0%,60%,100% { opacity:0.3; transform:translateY(0); } 30% { opacity:1; transform:translateY(-3px); } }
-.suporte-opcoes { display: flex; flex-wrap: wrap; gap: 5px; padding: 8px 10px; border-top: 1px solid #145a38; }
-.suporte-opcoes button {
-    flex: 1 1 30%; padding: 8px 4px; border: 1px solid #1e7a4d; border-radius: 8px;
-    background: #072a1a; color: #bbf7d0; cursor: pointer; font-size: 11px;
-}
-.suporte-escrever { display: flex; gap: 6px; padding: 8px; background: #072a1a; border-top: 1px solid #145a38; }
-#entradaSuporte { height: 40px; flex: 1; min-width: 0; margin: 0; font-size: 13px; }
-#enviarSuporte {
-    width: 44px; height: 40px; border: 0; border-radius: 8px;
-    background: #22c55e; color: white; font-size: 18px; cursor: pointer; flex-shrink: 0;
+
+@keyframes digitando {
+    0%,60%,100% {
+        opacity:0.3;
+        transform:translateY(0);
+    }
+    30% {
+        opacity:1;
+        transform:translateY(-3px);
+    }
 }
 
-/* ========================= LOADER DE JOGOS (RESTAURADO) ========================= */
+.suporte-opcoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 8px 10px;
+    border-top: 1px solid #145a38;
+}
+
+.suporte-opcoes button {
+    flex: 1 1 30%;
+    padding: 8px 4px;
+    border: 1px solid #1e7a4d;
+    border-radius: 8px;
+    background: #072a1a;
+    color: #bbf7d0;
+    cursor: pointer;
+    font-size: 11px;
+}
+
+.suporte-escrever {
+    display: flex;
+    gap: 6px;
+    padding: 8px;
+    background: #072a1a;
+    border-top: 1px solid #145a38;
+}
+
+#entradaSuporte {
+    height: 40px;
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: 13px;
+}
+
+#enviarSuporte {
+    width: 44px;
+    height: 40px;
+    border: 0;
+    border-radius: 8px;
+    background: #22c55e;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
 #loader {
-    position: fixed; inset: 0; z-index: 99999;
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    padding: 20px; background: radial-gradient(circle at 50% 40%, #35105d, #12001f 55%, #08000f 100%);
-    opacity: 0; visibility: hidden; pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: radial-gradient(circle at 50% 40%, #35105d, #12001f 55%, #08000f 100%);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
     transition: opacity .45s ease, visibility .45s ease;
 }
-#loader.ativo { opacity: 1; visibility: visible; pointer-events: auto; }
+
+#loader.ativo {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
 
 .loader-card {
-    width: 350px; max-width: 94vw; padding: 0; text-align: center;
-    background: transparent; border: 0; box-shadow: none;
+    width: 350px;
+    max-width: 94vw;
+    padding: 0;
+    text-align: center;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
 }
+
 .loader-icone {
-    width: 350px; max-width: 94vw; height: auto; min-height: 0;
-    display: flex; align-items: center; justify-content: center; overflow: hidden;
-    border-radius: 18px; background: #08000f; border: 2px solid rgba(255,215,0,.75);
+    width: 350px;
+    max-width: 94vw;
+    height: auto;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 18px;
+    background: #08000f;
+    border: 2px solid rgba(255,215,0,.75);
     box-shadow: 0 0 20px rgba(255,215,0,.35), 0 0 50px rgba(145,0,255,.35);
     animation: bannerCarregando 1.4s ease-in-out infinite alternate;
 }
-@keyframes bannerCarregando { from { transform:scale(.97); opacity:.82; } to { transform:scale(1); opacity:1; } }
+
+@keyframes bannerCarregando {
+    from {
+        transform:scale(.97);
+        opacity:.82;
+    }
+    to {
+        transform:scale(1);
+        opacity:1;
+    }
+}
 
 .loader-icone img {
-    width: 100%; height: auto; max-height: none; object-fit: contain;
-    display: none; border-radius: 16px;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    object-fit: contain;
+    display: none;
+    border-radius: 16px;
 }
+
 .loader-icone .icone-normal {
-    width: 100%; min-height: 180px; display: flex; align-items: center; justify-content: center;
+    width: 100%;
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 65px;
 }
+
 #loaderNome {
-    margin-top: 22px; color: #ffd700; font-size: 21px; font-weight: bold;
-    text-align: center; text-shadow: 0 0 10px rgba(255,215,0,.6);
+    margin-top: 22px;
+    color: #ffd700;
+    font-size: 21px;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 0 0 10px rgba(255,215,0,.6);
 }
-.loader-status { margin-top: 9px; color: #cdbce0; font-size: 14px; text-align: center; }
-.loader-dots { margin-top: 15px; display: flex; justify-content: center; gap: 7px; }
+
+.loader-status {
+    margin-top: 9px;
+    color: #cdbce0;
+    font-size: 14px;
+    text-align: center;
+}
+
+.loader-dots {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+}
+
 .loader-dots span {
-    width: 9px; height: 9px; border-radius: 50%; background: #ffd700;
-    box-shadow: 0 0 8px rgba(255,215,0,.7); animation: loadingDot 1s infinite;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #ffd700;
+    box-shadow: 0 0 8px rgba(255,215,0,.7);
+    animation: loadingDot 1s infinite;
 }
+
 .loader-dots span:nth-child(2) { animation-delay: .15s; }
 .loader-dots span:nth-child(3) { animation-delay: .30s; }
-@keyframes loadingDot { 0%,100% { transform:scale(.65); opacity:.35; } 50% { transform:scale(1); opacity:1; } }
+
+@keyframes loadingDot {
+    0%,100% {
+        transform:scale(.65);
+        opacity:.35;
+    }
+    50% {
+        transform:scale(1);
+        opacity:1;
+    }
+}
 
 @media(max-width: 360px) {
     .logo { font-size: 34px; }
     .jackpot-value { font-size: 22px; }
-    .games-grid { gap: 6px; padding: 10px 12px; }
+    .games-grid {
+        gap: 6px;
+        padding: 10px 12px;
+    }
     .game-overlay { font-size: 9px; }
-    .nav-link { font-size: 9px; min-width: 48px; }
+    .nav-link {
+        font-size: 9px;
+        min-width: 48px;
+    }
     .nav-icon { font-size: 20px; }
     .loader-icone { width: 94vw; }
-    .loader-icone .icone-normal { min-height: 160px; font-size: 52px; }
+    .loader-icone .icone-normal {
+        min-height: 160px;
+        font-size: 52px;
+    }
     .loader-card { width: 94vw; }
 }
 </style>
 </head>
+
 <body>
 
 <section id="telaLogin">
 <div class="login-container">
     <div class="logo">Aposta<span>X</span>Bet</div>
+
     <div class="banner-login">
         <div class="brasil">🇧🇷</div>
         <h2>Bem-vindo ao ApostaXBet</h2>
         <p>Cadastre-se agora e comece a jogar</p>
         <strong>🎁 BÔNUS DE BOAS-VINDAS</strong>
     </div>
+
     <div class="login-box">
         <div class="tabs">
             <div class="tab active" id="tabCadastro" onclick="mostrarCadastro()">Cadastro</div>
             <div class="tab" id="tabLogin" onclick="mostrarLogin()">Login</div>
         </div>
+
         <form id="formCadastro" class="form active" onsubmit="cadastrar(event)">
             <label>Seu nome</label>
             <input id="nomeCadastro" type="text" placeholder="Digite seu nome" required>
+
             <label>E-mail</label>
             <input id="emailCadastro" type="email" placeholder="Digite seu e-mail" required>
+
             <label>Criar senha</label>
             <div class="campo-senha">
                 <input id="senhaCadastro" type="password" placeholder="Mínimo de 6 caracteres" minlength="6" required>
                 <span class="olho" onclick="mostrarSenha('senhaCadastro')">👁️</span>
             </div>
+
             <label>Confirmar senha</label>
             <div class="campo-senha">
                 <input id="confirmarSenha" type="password" placeholder="Digite a senha novamente" minlength="6" required>
                 <span class="olho" onclick="mostrarSenha('confirmarSenha')">👁️</span>
             </div>
+
             <button class="btn-principal" type="submit" id="btnCadastro">CRIAR CONTA</button>
             <div id="mensagemCadastro" class="mensagem"></div>
         </form>
+
         <form id="formLogin" class="form" onsubmit="entrar(event)">
             <label>E-mail</label>
             <input id="emailLogin" type="email" placeholder="Digite seu e-mail" required>
+
             <label>Senha</label>
             <div class="campo-senha">
                 <input id="senhaLogin" type="password" placeholder="Digite sua senha" required>
                 <span class="olho" onclick="mostrarSenha('senhaLogin')">👁️</span>
             </div>
+
             <button class="btn-principal" type="submit" id="btnLogin">ENTRAR</button>
             <button type="button" class="esqueci" onclick="mostrarRecuperacao()">Esqueci minha senha?</button>
             <div id="mensagemLogin" class="mensagem"></div>
         </form>
-        <div class="termos">Ao criar uma conta, você concorda com os termos de uso e política de privacidade do ApostaXBet.</div>
+
+        <div class="termos">
+            Ao criar uma conta, você concorda com os termos de uso e política de privacidade do ApostaXBet.
+        </div>
     </div>
 </div>
 </section>
@@ -372,15 +1007,22 @@ input:focus { border-color: #facc15; box-shadow: 0 0 0 2px rgba(250,204,21,0.15)
 <section id="telaRecuperacao">
 <div class="recuperacao-container">
     <div class="logo">Aposta<span>X</span>Bet</div>
+
     <div class="recuperacao-box">
         <h2 style="text-align:center;color:#facc15;margin-bottom:10px;">🔐 Recuperar senha</h2>
-        <p style="text-align:center;color:#bbf7d0;line-height:1.5;margin-bottom:15px;">Digite o e-mail usado no cadastro. Vamos enviar um link para você criar uma nova senha.</p>
+
+        <p style="text-align:center;color:#bbf7d0;line-height:1.5;margin-bottom:15px;">
+            Digite o e-mail usado no cadastro. Vamos enviar um link para você criar uma nova senha.
+        </p>
+
         <form onsubmit="enviarRecuperacao(event)">
             <label>E-mail</label>
             <input id="emailRecuperacao" type="email" placeholder="Digite seu e-mail" required>
+
             <button class="btn-principal" type="submit" id="btnRecuperacao">ENVIAR LINK</button>
             <div id="mensagemRecuperacao" class="mensagem"></div>
         </form>
+
         <button class="voltar" type="button" onclick="voltarLogin()">← Voltar para o login</button>
     </div>
 </div>
@@ -389,20 +1031,24 @@ input:focus { border-color: #facc15; box-shadow: 0 0 0 2px rgba(250,204,21,0.15)
 <section id="telaNovaSenha">
 <div class="nova-senha-container">
     <div class="logo">Aposta<span>X</span>Bet</div>
+
     <div class="nova-senha-box">
         <h2 style="text-align:center;color:#facc15;margin-bottom:10px;">Criar nova senha</h2>
         <p style="text-align:center;color:#bbf7d0;margin-bottom:15px;">Digite sua nova senha abaixo.</p>
+
         <form onsubmit="salvarNovaSenha(event)">
             <label>Nova senha</label>
             <div class="campo-senha">
                 <input id="novaSenha" type="password" placeholder="Mínimo de 6 caracteres" minlength="6" required>
-                <span class="olho" onclick="mostrarSenha('novaSenha')">️</span>
+                <span class="olho" onclick="mostrarSenha('novaSenha')">👁️</span>
             </div>
+
             <label>Confirmar nova senha</label>
             <div class="campo-senha">
                 <input id="confirmarNovaSenha" type="password" placeholder="Digite novamente" minlength="6" required>
                 <span class="olho" onclick="mostrarSenha('confirmarNovaSenha')">👁️</span>
             </div>
+
             <button class="btn-principal" type="submit" id="btnNovaSenha">SALVAR NOVA SENHA</button>
             <div id="mensagemNovaSenha" class="mensagem"></div>
         </form>
@@ -411,188 +1057,334 @@ input:focus { border-color: #facc15; box-shadow: 0 0 0 2px rgba(250,204,21,0.15)
 </section>
 
 <section id="site">
-    <header class="site-header">
-        <div class="site-logo">Aposta<span>X</span>Bet</div>
-        <div class="site-saldo">💰 R$ <span id="saldoValor">0,00</span></div>
-    </header>
 
-    <div class="quick-actions">
-        <a href="#" class="action-btn"><span class="icon">👑</span>VIP</a>
-        <a href="#" class="action-btn"><span class="icon"></span>CONVITE</a>
-        <a href="#" class="action-btn"><span class="icon">🎟️</span>CÓDIGO</a>
-        <a href="#" class="action-btn"><span class="icon">📋</span>MISSÃO</a>
-        <a href="#" class="action-btn"><span class="icon"></span>COLEÇÃO</a>
-        <a href="#" class="action-btn"><span class="icon">🏷️</span>DESCONTO</a>
+<header class="site-header">
+    <div class="site-logo">Aposta<span>X</span>Bet</div>
+    <div class="site-saldo">💰 R$ <span id="saldoValor">0,00</span></div>
+</header>
+
+<div class="quick-actions">
+    <a href="#" class="action-btn"><span class="icon">👑</span>VIP</a>
+    <a href="#" class="action-btn"><span class="icon"></span>CONVITE</a>
+    <a href="#" class="action-btn"><span class="icon">🎟️</span>CÓDIGO</a>
+    <a href="#" class="action-btn"><span class="icon">📋</span>MISSÃO</a>
+    <a href="#" class="action-btn"><span class="icon"></span>COLEÇÃO</a>
+    <a href="#" class="action-btn"><span class="icon">🏷️</span>DESCONTO</a>
+</div>
+
+<div class="marquee-bar">
+    <span>🔥</span>
+    <div class="marquee-text">
+        COMPARTILHE O LINK DO AGENTE E GANHE BÔNUS EXCLUSIVOS NO APOSTAXBET! 🔥
+        CADASTRE-SE AGORA E RECEBA SEU BÔNUS DE BOAS-VINDAS! 🎁
+    </div>
+</div>
+
+<div class="nav-categories">
+    <div class="cat-item active" onclick="filtrarJogos('todos', this)">
+        <span class="cat-icon">🔍</span><span>Pesquisar</span>
+    </div>
+    <div class="cat-item" onclick="filtrarJogos('popular', this)">
+        <span class="cat-icon">🔥</span><span>Popular</span>
+    </div>
+    <div class="cat-item" onclick="filtrarJogos('slots', this)">
+        <span class="cat-icon">🎰</span><span>Slots</span>
+    </div>
+    <div class="cat-item" onclick="filtrarJogos('mini', this)">
+        <span class="cat-icon">🎮</span><span>Minijogos</span>
+    </div>
+</div>
+
+<div class="jackpot-banner">
+    <div class="jackpot-label">JACKPOT</div>
+    <div class="jackpot-value" id="jackpotValue">15.617.132,96</div>
+
+    <div class="providers">
+        <div class="prov-badge">PG Slots</div>
+        <div class="prov-badge">JDB Slots</div>
+        <div class="prov-badge">WG Slots</div>
+        <div class="prov-badge">2J Slots</div>
+    </div>
+</div>
+
+<!-- ==================== JOGOS ==================== -->
+<div class="games-grid" id="gamesGrid">
+
+    <div class="game-card"
+         data-cat="popular slots"
+         data-jogo="Roleta"
+         data-capa="jogos/banner-roleta.png"
+         data-icon="🎰"
+         data-link="jogos/roleta.html">
+        <img class="game-img" src="jogos/banner-roleta.png" alt="Roleta">
+        <span class="like-icon">👍</span>
+        <span class="fav-icon">⭐</span>
+        <div class="game-overlay">
+            Roleta<br>
+            <span class="provider-tag">AX</span>
+        </div>
     </div>
 
-    <div class="marquee-bar">
-        <span>🔥</span>
-        <div class="marquee-text">COMPARTILHE O LINK DO AGENTE E GANHE BÔNUS EXCLUSIVOS NO APOSTAXBET! 🔥 CADASTRE-SE AGORA E RECEBA SEU BÔNUS DE BOAS-VINDAS! 🎁</div>
-    </div>
-
-    <div class="nav-categories">
-        <div class="cat-item active" onclick="filtrarJogos('todos', this)"><span class="cat-icon">🔍</span><span>Pesquisar</span></div>
-        <div class="cat-item" onclick="filtrarJogos('popular', this)"><span class="cat-icon">🔥</span><span>Popular</span></div>
-        <div class="cat-item" onclick="filtrarJogos('slots', this)"><span class="cat-icon">🎰</span><span>Slots</span></div>
-        <div class="cat-item" onclick="filtrarJogos('mini', this)"><span class="cat-icon"></span><span>Minijogos</span></div>
-    </div>
-
-    <div class="jackpot-banner">
-        <div class="jackpot-label">JACKPOT</div>
-        <div class="jackpot-value" id="jackpotValue">15.617.132,96</div>
-        <div class="providers">
-            <div class="prov-badge">PG Slots</div>
-            <div class="prov-badge">JDB Slots</div>
-            <div class="prov-badge">WG Slots</div>
-            <div class="prov-badge">2J Slots</div>
+    <div class="game-card"
+         data-cat="popular slots"
+         data-jogo="Roleta Premium"
+         data-capa="jogos/banner-roleta-premium.png"
+         data-icon="🎡"
+         data-link="jogos/roleta2.html">
+        <img class="game-img" src="jogos/banner-roleta-premium.png" alt="Roleta Premium">
+        <span class="like-icon">👍</span>
+        <span class="fav-icon">⭐</span>
+        <div class="game-overlay">
+            Roleta Premium<br>
+            <span class="provider-tag">AX</span>
         </div>
     </div>
 
-    <!-- GRID DE JOGOS ESTÁTICO (HTML PURO) -->
-    <div class="games-grid" id="gamesGrid">
-        
-        <div class="game-card" data-cat="popular slots" data-jogo="Roleta" data-capa="banner-roleta.png" data-icon="🎰" data-link="jogos/roleta.html">
-            <img class="game-img" src="banner-roleta.png" alt="Roleta">
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-            <div class="game-overlay">Roleta<br><span class="provider-tag">AX</span></div>
+    <div class="game-card"
+         data-cat="slots"
+         data-jogo="Roleta Cassino"
+         data-capa="jogos/banner-roleta-cassino.png"
+         data-icon="🎰"
+         data-link="jogos/roleta-cassino.html">
+        <img class="game-img" src="jogos/banner-roleta-cassino.png" alt="Roleta Cassino">
+        <span class="like-icon">👍</span>
+        <span class="fav-icon">⭐</span>
+        <div class="game-overlay">
+            Roleta Cassino<br>
+            <span class="provider-tag">AX</span>
         </div>
-
-        <div class="game-card" data-cat="popular slots" data-jogo="Roleta Premium" data-capa="banner-roleta-premium.png" data-icon="🎡" data-link="jogos/roleta2.html">
-            <img class="game-img" src="banner-roleta-premium.png" alt="Roleta Premium">
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-            <div class="game-overlay">Roleta Premium<br><span class="provider-tag">AX</span></div>
-        </div>
-
-        <div class="game-card" data-cat="slots" data-jogo="Roleta Cassino" data-capa="banner-roleta-cassino.png" data-icon="" data-link="jogos/roleta-cassino.html">
-            <img class="game-img" src="banner-roleta-cassino.png" alt="Roleta Cassino">
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-            <div class="game-overlay">Roleta Cassino<br><span class="provider-tag">AX</span></div>
-        </div>
-
-        <div class="game-card" data-cat="popular mini" data-jogo="Mines" data-capa="banner-mines.png" data-icon="" data-link="jogos/mines.html">
-            <img class="game-img" src="banner-mines.png" alt="Mines">
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-            <div class="game-overlay">Mines<br><span class="provider-tag">AX</span></div>
-        </div>
-
-        <div class="game-card" data-cat="popular slots" data-jogo="Crash" data-capa="banner-crash.png" data-icon="🚀" data-link="jogos/crash.html">
-            <img class="game-img" src="banner-crash.png" alt="Crash">
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-            <div class="game-overlay">Crash<br><span class="provider-tag">AX</span></div>
-        </div>
-
-        <div class="game-card" data-cat="mini" data-jogo="Plinko" data-capa="banner-plinko.png" data-icon="🎯" data-link="jogos/plinko.html">
-            <img class="game-img" src="banner-plinko.png" alt="Plinko">
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-            <div class="game-overlay">Plinko<br><span class="provider-tag">AX</span></div>
-        </div>
-
-        <div class="game-card" data-cat="slots" data-jogo="Dice" data-capa="banner-dice.png" data-icon="" data-link="jogos/dice.html">
-            <img class="game-img" src="banner-dice.png" alt="Dice">
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-            <div class="game-overlay">Dice<br><span class="provider-tag">AX</span></div>
-        </div>
-
-        <div class="game-card" data-cat="popular" data-jogo="Lobby" data-capa="banner-lobby.png" data-icon="🐺" data-link="jogos/lobby.html">
-            <img class="game-img" src="banner-lobby.png" alt="Lobby">
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-            <div class="game-overlay">Lobby<br><span class="provider-tag">AX</span></div>
-        </div>
-
-        <div class="game-card" data-cat="slots" data-jogo="Night Monsters" data-capa="banner-night-monsters.png" data-icon="🧛" data-link="jogos/hotel-transylvania/index.html">
-            <img class="game-img" src="banner-night-monsters.png" alt="Night Monsters">
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-            <div class="bonus-badge">Novo</div>
-            <div class="game-overlay">Night Monsters<br><span class="provider-tag">AX</span></div>
-        </div>
-
-        <div class="game-card" data-cat="popular slots" data-jogo="Fortune Snake" data-capa="banner-fortune-snake.png" data-icon="🐍" data-link="jogos/fortune-snake.html">
-            <img class="game-img" src="banner-fortune-snake.png" alt="Fortune Snake">
-            <span class="like-icon">👍</span>
-            <span class="fav-icon">⭐</span>
-            <div class="bonus-badge">Bônus R$20,00</div>
-            <div class="game-overlay">Fortune Snake<br><span class="provider-tag">AX</span></div>
-        </div>
-
     </div>
 
-    <div style="padding:0 15px;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:5px;">
-        <a href="deposito.html" style="padding:16px;border-radius:12px;background:linear-gradient(135deg,#facc15,#eab308);color:#0b3b24;text-decoration:none;text-align:center;font-size:15px;font-weight:800;">💰 Depositar</a>
-        <a href="saque.html" style="padding:16px;border-radius:12px;background:#22c55e;color:white;text-decoration:none;text-align:center;font-size:15px;font-weight:800;">💵 Sacar</a>
+    <div class="game-card"
+         data-cat="popular mini"
+         data-jogo="Mines"
+         data-capa="jogos/banner-mines.png"
+         data-icon="💣"
+         data-link="jogos/mines.html">
+        <img class="game-img" src="jogos/banner-mines.png" alt="Mines">
+        <span class="like-icon">👍</span>
+        <span class="fav-icon">⭐</span>
+        <div class="game-overlay">
+            Mines<br>
+            <span class="provider-tag">AX</span>
+        </div>
     </div>
+
+    <div class="game-card"
+         data-cat="popular slots"
+         data-jogo="Crash"
+         data-capa="jogos/banner-crash.png"
+         data-icon="🚀"
+         data-link="jogos/crash.html">
+        <img class="game-img" src="jogos/banner-crash.png" alt="Crash">
+        <span class="like-icon">👍</span>
+        <span class="fav-icon">⭐</span>
+        <div class="game-overlay">
+            Crash<br>
+            <span class="provider-tag">AX</span>
+        </div>
+    </div>
+
+    <div class="game-card"
+         data-cat="mini"
+         data-jogo="Plinko"
+         data-capa="jogos/banner-plinko.png"
+         data-icon="🎯"
+         data-link="jogos/plinko.html">
+        <img class="game-img" src="jogos/banner-plinko.png" alt="Plinko">
+        <span class="like-icon">👍</span>
+        <span class="fav-icon">⭐</span>
+        <div class="game-overlay">
+            Plinko<br>
+            <span class="provider-tag">AX</span>
+        </div>
+    </div>
+
+    <div class="game-card"
+         data-cat="slots"
+         data-jogo="Dice"
+         data-capa="jogos/banner-dice.png"
+         data-icon="🎲"
+         data-link="jogos/dice.html">
+        <img class="game-img" src="jogos/banner-dice.png" alt="Dice">
+        <span class="like-icon">👍</span>
+        <span class="fav-icon">⭐</span>
+        <div class="game-overlay">
+            Dice<br>
+            <span class="provider-tag">AX</span>
+        </div>
+    </div>
+
+    <div class="game-card"
+         data-cat="popular"
+         data-jogo="Lobby"
+         data-capa="jogos/banner-lobby.png"
+         data-icon="🐺"
+         data-link="jogos/lobby.html">
+        <img class="game-img" src="jogos/banner-lobby.png" alt="Lobby">
+        <span class="like-icon">👍</span>
+        <span class="fav-icon">⭐</span>
+        <div class="game-overlay">
+            Lobby<br>
+            <span class="provider-tag">AX</span>
+        </div>
+    </div>
+
+    <div class="game-card"
+         data-cat="slots"
+         data-jogo="Night Monsters"
+         data-capa="jogos/banner-night-monsters.png"
+         data-icon="🧛"
+         data-link="jogos/hotel-transylvania/index.html">
+        <img class="game-img" src="jogos/banner-night-monsters.png" alt="Night Monsters">
+        <span class="like-icon">👍</span>
+        <span class="fav-icon">⭐</span>
+        <div class="bonus-badge">Novo</div>
+        <div class="game-overlay">
+            Night Monsters<br>
+            <span class="provider-tag">AX</span>
+        </div>
+    </div>
+
+    <div class="game-card"
+         data-cat="popular slots"
+         data-jogo="Fortune Snake"
+         data-capa="jogos/banner-fortune-snake.png"
+         data-icon="🐍"
+         data-link="jogos/fortune-snake.html">
+        <img class="game-img" src="jogos/banner-fortune-snake.png" alt="Fortune Snake">
+        <span class="like-icon">👍</span>
+        <span class="fav-icon">⭐</span>
+        <div class="bonus-badge">Bônus R$20,00</div>
+        <div class="game-overlay">
+            Fortune Snake<br>
+            <span class="provider-tag">AX</span>
+        </div>
+    </div>
+
+</div>
+
+<div style="padding:0 15px;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:5px;">
+    <a href="deposito.html"
+       style="padding:16px;border-radius:12px;background:linear-gradient(135deg,#facc15,#eab308);color:#0b3b24;text-decoration:none;text-align:center;font-size:15px;font-weight:800;">
+        💰 Depositar
+    </a>
+
+    <a href="saque.html"
+       style="padding:16px;border-radius:12px;background:#22c55e;color:white;text-decoration:none;text-align:center;font-size:15px;font-weight:800;">
+        💵 Sacar
+    </a>
+</div>
+
 </section>
 
 <section id="paginaConta">
 <div class="conta-container">
     <h2 class="conta-titulo">👤 Minha Conta</h2>
+
     <div class="conta-card">
-        <div class="avatar"></div>
+        <div class="avatar">👤</div>
+
         <div class="conta-nome" id="contaNome">ID do usuário</div>
         <div class="conta-email" id="contaEmail"></div>
+
         <div class="conta-item">
             <strong>💰 Seu saldo</strong>
-            <div class="conta-saldo">R$ <span id="contaSaldo">0,00</span></div>
+            <div class="conta-saldo">
+                R$ <span id="contaSaldo">0,00</span>
+            </div>
         </div>
+
         <button class="btn-sair-conta" onclick="sair()">🚪 Sair da conta</button>
     </div>
 </div>
 </section>
 
 <nav class="bottom-nav" id="menuPrincipal">
-    <div class="nav-link active" onclick="mostrarInicio()"><span class="nav-icon"></span><span>Início</span></div>
-    <div class="nav-link" onclick="window.location.href='jogos/jogos.html'"><span class="nav-icon"></span><span>Jogos</span></div>
-    <div class="nav-link has-badge" data-badge="5" onclick="mostrarConta()"><span class="nav-icon">🎁</span><span>Ofertas</span></div>
-    <div class="nav-link" onclick="abrirSuporte()"><span class="nav-icon">🎧</span><span>Suporte</span></div>
-    <div class="nav-link" onclick="mostrarConta()"><span class="nav-icon">👤</span><span>Perfil</span></div>
+    <div class="nav-link active" onclick="mostrarInicio()">
+        <span class="nav-icon">🏠</span>
+        <span>Início</span>
+    </div>
+
+    <div class="nav-link" onclick="window.location.href='jogos/jogos.html'">
+        <span class="nav-icon">🎮</span>
+        <span>Jogos</span>
+    </div>
+
+    <div class="nav-link has-badge" data-badge="5" onclick="mostrarConta()">
+        <span class="nav-icon">🎁</span>
+        <span>Ofertas</span>
+    </div>
+
+    <div class="nav-link" onclick="abrirSuporte()">
+        <span class="nav-icon">🎧</span>
+        <span>Suporte</span>
+    </div>
+
+    <div class="nav-link" onclick="mostrarConta()">
+        <span class="nav-icon">👤</span>
+        <span>Perfil</span>
+    </div>
 </nav>
 
-<button class="btn-topo" id="btnTopo" onclick="window.scrollTo({top:0,behavior:'smooth'})"></button>
+<button class="btn-topo" id="btnTopo" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
 <button id="botaoSuporte" type="button" onclick="abrirSuporte()">💬 Suporte</button>
+
 <div id="janelaSuporte">
     <div class="suporte-topo">
         <div>
             <div class="suporte-titulo">🤖 Assistente ApostaXBet</div>
             <div class="suporte-status">● Atendimento automático</div>
         </div>
+
         <button class="fechar-suporte" type="button" onclick="fecharSuporte()">×</button>
     </div>
+
     <div id="suporteMensagens">
-        <div class="msg-suporte msg-bot">👋 Olá! Sou o assistente do ApostaXBet.<br><br>Como posso ajudar?</div>
+        <div class="msg-suporte msg-bot">
+            👋 Olá! Sou o assistente do ApostaXBet.<br><br>
+            Como posso ajudar?
+        </div>
     </div>
+
     <div class="suporte-opcoes">
         <button type="button" onclick="perguntaSuporte('saldo')">💰 Saldo</button>
-        <button type="button" onclick="perguntaSuporte('jogos')"> Jogos</button>
+        <button type="button" onclick="perguntaSuporte('jogos')">🎮 Jogos</button>
         <button type="button" onclick="perguntaSuporte('deposito')">💵 Depósito</button>
         <button type="button" onclick="perguntaSuporte('saque')">🏦 Saque</button>
         <button type="button" onclick="perguntaSuporte('conta')">👤 Conta</button>
-        <button type="button" onclick="perguntaSuporte('problema')"> Problema</button>
+        <button type="button" onclick="perguntaSuporte('problema')">❓ Problema</button>
     </div>
+
     <div class="suporte-escrever">
-        <input id="entradaSuporte" type="text" placeholder="Digite sua pergunta..." autocomplete="off" onkeydown="if(event.key==='Enter')enviarPerguntaSuporte()">
+        <input
+            id="entradaSuporte"
+            type="text"
+            placeholder="Digite sua pergunta..."
+            autocomplete="off"
+            onkeydown="if(event.key==='Enter')enviarPerguntaSuporte()"
+        >
+
         <button id="enviarSuporte" type="button" onclick="enviarPerguntaSuporte()">➤</button>
     </div>
 </div>
 
-<!-- LOADER DE JOGOS RESTAURADO -->
 <div id="loader">
     <div class="loader-card">
         <div id="loaderIcone" class="loader-icone">
             <img id="loaderImagem" src="" alt="Capa do jogo">
             <div id="loaderIconeNormal" class="icone-normal">🎮</div>
         </div>
+
         <div id="loaderNome">Carregando...</div>
         <div class="loader-status">Carregando jogo...</div>
-        <div class="loader-dots"><span></span><span></span><span></span></div>
+
+        <div class="loader-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
     </div>
 </div>
 
@@ -603,16 +1395,17 @@ const SUPABASE_URL = "https://jxbzjiwmajjzxgihfjgt.supabase.co";
 const SUPABASE_KEY = "sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ";
 const CASA_VANTAGEM = 0.95;
 
-// Cliente Supabase único
 if (!window.supabase || typeof window.supabase.createClient !== "function") {
     console.error("Supabase não foi carregado.");
 } else if (!window.supabaseClient) {
-    window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    window.supabaseClient =
+        window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 }
 
-function clienteSupabase() { return window.supabaseClient; }
+function clienteSupabase() {
+    return window.supabaseClient;
+}
 
-// Elementos
 const telaLogin = document.getElementById("telaLogin");
 const telaRecuperacao = document.getElementById("telaRecuperacao");
 const telaNovaSenha = document.getElementById("telaNovaSenha");
@@ -623,95 +1416,199 @@ const botaoSuporte = document.getElementById("botaoSuporte");
 const janelaSuporte = document.getElementById("janelaSuporte");
 const btnTopo = document.getElementById("btnTopo");
 
-// Loader Elements
 const loader = document.getElementById("loader");
 const loaderNome = document.getElementById("loaderNome");
 const loaderImagem = document.getElementById("loaderImagem");
 const loaderIconeNormal = document.getElementById("loaderIconeNormal");
+
 let carregando = false;
 
-// Scroll to top button visibility
 window.addEventListener("scroll", () => {
     btnTopo.style.display = window.scrollY > 300 ? "block" : "none";
 });
 
-// Menu
-function mostrarMenu() { menuPrincipal.style.display = "flex"; }
-function esconderMenu() { menuPrincipal.style.display = "none"; }
+function mostrarMenu() {
+    menuPrincipal.style.display = "flex";
+}
 
-// Suporte
+function esconderMenu() {
+    menuPrincipal.style.display = "none";
+}
+
 function resetarSuporte() {
     const mensagens = document.getElementById("suporteMensagens");
     const campo = document.getElementById("entradaSuporte");
+
     removerDigitando();
+
     if (mensagens) {
         mensagens.innerHTML = "";
+
         const div = document.createElement("div");
         div.className = "msg-suporte msg-bot";
-        div.innerText = "👋 Olá! Sou o assistente do ApostaXBet.\n\nComo posso ajudar?";
+        div.innerText =
+            "👋 Olá! Sou o assistente do ApostaXBet.\n\nComo posso ajudar?";
+
         mensagens.appendChild(div);
         mensagens.scrollTop = mensagens.scrollHeight;
     }
+
     if (campo) campo.value = "";
 }
-function mostrarBotaoSuporte() { botaoSuporte.style.display = "block"; }
-function esconderBotaoSuporte() { botaoSuporte.style.display = "none"; fecharSuporte(); }
-function abrirSuporte() { resetarSuporte(); janelaSuporte.style.display = "block"; setTimeout(() => { const c = document.getElementById("entradaSuporte"); if (c) c.focus(); }, 100); }
-function fecharSuporte() { removerDigitando(); janelaSuporte.style.display = "none"; }
+
+function mostrarBotaoSuporte() {
+    botaoSuporte.style.display = "block";
+}
+
+function esconderBotaoSuporte() {
+    botaoSuporte.style.display = "none";
+    fecharSuporte();
+}
+
+function abrirSuporte() {
+    resetarSuporte();
+    janelaSuporte.style.display = "block";
+
+    setTimeout(() => {
+        const c = document.getElementById("entradaSuporte");
+        if (c) c.focus();
+    }, 100);
+}
+
+function fecharSuporte() {
+    removerDigitando();
+    janelaSuporte.style.display = "none";
+}
+
 function adicionarMensagemSuporte(texto, usuario = false) {
     const mensagens = document.getElementById("suporteMensagens");
     if (!mensagens) return;
+
     const div = document.createElement("div");
-    div.className = usuario ? "msg-suporte msg-usuario" : "msg-suporte msg-bot";
+    div.className = usuario
+        ? "msg-suporte msg-usuario"
+        : "msg-suporte msg-bot";
+
     div.innerText = texto;
     mensagens.appendChild(div);
     mensagens.scrollTop = mensagens.scrollHeight;
 }
+
 function mostrarDigitando() {
     const mensagens = document.getElementById("suporteMensagens");
     if (!mensagens) return;
+
     removerDigitando();
+
     const div = document.createElement("div");
     div.id = "mensagemDigitando";
     div.className = "msg-suporte msg-bot msg-digitando";
     div.innerHTML = "<span></span><span></span><span></span>";
+
     mensagens.appendChild(div);
     mensagens.scrollTop = mensagens.scrollHeight;
 }
-function removerDigitando() { const d = document.getElementById("mensagemDigitando"); if (d) d.remove(); }
+
+function removerDigitando() {
+    const d = document.getElementById("mensagemDigitando");
+    if (d) d.remove();
+}
 
 function responderSuporte(texto) {
     const p = texto.toLowerCase().trim();
-    if (p.includes("oi") || p.includes("olá") || p.includes("ola") || p.includes("bom dia") || p.includes("boa tarde") || p.includes("boa noite"))
+
+    if (
+        p.includes("oi") ||
+        p.includes("olá") ||
+        p.includes("ola") ||
+        p.includes("bom dia") ||
+        p.includes("boa tarde") ||
+        p.includes("boa noite")
+    ) {
         return "👋 Olá! Seja bem-vindo ao suporte ApostaXBet. Como posso ajudar? Você pode escolher uma das opções acima ou escrever sua pergunta aqui embaixo.";
-    if (p.includes("saldo") || p.includes("dinheiro") || p.includes("quanto tenho"))
+    }
+
+    if (
+        p.includes("saldo") ||
+        p.includes("dinheiro") ||
+        p.includes("quanto tenho")
+    ) {
         return "💰 Para consultar seu saldo, veja o valor que aparece no topo da página inicial. Você também pode entrar em 👤 Perfil para consultar.";
-    if (p.includes("jogo") || p.includes("jogar") || p.includes("games") || p.includes("jogos"))
-        return " Para jogar, toque em 🎮 Jogos no menu inferior. Lá você encontrará todos os jogos disponíveis no ApostaXBet.";
-    if (p.includes("deposit") || p.includes("pix") || p.includes("colocar dinheiro"))
+    }
+
+    if (
+        p.includes("jogo") ||
+        p.includes("jogar") ||
+        p.includes("games") ||
+        p.includes("jogos")
+    ) {
+        return "🎮 Para jogar, toque em Jogos no menu inferior. Lá você encontrará todos os jogos disponíveis no ApostaXBet.";
+    }
+
+    if (
+        p.includes("deposit") ||
+        p.includes("pix") ||
+        p.includes("colocar dinheiro")
+    ) {
         return "💵 Para fazer um depósito, toque em 💰 Depositar na página inicial e siga as instruções apresentadas.";
-    if (p.includes("saque") || p.includes("sacar") || p.includes("retirar"))
-        return "🏦 Para solicitar um saque, toque em  Sacar na página inicial e preencha as informações solicitadas.";
-    if (p.includes("conta") || p.includes("cadastro") || p.includes("login") || p.includes("senha"))
-        return " Para acessar sua conta, use o botão 👤 Perfil no menu inferior. Se esqueceu sua senha, use \"Esqueci minha senha?\" na tela de login.";
-    if (p.includes("erro") || p.includes("problema") || p.includes("não funciona") || p.includes("bug"))
+    }
+
+    if (
+        p.includes("saque") ||
+        p.includes("sacar") ||
+        p.includes("retirar")
+    ) {
+        return "🏦 Para solicitar um saque, toque em 💵 Sacar na página inicial e preencha as informações solicitadas.";
+    }
+
+    if (
+        p.includes("conta") ||
+        p.includes("cadastro") ||
+        p.includes("login") ||
+        p.includes("senha")
+    ) {
+        return "👤 Para acessar sua conta, use o botão Perfil no menu inferior. Se esqueceu sua senha, use \"Esqueci minha senha?\" na tela de login.";
+    }
+
+    if (
+        p.includes("erro") ||
+        p.includes("problema") ||
+        p.includes("não funciona") ||
+        p.includes("bug")
+    ) {
         return "❓ Entendi. Tente sair da conta e entrar novamente. Se o problema continuar, descreva aqui o que aconteceu para receber uma orientação.";
+    }
+
     return "🤖 Ainda não tenho uma resposta cadastrada para essa pergunta. Tente explicar um pouco mais ou pergunte sobre saldo, jogos, depósito, saque, conta ou algum problema no site.";
 }
 
 function responderComDigitacao(pergunta) {
     mostrarDigitando();
+
     setTimeout(() => {
-        if (janelaSuporte.style.display === "none") { removerDigitando(); return; }
+        if (janelaSuporte.style.display === "none") {
+            removerDigitando();
+            return;
+        }
+
         removerDigitando();
         adicionarMensagemSuporte(responderSuporte(pergunta));
     }, 1100);
 }
 
 function perguntaSuporte(tipo) {
-    const respostas = { saldo:"Como posso consultar meu saldo?", jogos:"Como faço para jogar?", deposito:"Como faço um depósito?", saque:"Como faço um saque?", conta:"Como acesso minha conta?", problema:"Estou com um problema no site." };
+    const respostas = {
+        saldo: "Como posso consultar meu saldo?",
+        jogos: "Como faço para jogar?",
+        deposito: "Como faço um depósito?",
+        saque: "Como faço um saque?",
+        conta: "Como acesso minha conta?",
+        problema: "Estou com um problema no site."
+    };
+
     const pergunta = respostas[tipo];
     if (!pergunta) return;
+
     adicionarMensagemSuporte(pergunta, true);
     responderComDigitacao(pergunta);
 }
@@ -719,20 +1616,23 @@ function perguntaSuporte(tipo) {
 function enviarPerguntaSuporte() {
     const campo = document.getElementById("entradaSuporte");
     if (!campo) return;
+
     const texto = campo.value.trim();
     if (!texto) return;
+
     adicionarMensagemSuporte(texto, true);
     campo.value = "";
+
     responderComDigitacao(texto);
 }
 
-// Abas
 function mostrarCadastro() {
     document.getElementById("formCadastro").classList.add("active");
     document.getElementById("formLogin").classList.remove("active");
     document.getElementById("tabCadastro").classList.add("active");
     document.getElementById("tabLogin").classList.remove("active");
 }
+
 function mostrarLogin() {
     document.getElementById("formLogin").classList.add("active");
     document.getElementById("formCadastro").classList.remove("active");
@@ -740,295 +1640,743 @@ function mostrarLogin() {
     document.getElementById("tabCadastro").classList.remove("active");
 }
 
-// Senha
 function mostrarSenha(id) {
     const campo = document.getElementById(id);
     if (!campo) return;
-    campo.type = campo.type === "password" ? "text" : "password";
+
+    campo.type =
+        campo.type === "password"
+            ? "text"
+            : "password";
 }
 
-// Mensagem
 function mensagem(id, texto, tipo) {
     const el = document.getElementById(id);
     if (!el) return;
+
     el.style.display = "block";
     el.className = "mensagem " + tipo;
     el.innerText = texto;
 }
 
-// Recuperação
 function mostrarRecuperacao() {
-    const emailLogin = document.getElementById("emailLogin").value.trim();
+    const emailLogin =
+        document.getElementById("emailLogin").value.trim();
+
     telaLogin.style.display = "none";
     telaRecuperacao.style.display = "block";
     telaNovaSenha.style.display = "none";
     site.style.display = "none";
     paginaConta.style.display = "none";
-    esconderMenu(); esconderBotaoSuporte();
-    if (emailLogin) document.getElementById("emailRecuperacao").value = emailLogin;
+
+    esconderMenu();
+    esconderBotaoSuporte();
+
+    if (emailLogin) {
+        document.getElementById("emailRecuperacao").value =
+            emailLogin;
+    }
 }
+
 function voltarLogin() {
     telaRecuperacao.style.display = "none";
     telaNovaSenha.style.display = "none";
     telaLogin.style.display = "block";
-    mostrarLogin(); esconderMenu(); esconderBotaoSuporte();
+
+    mostrarLogin();
+    esconderMenu();
+    esconderBotaoSuporte();
 }
 
 async function enviarRecuperacao(event) {
     event.preventDefault();
-    const email = document.getElementById("emailRecuperacao").value.trim();
+
+    const email =
+        document.getElementById("emailRecuperacao").value.trim();
+
     const botao = document.getElementById("btnRecuperacao");
-    botao.disabled = true; botao.innerText = "ENVIANDO...";
+
+    botao.disabled = true;
+    botao.innerText = "ENVIANDO...";
+
     try {
-        const { error } = await clienteSupabase().auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + window.location.pathname });
+        const { error } =
+            await clienteSupabase().auth.resetPasswordForEmail(
+                email,
+                {
+                    redirectTo:
+                        window.location.origin +
+                        window.location.pathname
+                }
+            );
+
         if (error) throw error;
-        mensagem("mensagemRecuperacao", "Se esse e-mail estiver cadastrado, enviamos o link de recuperação. Verifique sua caixa de entrada e também o spam.", "sucesso");
-    } catch (error) { mensagem("mensagemRecuperacao", traduzirErro(error.message), "erro"); }
-    botao.disabled = false; botao.innerText = "ENVIAR LINK";
+
+        mensagem(
+            "mensagemRecuperacao",
+            "Se esse e-mail estiver cadastrado, enviamos o link de recuperação. Verifique sua caixa de entrada e também o spam.",
+            "sucesso"
+        );
+    } catch (error) {
+        mensagem(
+            "mensagemRecuperacao",
+            traduzirErro(error.message),
+            "erro"
+        );
+    }
+
+    botao.disabled = false;
+    botao.innerText = "ENVIAR LINK";
 }
 
 async function salvarNovaSenha(event) {
     event.preventDefault();
-    const senha = document.getElementById("novaSenha").value;
-    const confirmar = document.getElementById("confirmarNovaSenha").value;
-    const botao = document.getElementById("btnNovaSenha");
-    if (senha.length < 6) { mensagem("mensagemNovaSenha", "A senha precisa ter pelo menos 6 caracteres.", "erro"); return; }
-    if (senha !== confirmar) { mensagem("mensagemNovaSenha", "As senhas não são iguais.", "erro"); return; }
-    botao.disabled = true; botao.innerText = "SALVANDO...";
+
+    const senha =
+        document.getElementById("novaSenha").value;
+
+    const confirmar =
+        document.getElementById("confirmarNovaSenha").value;
+
+    const botao =
+        document.getElementById("btnNovaSenha");
+
+    if (senha.length < 6) {
+        mensagem(
+            "mensagemNovaSenha",
+            "A senha precisa ter pelo menos 6 caracteres.",
+            "erro"
+        );
+        return;
+    }
+
+    if (senha !== confirmar) {
+        mensagem(
+            "mensagemNovaSenha",
+            "As senhas não são iguais.",
+            "erro"
+        );
+        return;
+    }
+
+    botao.disabled = true;
+    botao.innerText = "SALVANDO...";
+
     try {
-        const { error } = await clienteSupabase().auth.updateUser({ password: senha });
+        const { error } =
+            await clienteSupabase().auth.updateUser({
+                password: senha
+            });
+
         if (error) throw error;
-        mensagem("mensagemNovaSenha", "Senha alterada com sucesso! Você já pode entrar com a nova senha.", "sucesso");
-        setTimeout(async () => { await clienteSupabase().auth.signOut(); telaNovaSenha.style.display = "none"; telaLogin.style.display = "block"; mostrarLogin(); }, 1800);
-    } catch (error) { mensagem("mensagemNovaSenha", traduzirErro(error.message), "erro"); }
-    botao.disabled = false; botao.innerText = "SALVAR NOVA SENHA";
+
+        mensagem(
+            "mensagemNovaSenha",
+            "Senha alterada com sucesso! Você já pode entrar com a nova senha.",
+            "sucesso"
+        );
+
+        setTimeout(async () => {
+            await clienteSupabase().auth.signOut();
+
+            telaNovaSenha.style.display = "none";
+            telaLogin.style.display = "block";
+
+            mostrarLogin();
+        }, 1800);
+
+    } catch (error) {
+        mensagem(
+            "mensagemNovaSenha",
+            traduzirErro(error.message),
+            "erro"
+        );
+    }
+
+    botao.disabled = false;
+    botao.innerText = "SALVAR NOVA SENHA";
 }
 
-// Cadastro
 async function cadastrar(event) {
     event.preventDefault();
-    const nome = document.getElementById("nomeCadastro").value.trim();
-    const email = document.getElementById("emailCadastro").value.trim();
-    const senha = document.getElementById("senhaCadastro").value;
-    const confirmar = document.getElementById("confirmarSenha").value;
-    const botao = document.getElementById("btnCadastro");
-    if (senha !== confirmar) { mensagem("mensagemCadastro", "As senhas não são iguais.", "erro"); return; }
-    if (senha.length < 6) { mensagem("mensagemCadastro", "A senha precisa ter pelo menos 6 caracteres.", "erro"); return; }
-    botao.disabled = true; botao.innerText = "CRIANDO CONTA...";
+
+    const nome =
+        document.getElementById("nomeCadastro").value.trim();
+
+    const email =
+        document.getElementById("emailCadastro").value.trim();
+
+    const senha =
+        document.getElementById("senhaCadastro").value;
+
+    const confirmar =
+        document.getElementById("confirmarSenha").value;
+
+    const botao =
+        document.getElementById("btnCadastro");
+
+    if (senha !== confirmar) {
+        mensagem(
+            "mensagemCadastro",
+            "As senhas não são iguais.",
+            "erro"
+        );
+        return;
+    }
+
+    if (senha.length < 6) {
+        mensagem(
+            "mensagemCadastro",
+            "A senha precisa ter pelo menos 6 caracteres.",
+            "erro"
+        );
+        return;
+    }
+
+    botao.disabled = true;
+    botao.innerText = "CRIANDO CONTA...";
+
     try {
-        const { data, error } = await clienteSupabase().auth.signUp({ email, password: senha, options: { data: { nome, full_name: nome } } });
+        const { data, error } =
+            await clienteSupabase().auth.signUp({
+                email,
+                password: senha,
+                options: {
+                    data: {
+                        nome,
+                        full_name: nome
+                    }
+                }
+            });
+
         if (error) throw error;
+
         if (data.session) {
             sessionStorage.removeItem("apostaxbet_logout");
-            mensagem("mensagemCadastro", "Conta criada com sucesso!", "sucesso");
-            setTimeout(() => mostrarSite(data.session.user), 800);
+
+            mensagem(
+                "mensagemCadastro",
+                "Conta criada com sucesso!",
+                "sucesso"
+            );
+
+            setTimeout(
+                () => mostrarSite(data.session.user),
+                800
+            );
         } else {
-            mensagem("mensagemCadastro", "Conta criada! Verifique seu e-mail para confirmar a conta.", "sucesso");
+            mensagem(
+                "mensagemCadastro",
+                "Conta criada! Verifique seu e-mail para confirmar a conta.",
+                "sucesso"
+            );
         }
-    } catch (error) { mensagem("mensagemCadastro", traduzirErro(error.message), "erro"); }
-    botao.disabled = false; botao.innerText = "CRIAR CONTA";
+
+    } catch (error) {
+        mensagem(
+            "mensagemCadastro",
+            traduzirErro(error.message),
+            "erro"
+        );
+    }
+
+    botao.disabled = false;
+    botao.innerText = "CRIAR CONTA";
 }
 
-// Login
 async function entrar(event) {
     event.preventDefault();
-    const email = document.getElementById("emailLogin").value.trim();
-    const senha = document.getElementById("senhaLogin").value;
-    const botao = document.getElementById("btnLogin");
-    botao.disabled = true; botao.innerText = "ENTRANDO...";
+
+    const email =
+        document.getElementById("emailLogin").value.trim();
+
+    const senha =
+        document.getElementById("senhaLogin").value;
+
+    const botao =
+        document.getElementById("btnLogin");
+
+    botao.disabled = true;
+    botao.innerText = "ENTRANDO...";
+
     try {
-        const { data, error } = await clienteSupabase().auth.signInWithPassword({ email, password: senha });
+        const { data, error } =
+            await clienteSupabase().auth.signInWithPassword({
+                email,
+                password: senha
+            });
+
         if (error) throw error;
+
         sessionStorage.removeItem("apostaxbet_logout");
-        mensagem("mensagemLogin", "Login realizado! Entrando...", "sucesso");
-        setTimeout(() => mostrarSite(data.user), 700);
-    } catch (error) { mensagem("mensagemLogin", traduzirErro(error.message), "erro"); }
-    botao.disabled = false; botao.innerText = "ENTRAR";
+
+        mensagem(
+            "mensagemLogin",
+            "Login realizado! Entrando...",
+            "sucesso"
+        );
+
+        setTimeout(
+            () => mostrarSite(data.user),
+            700
+        );
+
+    } catch (error) {
+        mensagem(
+            "mensagemLogin",
+            traduzirErro(error.message),
+            "erro"
+        );
+    }
+
+    botao.disabled = false;
+    botao.innerText = "ENTRAR";
 }
 
-// Mostrar Site
 function mostrarSite(user) {
-    if (!user) { mostrarLoginTela(); return; }
+    if (!user) {
+        mostrarLoginTela();
+        return;
+    }
+
     telaLogin.style.display = "none";
     telaRecuperacao.style.display = "none";
     telaNovaSenha.style.display = "none";
     paginaConta.style.display = "none";
     site.style.display = "block";
-    mostrarMenu(); mostrarBotaoSuporte(); resetarSuporte();
-    
-    // Ativar eventos de clique nos jogos estáticos
+
+    mostrarMenu();
+    mostrarBotaoSuporte();
+    resetarSuporte();
+
     ativarEventosJogos();
-    
-    const idUsuario = user.id || "ID indisponível";
-    document.getElementById("contaNome").innerText = idUsuario;
-    document.getElementById("contaEmail").innerText = user.email || "";
+
+    const idUsuario =
+        user.id || "ID indisponível";
+
+    document.getElementById("contaNome").innerText =
+        idUsuario;
+
+    document.getElementById("contaEmail").innerText =
+        user.email || "";
+
     atualizarSaldoVisual();
 }
 
 function mostrarInicio() {
     site.style.display = "block";
     paginaConta.style.display = "none";
+
     mostrarBotaoSuporte();
-    document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("active"));
-    document.querySelector(".nav-link:first-child").classList.add("active");
+
+    document.querySelectorAll(".nav-link")
+        .forEach(l => l.classList.remove("active"));
+
+    document
+        .querySelector(".nav-link:first-child")
+        .classList.add("active");
 }
 
 function mostrarConta() {
     site.style.display = "none";
     paginaConta.style.display = "block";
+
     esconderBotaoSuporte();
     atualizarSaldoVisual();
-    document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("active"));
+
+    document.querySelectorAll(".nav-link")
+        .forEach(l => l.classList.remove("active"));
 }
 
-// ==================== EVENTOS DOS JOGOS ESTÁTICOS ====================
+/* ==================== EVENTOS DOS JOGOS ==================== */
+
 function ativarEventosJogos() {
-    const cards = document.querySelectorAll('.game-card');
+    const cards =
+        document.querySelectorAll(".game-card");
+
     cards.forEach(card => {
-        // Remove listeners antigos para evitar duplicação
         card.replaceWith(card.cloneNode(true));
     });
-    
-    // Re-seleciona após clonar
-    document.querySelectorAll('.game-card').forEach(card => {
-        card.addEventListener('click', function(e) {
-            e.preventDefault();
-            if(carregando) return;
-            
-            carregando = true;
-            const destino = this.getAttribute('data-link');
-            const nome = this.getAttribute('data-jogo');
-            const icone = this.getAttribute('data-icon');
-            const capa = this.getAttribute('data-capa');
 
-            loaderNome.textContent = nome || "Carregando...";
+    document
+        .querySelectorAll(".game-card")
+        .forEach(card => {
 
-            if(capa){
-                loaderImagem.src = capa;
-                loaderImagem.style.display = "block";
-                loaderIconeNormal.style.display = "none";
-            }else{
-                loaderImagem.src = "";
-                loaderImagem.style.display = "none";
-                loaderIconeNormal.textContent = icone || "🎮";
-                loaderIconeNormal.style.display = "flex";
-            }
+            card.addEventListener("click", function(e) {
+                e.preventDefault();
 
-            loader.classList.add("ativo");
+                if (carregando) return;
 
-            setTimeout(function(){
-                window.location.href = destino;
-            }, 1800);
+                carregando = true;
+
+                const destino =
+                    this.getAttribute("data-link");
+
+                const nome =
+                    this.getAttribute("data-jogo");
+
+                const icone =
+                    this.getAttribute("data-icon");
+
+                const capa =
+                    this.getAttribute("data-capa");
+
+                loaderNome.textContent =
+                    nome || "Carregando...";
+
+                if (capa) {
+                    loaderImagem.src = capa;
+                    loaderImagem.style.display = "block";
+                    loaderIconeNormal.style.display = "none";
+                } else {
+                    loaderImagem.src = "";
+                    loaderImagem.style.display = "none";
+                    loaderIconeNormal.textContent =
+                        icone || "🎮";
+                    loaderIconeNormal.style.display = "flex";
+                }
+
+                loader.classList.add("ativo");
+
+                setTimeout(function() {
+                    window.location.href = destino;
+                }, 1800);
+            });
         });
-    });
 }
 
 function filtrarJogos(cat, el) {
-    document.querySelectorAll(".cat-item").forEach(c => c.classList.remove("active"));
+    document
+        .querySelectorAll(".cat-item")
+        .forEach(c => c.classList.remove("active"));
+
     el.classList.add("active");
-    const cards = document.querySelectorAll(".game-card");
+
+    const cards =
+        document.querySelectorAll(".game-card");
+
     cards.forEach(card => {
-        if (cat === "todos") { card.style.display = "flex"; return; }
-        const cats = card.getAttribute("data-cat") || "";
-        card.style.display = cats.includes(cat) ? "flex" : "none";
+
+        if (cat === "todos") {
+            card.style.display = "flex";
+            return;
+        }
+
+        const cats =
+            card.getAttribute("data-cat") || "";
+
+        card.style.display =
+            cats.includes(cat)
+                ? "flex"
+                : "none";
     });
 }
 
-// Usuário logado
+/* ==================== USUÁRIO ==================== */
+
 async function getUsuarioLogado() {
     try {
-        const { data, error } = await clienteSupabase().auth.getSession();
-        if (error) { console.error("Erro ao verificar sessão:", error); return null; }
+        const { data, error } =
+            await clienteSupabase().auth.getSession();
+
+        if (error) {
+            console.error(
+                "Erro ao verificar sessão:",
+                error
+            );
+            return null;
+        }
+
         return data?.session?.user || null;
-    } catch (error) { console.error("Erro na sessão:", error); return null; }
+
+    } catch (error) {
+        console.error(
+            "Erro na sessão:",
+            error
+        );
+
+        return null;
+    }
 }
 
-// Saldo
+/* ==================== SALDO ==================== */
+
 async function buscarSaldo() {
-    const user = await getUsuarioLogado();
+    const user =
+        await getUsuarioLogado();
+
     if (!user) return 0;
+
     try {
-        const { data, error } = await clienteSupabase().from("saldos").select("valor").eq("user_id", user.id).maybeSingle();
-        if (error) { console.error("Erro ao buscar saldo:", error); return 0; }
+        const { data, error } =
+            await clienteSupabase()
+                .from("saldos")
+                .select("valor")
+                .eq("user_id", user.id)
+                .maybeSingle();
+
+        if (error) {
+            console.error(
+                "Erro ao buscar saldo:",
+                error
+            );
+            return 0;
+        }
+
         if (!data) return 0;
-        const saldo = parseFloat(data.valor);
-        return Number.isFinite(saldo) ? saldo : 0;
-    } catch (error) { console.error("Erro ao buscar saldo:", error); return 0; }
+
+        const saldo =
+            parseFloat(data.valor);
+
+        return Number.isFinite(saldo)
+            ? saldo
+            : 0;
+
+    } catch (error) {
+        console.error(
+            "Erro ao buscar saldo:",
+            error
+        );
+
+        return 0;
+    }
 }
 
 async function salvarSaldo(novoValor) {
-    const user = await getUsuarioLogado();
-    if (!user) { console.error("Usuário não está logado."); return false; }
-    const valor = Number(novoValor);
-    if (!Number.isFinite(valor)) return false;
+    const user =
+        await getUsuarioLogado();
+
+    if (!user) {
+        console.error(
+            "Usuário não está logado."
+        );
+        return false;
+    }
+
+    const valor =
+        Number(novoValor);
+
+    if (!Number.isFinite(valor))
+        return false;
+
     try {
-        const { error } = await clienteSupabase().from("saldos").upsert({ user_id: user.id, valor }, { onConflict: "user_id" });
-        if (error) { console.error("Erro ao salvar saldo:", error); return false; }
+        const { error } =
+            await clienteSupabase()
+                .from("saldos")
+                .upsert(
+                    {
+                        user_id: user.id,
+                        valor
+                    },
+                    {
+                        onConflict: "user_id"
+                    }
+                );
+
+        if (error) {
+            console.error(
+                "Erro ao salvar saldo:",
+                error
+            );
+            return false;
+        }
+
         return true;
-    } catch (error) { console.error("Erro ao salvar saldo:", error); return false; }
-}
 
-async function atualizarSaldoVisual() {
-    const saldo = await buscarSaldo();
-    const vf = saldo.toFixed(2).replace(".", ",");
-    const sv = document.getElementById("saldoValor");
-    if (sv) sv.innerText = vf;
-    const cs = document.getElementById("contaSaldo");
-    if (cs) cs.innerText = vf;
-    return saldo;
-}
-
-async function carregarSaldoDisplay() { return await atualizarSaldoVisual(); }
-
-async function descontarSaldo(valor) {
-    const vn = Number(valor);
-    if (!Number.isFinite(vn) || vn <= 0) return false;
-    const atual = await buscarSaldo();
-    if (atual < vn) return false;
-    const salvo = await salvarSaldo(atual - vn);
-    if (salvo) await carregarSaldoDisplay();
-    return salvo;
-}
-
-async function processarVitoria(aposta, multiplicador) {
-    const an = Number(aposta), mn = Number(multiplicador);
-    if (!Number.isFinite(an) || !Number.isFinite(mn)) return 0;
-    const ganho = (an * mn) * CASA_VANTAGEM;
-    const atual = await buscarSaldo();
-    const salvo = await salvarSaldo(atual + ganho);
-    if (salvo) await carregarSaldoDisplay();
-    return ganho;
-}
-
-async function processarSaque(valor, chavePix) {
-    const user = await getUsuarioLogado();
-    if (!user) { alert("⚠️ Você precisa estar logado para sacar!"); return false; }
-    const vn = Number(valor);
-    if (!Number.isFinite(vn) || vn <= 0) { alert("❌ Valor de saque inválido."); return false; }
-    if (!chavePix) { alert("❌ Informe sua chave Pix."); return false; }
-    try {
-        const { data, error } = await clienteSupabase().functions.invoke("quick-endpoint", { body: { userId: user.id, valor: vn, chavePix } });
-        if (error) throw error;
-        if (data?.mensagem) alert("✅ " + data.mensagem);
-        else if (data?.erro) { alert("❌ " + data.erro); return false; }
-        else alert("✅ Solicitação enviada para análise!");
-        await carregarSaldoDisplay();
-        return true;
     } catch (error) {
-        console.error("Erro no saque:", error);
-        alert("❌ Erro ao processar saque:\n" + (error?.message || String(error)));
+        console.error(
+            "Erro ao salvar saldo:",
+            error
+        );
+
         return false;
     }
 }
 
-// Sair
+async function atualizarSaldoVisual() {
+    const saldo =
+        await buscarSaldo();
+
+    const vf =
+        saldo.toFixed(2)
+            .replace(".", ",");
+
+    const sv =
+        document.getElementById("saldoValor");
+
+    if (sv)
+        sv.innerText = vf;
+
+    const cs =
+        document.getElementById("contaSaldo");
+
+    if (cs)
+        cs.innerText = vf;
+
+    return saldo;
+}
+
+async function carregarSaldoDisplay() {
+    return await atualizarSaldoVisual();
+}
+
+async function descontarSaldo(valor) {
+    const vn = Number(valor);
+
+    if (
+        !Number.isFinite(vn) ||
+        vn <= 0
+    )
+        return false;
+
+    const atual =
+        await buscarSaldo();
+
+    if (atual < vn)
+        return false;
+
+    const salvo =
+        await salvarSaldo(atual - vn);
+
+    if (salvo)
+        await carregarSaldoDisplay();
+
+    return salvo;
+}
+
+async function processarVitoria(aposta, multiplicador) {
+    const an = Number(aposta);
+    const mn = Number(multiplicador);
+
+    if (
+        !Number.isFinite(an) ||
+        !Number.isFinite(mn)
+    )
+        return 0;
+
+    const ganho =
+        (an * mn) * CASA_VANTAGEM;
+
+    const atual =
+        await buscarSaldo();
+
+    const salvo =
+        await salvarSaldo(atual + ganho);
+
+    if (salvo)
+        await carregarSaldoDisplay();
+
+    return ganho;
+}
+
+async function processarSaque(valor, chavePix) {
+    const user =
+        await getUsuarioLogado();
+
+    if (!user) {
+        alert(
+            "⚠️ Você precisa estar logado para sacar!"
+        );
+        return false;
+    }
+
+    const vn = Number(valor);
+
+    if (
+        !Number.isFinite(vn) ||
+        vn <= 0
+    ) {
+        alert(
+            "❌ Valor de saque inválido."
+        );
+        return false;
+    }
+
+    if (!chavePix) {
+        alert(
+            "❌ Informe sua chave Pix."
+        );
+        return false;
+    }
+
+    try {
+        const { data, error } =
+            await clienteSupabase()
+                .functions
+                .invoke(
+                    "quick-endpoint",
+                    {
+                        body: {
+                            userId: user.id,
+                            valor: vn,
+                            chavePix
+                        }
+                    }
+                );
+
+        if (error) throw error;
+
+        if (data?.mensagem) {
+            alert(
+                "✅ " + data.mensagem
+            );
+        } else if (data?.erro) {
+            alert(
+                "❌ " + data.erro
+            );
+            return false;
+        } else {
+            alert(
+                "✅ Solicitação enviada para análise!"
+            );
+        }
+
+        await carregarSaldoDisplay();
+
+        return true;
+
+    } catch (error) {
+        console.error(
+            "Erro no saque:",
+            error
+        );
+
+        alert(
+            "❌ Erro ao processar saque:\n" +
+            (error?.message || String(error))
+        );
+
+        return false;
+    }
+}
+
+/* ==================== SAIR ==================== */
+
 async function sair() {
-    sessionStorage.setItem("apostaxbet_logout", "1");
+    sessionStorage.setItem(
+        "apostaxbet_logout",
+        "1"
+    );
+
     fecharSuporte();
+
     site.style.display = "none";
     paginaConta.style.display = "none";
-    esconderMenu(); esconderBotaoSuporte();
-    try { await clienteSupabase().auth.signOut(); } catch (e) { console.error("Erro ao sair:", e); }
+
+    esconderMenu();
+    esconderBotaoSuporte();
+
+    try {
+        await clienteSupabase()
+            .auth
+            .signOut();
+    } catch (e) {
+        console.error(
+            "Erro ao sair:",
+            e
+        );
+    }
+
     mostrarLoginTela();
 }
 
@@ -1038,84 +2386,270 @@ function mostrarLoginTela() {
     telaNovaSenha.style.display = "none";
     site.style.display = "none";
     paginaConta.style.display = "none";
-    esconderMenu(); esconderBotaoSuporte();
+
+    esconderMenu();
+    esconderBotaoSuporte();
+
     mostrarLogin();
 }
 
-// Traduzir erros
+/* ==================== ERROS ==================== */
+
 function traduzirErro(erro) {
-    if (!erro) return "Ocorreu um erro.";
-    const t = String(erro).toLowerCase();
-    if (t.includes("invalid login credentials")) return "E-mail ou senha incorretos.";
-    if (t.includes("user already registered")) return "Esse e-mail já está cadastrado.";
-    if (t.includes("email rate limit exceeded")) return "Muitas tentativas. Aguarde alguns minutos.";
-    if (t.includes("password should be at least")) return "A senha precisa ter pelo menos 6 caracteres.";
-    if (t.includes("unable to validate email")) return "Digite um e-mail válido.";
-    if (t.includes("email not confirmed")) return "Confirme seu e-mail antes de entrar.";
-    if (t.includes("database error saving new user")) return "Problema na configuração do banco de dados.";
+    if (!erro)
+        return "Ocorreu um erro.";
+
+    const t =
+        String(erro).toLowerCase();
+
+    if (
+        t.includes(
+            "invalid login credentials"
+        )
+    )
+        return "E-mail ou senha incorretos.";
+
+    if (
+        t.includes(
+            "user already registered"
+        )
+    )
+        return "Esse e-mail já está cadastrado.";
+
+    if (
+        t.includes(
+            "email rate limit exceeded"
+        )
+    )
+        return "Muitas tentativas. Aguarde alguns minutos.";
+
+    if (
+        t.includes(
+            "password should be at least"
+        )
+    )
+        return "A senha precisa ter pelo menos 6 caracteres.";
+
+    if (
+        t.includes(
+            "unable to validate email"
+        )
+    )
+        return "Digite um e-mail válido.";
+
+    if (
+        t.includes(
+            "email not confirmed"
+        )
+    )
+        return "Confirme seu e-mail antes de entrar.";
+
+    if (
+        t.includes(
+            "database error saving new user"
+        )
+    )
+        return "Problema na configuração do banco de dados.";
+
     return String(erro);
 }
 
-// Verificar sessão
+/* ==================== SESSÃO ==================== */
+
 async function verificarSessao() {
-    esconderMenu(); esconderBotaoSuporte();
-    if (sessionStorage.getItem("apostaxbet_logout") === "1") { mostrarLoginTela(); return; }
+    esconderMenu();
+    esconderBotaoSuporte();
+
+    if (
+        sessionStorage.getItem(
+            "apostaxbet_logout"
+        ) === "1"
+    ) {
+        mostrarLoginTela();
+        return;
+    }
+
     try {
-        const { data, error } = await clienteSupabase().auth.getSession();
-        if (error) { console.error(error); mostrarLoginTela(); return; }
-        if (data && data.session) mostrarSite(data.session.user);
-        else mostrarLoginTela();
-    } catch (error) { console.error(error); mostrarLoginTela(); }
+        const { data, error } =
+            await clienteSupabase()
+                .auth
+                .getSession();
+
+        if (error) {
+            console.error(error);
+            mostrarLoginTela();
+            return;
+        }
+
+        if (
+            data &&
+            data.session
+        ) {
+            mostrarSite(
+                data.session.user
+            );
+        } else {
+            mostrarLoginTela();
+        }
+
+    } catch (error) {
+        console.error(error);
+        mostrarLoginTela();
+    }
 }
 
-// Auth state change
-clienteSupabase().auth.onAuthStateChange(function (event, session) {
-    if (event === "PASSWORD_RECOVERY") {
-        telaLogin.style.display = "none";
-        telaRecuperacao.style.display = "none";
-        telaNovaSenha.style.display = "block";
-        site.style.display = "none";
-        paginaConta.style.display = "none";
-        esconderMenu(); esconderBotaoSuporte();
-        return;
-    }
-    if (sessionStorage.getItem("apostaxbet_logout") === "1") {
-        if (!session) mostrarLoginTela();
-        return;
-    }
-    if (session) mostrarSite(session.user);
-    else mostrarLoginTela();
-});
+clienteSupabase()
+    .auth
+    .onAuthStateChange(
+        function(event, session) {
 
-// API Global dos Jogos
-window.SistemaSaldo = { get: buscarSaldo, debitar: descontarSaldo, ganhar: processarVitoria, atualizarTela: carregarSaldoDisplay, salvar: salvarSaldo };
+            if (
+                event ===
+                "PASSWORD_RECOVERY"
+            ) {
+                telaLogin.style.display = "none";
+                telaRecuperacao.style.display = "none";
+                telaNovaSenha.style.display = "block";
+                site.style.display = "none";
+                paginaConta.style.display = "none";
 
-// API ApostaXBet
+                esconderMenu();
+                esconderBotaoSuporte();
+
+                return;
+            }
+
+            if (
+                sessionStorage.getItem(
+                    "apostaxbet_logout"
+                ) === "1"
+            ) {
+                if (!session)
+                    mostrarLoginTela();
+
+                return;
+            }
+
+            if (session) {
+                mostrarSite(
+                    session.user
+                );
+            } else {
+                mostrarLoginTela();
+            }
+        }
+    );
+
+/* ==================== API GLOBAL DOS JOGOS ==================== */
+
+window.SistemaSaldo = {
+    get: buscarSaldo,
+    debitar: descontarSaldo,
+    ganhar: processarVitoria,
+    atualizarTela: carregarSaldoDisplay,
+    salvar: salvarSaldo
+};
+
+/* ==================== API APOSTAXBET ==================== */
+
 window.ApostaXBet = {
     supabase: window.supabaseClient,
-    getUsuarioLogado, buscarSaldo, salvarSaldo, descontarSaldo, processarVitoria, processarSaque,
-    cadastrar: async (nome, email, senha) => {
+
+    getUsuarioLogado,
+    buscarSaldo,
+    salvarSaldo,
+    descontarSaldo,
+    processarVitoria,
+    processarSaque,
+
+    cadastrar: async (
+        nome,
+        email,
+        senha
+    ) => {
         try {
-            const { data, error } = await clienteSupabase().auth.signUp({ email, password: senha, options: { data: { nome, full_name: nome } } });
-            if (error) throw error;
-            return { sucesso: true, data };
-        } catch (error) { return { sucesso: false, erro: error }; }
+            const { data, error } =
+                await clienteSupabase()
+                    .auth
+                    .signUp({
+                        email,
+                        password: senha,
+                        options: {
+                            data: {
+                                nome,
+                                full_name: nome
+                            }
+                        }
+                    });
+
+            if (error)
+                throw error;
+
+            return {
+                sucesso: true,
+                data
+            };
+
+        } catch (error) {
+
+            return {
+                sucesso: false,
+                erro: error
+            };
+        }
     },
-    login: async (email, senha) => {
+
+    login: async (
+        email,
+        senha
+    ) => {
+
         try {
-            const { data, error } = await clienteSupabase().auth.signInWithPassword({ email, password: senha });
-            if (error) throw error;
-            return { sucesso: true, data };
-        } catch (error) { return { sucesso: false, erro: error }; }
+            const { data, error } =
+                await clienteSupabase()
+                    .auth
+                    .signInWithPassword({
+                        email,
+                        password: senha
+                    });
+
+            if (error)
+                throw error;
+
+            return {
+                sucesso: true,
+                data
+            };
+
+        } catch (error) {
+
+            return {
+                sucesso: false,
+                erro: error
+            };
+        }
     }
 };
 
-// Iniciar
-document.addEventListener("DOMContentLoaded", function () {
-    console.log("✅ ApostaXBet carregado com jogos estáticos e loader.");
-    console.log("✅ Supabase Client único:", window.supabaseClient);
-    verificarSessao();
-});
+/* ==================== INICIAR ==================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        console.log(
+            "✅ ApostaXBet carregado com jogos estáticos e loader."
+        );
+
+        console.log(
+            "✅ Supabase Client único:",
+            window.supabaseClient
+        );
+
+        verificarSessao();
+    }
+);
 </script>
+
 </body>
 </html>
