@@ -6,8 +6,6 @@
 
     <title>Depositar - ApostaXBet</title>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <style>
         * {
             box-sizing: border-box;
@@ -158,9 +156,10 @@
             font-family: monospace;
             font-size: 12px;
             color: #555;
-            max-height: 80px;
+            max-height: 100px;
             overflow-y: auto;
             border: 1px dashed #ccc;
+            min-height: 40px;
         }
 
         .btn-copiar {
@@ -174,6 +173,10 @@
             width: 100%;
             margin-bottom: 10px;
             font-weight: bold;
+        }
+
+        .btn-copiar:active {
+            transform: scale(0.98);
         }
 
         .btn-fechar {
@@ -219,846 +222,781 @@
 
 <body>
 
-<div class="topo">
+    <div class="topo">
 
-    <h1>ApostaXBet</h1>
+        <h1>ApostaXBet</h1>
 
-    <div class="saldo" id="displaySaldo">
-        💰 Saldo: R$ 0,00
-    </div>
-
-    <div class="status-saldo" id="statusSaldo">
-        Carregando saldo...
-    </div>
-
-</div>
-
-<div class="container">
-
-    <h2>Recarregar Saldo</h2>
-
-    <p>
-        Escolha um valor para depositar via PIX:
-    </p>
-
-    <div class="valores-rapidos">
-
-        <button class="btn-valor"
-                onclick="selecionarValor(this,10)">
-            R$ 10
-        </button>
-
-        <button class="btn-valor"
-                onclick="selecionarValor(this,20)">
-            R$ 20
-        </button>
-
-        <button class="btn-valor"
-                onclick="selecionarValor(this,50)">
-            R$ 50
-        </button>
-
-        <button class="btn-valor"
-                onclick="selecionarValor(this,100)">
-            R$ 100
-        </button>
-
-        <button class="btn-valor"
-                onclick="selecionarValor(this,200)">
-            R$ 200
-        </button>
-
-    </div>
-
-    <button
-        id="btnDepositar"
-        class="btn-pix"
-        onclick="abrirModal()"
-        disabled
-        style="opacity:0.6;"
-    >
-        Depositar via PIX
-    </button>
-
-    <div id="mensagemDeposito"></div>
-
-</div>
-
-<div
-    id="modalPix"
-    class="modal-pix"
-    onclick="if(event.target === this) fecharModal()"
->
-
-    <div class="modal-conteudo">
-
-        <h3>Pague com PIX</h3>
-
-        <span
-            id="valorDisplay"
-            class="valor-selecionado"
-        ></span>
-
-        <div id="carregandoPix" class="carregando">
-            Criando PIX...
+        <div class="saldo" id="displaySaldo">
+            💰 Saldo: R$ 0,00
         </div>
 
-        <img
-            id="qrCodePix"
-            src=""
-            alt="QR Code PIX"
-            style="display:none;"
-        >
-
-        <div
-            class="area-copia"
-            id="textoPix"
-        ></div>
-
-        <button
-            class="btn-copiar"
-            onclick="copiarChave()"
-        >
-            📋 Copiar Código PIX
-        </button>
-
-        <p style="font-size:12px;color:#888;margin:10px 0;">
-            Escaneie o QR Code no aplicativo do seu banco
-            ou copie o código PIX.
-        </p>
-
-        <button
-            class="btn-fechar"
-            onclick="fecharModal()"
-        >
-            Fechar
-        </button>
+        <div class="status-saldo" id="statusSaldo">
+            Carregando saldo...
+        </div>
 
     </div>
 
-</div>
 
-<script>
+    <div class="container">
 
-/* =========================================================
-   SUPABASE
-   MESMA CONFIGURAÇÃO DO saldo.js
-   ========================================================= */
+        <h2>Recarregar Saldo</h2>
 
-const SUPABASE_URL =
-    "https://jxbzjiwmajjzxgihfjgt.supabase.co";
+        <p>
+            Escolha um valor para depositar via PIX:
+        </p>
 
-const SUPABASE_KEY =
-    "sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ";
+        <div class="valores-rapidos">
 
-const supabaseClient =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-    );
+            <button
+                class="btn-valor"
+                onclick="selecionarValor(this, 10)"
+            >
+                R$ 10
+            </button>
 
+            <button
+                class="btn-valor"
+                onclick="selecionarValor(this, 20)"
+            >
+                R$ 20
+            </button>
 
-/* =========================================================
-   EDGE FUNCTION DO PIX
-   ========================================================= */
+            <button
+                class="btn-valor"
+                onclick="selecionarValor(this, 50)"
+            >
+                R$ 50
+            </button>
 
-const WEBHOOK_DEPOSITO_URL =
-    "https://jxbzjiwmajjzxgihfjgt.supabase.co/functions/v1/swift-action";
+            <button
+                class="btn-valor"
+                onclick="selecionarValor(this, 100)"
+            >
+                R$ 100
+            </button>
 
+            <button
+                class="btn-valor"
+                onclick="selecionarValor(this, 200)"
+            >
+                R$ 200
+            </button>
 
-let valorAtual = 0;
-let usuarioAtual = null;
-let saldoAtual = 0;
-
-
-/* =========================================================
-   FORMATAR DINHEIRO
-   ========================================================= */
-
-function formatarValor(valor) {
-
-    return Number(valor || 0)
-        .toFixed(2)
-        .replace(".", ",");
-
-}
-
-
-/* =========================================================
-   MOSTRAR SALDO
-   ========================================================= */
-
-function atualizarSaldoVisual() {
-
-    document.getElementById(
-        "displaySaldo"
-    ).innerText =
-        `💰 Saldo: R$ ${formatarValor(saldoAtual)}`;
-
-}
+        </div>
 
 
-/* =========================================================
-   PEGAR USUÁRIO LOGADO
-   ========================================================= */
-
-async function carregarUsuario() {
-
-    const {
-        data,
-        error
-    } =
-        await supabaseClient.auth.getSession();
+        <button
+            id="btnDepositar"
+            class="btn-pix"
+            onclick="abrirModal()"
+            disabled
+            style="opacity:0.6;"
+        >
+            Depositar via PIX
+        </button>
 
 
-    if (error) {
+        <div id="mensagemDeposito"></div>
 
-        console.error(
-            "Erro ao obter sessão:",
-            error
-        );
-
-        throw new Error(
-            "Erro ao verificar sua sessão."
-        );
-
-    }
+    </div>
 
 
-    if (
-        !data ||
-        !data.session ||
-        !data.session.user
-    ) {
+    <div
+        id="modalPix"
+        class="modal-pix"
+        onclick="if(event.target === this) fecharModal()"
+    >
 
-        throw new Error(
-            "Usuário não identificado. Faça login novamente."
-        );
+        <div class="modal-conteudo">
 
-    }
+            <h3>Pague com PIX</h3>
 
+            <span
+                id="valorDisplay"
+                class="valor-selecionado"
+            ></span>
 
-    usuarioAtual =
-        data.session.user;
+            <div
+                id="carregandoPix"
+                class="carregando"
+            >
+                Criando PIX...
+            </div>
 
+            <img
+                id="qrCodePix"
+                src=""
+                alt="QR Code PIX"
+                style="display:none;"
+            >
 
-    console.log(
-        "ApostaXBet - usuário:",
-        usuarioAtual.id
-    );
+            <div
+                class="area-copia"
+                id="textoPix"
+            ></div>
 
+            <button
+                class="btn-copiar"
+                onclick="copiarChave()"
+            >
+                📋 Copiar Código PIX
+            </button>
 
-    return usuarioAtual;
+            <p style="font-size:12px;color:#888;margin:10px 0;">
+                Escaneie o QR Code no aplicativo do seu banco
+                ou copie o código PIX.
+            </p>
 
-}
+            <button
+                class="btn-fechar"
+                onclick="fecharModal()"
+            >
+                Fechar
+            </button>
 
+        </div>
 
-/* =========================================================
-   BUSCAR SALDO DIRETAMENTE NA TABELA
-   ========================================================= */
-
-async function carregarSaldoReal() {
-
-    const status =
-        document.getElementById(
-            "statusSaldo"
-        );
-
-
-    try {
-
-        status.innerText =
-            "Carregando saldo...";
-
-
-        const user =
-            usuarioAtual ||
-            await carregarUsuario();
-
-
-        /*
-         * IMPORTANTÍSSIMO:
-         *
-         * Não usar .single().
-         *
-         * .maybeSingle() permite que não exista
-         * registro sem transformar isso em erro.
-         */
-
-        const {
-            data,
-            error
-        } =
-            await supabaseClient
-                .from("saldos")
-                .select("valor")
-                .eq("user_id", user.id)
-                .maybeSingle();
+    </div>
 
 
-        if (error) {
+    <!-- =====================================================
+         SISTEMA OFICIAL DE SALDO
+         ===================================================== -->
 
-            console.error(
-                "ERRO SUPABASE SALDO:",
-                error
-            );
+    <script
+        type="module"
+        src="../saldo.js"
+    ></script>
 
-            throw new Error(
-                "Erro ao consultar o saldo."
-            );
+
+    <script>
+
+        const WEBHOOK_DEPOSITO_URL =
+            "https://jxbzjiwmajjzxgihfjgt.supabase.co/functions/v1/swift-action";
+
+        const SUPABASE_URL =
+            "https://jxbzjiwmajjzxgihfjgt.supabase.co";
+
+        const SUPABASE_ANON_KEY =
+            "sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ";
+
+        let valorAtual = 0;
+
+
+        // =====================================================
+        // FORMATAR VALOR
+        // =====================================================
+
+        function formatarValor(valor) {
+
+            return Number(valor || 0)
+                .toFixed(2)
+                .replace(".", ",");
 
         }
 
 
-        /*
-         * Se ainda não existir uma linha para
-         * esse usuário, o saldo é zero.
-         */
-
-        if (!data) {
-
-            saldoAtual = 0;
-
-        } else {
-
-            saldoAtual =
-                Number(data.valor) || 0;
-
-        }
-
-
-        atualizarSaldoVisual();
-
-
-        status.innerText =
-            "Saldo atualizado";
-
-
-        console.log(
-            "ApostaXBet - saldo encontrado:",
-            saldoAtual
-        );
-
-
-    } catch (erro) {
-
-        console.error(
-            "ERRO AO CARREGAR SALDO:",
-            erro
-        );
-
-
-        status.innerText =
-            "Erro ao carregar saldo";
-
-
-        /*
-         * NÃO mostrar zero como se fosse o
-         * saldo real quando houve erro.
-         */
-
-        document.getElementById(
-            "displaySaldo"
-        ).innerText =
-            "💰 Saldo indisponível";
-
-
-        mostrarErro(
-            erro.message ||
-            "Não foi possível carregar o saldo."
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   SELECIONAR VALOR
-   ========================================================= */
-
-function selecionarValor(
-    botao,
-    valor
-) {
-
-    document
-        .querySelectorAll(".btn-valor")
-        .forEach(
-            b =>
-                b.classList.remove("ativo")
-        );
-
-
-    botao.classList.add("ativo");
-
-
-    valorAtual =
-        Number(valor);
-
-
-    const btn =
-        document.getElementById(
-            "btnDepositar"
-        );
-
-
-    btn.disabled =
-        false;
-
-
-    btn.style.opacity =
-        "1";
-
-
-    btn.innerHTML =
-        `💰 Depositar R$ ${formatarValor(valorAtual)} via PIX`;
-
-}
-
-
-/* =========================================================
-   ABRIR MODAL / CRIAR PIX
-   ========================================================= */
-
-async function abrirModal() {
-
-    if (
-        !valorAtual ||
-        valorAtual <= 0
-    ) {
-
-        return;
-
-    }
-
-
-    const modal =
-        document.getElementById(
-            "modalPix"
-        );
-
-
-    const qr =
-        document.getElementById(
-            "qrCodePix"
-        );
-
-
-    const texto =
-        document.getElementById(
-            "textoPix"
-        );
-
-
-    const carregando =
-        document.getElementById(
-            "carregandoPix"
-        );
-
-
-    modal.style.display =
-        "flex";
-
-
-    qr.style.display =
-        "none";
-
-
-    qr.src =
-        "";
-
-
-    texto.innerText =
-        "";
-
-
-    carregando.style.display =
-        "block";
-
-
-    carregando.innerText =
-        "Criando PIX...";
-
-
-    document.getElementById(
-        "valorDisplay"
-    ).innerText =
-        `Valor: R$ ${formatarValor(valorAtual)}`;
-
-
-    try {
-
-        /*
-         * Garantir usuário autenticado
-         */
-
-        const user =
-            usuarioAtual ||
-            await carregarUsuario();
-
-
-        console.log(
-            "ApostaXBet - usuário utilizado no PIX:",
-            user.id
-        );
-
-
-        /*
-         * Chamar a função existente.
-         */
-
-        const resposta =
-            await fetch(
-                WEBHOOK_DEPOSITO_URL,
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-
-                        tipo:
-                            "deposito_pix",
-
-                        valor:
-                            valorAtual,
-
-                        userId:
-                            user.id,
-
-                        data:
-                            new Date()
-                                .toISOString(),
-
-                        status:
-                            "pendente"
-
-                    })
-
+        // =====================================================
+        // ESPERAR SISTEMA DE SALDO
+        // =====================================================
+
+        async function esperarSistemaSaldo() {
+
+            for (let i = 0; i < 100; i++) {
+
+                if (
+                    window.SistemaSaldo &&
+                    typeof window.SistemaSaldo.get === "function"
+                ) {
+                    return true;
                 }
-            );
+
+                await new Promise(
+                    resolve =>
+                        setTimeout(resolve, 100)
+                );
+            }
+
+            return false;
+        }
 
 
-        const respostaTexto =
-            await resposta.text();
+        // =====================================================
+        // CARREGAR SALDO
+        // =====================================================
+
+        async function carregarSaldoReal() {
+
+            const status =
+                document.getElementById("statusSaldo");
+
+            try {
+
+                status.innerText =
+                    "Carregando saldo...";
+
+                const sistemaExiste =
+                    await esperarSistemaSaldo();
+
+                if (!sistemaExiste) {
+
+                    throw new Error(
+                        "Sistema de saldo não carregou."
+                    );
+                }
+
+                const saldo =
+                    await window.SistemaSaldo.get();
+
+                const numero =
+                    Number(saldo) || 0;
+
+                document.getElementById(
+                    "displaySaldo"
+                ).innerText =
+                    `💰 Saldo: R$ ${formatarValor(numero)}`;
+
+                status.innerText =
+                    "Saldo atualizado";
+
+                console.log(
+                    "ApostaXBet - saldo real:",
+                    numero
+                );
+
+            } catch (erro) {
+
+                console.error(
+                    "Erro ao carregar saldo:",
+                    erro
+                );
+
+                status.innerText =
+                    "Erro ao carregar saldo";
+
+                document.getElementById(
+                    "displaySaldo"
+                ).innerText =
+                    "💰 Saldo: R$ 0,00";
+
+                mostrarErro(
+                    "Não foi possível carregar o saldo real."
+                );
+            }
+        }
 
 
-        console.log(
-            "Resposta da função PIX:",
-            respostaTexto
-        );
+        // =====================================================
+        // SELECIONAR VALOR
+        // =====================================================
+
+        function selecionarValor(
+            botao,
+            valor
+        ) {
+
+            document
+                .querySelectorAll(".btn-valor")
+                .forEach(
+                    b =>
+                        b.classList.remove("ativo")
+                );
+
+            botao.classList.add("ativo");
+
+            valorAtual =
+                Number(valor);
+
+            const btn =
+                document.getElementById(
+                    "btnDepositar"
+                );
+
+            btn.disabled = false;
+            btn.style.opacity = "1";
+
+            btn.innerHTML =
+                `💰 Depositar R$ ${formatarValor(valorAtual)} via PIX`;
+        }
 
 
-        let dados;
+        // =====================================================
+        // ABRIR MODAL / CRIAR PIX
+        // =====================================================
+
+        async function abrirModal() {
+
+            if (!valorAtual || valorAtual <= 0) {
+
+                alert(
+                    "Escolha um valor para depositar."
+                );
+
+                return;
+            }
+
+            const modal =
+                document.getElementById(
+                    "modalPix"
+                );
+
+            const qr =
+                document.getElementById(
+                    "qrCodePix"
+                );
+
+            const texto =
+                document.getElementById(
+                    "textoPix"
+                );
+
+            const carregando =
+                document.getElementById(
+                    "carregandoPix"
+                );
+
+            modal.style.display = "flex";
+
+            qr.style.display = "none";
+            qr.src = "";
+
+            texto.innerText = "";
+
+            carregando.style.display = "block";
+            carregando.innerText =
+                "Criando PIX...";
+
+            document.getElementById(
+                "valorDisplay"
+            ).innerText =
+                `Valor: R$ ${formatarValor(valorAtual)}`;
 
 
-        try {
+            try {
 
-            dados =
-                JSON.parse(
+                // =================================================
+                // IMPORTAR SUPABASE
+                // =================================================
+
+                const supabaseImport =
+                    await import(
+                        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
+                    );
+
+                const supabase =
+                    supabaseImport.createClient(
+                        SUPABASE_URL,
+                        SUPABASE_ANON_KEY
+                    );
+
+
+                // =================================================
+                // PEGAR SESSÃO
+                // =================================================
+
+                const {
+                    data: sessionData,
+                    error: sessionError
+                } =
+                    await supabase.auth.getSession();
+
+
+                if (sessionError) {
+
+                    console.error(
+                        "Erro da sessão:",
+                        sessionError
+                    );
+
+                    throw new Error(
+                        "Erro ao verificar sua sessão."
+                    );
+                }
+
+
+                const session =
+                    sessionData?.session;
+
+                const user =
+                    session?.user;
+
+
+                if (!user) {
+
+                    throw new Error(
+                        "Usuário não identificado. Faça login novamente."
+                    );
+                }
+
+
+                console.log(
+                    "Usuário do depósito:",
+                    user.id
+                );
+
+
+                // =================================================
+                // CHAMAR EDGE FUNCTION
+                // =================================================
+
+                const resposta =
+                    await fetch(
+                        WEBHOOK_DEPOSITO_URL,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json",
+
+                                "apikey":
+                                    SUPABASE_ANON_KEY
+                            },
+
+                            body: JSON.stringify({
+
+                                tipo:
+                                    "deposito_pix",
+
+                                valor:
+                                    Number(valorAtual),
+
+                                userId:
+                                    user.id,
+
+                                data:
+                                    new Date()
+                                        .toISOString(),
+
+                                status:
+                                    "pendente"
+                            })
+                        }
+                    );
+
+
+                // =================================================
+                // LER RESPOSTA
+                // =================================================
+
+                const respostaTexto =
+                    await resposta.text();
+
+
+                console.log(
+                    "Resposta bruta da swift-action:",
                     respostaTexto
                 );
 
-        } catch {
 
-            throw new Error(
-                "A função PIX retornou uma resposta inválida."
-            );
+                let dados;
 
-        }
+                try {
 
+                    dados =
+                        JSON.parse(
+                            respostaTexto
+                        );
 
-        if (
-            !resposta.ok ||
-            !dados.sucesso
-        ) {
+                } catch {
 
-            console.error(
-                "Resposta de erro do PIX:",
-                dados
-            );
+                    throw new Error(
+                        "A função do PIX retornou uma resposta inválida."
+                    );
+                }
 
 
-            throw new Error(
-                dados.error ||
-                dados.message ||
-                "Não foi possível criar o PIX."
-            );
-
-        }
+                console.log(
+                    "Dados recebidos:",
+                    dados
+                );
 
 
-        /*
-         * Procurar o código PIX em
-         * todos os formatos que sua função
-         * já pode estar retornando.
-         */
+                // =================================================
+                // VERIFICAR HTTP
+                // =================================================
 
-        const codigoPix =
-            dados.qr_code ||
-            dados.qr_code_text ||
-            dados.qr_code_copy_paste ||
-            dados.point_of_interaction
-                ?.transaction_data
-                ?.qr_code;
+                if (!resposta.ok) {
 
-
-        if (!codigoPix) {
-
-            console.error(
-                "Resposta completa:",
-                dados
-            );
+                    throw new Error(
+                        dados?.error ||
+                        dados?.message ||
+                        `Erro HTTP ${resposta.status}`
+                    );
+                }
 
 
-            throw new Error(
-                "O código PIX não foi retornado."
-            );
+                // =================================================
+                // VERIFICAR SUCESSO
+                // =================================================
 
-        }
+                if (
+                    dados?.sucesso !== true
+                ) {
+
+                    throw new Error(
+                        dados?.error ||
+                        dados?.message ||
+                        "A função não conseguiu criar o PIX."
+                    );
+                }
 
 
-        texto.innerText =
-            codigoPix;
+                // =================================================
+                // PEGAR CÓDIGO PIX
+                // =================================================
+
+                const codigoPix =
+                    dados?.qr_code ||
+                    dados
+                        ?.point_of_interaction
+                        ?.transaction_data
+                        ?.qr_code;
 
 
-        /*
-         * QR BASE64
-         */
+                const qrBase64 =
+                    dados?.qr_code_base64 ||
+                    dados
+                        ?.point_of_interaction
+                        ?.transaction_data
+                        ?.qr_code_base64;
 
-        if (
-            dados.qr_code_base64
-        ) {
 
-            qr.src =
-                `data:image/png;base64,${dados.qr_code_base64}`;
+                if (!codigoPix) {
 
-        }
+                    console.error(
+                        "Resposta completa sem QR CODE:",
+                        dados
+                    );
 
-        /*
-         * URL de imagem
-         */
+                    throw new Error(
+                        "O Mercado Pago não retornou o código PIX."
+                    );
+                }
 
-        else if (
-            dados.qr_code_image
-        ) {
 
-            qr.src =
-                dados.qr_code_image;
+                // =================================================
+                // MOSTRAR PIX COPIA E COLA
+                // =================================================
 
-        }
+                texto.innerText =
+                    codigoPix;
 
-        /*
-         * Gerar QR pelo código PIX
-         */
 
-        else {
+                texto.style.display =
+                    "block";
 
-            qr.src =
-                "https://api.qrserver.com/v1/create-qr-code/" +
-                "?size=250x250&data=" +
-                encodeURIComponent(
+
+                // =================================================
+                // MOSTRAR QR CODE
+                // =================================================
+
+                if (qrBase64) {
+
+                    qr.src =
+                        `data:image/png;base64,${qrBase64}`;
+
+                } else {
+
+                    qr.src =
+                        "https://api.qrserver.com/v1/create-qr-code/" +
+                        "?size=250x250&data=" +
+                        encodeURIComponent(
+                            codigoPix
+                        );
+                }
+
+
+                qr.onload =
+                    function() {
+
+                        carregando.style.display =
+                            "none";
+
+                        qr.style.display =
+                            "block";
+                    };
+
+
+                qr.onerror =
+                    function() {
+
+                        carregando.innerText =
+                            "QR Code não pôde ser exibido. Use o PIX Copia e Cola.";
+
+                        qr.style.display =
+                            "none";
+                    };
+
+
+                // =================================================
+                // CASO O QR AINDA ESTEJA CARREGANDO
+                // O CÓDIGO JÁ ESTÁ DISPONÍVEL
+                // =================================================
+
+                carregando.innerText =
+                    "PIX criado com sucesso.";
+
+                console.log(
+                    "PIX recebido:",
                     codigoPix
                 );
 
+
+            } catch (erro) {
+
+                console.error(
+                    "ERRO COMPLETO AO CRIAR PIX:",
+                    erro
+                );
+
+                carregando.innerText =
+                    erro?.message ||
+                    "Não foi possível criar o PIX.";
+
+                texto.innerText =
+                    "";
+
+                mostrarErro(
+                    erro?.message ||
+                    "Não foi possível criar o PIX."
+                );
+            }
         }
 
 
-        qr.onload =
-            function() {
+        // =====================================================
+        // COPIAR PIX
+        // =====================================================
 
-                carregando.style.display =
-                    "none";
+        async function copiarChave() {
 
-                qr.style.display =
-                    "block";
-
-            };
-
-
-        qr.onerror =
-            function() {
-
-                carregando.innerText =
-                    "QR Code não pôde ser exibido. Use o código PIX abaixo.";
-
-                qr.style.display =
-                    "none";
-
-            };
+            const texto =
+                document.getElementById(
+                    "textoPix"
+                ).innerText.trim();
 
 
-    } catch (erro) {
+            if (!texto) {
 
-        console.error(
-            "ERRO AO CRIAR PIX:",
-            erro
-        );
+                alert(
+                    "O código PIX ainda não foi carregado."
+                );
 
-
-        carregando.innerText =
-            erro.message ||
-            "Não foi possível criar o PIX.";
+                return;
+            }
 
 
-        texto.innerText =
-            "";
+            try {
+
+                await navigator.clipboard.writeText(
+                    texto
+                );
 
 
-        mostrarErro(
-            erro.message ||
-            "Não foi possível criar o PIX."
-        );
-
-    }
-
-}
+                const btn =
+                    document.querySelector(
+                        ".btn-copiar"
+                    );
 
 
-/* =========================================================
-   COPIAR PIX
-   ========================================================= */
+                const original =
+                    btn.innerHTML;
 
-async function copiarChave() {
-
-    const texto =
-        document.getElementById(
-            "textoPix"
-        ).innerText.trim();
-
-
-    if (!texto) {
-
-        alert(
-            "O código PIX ainda não foi carregado."
-        );
-
-        return;
-
-    }
-
-
-    try {
-
-        await navigator.clipboard.writeText(
-            texto
-        );
-
-
-        const btn =
-            document.querySelector(
-                ".btn-copiar"
-            );
-
-
-        const original =
-            btn.innerHTML;
-
-
-        btn.innerHTML =
-            "✅ Copiado!";
-
-
-        btn.style.background =
-            "#28a745";
-
-
-        setTimeout(
-            () => {
 
                 btn.innerHTML =
-                    original;
+                    "✅ Copiado!";
+
 
                 btn.style.background =
-                    "#007bff";
-
-            },
-            2000
-        );
+                    "#28a745";
 
 
-    } catch {
+                setTimeout(
+                    () => {
 
-        alert(
-            "Não foi possível copiar automaticamente. Selecione e copie o código PIX."
-        );
+                        btn.innerHTML =
+                            original;
 
-    }
+                        btn.style.background =
+                            "#007bff";
 
-}
-
-
-/* =========================================================
-   FECHAR MODAL
-   ========================================================= */
-
-function fecharModal() {
-
-    document.getElementById(
-        "modalPix"
-    ).style.display =
-        "none";
-
-}
+                    },
+                    2000
+                );
 
 
-/* =========================================================
-   MENSAGEM
-   ========================================================= */
+            } catch {
 
-function mostrarErro(
-    mensagem
-) {
-
-    const elemento =
-        document.getElementById(
-            "mensagemDeposito"
-        );
+                alert(
+                    "Não foi possível copiar automaticamente. Selecione e copie o código PIX."
+                );
+            }
+        }
 
 
-    elemento.className =
-        "mensagem-erro";
+        // =====================================================
+        // FECHAR MODAL
+        // =====================================================
+
+        function fecharModal() {
+
+            document.getElementById(
+                "modalPix"
+            ).style.display =
+                "none";
+        }
 
 
-    elemento.innerText =
-        mensagem;
+        // =====================================================
+        // MOSTRAR ERRO
+        // =====================================================
 
+        function mostrarErro(
+            mensagem
+        ) {
 
-    elemento.style.display =
-        "block";
+            const elemento =
+                document.getElementById(
+                    "mensagemDeposito"
+                );
 
+            elemento.className =
+                "mensagem-erro";
 
-    setTimeout(
-        () => {
+            elemento.innerText =
+                mensagem;
 
             elemento.style.display =
-                "none";
-
-        },
-        7000
-    );
-
-}
+                "block";
 
 
-/* =========================================================
-   INICIALIZAÇÃO
-   ========================================================= */
+            setTimeout(
+                () => {
 
-window.addEventListener(
-    "load",
-    async function() {
+                    elemento.style.display =
+                        "none";
 
-        await carregarSaldoReal();
+                },
+                7000
+            );
+        }
 
-    }
-);
 
-</script>
+        // =====================================================
+        // INICIAR
+        // =====================================================
+
+        window.addEventListener(
+            "load",
+            function() {
+
+                carregarSaldoReal();
+
+            }
+        );
+
+    </script>
 
 </body>
 </html>
