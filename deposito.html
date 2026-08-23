@@ -6,11 +6,6 @@
 
     <title>Depositar - ApostaXBet</title>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- MESMO SISTEMA DE SALDO USADO PELOS JOGOS -->
-    <script src="saldo.js"></script>
-
     <style>
         * {
             box-sizing: border-box;
@@ -215,18 +210,31 @@
             color: #555;
             margin: 10px 0;
         }
+
+        .status-saldo {
+            font-size: 12px;
+            margin-top: 5px;
+            color: #aaa;
+        }
     </style>
 </head>
 
 <body>
 
     <div class="topo">
+
         <h1>ApostaXBet</h1>
 
         <div class="saldo" id="displaySaldo">
-            Saldo: R$ 0,00
+            💰 Saldo: R$ 0,00
         </div>
+
+        <div class="status-saldo" id="statusSaldo">
+            Carregando saldo...
+        </div>
+
     </div>
+
 
     <div class="container">
 
@@ -236,43 +244,62 @@
             Escolha um valor para depositar via PIX:
         </p>
 
+
         <div class="valores-rapidos">
 
-            <button class="btn-valor" onclick="selecionarValor(this, 10)">
+            <button
+                class="btn-valor"
+                onclick="selecionarValor(this, 10)"
+            >
                 R$ 10
             </button>
 
-            <button class="btn-valor" onclick="selecionarValor(this, 20)">
+            <button
+                class="btn-valor"
+                onclick="selecionarValor(this, 20)"
+            >
                 R$ 20
             </button>
 
-            <button class="btn-valor" onclick="selecionarValor(this, 50)">
+            <button
+                class="btn-valor"
+                onclick="selecionarValor(this, 50)"
+            >
                 R$ 50
             </button>
 
-            <button class="btn-valor" onclick="selecionarValor(this, 100)">
+            <button
+                class="btn-valor"
+                onclick="selecionarValor(this, 100)"
+            >
                 R$ 100
             </button>
 
-            <button class="btn-valor" onclick="selecionarValor(this, 200)">
+            <button
+                class="btn-valor"
+                onclick="selecionarValor(this, 200)"
+            >
                 R$ 200
             </button>
 
         </div>
+
 
         <button
             id="btnDepositar"
             class="btn-pix"
             onclick="abrirModal()"
             disabled
-            style="opacity: 0.6;"
+            style="opacity:0.6;"
         >
             Depositar via PIX
         </button>
 
+
         <div id="mensagemDeposito"></div>
 
     </div>
+
 
     <div
         id="modalPix"
@@ -284,11 +311,18 @@
 
             <h3>Pague com PIX</h3>
 
-            <span id="valorDisplay" class="valor-selecionado"></span>
+            <span
+                id="valorDisplay"
+                class="valor-selecionado"
+            ></span>
 
-            <div id="carregandoPix" class="carregando">
+            <div
+                id="carregandoPix"
+                class="carregando"
+            >
                 Criando PIX...
             </div>
+
 
             <img
                 id="qrCodePix"
@@ -297,18 +331,31 @@
                 style="display:none;"
             >
 
-            <div class="area-copia" id="textoPix"></div>
 
-            <button class="btn-copiar" onclick="copiarChave()">
+            <div
+                class="area-copia"
+                id="textoPix"
+            ></div>
+
+
+            <button
+                class="btn-copiar"
+                onclick="copiarChave()"
+            >
                 📋 Copiar Código PIX
             </button>
+
 
             <p style="font-size:12px;color:#888;margin:10px 0;">
                 Escaneie o QR Code no aplicativo do seu banco
                 ou copie o código PIX.
             </p>
 
-            <button class="btn-fechar" onclick="fecharModal()">
+
+            <button
+                class="btn-fechar"
+                onclick="fecharModal()"
+            >
                 Fechar
             </button>
 
@@ -316,222 +363,157 @@
 
     </div>
 
+
+    <!-- =====================================================
+         SISTEMA OFICIAL DE SALDO DO APOSTAXBET
+         NÃO ALTERAR
+         ===================================================== -->
+
+    <script
+        type="module"
+        src="../saldo.js"
+    ></script>
+
+
     <script>
 
         // =====================================================
-        // CONFIGURAÇÃO
+        // CONFIGURAÇÃO DO DEPÓSITO
         // =====================================================
-
-        const SUPABASE_URL =
-            "https://jxbzjiwmajjzxgihfjgt.supabase.co";
-
-        const SUPABASE_ANON_KEY =
-            "<SECRET>";
-
-        const supabaseClient =
-            window.supabase.createClient(
-                SUPABASE_URL,
-                SUPABASE_ANON_KEY
-            );
 
         const WEBHOOK_DEPOSITO_URL =
             "https://jxbzjiwmajjzxgihfjgt.supabase.co/functions/v1/swift-action";
 
 
-        // =====================================================
-        // VARIÁVEIS
-        // =====================================================
-
         let valorAtual = 0;
-        let usuarioAtual = null;
-        let saldoAtual = 0;
 
 
         // =====================================================
-        // FORMATAÇÃO
+        // FORMATAR VALOR
         // =====================================================
 
-        function moeda(valor) {
+        function formatarValor(valor) {
 
-            return new Intl.NumberFormat(
-                "pt-BR",
-                {
-                    style: "currency",
-                    currency: "BRL"
-                }
-            ).format(
-                Number(valor) || 0
-            );
+            return Number(valor || 0)
+                .toFixed(2)
+                .replace(".", ",");
+
         }
 
 
         // =====================================================
-        // CARREGAR USUÁRIO
+        // ESPERAR SISTEMA DE SALDO
         // =====================================================
 
-        async function carregarUsuario() {
+        async function esperarSistemaSaldo() {
 
-            try {
-
-                const {
-                    data,
-                    error
-                } =
-                await supabaseClient.auth.getUser();
-
-
-                if (error) {
-
-                    console.error(
-                        "Erro ao buscar usuário:",
-                        error
-                    );
-
-                    return null;
-                }
-
-
-                if (!data || !data.user) {
-
-                    console.error(
-                        "Nenhum usuário autenticado."
-                    );
-
-                    return null;
-                }
-
-
-                usuarioAtual =
-                    data.user;
-
-
-                console.log(
-                    "ApostaXBet - usuário:",
-                    usuarioAtual.id
-                );
-
-
-                return usuarioAtual;
-
-            } catch (erro) {
-
-                console.error(
-                    "Erro ao carregar usuário:",
-                    erro
-                );
-
-                return null;
-            }
-        }
-
-
-        // =====================================================
-        // CARREGAR SALDO
-        //
-        // IMPORTANTE:
-        // NÃO CONSULTA A TABELA "saldos" DIRETAMENTE.
-        //
-        // USA O MESMO SISTEMA DOS JOGOS:
-        // window.SistemaSaldo.get()
-        // =====================================================
-
-        async function carregarSaldo() {
-
-            try {
-
-                let tentativas = 0;
-
-                // Espera o saldo.js terminar de carregar
-                while (
-                    !window.SistemaSaldo &&
-                    tentativas < 50
-                ) {
-
-                    await new Promise(
-                        resolve =>
-                            setTimeout(resolve, 100)
-                    );
-
-                    tentativas++;
-                }
-
+            for (let i = 0; i < 100; i++) {
 
                 if (
-                    !window.SistemaSaldo ||
-                    typeof window.SistemaSaldo.get !== "function"
+                    window.SistemaSaldo &&
+                    typeof window.SistemaSaldo.get === "function"
                 ) {
 
-                    console.error(
-                        "SistemaSaldo não foi carregado."
+                    return true;
+
+                }
+
+                await new Promise(
+                    resolve =>
+                        setTimeout(resolve, 100)
+                );
+
+            }
+
+            return false;
+        }
+
+
+        // =====================================================
+        // CARREGAR SALDO REAL
+        // USA O MESMO SISTEMA DOS JOGOS
+        // =====================================================
+
+        async function carregarSaldoReal() {
+
+            const status =
+                document.getElementById(
+                    "statusSaldo"
+                );
+
+
+            try {
+
+                status.innerText =
+                    "Carregando saldo...";
+
+
+                const sistemaExiste =
+                    await esperarSistemaSaldo();
+
+
+                if (!sistemaExiste) {
+
+                    throw new Error(
+                        "Sistema de saldo não carregou."
                     );
 
-                    mostrarErro(
-                        "Sistema de saldo não carregado. Recarregue a página."
-                    );
-
-                    return false;
                 }
 
 
-                const resultado =
+                const saldo =
                     await window.SistemaSaldo.get();
 
 
-                saldoAtual =
-                    Number(resultado) || 0;
+                const numero =
+                    Number(saldo) || 0;
 
 
-                atualizarSaldoVisual();
+                document.getElementById(
+                    "displaySaldo"
+                ).innerText =
+                    `💰 Saldo: R$ ${formatarValor(numero)}`;
+
+
+                status.innerText =
+                    "Saldo atualizado";
 
 
                 console.log(
-                    "ApostaXBet - saldo pelo SistemaSaldo:",
-                    saldoAtual
+                    "ApostaXBet - saldo real:",
+                    numero
                 );
 
-
-                return true;
 
             } catch (erro) {
 
                 console.error(
-                    "Erro ao carregar saldo pelo SistemaSaldo:",
+                    "Erro ao carregar saldo:",
                     erro
                 );
 
-                mostrarErro(
-                    "Não foi possível carregar o saldo."
-                );
 
-                return false;
-            }
-        }
+                status.innerText =
+                    "Erro ao carregar saldo";
 
 
-        // =====================================================
-        // MOSTRAR SALDO
-        // =====================================================
-
-        function atualizarSaldoVisual() {
-
-            const elemento =
                 document.getElementById(
                     "displaySaldo"
+                ).innerText =
+                    "💰 Saldo: R$ 0,00";
+
+
+                mostrarErro(
+                    "Não foi possível carregar o saldo real. Verifique se você está logado."
                 );
 
-
-            if (!elemento) {
-                return;
             }
 
-
-            elemento.innerText =
-                "Saldo: " + moeda(saldoAtual);
         }
 
 
         // =====================================================
-        // ESCOLHER VALOR DO DEPÓSITO
+        // ESCOLHER VALOR
         // =====================================================
 
         function selecionarValor(
@@ -569,15 +551,8 @@
 
 
             btn.innerHTML =
-                "💰 Depositar " +
-                moeda(valorAtual) +
-                " via PIX";
+                `💰 Depositar R$ ${formatarValor(valorAtual)} via PIX`;
 
-
-            document.getElementById(
-                "mensagemDeposito"
-            ).style.display =
-                "none";
         }
 
 
@@ -593,6 +568,7 @@
             ) {
 
                 return;
+
             }
 
 
@@ -601,15 +577,18 @@
                     "modalPix"
                 );
 
+
             const qr =
                 document.getElementById(
                     "qrCodePix"
                 );
 
+
             const texto =
                 document.getElementById(
                     "textoPix"
                 );
+
 
             const carregando =
                 document.getElementById(
@@ -644,50 +623,62 @@
             document.getElementById(
                 "valorDisplay"
             ).innerText =
-                "Valor: " +
-                moeda(valorAtual);
+                `Valor: R$ ${formatarValor(valorAtual)}`;
 
 
-            // ================================================
-            // GARANTIR USUÁRIO
-            // ================================================
+            try {
 
-            if (!usuarioAtual) {
+                // =================================================
+                // PEGAR USUÁRIO DO MESMO SUPABASE DO saldo.js
+                // =================================================
 
-                const usuario =
-                    await carregarUsuario();
-
-
-                if (!usuario) {
-
-                    carregando.innerText =
-                        "Usuário não identificado.";
+                const supabaseImport =
+                    await import(
+                        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
+                    );
 
 
-                    mostrarErro(
+                const supabase =
+                    supabaseImport.createClient(
+                        "https://jxbzjiwmajjzxgihfjgt.supabase.co",
+                        "sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ"
+                    );
+
+
+                const {
+                    data,
+                    error
+                } =
+                    await supabase.auth.getSession();
+
+
+                if (
+                    error ||
+                    !data ||
+                    !data.session ||
+                    !data.session.user
+                ) {
+
+                    throw new Error(
                         "Usuário não identificado. Faça login novamente."
                     );
 
-                    return;
                 }
-            }
 
 
-            const userId =
-                usuarioAtual.id;
+                const userId =
+                    data.session.user.id;
 
 
-            console.log(
-                "ApostaXBet - usuário do PIX:",
-                userId
-            );
+                console.log(
+                    "ApostaXBet - usuário do depósito:",
+                    userId
+                );
 
 
-            // ================================================
-            // CRIAR PIX
-            // ================================================
-
-            try {
+                // =================================================
+                // CHAMAR EDGE FUNCTION
+                // =================================================
 
                 const resposta =
                     await fetch(
@@ -706,7 +697,7 @@
                                     "deposito_pix",
 
                                 valor:
-                                    Number(valorAtual),
+                                    valorAtual,
 
                                 userId:
                                     userId,
@@ -717,18 +708,20 @@
 
                                 status:
                                     "pendente"
+
                             })
+
                         }
                     );
 
 
-                const respostaTexto =
+                const textoResposta =
                     await resposta.text();
 
 
                 console.log(
-                    "Resposta da Edge Function:",
-                    respostaTexto
+                    "Resposta PIX:",
+                    textoResposta
                 );
 
 
@@ -739,58 +732,63 @@
 
                     dados =
                         JSON.parse(
-                            respostaTexto
+                            textoResposta
                         );
 
                 } catch {
 
                     throw new Error(
-                        "A função do PIX retornou uma resposta inválida."
+                        "A função PIX retornou uma resposta inválida."
                     );
+
                 }
 
 
-                if (!resposta.ok) {
+                if (
+                    !resposta.ok ||
+                    !dados.sucesso
+                ) {
 
-                    throw new Error(
-                        dados.error ||
-                        dados.message ||
-                        "Erro ao criar o PIX."
+                    console.error(
+                        "Erro retornado pela função:",
+                        dados
                     );
-                }
 
-
-                if (!dados.sucesso) {
 
                     throw new Error(
                         dados.error ||
                         dados.message ||
                         "Não foi possível criar o PIX."
                     );
+
                 }
 
 
-                // ============================================
+                // =================================================
                 // CÓDIGO PIX
-                // ============================================
+                // =================================================
 
                 const codigoPix =
                     dados.qr_code ||
                     dados.qr_code_text ||
-                    dados.pix_copy_paste ||
-                    dados.copy_paste;
+                    dados.qr_code_copy_paste ||
+                    dados.point_of_interaction
+                        ?.transaction_data
+                        ?.qr_code;
 
 
                 if (!codigoPix) {
 
                     console.error(
-                        "Resposta sem código PIX:",
+                        "Resposta completa do PIX:",
                         dados
                     );
+
 
                     throw new Error(
                         "O Mercado Pago não retornou o código PIX."
                     );
+
                 }
 
 
@@ -798,26 +796,31 @@
                     codigoPix;
 
 
-                // ============================================
+                // =================================================
                 // QR CODE
-                // ============================================
+                // =================================================
 
                 if (
                     dados.qr_code_base64
                 ) {
 
                     qr.src =
-                        "data:image/png;base64," +
-                        dados.qr_code_base64;
+                        `data:image/png;base64,${dados.qr_code_base64}`;
+
+                } else if (
+                    dados.qr_code_image
+                ) {
+
+                    qr.src =
+                        dados.qr_code_image;
 
                 } else {
 
                     qr.src =
                         "https://api.qrserver.com/v1/create-qr-code/" +
                         "?size=250x250&data=" +
-                        encodeURIComponent(
-                            codigoPix
-                        );
+                        encodeURIComponent(codigoPix);
+
                 }
 
 
@@ -829,24 +832,26 @@
 
                         qr.style.display =
                             "block";
+
                     };
 
 
                 qr.onerror =
                     function() {
 
+                        carregando.innerText =
+                            "QR Code não pôde ser exibido. Use o código PIX abaixo.";
+
                         qr.style.display =
                             "none";
 
-                        carregando.innerText =
-                            "QR Code não pôde ser exibido. Use o código PIX abaixo.";
                     };
 
 
             } catch (erro) {
 
                 console.error(
-                    "Erro ao criar PIX:",
+                    "ERRO AO CRIAR PIX:",
                     erro
                 );
 
@@ -864,7 +869,9 @@
                     erro.message ||
                     "Não foi possível criar o PIX."
                 );
+
             }
+
         }
 
 
@@ -887,6 +894,7 @@
                 );
 
                 return;
+
             }
 
 
@@ -934,7 +942,9 @@
                 alert(
                     "Não foi possível copiar automaticamente. Selecione e copie o código PIX."
                 );
+
             }
+
         }
 
 
@@ -948,6 +958,7 @@
                 "modalPix"
             ).style.display =
                 "none";
+
         }
 
 
@@ -986,38 +997,19 @@
                 },
                 7000
             );
+
         }
 
 
         // =====================================================
-        // INICIALIZAÇÃO
+        // INICIAR
         // =====================================================
 
         window.addEventListener(
             "load",
-            async function() {
+            function() {
 
-                console.log(
-                    "ApostaXBet - iniciando depósito..."
-                );
-
-
-                await carregarUsuario();
-
-
-                await carregarSaldo();
-
-
-                // Atualiza o saldo periodicamente,
-                // igual ao comportamento dos jogos.
-                setInterval(
-                    async function() {
-
-                        await carregarSaldo();
-
-                    },
-                    5000
-                );
+                carregarSaldoReal();
 
             }
         );
