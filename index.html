@@ -3260,10 +3260,12 @@ async function copiarIdUsuario(){
 function mostrarSite(user){
 
     if(!user){
-
-        mostrarLoginTela();
+        window._apostaxbetUsuarioLogado=false;
+        mostrarSitePublico();
         return;
     }
+
+    window._apostaxbetUsuarioLogado=true;
 
     telaLogin.style.display="none";
     telaRecuperacao.style.display="none";
@@ -3282,6 +3284,24 @@ function mostrarSite(user){
     atualizarIdUsuario(user);
 
     atualizarSaldoVisual();
+}
+
+/* ========================= SITE PÚBLICO ========================= */
+function mostrarSitePublico(){
+
+    sessionStorage.removeItem("apostaxbet_logout");
+
+    telaLogin.style.display="none";
+    telaRecuperacao.style.display="none";
+    telaNovaSenha.style.display="none";
+    paginaConta.style.display="none";
+    site.style.display="block";
+
+    mostrarMenu();
+
+    resetarSuporte();
+    ativarEventosJogos();
+    configurarTodasAsCapas();
 }
 
 function mostrarInicio(){
@@ -3365,6 +3385,13 @@ function ativarEventosJogos(){
                 }
 
                 if(carregando)return;
+
+                
+                /* VISITANTE: vê a página, mas precisa entrar/cadastrar para abrir jogos reais. */
+                if(!window._apostaxbetUsuarioLogado){
+                    mostrarLoginTela();
+                    return;
+                }
 
                 carregando=true;
 
@@ -3806,16 +3833,7 @@ async function sair(){
         console.error(error);
     }
 
-    history.pushState(
-        {
-            apostaxbetLogin:true,
-            aposLogout:true
-        },
-        "",
-        window.location.href
-    );
-
-    mostrarLoginTela();
+    mostrarSitePublico();
 }
 
 function mostrarLoginTela(){
@@ -3906,18 +3924,6 @@ function traduzirErro(erro){
 
 async function verificarSessao(){
 
-    esconderMenu();
-
-    if(
-        sessionStorage.getItem(
-            "apostaxbet_logout"
-        )==="1"
-    ){
-
-        mostrarLoginTela();
-        return;
-    }
-
     try{
 
         const {data,error}=
@@ -3926,27 +3932,24 @@ async function verificarSessao(){
             .getSession();
 
         if(error){
-
             console.error(error);
-            mostrarLoginTela();
+            mostrarSitePublico();
             return;
         }
 
         if(data?.session){
-
-            mostrarSite(
-                data.session.user
-            );
-
+            sessionStorage.removeItem("apostaxbet_logout");
+            mostrarSite(data.session.user);
         }else{
-
-            mostrarLoginTela();
+            // VISITANTE: entra direto na página principal.
+            mostrarSitePublico();
         }
 
     }catch(error){
 
         console.error(error);
-        mostrarLoginTela();
+        // Mesmo se o Supabase falhar, o visitante continua vendo a página pública.
+        mostrarSitePublico();
     }
 }
 
@@ -4075,20 +4078,9 @@ clienteSupabase()
             return;
         }
 
-        if(
-            sessionStorage.getItem(
-                "apostaxbet_logout"
-            )==="1"
-        ){
-
-            if(!session){
-                mostrarLoginTela();
-            }
-
-            return;
-        }
-
         if(session){
+
+            sessionStorage.removeItem("apostaxbet_logout");
 
             mostrarSite(
                 session.user
@@ -4096,7 +4088,8 @@ clienteSupabase()
 
         }else{
 
-            mostrarLoginTela();
+            // Sem sessão = visitante. Não abrir a tela de login automaticamente.
+            mostrarSitePublico();
         }
     }
 );
@@ -4105,23 +4098,14 @@ clienteSupabase()
 
 window.addEventListener("popstate",function(){
 
-    if(
-        sessionStorage.getItem(
-            "apostaxbet_logout"
-        )==="1"
-    ){
-
-        history.pushState(
-            {
-                apostaxbetLogin:true,
-                aposLogout:true
-            },
-            "",
-            window.location.href
-        );
-
-        mostrarLoginTela();
-    }
+    // O botão voltar nunca deve transformar um visitante em tela de login.
+    clienteSupabase().auth.getSession().then(({data})=>{
+        if(data?.session){
+            mostrarSite(data.session.user);
+        }else{
+            mostrarSitePublico();
+        }
+    }).catch(()=>mostrarSitePublico());
 
 });
 
@@ -4178,31 +4162,6 @@ document.addEventListener(
             pequenoMovimentoJackpot,
             2000
         );
-
-        if(
-            sessionStorage.getItem(
-                "apostaxbet_logout"
-            )==="1"
-        ){
-
-            history.replaceState(
-                {
-                    apostaxbetLogin:true,
-                    aposLogout:true
-                },
-                "",
-                window.location.href
-            );
-
-            history.pushState(
-                {
-                    apostaxbetLogin:true,
-                    aposLogout:true
-                },
-                "",
-                window.location.href
-            );
-        }
 
         verificarSessao();
     }
