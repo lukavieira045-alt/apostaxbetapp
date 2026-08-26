@@ -4,117 +4,461 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Divulgação - ApostaXBet</title>
+
 <style>
-    body {
-        margin: 0;
-        padding: 0;
-        background: #02030b;
-        font-family: Arial, sans-serif;
-        color: white;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        min-height: 100vh;
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+body {
+    background:
+        radial-gradient(circle at 50% 20%, #10265c 0%, #02030b 45%, #000 100%);
+    font-family: Arial, sans-serif;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+}
+
+/* LUZES DE FUNDO */
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: .25;
+    pointer-events: none;
+    animation: luzes 5s ease-in-out infinite alternate;
+}
+
+body::before {
+    background: #00eaff;
+    top: 15%;
+    left: -120px;
+}
+
+body::after {
+    background: #0066ff;
+    right: -120px;
+    bottom: 10%;
+    animation-delay: 2s;
+}
+
+@keyframes luzes {
+    from {
+        transform: scale(.8);
+        opacity: .15;
     }
+    to {
+        transform: scale(1.3);
+        opacity: .35;
+    }
+}
+
+/* CABEÇALHO */
+.header {
+    width: 100%;
+    padding: 20px 10px;
+    text-align: center;
+    background: linear-gradient(180deg, #101d49, #071127);
+    border-bottom: 2px solid #25eaf1;
+    box-shadow:
+        0 0 15px #00eaff,
+        0 0 35px #00eaff55;
+    position: relative;
+    z-index: 2;
+}
+
+.header h1 {
+    margin: 0;
+    color: #61fff4;
+    text-transform: uppercase;
+    font-size: clamp(19px, 5vw, 28px);
+    text-shadow:
+        0 0 5px #00ffff,
+        0 0 15px #00ffff,
+        0 0 30px #0088ff;
+    animation: tituloPulse 2s ease-in-out infinite;
+}
+
+@keyframes tituloPulse {
+    0%, 100% {
+        transform: scale(1);
+        text-shadow:
+            0 0 5px #00ffff,
+            0 0 15px #00ffff;
+    }
+
+    50% {
+        transform: scale(1.04);
+        text-shadow:
+            0 0 10px #00ffff,
+            0 0 25px #00ffff,
+            0 0 45px #0088ff;
+    }
+}
+
+/* ÁREA DO VÍDEO */
+.video-wrapper {
+    position: relative;
+    max-width: 500px;
+    width: 90%;
+    margin: 35px auto 15px;
+    padding: 8px;
+    border-radius: 18px;
+
+    background: linear-gradient(
+        135deg,
+        #25eaf1,
+        #0088ff,
+        #25eaf1,
+        #0066ff,
+        #25eaf1
+    );
+
+    background-size: 400% 400%;
+
+    animation:
+        bordaMovimento 4s ease infinite,
+        entradaVideo .9s ease-out;
+
+    box-shadow:
+        0 0 15px #25eaf1,
+        0 0 35px #0088ff,
+        0 0 70px #00eaff55;
+}
+
+/* LUZ PULSANDO ATRÁS DO VÍDEO */
+.video-wrapper::before {
+    content: "";
+    position: absolute;
+    inset: -15px;
+    border-radius: 25px;
+    background: #00eaff;
+    filter: blur(25px);
+    opacity: .18;
+    z-index: -1;
+    animation: videoGlow 2s ease-in-out infinite;
+}
+
+@keyframes videoGlow {
+    0%, 100% {
+        transform: scale(.96);
+        opacity: .15;
+    }
+
+    50% {
+        transform: scale(1.04);
+        opacity: .4;
+    }
+}
+
+@keyframes bordaMovimento {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes entradaVideo {
+    from {
+        opacity: 0;
+        transform: scale(.85) translateY(30px);
+        filter: brightness(.4);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+        filter: brightness(1);
+    }
+}
+
+/* BRILHO PASSANDO PELO VÍDEO */
+.video-wrapper::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 45%;
+    height: 100%;
+    border-radius: 18px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.45),
+        transparent
+    );
+    transform: skewX(-20deg);
+    pointer-events: none;
+    animation: reflexo 4s ease-in-out infinite;
+}
+
+@keyframes reflexo {
+    0%, 55% {
+        left: -100%;
+    }
+
+    75% {
+        left: 130%;
+    }
+
+    100% {
+        left: 130%;
+    }
+}
+
+/* VÍDEO */
+video {
+    width: 100%;
+    height: auto;
+    max-height: 75vh;
+    border-radius: 11px;
+    display: block;
+    object-fit: contain;
+    background: #000;
+    position: relative;
+    z-index: 1;
+}
+
+/* TEXTO DO SOM */
+.aviso-som {
+    color: #ffd700;
+    font-size: 12px;
+    text-align: center;
+    margin: 8px 0 2px;
+    text-shadow: 0 0 8px #ffd700;
+    animation: avisoPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes avisoPulse {
+    0%, 100% {
+        opacity: .65;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* CTA */
+.cta-box {
+    width: 100%;
+    text-align: center;
+    margin-top: 12px;
+    padding: 15px 20px 25px;
+    animation: ctaEntrada 1.2s ease-out;
+}
+
+@keyframes ctaEntrada {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.cta-text {
+    color: #a8ff67;
+    font-size: clamp(16px, 4vw, 20px);
+    font-weight: bold;
+    margin: 0 0 22px;
+    text-shadow: 0 0 10px #73ff00;
+}
+
+/* BOTÃO */
+.btn-site {
+    position: relative;
+    overflow: hidden;
+
+    background: linear-gradient(
+        135deg,
+        #25eaf1,
+        #0088ff,
+        #25eaf1
+    );
+
+    background-size: 200% 200%;
+
+    color: #02030b;
+    padding: 16px 42px;
+    font-size: clamp(18px, 5vw, 23px);
+    font-weight: 900;
+    text-decoration: none;
+    border-radius: 50px;
+    display: inline-block;
+
+    box-shadow:
+        0 0 10px #25eaf1,
+        0 0 25px #25eaf1,
+        0 0 50px #0088ff;
+
+    animation:
+        botaoPulse 1.5s ease-in-out infinite,
+        botaoFundo 3s ease infinite;
+
+    transition: transform .25s ease;
+}
+
+.btn-site:hover {
+    transform: scale(1.1);
+}
+
+.btn-site:active {
+    transform: scale(.95);
+}
+
+.btn-site::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.8),
+        transparent
+    );
+    transform: skewX(-20deg);
+    animation: brilhoBotao 2.5s infinite;
+}
+
+@keyframes botaoPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes botaoFundo {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes brilhoBotao {
+    0%, 45% {
+        left: -100%;
+    }
+
+    70% {
+        left: 130%;
+    }
+
+    100% {
+        left: 130%;
+    }
+}
+
+/* VOLTAR */
+.back-link {
+    margin: 5px 0 30px;
+    color: #8796b4;
+    text-decoration: none;
+    font-size: 14px;
+    transition: .3s;
+}
+
+.back-link:hover {
+    color: #61fff4;
+    text-shadow: 0 0 10px #00ffff;
+}
+
+/* CELULAR */
+@media (max-width: 600px) {
 
     .header {
-        width: 100%;
-        padding: 20px;
-        text-align: center;
-        background: linear-gradient(#101d49, #071127);
-        border-bottom: 2px solid #345a9e;
-        box-shadow: 0 0 20px #00eaff44;
-    }
-
-    .header h1 {
-        margin: 0;
-        color: #61fff4;
-        text-transform: uppercase;
-        font-size: 24px;
-        text-shadow: 0 0 10px #00ffff;
+        padding: 17px 8px;
     }
 
     .video-wrapper {
-        max-width: 500px; /* Ajustado para vídeos verticais/celular */
-        width: 90%;
-        margin: 40px auto;
-        background: #101736;
-        padding: 10px;
-        border-radius: 15px;
-        border: 3px solid #25eaf1;
-        box-shadow: 0 0 30px rgba(37, 234, 241, 0.3);
-    }
-
-    video {
-        width: 100%;
-        height: auto;
-        border-radius: 10px;
-        display: block;
-        object-fit: contain; /* Garante que o vídeo não seja cortado */
+        width: 94%;
+        margin-top: 25px;
+        padding: 6px;
     }
 
     .cta-box {
-        text-align: center;
-        margin-top: 20px;
-        padding: 20px;
+        padding-left: 12px;
+        padding-right: 12px;
     }
 
     .btn-site {
-        background: radial-gradient(circle, #25eaf1, #0088ff);
-        color: #02030b;
-        padding: 15px 50px;
-        font-size: 22px;
-        font-weight: bold;
-        text-decoration: none;
-        border-radius: 50px;
-        box-shadow: 0 0 20px #25eaf1;
-        transition: 0.3s;
-        display: inline-block;
+        width: 90%;
+        max-width: 350px;
     }
-
-    .btn-site:hover {
-        transform: scale(1.1);
-        box-shadow: 0 0 40px #25eaf1;
-    }
-
-    .back-link {
-        margin-top: 30px;
-        color: #8796b4;
-        text-decoration: none;
-        font-size: 14px;
-    }
-    
-    .aviso-som {
-        color: #ffd700;
-        font-size: 12px;
-        margin-top: 5px;
-    }
+}
 </style>
 </head>
+
 <body>
 
-    <div class="header">
-        <h1>🎰 Veja como é fácil ganhar!</h1>
-    </div>
+<div class="header">
+    <h1>🎰 VEJA COMO É FÁCIL GANHAR! 🎰</h1>
+</div>
 
-    <div class="video-wrapper">
-        <!-- Som ativado (removido o muted) e loop -->
-        <video controls autoplay loop playsinline>
-            <source src="video-promo~3.mp4" type="video/mp4">
-            Seu navegador não suporta a tag de vídeo.
-        </video>
-        <p class="aviso-som">🔊 Se o som não iniciar, clique no vídeo para ativar.</p>
-    </div>
+<div class="video-wrapper">
 
-    <div class="cta-box">
-        <p style="color: #a8ff67; font-size: 18px; margin-bottom: 20px;">
-            Não fique só olhando! Acesse o site principal agora.
-        </p>
-        <!-- Link alterado para a Home do site -->
-        <a href="index.html" class="btn-site">ACESSAR O SITE 🚀</a>
-    </div>
+    <video controls autoplay loop playsinline>
+        <source src="video-promo~3.mp4" type="video/mp4">
+        Seu navegador não suporta a reprodução de vídeo.
+    </video>
 
-    <a href="index.html" class="back-link">← Voltar para a Home</a>
+    <p class="aviso-som">
+        🔊 Se o som não iniciar, toque no vídeo para ativar.
+    </p>
+
+</div>
+
+<div class="cta-box">
+
+    <p class="cta-text">
+        🚀 Não fique só olhando!<br>
+        Acesse o site principal agora!
+    </p>
+
+    <a href="index.html" class="btn-site">
+        ACESSAR O SITE 🚀
+    </a>
+
+</div>
+
+<a href="index.html" class="back-link">
+    ← Voltar para a Home
+</a>
 
 </body>
 </html>
