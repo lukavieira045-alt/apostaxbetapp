@@ -2,423 +2,511 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>Divulgação - ApostaXBet</title>
 
 <style>
-* {
-    box-sizing: border-box;
+*{
+    box-sizing:border-box;
 }
 
-html, body {
-    margin: 0;
-    padding: 0;
-    min-height: 100%;
+html,body{
+    margin:0;
+    padding:0;
+    min-height:100%;
 }
 
-body {
+body{
+    min-height:100vh;
+    overflow-x:hidden;
+    font-family:Arial,sans-serif;
+    color:#fff;
     background:
-        radial-gradient(circle at 50% 20%, #10265c 0%, #02030b 45%, #000 100%);
-    font-family: Arial, sans-serif;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow-x: hidden;
+        radial-gradient(circle at 50% 15%,#173a78 0%,#07122c 25%,#02030b 58%,#000 100%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
 }
 
-/* LUZES DE FUNDO */
-body::before,
-body::after {
-    content: "";
-    position: fixed;
-    width: 260px;
-    height: 260px;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: .25;
-    pointer-events: none;
-    animation: luzes 5s ease-in-out infinite alternate;
+/* FUNDO ANIMADO */
+.bg-light{
+    position:fixed;
+    width:280px;
+    height:280px;
+    border-radius:50%;
+    filter:blur(80px);
+    pointer-events:none;
+    z-index:0;
+    opacity:.35;
 }
 
-body::before {
-    background: #00eaff;
-    top: 15%;
-    left: -120px;
+.bg-light.one{
+    background:#00eaff;
+    left:-150px;
+    top:20%;
+    animation:moveLight1 5s ease-in-out infinite alternate;
 }
 
-body::after {
-    background: #0066ff;
-    right: -120px;
-    bottom: 10%;
-    animation-delay: 2s;
+.bg-light.two{
+    background:#0066ff;
+    right:-150px;
+    top:55%;
+    animation:moveLight2 6s ease-in-out infinite alternate;
 }
 
-@keyframes luzes {
-    from {
-        transform: scale(.8);
-        opacity: .15;
+.bg-light.three{
+    background:#b700ff;
+    left:35%;
+    bottom:-200px;
+    animation:moveLight3 7s ease-in-out infinite alternate;
+}
+
+@keyframes moveLight1{
+    from{transform:translate(0,0) scale(.8)}
+    to{transform:translate(100px,-80px) scale(1.3)}
+}
+
+@keyframes moveLight2{
+    from{transform:translate(0,0) scale(.8)}
+    to{transform:translate(-100px,80px) scale(1.25)}
+}
+
+@keyframes moveLight3{
+    from{transform:translateY(0) scale(.8)}
+    to{transform:translateY(-100px) scale(1.2)}
+}
+
+/* PARTÍCULAS */
+.particles{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+    z-index:1;
+}
+
+.particle{
+    position:absolute;
+    width:4px;
+    height:4px;
+    border-radius:50%;
+    background:#61fff4;
+    box-shadow:0 0 8px #00ffff,0 0 15px #00ffff;
+    animation:floatUp linear infinite;
+}
+
+.particle:nth-child(1){left:8%;animation-duration:7s;animation-delay:0s}
+.particle:nth-child(2){left:18%;animation-duration:9s;animation-delay:2s}
+.particle:nth-child(3){left:29%;animation-duration:6s;animation-delay:1s}
+.particle:nth-child(4){left:42%;animation-duration:10s;animation-delay:3s}
+.particle:nth-child(5){left:55%;animation-duration:8s;animation-delay:1s}
+.particle:nth-child(6){left:67%;animation-duration:7s;animation-delay:4s}
+.particle:nth-child(7){left:78%;animation-duration:11s;animation-delay:0s}
+.particle:nth-child(8){left:90%;animation-duration:8s;animation-delay:2s}
+.particle:nth-child(9){left:35%;animation-duration:12s;animation-delay:5s}
+.particle:nth-child(10){left:72%;animation-duration:9s;animation-delay:6s}
+
+@keyframes floatUp{
+    0%{
+        bottom:-20px;
+        opacity:0;
+        transform:translateX(0) scale(.5);
     }
-    to {
-        transform: scale(1.3);
-        opacity: .35;
+    15%{
+        opacity:1;
+    }
+    80%{
+        opacity:.8;
+    }
+    100%{
+        bottom:110vh;
+        opacity:0;
+        transform:translateX(60px) scale(1.4);
     }
 }
 
-/* CABEÇALHO */
-.header {
-    width: 100%;
-    padding: 20px 10px;
-    text-align: center;
-    background: linear-gradient(180deg, #101d49, #071127);
-    border-bottom: 2px solid #25eaf1;
+/* HEADER */
+.header{
+    position:relative;
+    z-index:5;
+    width:100%;
+    padding:18px 10px;
+    text-align:center;
+    background:linear-gradient(180deg,#13275c,#071127);
+    border-bottom:2px solid #25eaf1;
     box-shadow:
         0 0 15px #00eaff,
-        0 0 35px #00eaff55;
-    position: relative;
-    z-index: 2;
+        0 0 40px #0088ff88;
 }
 
-.header h1 {
-    margin: 0;
-    color: #61fff4;
-    text-transform: uppercase;
-    font-size: clamp(19px, 5vw, 28px);
+.header h1{
+    margin:0;
+    font-size:clamp(19px,5vw,29px);
+    color:#61fff4;
+    text-transform:uppercase;
     text-shadow:
         0 0 5px #00ffff,
         0 0 15px #00ffff,
         0 0 30px #0088ff;
-    animation: tituloPulse 2s ease-in-out infinite;
+    animation:titlePulse 1.8s ease-in-out infinite;
 }
 
-@keyframes tituloPulse {
-    0%, 100% {
-        transform: scale(1);
-        text-shadow:
-            0 0 5px #00ffff,
-            0 0 15px #00ffff;
+@keyframes titlePulse{
+    0%,100%{
+        transform:scale(1);
+        filter:brightness(1);
     }
-
-    50% {
-        transform: scale(1.04);
-        text-shadow:
-            0 0 10px #00ffff,
-            0 0 25px #00ffff,
-            0 0 45px #0088ff;
+    50%{
+        transform:scale(1.045);
+        filter:brightness(1.4);
     }
 }
 
-/* ÁREA DO VÍDEO */
-.video-wrapper {
-    position: relative;
-    max-width: 500px;
-    width: 90%;
-    margin: 35px auto 15px;
-    padding: 8px;
-    border-radius: 18px;
+/* CONTEÚDO */
+.video-wrapper{
+    position:relative;
+    z-index:4;
+    width:90%;
+    max-width:500px;
+    margin:34px auto 10px;
+    padding:8px;
+    border-radius:20px;
 
-    background: linear-gradient(
-        135deg,
-        #25eaf1,
-        #0088ff,
-        #25eaf1,
-        #0066ff,
-        #25eaf1
-    );
+    background:
+        linear-gradient(
+            120deg,
+            #00ffff,
+            #0066ff,
+            #b700ff,
+            #00ffff,
+            #0088ff
+        );
 
-    background-size: 400% 400%;
+    background-size:500% 500%;
 
     animation:
-        bordaMovimento 4s ease infinite,
-        entradaVideo .9s ease-out;
+        borderMove 4s linear infinite,
+        videoEnter 1s ease-out;
 
     box-shadow:
-        0 0 15px #25eaf1,
+        0 0 15px #00ffff,
         0 0 35px #0088ff,
-        0 0 70px #00eaff55;
+        0 0 70px #0066ff88;
 }
 
-/* LUZ PULSANDO ATRÁS DO VÍDEO */
-.video-wrapper::before {
-    content: "";
-    position: absolute;
-    inset: -15px;
-    border-radius: 25px;
-    background: #00eaff;
-    filter: blur(25px);
-    opacity: .18;
-    z-index: -1;
-    animation: videoGlow 2s ease-in-out infinite;
+@keyframes borderMove{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
 }
 
-@keyframes videoGlow {
-    0%, 100% {
-        transform: scale(.96);
-        opacity: .15;
+@keyframes videoEnter{
+    from{
+        opacity:0;
+        transform:scale(.75) translateY(40px);
+        filter:brightness(.3);
     }
-
-    50% {
-        transform: scale(1.04);
-        opacity: .4;
+    to{
+        opacity:1;
+        transform:scale(1) translateY(0);
+        filter:brightness(1);
     }
 }
 
-@keyframes bordaMovimento {
-    0% {
-        background-position: 0% 50%;
-    }
+/* HALO EXTERNO */
+.video-wrapper::before{
+    content:"";
+    position:absolute;
+    inset:-18px;
+    border-radius:28px;
+    background:linear-gradient(
+        90deg,
+        #00ffff,
+        #0066ff,
+        #b700ff,
+        #00ffff
+    );
+    background-size:300% 100%;
+    filter:blur(22px);
+    opacity:.3;
+    z-index:-1;
+    animation:halo 3s linear infinite;
+}
 
-    50% {
-        background-position: 100% 50%;
+@keyframes halo{
+    0%{
+        background-position:0% 50%;
+        opacity:.2;
+        transform:scale(.96);
     }
-
-    100% {
-        background-position: 0% 50%;
+    50%{
+        background-position:100% 50%;
+        opacity:.5;
+        transform:scale(1.04);
+    }
+    100%{
+        background-position:0% 50%;
+        opacity:.2;
+        transform:scale(.96);
     }
 }
 
-@keyframes entradaVideo {
-    from {
-        opacity: 0;
-        transform: scale(.85) translateY(30px);
-        filter: brightness(.4);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-        filter: brightness(1);
-    }
-}
-
-/* BRILHO PASSANDO PELO VÍDEO */
-.video-wrapper::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 45%;
-    height: 100%;
-    border-radius: 18px;
-    background: linear-gradient(
+/* FLASH QUE PASSA NA BORDA */
+.video-wrapper::after{
+    content:"";
+    position:absolute;
+    top:-3px;
+    left:-120%;
+    width:55%;
+    height:calc(100% + 6px);
+    background:linear-gradient(
         90deg,
         transparent,
-        rgba(255,255,255,.45),
+        rgba(255,255,255,.9),
         transparent
     );
-    transform: skewX(-20deg);
-    pointer-events: none;
-    animation: reflexo 4s ease-in-out infinite;
+    transform:skewX(-25deg);
+    pointer-events:none;
+    z-index:3;
+    animation:borderFlash 2.8s ease-in-out infinite;
 }
 
-@keyframes reflexo {
-    0%, 55% {
-        left: -100%;
-    }
-
-    75% {
-        left: 130%;
-    }
-
-    100% {
-        left: 130%;
-    }
+@keyframes borderFlash{
+    0%,45%{left:-120%}
+    65%{left:130%}
+    100%{left:130%}
 }
 
-/* VÍDEO */
-video {
-    width: 100%;
-    height: auto;
-    max-height: 75vh;
-    border-radius: 11px;
-    display: block;
-    object-fit: contain;
-    background: #000;
-    position: relative;
-    z-index: 1;
+/* VIDEO */
+video{
+    display:block;
+    width:100%;
+    height:auto;
+    max-height:75vh;
+    border-radius:13px;
+    background:#000;
+    object-fit:contain;
+    position:relative;
+    z-index:2;
 }
 
-/* TEXTO DO SOM */
-.aviso-som {
-    color: #ffd700;
-    font-size: 12px;
-    text-align: center;
-    margin: 8px 0 2px;
-    text-shadow: 0 0 8px #ffd700;
-    animation: avisoPulse 1.8s ease-in-out infinite;
+/* AVISO */
+.aviso-som{
+    position:relative;
+    z-index:4;
+    margin:8px 0 2px;
+    text-align:center;
+    color:#ffd700;
+    font-size:12px;
+    text-shadow:
+        0 0 5px #ffd700,
+        0 0 12px #ff9900;
+    animation:soundPulse 1.2s ease-in-out infinite;
 }
 
-@keyframes avisoPulse {
-    0%, 100% {
-        opacity: .65;
-    }
-
-    50% {
-        opacity: 1;
-    }
+@keyframes soundPulse{
+    0%,100%{opacity:.65}
+    50%{opacity:1;transform:scale(1.03)}
 }
 
 /* CTA */
-.cta-box {
-    width: 100%;
-    text-align: center;
-    margin-top: 12px;
-    padding: 15px 20px 25px;
-    animation: ctaEntrada 1.2s ease-out;
+.cta-box{
+    position:relative;
+    z-index:5;
+    width:100%;
+    text-align:center;
+    padding:16px 15px 25px;
+    animation:ctaEnter 1.3s ease-out;
 }
 
-@keyframes ctaEntrada {
-    from {
-        opacity: 0;
-        transform: translateY(25px);
+@keyframes ctaEnter{
+    from{
+        opacity:0;
+        transform:translateY(30px);
     }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    to{
+        opacity:1;
+        transform:translateY(0);
     }
 }
 
-.cta-text {
-    color: #a8ff67;
-    font-size: clamp(16px, 4vw, 20px);
-    font-weight: bold;
-    margin: 0 0 22px;
-    text-shadow: 0 0 10px #73ff00;
+.cta-text{
+    margin:0 0 23px;
+    color:#a8ff67;
+    font-size:clamp(16px,4.5vw,21px);
+    font-weight:bold;
+    line-height:1.4;
+    text-shadow:
+        0 0 7px #73ff00,
+        0 0 18px #39ff14;
+    animation:textGlow 2s ease-in-out infinite;
+}
+
+@keyframes textGlow{
+    0%,100%{filter:brightness(1)}
+    50%{filter:brightness(1.5)}
 }
 
 /* BOTÃO */
-.btn-site {
-    position: relative;
-    overflow: hidden;
+.btn-site{
+    position:relative;
+    overflow:hidden;
+    display:inline-block;
+    min-width:260px;
 
-    background: linear-gradient(
+    padding:17px 42px;
+
+    border-radius:60px;
+
+    color:#02030b;
+    background:linear-gradient(
         135deg,
+        #61fff4,
+        #00aaff,
         #25eaf1,
-        #0088ff,
-        #25eaf1
+        #0066ff
     );
 
-    background-size: 200% 200%;
+    background-size:300% 300%;
 
-    color: #02030b;
-    padding: 16px 42px;
-    font-size: clamp(18px, 5vw, 23px);
-    font-weight: 900;
-    text-decoration: none;
-    border-radius: 50px;
-    display: inline-block;
+    font-size:clamp(18px,5vw,24px);
+    font-weight:900;
+    text-decoration:none;
 
     box-shadow:
-        0 0 10px #25eaf1,
-        0 0 25px #25eaf1,
-        0 0 50px #0088ff;
+        0 0 10px #00ffff,
+        0 0 25px #00ffff,
+        0 0 50px #0088ff,
+        0 0 80px #0066ff66;
 
     animation:
-        botaoPulse 1.5s ease-in-out infinite,
-        botaoFundo 3s ease infinite;
-
-    transition: transform .25s ease;
+        buttonPulse 1.4s ease-in-out infinite,
+        buttonBackground 3s linear infinite;
 }
 
-.btn-site:hover {
-    transform: scale(1.1);
+@keyframes buttonPulse{
+    0%,100%{
+        transform:scale(1);
+        box-shadow:
+            0 0 10px #00ffff,
+            0 0 25px #00ffff,
+            0 0 50px #0088ff;
+    }
+    50%{
+        transform:scale(1.07);
+        box-shadow:
+            0 0 15px #00ffff,
+            0 0 35px #00ffff,
+            0 0 65px #0088ff,
+            0 0 100px #0066ff88;
+    }
 }
 
-.btn-site:active {
-    transform: scale(.95);
+@keyframes buttonBackground{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
 }
 
-.btn-site::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(
+/* BRILHO DO BOTÃO */
+.btn-site::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:45%;
+    height:100%;
+    background:linear-gradient(
         90deg,
         transparent,
-        rgba(255,255,255,.8),
+        rgba(255,255,255,.95),
         transparent
     );
-    transform: skewX(-20deg);
-    animation: brilhoBotao 2.5s infinite;
+    transform:skewX(-25deg);
+    animation:buttonShine 2.2s ease-in-out infinite;
 }
 
-@keyframes botaoPulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.05);
-    }
+@keyframes buttonShine{
+    0%,35%{left:-100%}
+    60%{left:130%}
+    100%{left:130%}
 }
 
-@keyframes botaoFundo {
-    0% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-
-    100% {
-        background-position: 0% 50%;
-    }
+/* LINHA DE ENERGIA */
+.energy-line{
+    position:relative;
+    z-index:4;
+    width:75%;
+    max-width:380px;
+    height:2px;
+    margin:5px auto 18px;
+    background:#00ffff;
+    box-shadow:
+        0 0 5px #00ffff,
+        0 0 15px #00ffff,
+        0 0 30px #0088ff;
+    animation:energyPulse 1s ease-in-out infinite;
 }
 
-@keyframes brilhoBotao {
-    0%, 45% {
-        left: -100%;
-    }
-
-    70% {
-        left: 130%;
-    }
-
-    100% {
-        left: 130%;
-    }
+@keyframes energyPulse{
+    0%,100%{transform:scaleX(.6);opacity:.5}
+    50%{transform:scaleX(1);opacity:1}
 }
 
 /* VOLTAR */
-.back-link {
-    margin: 5px 0 30px;
-    color: #8796b4;
-    text-decoration: none;
-    font-size: 14px;
-    transition: .3s;
+.back-link{
+    position:relative;
+    z-index:5;
+    margin:0 0 30px;
+    color:#8796b4;
+    text-decoration:none;
+    font-size:14px;
+    transition:.3s;
 }
 
-.back-link:hover {
-    color: #61fff4;
-    text-shadow: 0 0 10px #00ffff;
+.back-link:hover{
+    color:#61fff4;
+    text-shadow:0 0 10px #00ffff;
 }
 
 /* CELULAR */
-@media (max-width: 600px) {
+@media(max-width:600px){
 
-    .header {
-        padding: 17px 8px;
+    .header{
+        padding:16px 8px;
     }
 
-    .video-wrapper {
-        width: 94%;
-        margin-top: 25px;
-        padding: 6px;
+    .video-wrapper{
+        width:94%;
+        margin-top:25px;
+        padding:6px;
     }
 
-    .cta-box {
-        padding-left: 12px;
-        padding-right: 12px;
+    .video-wrapper::before{
+        inset:-12px;
+        filter:blur(18px);
     }
 
-    .btn-site {
-        width: 90%;
-        max-width: 350px;
+    .cta-box{
+        padding-left:10px;
+        padding-right:10px;
+    }
+
+    .btn-site{
+        width:90%;
+        min-width:0;
+        max-width:350px;
+    }
+}
+
+/* REDUÇÃO DE MOVIMENTO */
+@media(prefers-reduced-motion:reduce){
+
+    *,
+    *::before,
+    *::after{
+        animation-duration:.01ms !important;
+        animation-iteration-count:1 !important;
     }
 }
 </style>
@@ -426,10 +514,31 @@ video {
 
 <body>
 
+<!-- LUZES DO FUNDO -->
+<div class="bg-light one"></div>
+<div class="bg-light two"></div>
+<div class="bg-light three"></div>
+
+<!-- PARTÍCULAS -->
+<div class="particles">
+    <span class="particle"></span>
+    <span class="particle"></span>
+    <span class="particle"></span>
+    <span class="particle"></span>
+    <span class="particle"></span>
+    <span class="particle"></span>
+    <span class="particle"></span>
+    <span class="particle"></span>
+    <span class="particle"></span>
+    <span class="particle"></span>
+</div>
+
+<!-- CABEÇALHO -->
 <div class="header">
     <h1>🎰 VEJA COMO É FÁCIL GANHAR! 🎰</h1>
 </div>
 
+<!-- VÍDEO -->
 <div class="video-wrapper">
 
     <video controls autoplay loop playsinline>
@@ -438,16 +547,19 @@ video {
     </video>
 
     <p class="aviso-som">
-        🔊 Se o som não iniciar, toque no vídeo para ativar.
+        🔊 Toque no vídeo para ativar o som
     </p>
 
 </div>
 
+<div class="energy-line"></div>
+
+<!-- CHAMADA -->
 <div class="cta-box">
 
     <p class="cta-text">
-        🚀 Não fique só olhando!<br>
-        Acesse o site principal agora!
+        🚀 NÃO FIQUE SÓ OLHANDO!<br>
+        ACESSE O SITE PRINCIPAL AGORA!
     </p>
 
     <a href="index.html" class="btn-site">
