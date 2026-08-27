@@ -1309,9 +1309,134 @@ input:focus{
     }
 }
 </style>
+
+<style id="apostaxbet-bg-controls">
+/* Efeitos decorativos do fundo — não interferem na lógica dos jogos */
+body{
+  position:relative;
+  overflow-x:hidden;
+}
+.ax-bg-decor{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+.ax-bg-grid{
+  position:absolute;
+  inset:-20%;
+  opacity:.12;
+  background-image:
+    linear-gradient(90deg, transparent 0 46px, rgba(255,255,255,.16) 47px, transparent 48px),
+    linear-gradient(0deg, transparent 0 46px, rgba(255,255,255,.11) 47px, transparent 48px);
+  transform:rotate(-8deg);
+  animation:axGridMove 18s linear infinite;
+}
+.ax-bg-line{
+  position:absolute;
+  width:180px;
+  height:2px;
+  border-radius:50%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
+  box-shadow:0 0 12px rgba(255,255,255,.25);
+  opacity:.35;
+  animation:axLineFloat 8s ease-in-out infinite;
+}
+.ax-bg-line.l1{top:16%;left:-30px;transform:rotate(24deg);animation-delay:-2s}
+.ax-bg-line.l2{top:64%;right:-35px;transform:rotate(-24deg);animation-delay:-5s}
+.ax-bg-line.l3{top:38%;left:8%;width:110px;transform:rotate(-35deg);animation-delay:-7s}
+.ax-bg-line.l4{bottom:12%;right:12%;width:130px;transform:rotate(32deg);animation-delay:-1s}
+
+.ax-game-control{
+  position:absolute;
+  width:92px;
+  height:42px;
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:13px;
+  background:rgba(0,0,0,.16);
+  box-shadow:0 0 18px rgba(255,255,255,.06), inset 0 0 14px rgba(255,255,255,.03);
+  opacity:.5;
+  transform:rotate(-8deg);
+}
+.ax-game-control::before,
+.ax-game-control::after{
+  content:"";
+  position:absolute;
+}
+.ax-game-control::before{
+  width:20px;height:20px;left:13px;top:10px;
+  background:
+    linear-gradient(rgba(255,255,255,.48),rgba(255,255,255,.48)) center/100% 3px no-repeat,
+    linear-gradient(rgba(255,255,255,.48),rgba(255,255,255,.48)) center/3px 100% no-repeat;
+  filter:drop-shadow(0 0 4px rgba(255,255,255,.25));
+}
+.ax-game-control::after{
+  width:7px;height:7px;right:17px;top:11px;border-radius:50%;
+  background:rgba(255,255,255,.42);
+  box-shadow:11px 10px 0 rgba(255,255,255,.28);
+}
+.ax-game-control.c1{top:11%;left:3%}
+.ax-game-control.c2{top:27%;right:3%;transform:rotate(9deg);animation:axPulse 4s ease-in-out infinite}
+.ax-game-control.c3{bottom:18%;left:4%;transform:rotate(8deg);animation:axPulse 5s ease-in-out infinite -2s}
+.ax-game-control.c4{bottom:7%;right:5%;transform:rotate(-11deg);animation:axPulse 4.5s ease-in-out infinite -1s}
+.ax-bg-dot{
+  position:absolute;width:4px;height:4px;border-radius:50%;
+  background:rgba(255,255,255,.5);
+  box-shadow:0 0 9px rgba(255,255,255,.35);
+  animation:axDot 6s ease-in-out infinite;
+}
+.ax-bg-dot.d1{top:20%;left:24%}
+.ax-bg-dot.d2{top:72%;left:72%;animation-delay:-2s}
+.ax-bg-dot.d3{top:48%;right:19%;animation-delay:-4s}
+.ax-bg-dot.d4{bottom:17%;left:29%;animation-delay:-1s}
+
+@keyframes axGridMove{
+  from{transform:translate3d(0,0,0) rotate(-8deg)}
+  to{transform:translate3d(48px,48px,0) rotate(-8deg)}
+}
+@keyframes axLineFloat{
+  0%,100%{opacity:.18;transform:translateX(0) rotate(24deg)}
+  50%{opacity:.55;transform:translateX(45px) rotate(24deg)}
+}
+@keyframes axPulse{
+  0%,100%{opacity:.3;box-shadow:0 0 14px rgba(255,255,255,.04),inset 0 0 12px rgba(255,255,255,.02)}
+  50%{opacity:.62;box-shadow:0 0 24px rgba(255,255,255,.10),inset 0 0 18px rgba(255,255,255,.05)}
+}
+@keyframes axDot{
+  0%,100%{transform:translate(0,0);opacity:.15}
+  50%{transform:translate(14px,-10px);opacity:.65}
+}
+@media(max-width:600px){
+  .ax-game-control{transform:scale(.78) rotate(-8deg);opacity:.38}
+  .ax-game-control.c2{transform:scale(.78) rotate(9deg)}
+  .ax-game-control.c3{transform:scale(.78) rotate(8deg)}
+  .ax-game-control.c4{transform:scale(.78) rotate(-11deg)}
+  .ax-bg-grid{opacity:.07}
+}
+</style>
+
 </head>
 
 <body>
+
+<div class="ax-bg-decor" aria-hidden="true">
+  <div class="ax-bg-grid"></div>
+  <div class="ax-bg-line l1"></div>
+  <div class="ax-bg-line l2"></div>
+  <div class="ax-bg-line l3"></div>
+  <div class="ax-bg-line l4"></div>
+  <div class="ax-game-control c1"></div>
+  <div class="ax-game-control c2"></div>
+  <div class="ax-game-control c3"></div>
+  <div class="ax-game-control c4"></div>
+  <span class="ax-bg-dot d1"></span>
+  <span class="ax-bg-dot d2"></span>
+  <span class="ax-bg-dot d3"></span>
+  <span class="ax-bg-dot d4"></span>
+</div>
+
+
 
 <!-- LOGIN -->
 <section id="telaLogin">
