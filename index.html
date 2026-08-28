@@ -1624,7 +1624,7 @@ Aposta<span>X</span>Bet
 <span class="icon">👑</span>VIP
 </a>
 
-<a href="#" class="action-btn">
+<a href="divulgacao.html" class="action-btn" id="btnConvite" onclick="abrirConvite(event)">
 <span class="icon">🤝</span>CONVITE
 </a>
 
@@ -3348,6 +3348,52 @@ function atualizarIdUsuario(user){
     }
 }
 
+function obterCodigoIndicacao(){
+
+    try{
+        return new URLSearchParams(window.location.search).get("ref") || "";
+    }catch(error){
+        return "";
+    }
+}
+
+function gerarLinkDivulgacao(userId){
+
+    if(!userId)return "";
+
+    const base=new URL("divulgacao.html",window.location.href);
+    base.searchParams.set("ref",userId);
+    return base.href;
+}
+
+async function abrirConvite(event){
+
+    event.preventDefault();
+
+    const user=window._apostaxbetUsuarioAtual;
+
+    if(!user || !user.id){
+        alert("Entre na sua conta para gerar seu link de divulgação.");
+        return;
+    }
+
+    const link=gerarLinkDivulgacao(user.id);
+    const botao=document.getElementById("btnConvite");
+
+    try{
+        await navigator.clipboard.writeText(link);
+        if(botao){
+            const textoOriginal=botao.innerHTML;
+            botao.innerHTML='<span class="icon">✅</span>LINK COPIADO';
+            setTimeout(()=>{ botao.innerHTML=textoOriginal; },1800);
+        }
+    }catch(error){
+        console.log("Não foi possível copiar automaticamente:",error);
+    }
+
+    window.location.href=link;
+}
+
 async function copiarIdUsuario(){
 
     const elemento=
@@ -3435,6 +3481,7 @@ function mostrarSite(user){
     }
 
     window._apostaxbetUsuarioLogado=true;
+    window._apostaxbetUsuarioAtual=user;
 
     telaLogin.style.display="none";
     telaRecuperacao.style.display="none";
