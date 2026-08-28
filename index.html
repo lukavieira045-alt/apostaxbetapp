@@ -237,6 +237,7 @@ input:focus{
     font-weight:900;
 }
 
+/* SALDO PEQUENO NO CANTO SUPERIOR */
 .site-saldo{
     margin-left:auto;
     background:transparent;
@@ -265,6 +266,97 @@ input:focus{
     white-space:nowrap;
 }
 
+/* EFEITOS VISUAIS DO TOPO — somente animações, sem alterar a estrutura */
+.topo-apostaxbet{
+    position:relative;
+    overflow:hidden;
+    padding:3px 8px;
+    border-radius:10px;
+    text-shadow:0 0 6px rgba(250,204,21,.35);
+}
+
+.topo-apostaxbet:before{
+    content:"";
+    position:absolute;
+    top:-35%;
+    bottom:-35%;
+    left:-35%;
+    width:24%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
+    transform:skewX(-18deg);
+    animation:luzPassandoTopo 3.8s ease-in-out infinite;
+    pointer-events:none;
+}
+
+.topo-apostaxbet:after{
+    content:"✦  ·  ✧  ·  ✦  ·  ✧";
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:rgba(250,204,21,.42);
+    font-size:11px;
+    letter-spacing:8px;
+    white-space:nowrap;
+    pointer-events:none;
+    animation:brilhoParticulasTopo 2.8s ease-in-out infinite;
+}
+
+.topo-apostaxbet > div{
+    position:relative;
+    z-index:2;
+}
+
+.topo-apostaxbet > div:first-child{
+    font-size:25px;
+    line-height:1.05;
+    letter-spacing:.4px;
+    animation:pulsarLogoTopo 2.2s ease-in-out infinite;
+}
+
+.topo-bonus{
+    position:relative;
+    font-size:13px;
+    line-height:1.15;
+    text-shadow:0 0 5px rgba(134,239,172,.35),0 0 10px rgba(250,204,21,.15);
+    animation:brilhoBonusTopo 1.8s ease-in-out infinite;
+}
+
+.topo-bonus strong{
+    display:inline-block;
+    font-size:15px;
+    animation:pulsarBonusTopo 1.5s ease-in-out infinite;
+}
+
+@keyframes luzPassandoTopo{
+    0%{left:-35%;opacity:0}
+    15%{opacity:1}
+    55%{opacity:1}
+    75%,100%{left:125%;opacity:0}
+}
+
+@keyframes pulsarLogoTopo{
+    0%,100%{transform:scale(1);filter:drop-shadow(0 0 2px rgba(250,204,21,.2))}
+    50%{transform:scale(1.035);filter:drop-shadow(0 0 9px rgba(250,204,21,.65))}
+}
+
+@keyframes brilhoBonusTopo{
+    0%,100%{opacity:.88}
+    50%{opacity:1;text-shadow:0 0 7px rgba(134,239,172,.75),0 0 14px rgba(250,204,21,.35)}
+}
+
+@keyframes pulsarBonusTopo{
+    0%,100%{transform:scale(1)}
+    50%{transform:scale(1.06)}
+}
+
+@keyframes brilhoParticulasTopo{
+    0%,100%{opacity:.15;transform:translateX(-8px)}
+    50%{opacity:.65;transform:translateX(8px)}
+}
+
+/* BÔNUS ABAIXO DO APOSTAXBET */
 .topo-bonus{
     margin-top:4px;
     color:#86efac;
@@ -281,6 +373,11 @@ input:focus{
 .topo-apostaxbet span{
     color:#fff;
 }
+
+/* Ajustes finais dos efeitos do topo */
+.topo-apostaxbet > div:first-child{font-size:25px;}
+.topo-apostaxbet .topo-bonus{font-size:13px;}
+.topo-apostaxbet .topo-bonus strong{font-size:15px;}
 
 .mini-financeiro{
     margin:8px 15px 0;
@@ -351,6 +448,7 @@ input:focus{
     gap:8px;
 }
 
+/* ID DO USUÁRIO */
 .usuario-id-barra{
     flex-shrink:0;
     display:flex;
@@ -431,94 +529,167 @@ input:focus{
     font-size:22px;
 }
 
+/* JACKPOT */
 .jackpot-banner{
     margin:0 15px;
-    background:radial-gradient(circle at center,#246b47 0%,#0a2e1c 100%);
-    border:1px solid #22c55e;
+    background:linear-gradient(180deg,#145a38 0%,#0b3b24 100%);
     border-radius:16px;
-    padding:15px;
+    padding:20px 15px;
     text-align:center;
+    border:1px solid #22c55e;
     position:relative;
     overflow:hidden;
 }
 
-.jackpot-title{
-    font-size:12px;
-    color:#86efac;
-    letter-spacing:2px;
-    margin-bottom:5px;
+.jackpot-banner:before{
+    content:"";
+    position:absolute;
+    inset:-50%;
+    background:radial-gradient(circle,rgba(250,204,21,.08) 0%,transparent 55%);
+    animation:jackpotBrilho 4s ease-in-out infinite;
+    pointer-events:none;
 }
 
-.jackpot-value{
-    font-size:28px;
-    font-weight:900;
-    color:#facc15;
-    text-shadow:0 2px 10px rgba(250,204,21,.3);
+@keyframes jackpotBrilho{
+    0%,100%{
+        transform:scale(.8) rotate(0deg);
+        opacity:.4;
+    }
+    50%{
+        transform:scale(1.2) rotate(180deg);
+        opacity:1;
+    }
 }
 
-.jackpot-animals{
+.jackpot-label{
+    position:relative;
+    z-index:2;
+    background:#0b3b24;
+    border:1px solid #22c55e;
+    padding:4px 18px;
+    border-radius:20px;
+    display:inline-block;
+    margin-bottom:8px;
+    font-weight:bold;
+    font-size:13px;
+}
+
+.jackpot-numero-area{
+    position:relative;
+    z-index:2;
     display:flex;
+    align-items:center;
     justify-content:center;
-    gap:15px;
-    margin-top:10px;
+    gap:12px;
+    width:100%;
 }
 
 .jackpot-animal{
-    width:50px;
-    height:50px;
-    border-radius:50%;
-    background:#0b3b24;
-    border:2px solid #facc15;
+    width:58px;
+    height:58px;
+    object-fit:contain;
+    display:block;
+    flex-shrink:0;
+    filter:drop-shadow(0 2px 5px rgba(0,0,0,.7));
+}
+
+.jackpot-value{
+    position:relative;
+    z-index:2;
+    font-size:26px;
+    font-weight:900;
+    color:#facc15;
+    margin:8px 0;
+    text-shadow:0 2px 6px rgba(0,0,0,.5),0 0 12px rgba(250,204,21,.35);
+    font-variant-numeric:tabular-nums;
+    transition:transform .6s ease,text-shadow .6s ease;
+    white-space:nowrap;
+}
+
+.jackpot-value.subindo{
+    transform:scale(1.035);
+    text-shadow:0 2px 8px rgba(0,0,0,.5),0 0 22px rgba(250,204,21,.65);
+}
+
+.providers{
+    position:relative;
+    z-index:2;
     display:flex;
-    align-items:center;
     justify-content:center;
-    font-size:28px;
-    animation:pulseAnimal 2s infinite;
-}
-
-@keyframes pulseAnimal{
-    0%,100%{transform:scale(1)}
-    50%{transform:scale(1.1)}
-}
-
-.games-section{
-    padding:15px;
-}
-
-.section-title{
-    font-size:16px;
-    font-weight:800;
-    margin-bottom:12px;
-    display:flex;
-    align-items:center;
     gap:8px;
+    margin-top:8px;
+    flex-wrap:wrap;
+}
+
+.prov-badge{
+    background:#0a2e1c;
+    padding:4px 10px;
+    border-radius:6px;
+    font-size:10px;
+    font-weight:bold;
+    border:1px solid #1e7a4d;
+}
+
+/* JOGOS */
+.games-section{
+    scroll-margin-top:75px;
 }
 
 .games-grid{
     display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+    padding:12px 15px;
 }
 
 .game-card{
-    position:relative;
-    border-radius:12px;
-    overflow:hidden;
     aspect-ratio:3/4;
-    background:#145a38;
+    background:#1e7a4d;
+    border-radius:10px;
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    align-items:flex-end;
     cursor:pointer;
-    transition:transform .2s;
-    border:1px solid #1e7a4d;
+    transition:transform .15s;
+    user-select:none;
+    text-decoration:none;
+    color:#fff;
+    touch-action:manipulation;
 }
 
 .game-card:active{
-    transform:scale(.96);
+    transform:scale(.95);
+}
+
+.game-card.ilustrativo{
+    cursor:default;
+}
+
+.game-card.ilustrativo:active{
+    transform:none;
 }
 
 .game-img{
     width:100%;
     height:100%;
     object-fit:cover;
+    object-position:center;
+    position:absolute;
+    inset:0;
+    border-radius:10px;
+    display:block;
+    z-index:0;
+    background:#145a38;
+    transition:transform .25s ease;
+}
+
+.game-card:hover .game-img{
+    transform:scale(1.025);
+}
+
+.game-card.ilustrativo:hover .game-img{
+    transform:scale(1.025);
 }
 
 .game-overlay{
@@ -527,7 +698,11 @@ input:focus{
     left:0;
     right:0;
     z-index:5;
-    background:linear-gradient(transparent 0%,rgba(0,0,0,.72) 35%,rgba(0,0,0,.95) 100%);
+    background:linear-gradient(
+        transparent 0%,
+        rgba(0,0,0,.72) 35%,
+        rgba(0,0,0,.95) 100%
+    );
     padding:30px 6px 7px;
     font-size:10px;
     font-weight:bold;
@@ -546,7 +721,9 @@ input:focus{
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
-    text-shadow:0 1px 2px #000,0 2px 5px #000;
+    text-shadow:
+        0 1px 2px #000,
+        0 2px 5px #000;
     position:relative;
     z-index:6;
 }
@@ -618,1124 +795,3592 @@ input:focus{
     background:#0a2e1c;
     border-top:1px solid #145a38;
     display:flex;
-    align-items:center;
     justify-content:space-around;
+    align-items:center;
     z-index:100;
-    padding-bottom:env(safe-area-inset-bottom);
 }
 
-.nav-btn{
-    flex:1;
-    height:100%;
-    border:0;
-    background:none;
-    color:#86efac;
+.nav-link{
     display:flex;
     flex-direction:column;
     align-items:center;
-    justify-content:center;
-    gap:4px;
+    gap:3px;
     font-size:10px;
+    opacity:.5;
+    cursor:pointer;
+    min-width:55px;
+}
+
+.nav-link.active{
+    opacity:1;
+    color:#facc15;
+}
+
+.nav-icon{
+    font-size:22px;
+}
+
+.nav-link.has-badge{
+    position:relative;
+}
+
+.nav-link.has-badge:after{
+    content:attr(data-badge);
+    position:absolute;
+    top:-2px;
+    right:12px;
+    background:#ef4444;
+    color:#fff;
+    font-size:9px;
+    font-weight:bold;
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* TOPO */
+.btn-topo{
+    position:fixed;
+    right:15px;
+    bottom:85px;
+    width:40px;
+    height:40px;
+    background:#facc15;
+    color:#0b3b24;
+    border:0;
+    border-radius:50%;
+    font-size:18px;
     font-weight:bold;
     cursor:pointer;
-}
-
-.nav-btn .nav-icon{
-    font-size:23px;
-}
-
-.nav-btn.active{
-    color:#facc15;
+    z-index:90;
+    display:none;
 }
 
 /* CONTA */
 #paginaConta{
     display:none;
     min-height:100vh;
-    background:#0b3b24;
-    padding-bottom:90px;
-}
-
-.conta-header{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:15px;
-    background:#0a2e1c;
-    border-bottom:1px solid #145a38;
-}
-
-.conta-header h2{
-    font-size:20px;
-}
-
-.btn-voltar-conta{
-    width:38px;
-    height:38px;
-    border:1px solid #1e7a4d;
-    border-radius:9px;
-    background:#145a38;
-    color:#fff;
-    font-size:25px;
+    padding:20px 15px 110px;
 }
 
 .conta-container{
-    max-width:650px;
+    max-width:600px;
     margin:auto;
-    padding:15px;
+}
+
+.conta-titulo{
+    text-align:center;
+    color:#facc15;
+    font-size:24px;
+    margin:10px 0 20px;
 }
 
 .conta-card{
-    background:#145a38;
-    border:1px solid #1e7a4d;
-    border-radius:14px;
-    padding:16px;
-    margin-bottom:12px;
+    padding:25px 20px;
+    background:#0a2e1c;
+    border:1px solid #145a38;
+    border-radius:16px;
 }
 
-.conta-card h3{
-    color:#facc15;
-    margin-bottom:12px;
+.avatar{
+    width:70px;
+    height:70px;
+    margin:0 auto 12px;
+    border-radius:50%;
+    background:#facc15;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:32px;
+    color:#0b3b24;
+}
+
+.conta-nome{
+    text-align:center;
     font-size:15px;
-}
-
-.conta-dados{
-    display:grid;
-    gap:10px;
-}
-
-.conta-dado{
-    background:#0b3b24;
-    border-radius:9px;
-    padding:10px;
-}
-
-.conta-dado small{
-    display:block;
-    color:#86efac;
-    font-size:10px;
-    margin-bottom:4px;
-}
-
-.conta-dado strong{
-    font-size:14px;
+    font-weight:bold;
     word-break:break-word;
 }
 
-.conta-saldo{
+.conta-email{
     text-align:center;
-    padding:20px;
-}
-
-.conta-saldo .valor{
-    color:#facc15;
-    font-size:30px;
-    font-weight:900;
+    color:#86efac;
     margin-top:5px;
-}
-
-.btn-sair{
-    width:100%;
-    height:48px;
-    border:1px solid #ef4444;
-    border-radius:10px;
-    background:#7f1d1d;
-    color:#fff;
-    font-weight:800;
-}
-
-/* SUPORTE */
-#janelaSuporte{
-    display:none;
-    position:fixed;
-    inset:0;
-    z-index:300;
-    background:rgba(0,0,0,.65);
-    padding:15px;
-}
-
-.suporte-box{
-    width:100%;
-    max-width:500px;
-    margin:40px auto 0;
-    background:#0b3b24;
-    border:1px solid #22c55e;
-    border-radius:16px;
-    overflow:hidden;
-}
-
-.suporte-topo{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:14px 16px;
-    background:#145a38;
-}
-
-.suporte-topo h3{
-    color:#facc15;
-}
-
-.btn-fechar-suporte{
-    width:34px;
-    height:34px;
-    border:0;
-    border-radius:8px;
-    background:#0b3b24;
-    color:#fff;
-    font-size:22px;
-}
-
-.suporte-conteudo{
-    padding:16px;
-}
-
-.suporte-conteudo p{
-    color:#bbf7d0;
     font-size:13px;
-    line-height:1.5;
+    word-break:break-word;
 }
 
-.suporte-opcao{
+.conta-item{
+    margin-top:18px;
+    padding:14px;
+    border-radius:10px;
+    background:#072a1a;
+    border:1px solid #145a38;
+}
+
+.conta-item strong{
     display:block;
-    width:100%;
-    margin-top:10px;
-    padding:13px;
-    border:1px solid #1e7a4d;
-    border-radius:9px;
-    background:#145a38;
+    color:#facc15;
+    margin-bottom:4px;
+}
+
+.conta-dado{
     color:#fff;
-    text-decoration:none;
-    text-align:center;
+    font-size:15px;
+    font-weight:700;
+    word-break:break-word;
+}
+
+.conta-id{
+    color:#bbf7d0;
+    font-size:12px;
+    font-weight:600;
+    word-break:break-all;
+}
+
+.conta-saldo{
+    color:#4ade80;
+    font-size:22px;
+    font-weight:900;
+}
+
+.btn-sair-conta{
+    width:100%;
+    margin-top:18px;
+    padding:14px;
+    border:0;
+    border-radius:10px;
+    background:#dc2626;
+    color:#fff;
+    font-size:15px;
     font-weight:bold;
 }
 
-/* MODAL */
-.modal{
+/* SUPORTE */
+#botaoSuporte{
+    display:none!important;
+}
+
+#janelaSuporte{
     display:none;
     position:fixed;
-    inset:0;
-    z-index:250;
-    background:rgba(0,0,0,.72);
-    padding:15px;
-    overflow-y:auto;
-}
-
-.modal-box{
-    max-width:520px;
-    margin:40px auto;
-    background:#0b3b24;
-    border:1px solid #22c55e;
+    right:10px;
+    bottom:80px;
+    width:calc(100% - 20px);
+    max-width:380px;
+    height:480px;
+    z-index:200;
+    background:#0a2e1c;
+    border:1px solid #145a38;
     border-radius:16px;
-    padding:18px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,.6);
 }
 
-.modal-box h2{
-    color:#facc15;
-    margin-bottom:15px;
-}
-
-.modal-fechar{
-    float:right;
-    width:34px;
-    height:34px;
-    border:0;
-    border-radius:8px;
+.suporte-topo{
+    height:55px;
+    padding:10px 14px;
     background:#145a38;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.suporte-titulo{
+    font-weight:bold;
+    font-size:15px;
+}
+
+.suporte-status{
+    color:#4ade80;
+    font-size:11px;
+}
+
+.fechar-suporte{
+    width:32px;
+    height:32px;
+    background:rgba(255,255,255,.1);
+    border:1px solid rgba(255,255,255,.2);
+    border-radius:50%;
     color:#fff;
     font-size:20px;
 }
 
-/* DEPOSITO */
-#paginaDeposito{
-    display:none;
-    min-height:100vh;
-    background:#0b3b24;
-    padding-bottom:90px;
+#suporteMensagens{
+    height:280px;
+    padding:12px;
+    overflow-y:auto;
 }
 
-.deposito-header{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:15px;
-    background:#0a2e1c;
-    border-bottom:1px solid #145a38;
-}
-
-.deposito-header h2{
-    font-size:19px;
-}
-
-.deposito-container{
-    max-width:600px;
-    margin:auto;
-    padding:15px;
-}
-
-.deposito-card{
-    background:#145a38;
-    border:1px solid #1e7a4d;
-    border-radius:15px;
-    padding:18px;
-    margin-bottom:12px;
-}
-
-.deposito-card h3{
-    color:#facc15;
-    margin-bottom:12px;
-}
-
-.valor-deposito{
-    font-size:28px;
-    font-weight:900;
-    color:#facc15;
-    text-align:center;
-    margin:15px 0;
-}
-
-.pix-area{
-    background:#0b3b24;
-    border:1px dashed #22c55e;
+.msg-suporte{
+    max-width:85%;
+    padding:10px 12px;
+    margin-bottom:8px;
     border-radius:12px;
-    padding:15px;
-    text-align:center;
-}
-
-.pix-chave{
-    margin-top:10px;
-    padding:10px;
-    border-radius:8px;
-    background:#062719;
-    color:#fff;
+    line-height:1.4;
     font-size:13px;
-    word-break:break-all;
+    white-space:pre-line;
 }
 
-.btn-pix{
-    width:100%;
-    height:48px;
-    margin-top:12px;
-    border:0;
-    border-radius:10px;
+.msg-bot{
+    background:#072a1a;
+    border:1px solid #145a38;
+}
+
+.msg-usuario{
     background:#facc15;
     color:#0b3b24;
-    font-weight:900;
+    margin-left:auto;
 }
 
-/* SAQUE */
-#paginaSaque{
-    display:none;
-    min-height:100vh;
-    background:#0b3b24;
-    padding-bottom:90px;
-}
-
-.saque-header{
+.suporte-opcoes{
     display:flex;
-    align-items:center;
-    gap:10px;
-    padding:15px;
-    background:#0a2e1c;
-    border-bottom:1px solid #145a38;
+    flex-wrap:wrap;
+    gap:5px;
+    padding:8px 10px;
+    border-top:1px solid #145a38;
 }
 
-.saque-container{
-    max-width:600px;
-    margin:auto;
-    padding:15px;
-}
-
-.saque-card{
-    background:#145a38;
+.suporte-opcoes button{
+    flex:1 1 30%;
+    padding:8px 4px;
     border:1px solid #1e7a4d;
-    border-radius:15px;
-    padding:18px;
+    border-radius:8px;
+    background:#072a1a;
+    color:#bbf7d0;
+    font-size:11px;
 }
 
-.saque-saldo{
-    text-align:center;
-    padding:15px;
-    background:#0b3b24;
-    border-radius:10px;
-    margin-bottom:15px;
+.suporte-escrever{
+    display:flex;
+    gap:6px;
+    padding:8px;
+    background:#072a1a;
 }
 
-.saque-saldo small{
-    display:block;
-    color:#86efac;
+#entradaSuporte{
+    height:40px;
+    flex:1;
+    margin:0;
+    font-size:13px;
 }
 
-.saque-saldo strong{
-    display:block;
-    margin-top:5px;
-    color:#facc15;
-    font-size:26px;
-}
-
-.btn-saque{
-    width:100%;
-    height:50px;
-    margin-top:15px;
+#enviarSuporte{
+    width:44px;
+    height:40px;
     border:0;
-    border-radius:10px;
-    background:#facc15;
-    color:#0b3b24;
-    font-weight:900;
+    border-radius:8px;
+    background:#22c55e;
+    color:#fff;
+    font-size:18px;
 }
 
 /* LOADER */
 #loader{
-    display:none;
     position:fixed;
     inset:0;
-    z-index:999;
-    background:rgba(11,59,36,.95);
+    z-index:99999;
+    display:flex;
     flex-direction:column;
-    align-items:center;
     justify-content:center;
-    gap:20px;
+    align-items:center;
+    padding:20px;
+    background:radial-gradient(circle at 50% 40%,#35105d,#12001f 55%,#08000f 100%);
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity .45s ease,visibility .45s ease;
 }
 
 #loader.ativo{
-    display:flex;
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
 }
 
-.loader-spinner{
-    width:50px;
-    height:50px;
-    border:4px solid rgba(250,204,21,.3);
-    border-top-color:#facc15;
-    border-radius:50%;
-    animation:spin 1s linear infinite;
-}
-
-@keyframes spin{
-    to{transform:rotate(360deg)}
-}
-
-.loader-info{
+.loader-card{
+    width:350px;
+    max-width:94vw;
     text-align:center;
 }
 
-.loader-nome{
-    color:#facc15;
-    font-size:18px;
-    font-weight:900;
-    margin-bottom:5px;
+.loader-icone{
+    width:350px;
+    max-width:94vw;
+    overflow:hidden;
+    border-radius:18px;
+    background:#08000f;
+    border:2px solid rgba(255,215,0,.75);
+    box-shadow:0 0 20px rgba(255,215,0,.35),0 0 50px rgba(145,0,255,.35);
+    animation:bannerCarregando 1.4s ease-in-out infinite alternate;
 }
 
-.loader-imagem{
-    width:120px;
-    height:120px;
-    border-radius:12px;
-    object-fit:cover;
-    border:2px solid #facc15;
+@keyframes bannerCarregando{
+    from{
+        transform:scale(.97);
+        opacity:.82;
+    }
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
 }
 
-.loader-icone-normal{
-    font-size:60px;
+.loader-icone img{
+    width:100%;
+    height:auto;
+    display:none;
+    border-radius:16px;
+}
+
+.loader-icone .icone-normal{
+    width:100%;
+    min-height:180px;
     display:flex;
     align-items:center;
     justify-content:center;
-    width:120px;
-    height:120px;
+    font-size:65px;
 }
 
-/* RESPONSIVO */
+#loaderNome{
+    margin-top:22px;
+    color:#ffd700;
+    font-size:21px;
+    font-weight:bold;
+    text-shadow:0 0 10px rgba(255,215,0,.6);
+}
+
+.loader-status{
+    margin-top:9px;
+    color:#cdbce0;
+    font-size:14px;
+}
+
+.loader-dots{
+    margin-top:15px;
+    display:flex;
+    justify-content:center;
+    gap:7px;
+}
+
+.loader-dots span{
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    background:#ffd700;
+    animation:loadingDot 1s infinite;
+}
+
+.loader-dots span:nth-child(2){animation-delay:.15s}
+.loader-dots span:nth-child(3){animation-delay:.3s}
+
+@keyframes loadingDot{
+    0%,100%{
+        transform:scale(.65);
+        opacity:.35;
+    }
+    50%{
+        transform:scale(1);
+        opacity:1;
+    }
+}
+
 @media(max-width:600px){
-    .logo{font-size:34px;}
-    .games-grid{grid-template-columns:repeat(4,1fr);gap:7px;padding-left:10px;padding-right:10px;}
-    .game-name{font-size:9px;}
-    .jackpot-value{font-size:22px;}
-    .jackpot-animal{width:48px;height:48px;}
-    .usuario-id-barra strong{max-width:90px;}
+
+    .games-grid{
+        grid-template-columns:repeat(4,1fr);
+    }
+
+    .game-name{
+        font-size:9px;
+    }
+
+    .topo-apostaxbet{
+        font-size:14px;
+        margin:0 5px;
+        padding:2px 4px;
+    }
+
+    .topo-apostaxbet > div:first-child{
+        font-size:20px;
+    }
+
+    .topo-bonus{
+        font-size:10px;
+    }
+
+    .topo-apostaxbet .topo-bonus strong{
+        font-size:12px;
+    }
+
+    .jackpot-numero-area{
+        gap:8px;
+    }
+
+    .jackpot-animal{
+        width:52px;
+        height:52px;
+    }
+
+    .jackpot-value{
+        font-size:24px;
+    }
+
+    .site-saldo{
+        font-size:8px;
+        padding:2px 3px;
+    }
+
+    .site-saldo span{
+        font-size:8px;
+    }
 }
 
-@media(min-width:700px){
-    .games-grid{grid-template-columns:repeat(6,1fr);}
+@media(max-width:360px){
+
+    .logo{
+        font-size:34px;
+    }
+
+    .jackpot-value{
+        font-size:20px;
+    }
+
+    .jackpot-animal{
+        width:46px;
+        height:46px;
+    }
+
+    .jackpot-numero-area{
+        gap:5px;
+    }
+
+    .games-grid{
+        gap:6px;
+        padding:10px 12px;
+    }
+
+    .game-overlay{
+        font-size:9px;
+        padding-top:28px;
+    }
+
+    .game-name{
+        font-size:8px;
+    }
+
+    .nav-link{
+        font-size:9px;
+        min-width:48px;
+    }
+
+    .nav-icon{
+        font-size:20px;
+    }
+
+    .topo-apostaxbet{
+        font-size:12px;
+        margin:0 3px;
+        padding:2px 3px;
+    }
+
+    .topo-apostaxbet > div:first-child{
+        font-size:17px;
+    }
+
+    .topo-bonus{
+        font-size:8px;
+    }
+
+    .topo-apostaxbet .topo-bonus strong{
+        font-size:10px;
+    }
+
+    .site-saldo{
+        font-size:8px;
+        padding:1px 2px;
+    }
+
+    .site-saldo span{
+        font-size:8px;
+    }
 }
 </style>
+
+<style id="apostaxbet-bg-controls">
+/* Efeitos decorativos do fundo — não interferem na lógica dos jogos */
+body{
+  position:relative;
+  overflow-x:hidden;
+}
+.ax-bg-decor{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+.ax-bg-grid{
+  position:absolute;
+  inset:-20%;
+  opacity:.12;
+  background-image:
+    linear-gradient(90deg, transparent 0 46px, rgba(255,255,255,.16) 47px, transparent 48px),
+    linear-gradient(0deg, transparent 0 46px, rgba(255,255,255,.11) 47px, transparent 48px);
+  transform:rotate(-8deg);
+  animation:axGridMove 18s linear infinite;
+}
+.ax-bg-line{
+  position:absolute;
+  width:180px;
+  height:2px;
+  border-radius:50%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
+  box-shadow:0 0 12px rgba(255,255,255,.25);
+  opacity:.35;
+  animation:axLineFloat 8s ease-in-out infinite;
+}
+.ax-bg-line.l1{top:16%;left:-30px;transform:rotate(24deg);animation-delay:-2s}
+.ax-bg-line.l2{top:64%;right:-35px;transform:rotate(-24deg);animation-delay:-5s}
+.ax-bg-line.l3{top:38%;left:8%;width:110px;transform:rotate(-35deg);animation-delay:-7s}
+.ax-bg-line.l4{bottom:12%;right:12%;width:130px;transform:rotate(32deg);animation-delay:-1s}
+
+.ax-game-control{
+  position:absolute;
+  width:92px;
+  height:42px;
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:13px;
+  background:rgba(0,0,0,.16);
+  box-shadow:0 0 18px rgba(255,255,255,.06), inset 0 0 14px rgba(255,255,255,.03);
+  opacity:.5;
+  transform:rotate(-8deg);
+}
+.ax-game-control::before,
+.ax-game-control::after{
+  content:"";
+  position:absolute;
+}
+.ax-game-control::before{
+  width:20px;height:20px;left:13px;top:10px;
+  background:
+    linear-gradient(rgba(255,255,255,.48),rgba(255,255,255,.48)) center/100% 3px no-repeat,
+    linear-gradient(rgba(255,255,255,.48),rgba(255,255,255,.48)) center/3px 100% no-repeat;
+  filter:drop-shadow(0 0 4px rgba(255,255,255,.25));
+}
+.ax-game-control::after{
+  width:7px;height:7px;right:17px;top:11px;border-radius:50%;
+  background:rgba(255,255,255,.42);
+  box-shadow:11px 10px 0 rgba(255,255,255,.28);
+}
+.ax-game-control.c1{top:11%;left:3%}
+.ax-game-control.c2{top:27%;right:3%;transform:rotate(9deg);animation:axPulse 4s ease-in-out infinite}
+.ax-game-control.c3{bottom:18%;left:4%;transform:rotate(8deg);animation:axPulse 5s ease-in-out infinite -2s}
+.ax-game-control.c4{bottom:7%;right:5%;transform:rotate(-11deg);animation:axPulse 4.5s ease-in-out infinite -1s}
+.ax-bg-dot{
+  position:absolute;width:4px;height:4px;border-radius:50%;
+  background:rgba(255,255,255,.5);
+  box-shadow:0 0 9px rgba(255,255,255,.35);
+  animation:axDot 6s ease-in-out infinite;
+}
+.ax-bg-dot.d1{top:20%;left:24%}
+.ax-bg-dot.d2{top:72%;left:72%;animation-delay:-2s}
+.ax-bg-dot.d3{top:48%;right:19%;animation-delay:-4s}
+.ax-bg-dot.d4{bottom:17%;left:29%;animation-delay:-1s}
+
+@keyframes axGridMove{
+  from{transform:translate3d(0,0,0) rotate(-8deg)}
+  to{transform:translate3d(48px,48px,0) rotate(-8deg)}
+}
+@keyframes axLineFloat{
+  0%,100%{opacity:.18;transform:translateX(0) rotate(24deg)}
+  50%{opacity:.55;transform:translateX(45px) rotate(24deg)}
+}
+@keyframes axPulse{
+  0%,100%{opacity:.3;box-shadow:0 0 14px rgba(255,255,255,.04),inset 0 0 12px rgba(255,255,255,.02)}
+  50%{opacity:.62;box-shadow:0 0 24px rgba(255,255,255,.10),inset 0 0 18px rgba(255,255,255,.05)}
+}
+@keyframes axDot{
+  0%,100%{transform:translate(0,0);opacity:.15}
+  50%{transform:translate(14px,-10px);opacity:.65}
+}
+@media(max-width:600px){
+  .ax-game-control{transform:scale(.78) rotate(-8deg);opacity:.38}
+  .ax-game-control.c2{transform:scale(.78) rotate(9deg)}
+  .ax-game-control.c3{transform:scale(.78) rotate(8deg)}
+  .ax-game-control.c4{transform:scale(.78) rotate(-11deg)}
+  .ax-bg-grid{opacity:.07}
+}
+</style>
+
 </head>
 
 <body>
 
-<!-- TELA DE LOGIN -->
-<div id="telaLogin">
-    <div class="login-container">
-        <div class="logo">Aposta<span>X</span>Bet</div>
-        
-        <div class="banner-login">
-            <div class="brasil">🇧🇷</div>
-            <h2>O Cassino do Brasil</h2>
-            <p>Jogue com segurança e retire via PIX</p>
-            <strong>Bônus de 100% no 1º Depósito</strong>
-        </div>
-
-        <div class="login-box">
-            <div class="tabs">
-                <div class="tab active" onclick="mostrarForm('login')">Entrar</div>
-                <div class="tab" onclick="mostrarForm('cadastro')">Cadastrar</div>
-            </div>
-
-            <!-- FORM LOGIN -->
-            <form id="formLogin" class="form active" onsubmit="entrar(event)">
-                <label>E-mail</label>
-                <input type="email" id="emailLogin" required placeholder="seu@email.com">
-                
-                <label>Senha</label>
-                <div class="campo-senha">
-                    <input type="password" id="senhaLogin" required placeholder="••••••">
-                    <span class="olho" onclick="verSenha('senhaLogin')">👁️</span>
-                </div>
-
-                <button type="submit" class="btn-principal">ACESSAR CONTA</button>
-                <button type="button" class="esqueci" onclick="mostrarTela('telaRecuperacao')">Esqueci minha senha</button>
-            </form>
-
-            <!-- FORM CADASTRO -->
-            <form id="formCadastro" class="form" onsubmit="cadastrar(event)">
-                <label>Nome Completo</label>
-                <input type="text" id="nomeCadastro" required placeholder="Seu nome">
-                
-                <label>E-mail</label>
-                <input type="email" id="emailCadastro" required placeholder="seu@email.com">
-                
-                <label>Telefone</label>
-                <input type="tel" id="telefoneCadastro" required placeholder="(00) 00000-0000">
-                
-                <label>CPF</label>
-                <input type="text" id="cpfCadastro" required placeholder="000.000.000-00">
-
-                <label>Senha</label>
-                <div class="campo-senha">
-                    <input type="password" id="senhaCadastro" required placeholder="Mínimo 6 caracteres">
-                    <span class="olho" onclick="verSenha('senhaCadastro')">👁️</span>
-                </div>
-
-                <button type="submit" class="btn-principal">CRIAR CONTA GRÁTIS</button>
-            </form>
-            
-            <div class="termos">
-                Ao se cadastrar, você concorda com nossos Termos de Uso e confirma ter mais de 18 anos.
-            </div>
-        </div>
-    </div>
+<div class="ax-bg-decor" aria-hidden="true">
+  <div class="ax-bg-grid"></div>
+  <div class="ax-bg-line l1"></div>
+  <div class="ax-bg-line l2"></div>
+  <div class="ax-bg-line l3"></div>
+  <div class="ax-bg-line l4"></div>
+  <div class="ax-game-control c1"></div>
+  <div class="ax-game-control c2"></div>
+  <div class="ax-game-control c3"></div>
+  <div class="ax-game-control c4"></div>
+  <span class="ax-bg-dot d1"></span>
+  <span class="ax-bg-dot d2"></span>
+  <span class="ax-bg-dot d3"></span>
+  <span class="ax-bg-dot d4"></span>
 </div>
 
-<!-- TELA DE RECUPERAÇÃO -->
-<div id="telaRecuperacao" style="display:none;">
-    <div class="recuperacao-container">
-        <button class="voltar" onclick="mostrarTela('telaLogin')">← Voltar ao Login</button>
-        <div class="logo">Recuperar<span>Senha</span></div>
-        
-        <div class="recuperacao-box">
-            <p style="color:#bbf7d0;margin-bottom:15px;text-align:center;">Digite seu e-mail para receber o link de redefinição.</p>
-            <form onsubmit="recuperarSenha(event)">
-                <label>E-mail cadastrado</label>
-                <input type="email" id="emailRecuperacao" required placeholder="seu@email.com">
-                <button type="submit" class="btn-principal">ENVIAR LINK</button>
-            </form>
-            <div id="msgRecuperacao" class="mensagem"></div>
-        </div>
-    </div>
+
+
+<!-- LOGIN -->
+<section id="telaLogin">
+<div class="login-container">
+
+<div class="logo">Aposta<span>X</span>Bet</div>
+
+<div class="banner-login">
+<div class="brasil">🇧🇷</div>
+<h2>Bem-vindo ao ApostaXBet</h2>
+<p>Cadastre-se agora e comece a jogar</p>
+<strong>🎁 BÔNUS DE BOAS-VINDAS</strong>
 </div>
 
-<!-- TELA NOVA SENHA -->
-<div id="telaNovaSenha" style="display:none;">
-    <div class="nova-senha-container">
-        <button class="voltar" onclick="mostrarTela('telaLogin')">← Voltar</button>
-        <div class="logo">Nova<span>Senha</span></div>
-        
-        <div class="nova-senha-box">
-            <form onsubmit="atualizarSenha(event)">
-                <label>Nova Senha</label>
-                <div class="campo-senha">
-                    <input type="password" id="novaSenhaInput" required placeholder="••••••">
-                    <span class="olho" onclick="verSenha('novaSenhaInput')">️</span>
-                </div>
-                <button type="submit" class="btn-principal">ATUALIZAR SENHA</button>
-            </form>
-            <div id="msgNovaSenha" class="mensagem"></div>
-        </div>
-    </div>
+<div class="login-box">
+
+<div class="tabs">
+<div class="tab active" id="tabCadastro" onclick="mostrarCadastro()">Cadastro</div>
+<div class="tab" id="tabLogin" onclick="mostrarLogin()">Login</div>
 </div>
 
-<!-- SITE PRINCIPAL -->
-<div id="site">
-    <header class="site-header">
-        <div class="site-logo">Aposta<span>X</span>Bet</div>
-        <div class="topo-apostaxbet">
-            APOSTA<span>X</span>BET
-            <div class="topo-bonus">BÔNUS DE <strong>100%</strong></div>
-        </div>
-        <button class="site-saldo" onclick="mostrarConta()">
-            R$ <span id="saldoTopo">0,00</span>
-        </button>
-    </header>
+<form id="formCadastro" class="form active" onsubmit="cadastrar(event)">
 
-    <div class="mini-financeiro">
-        <a href="#" onclick="abrirDeposito(); return false;">DEPÓSITO</a>
-        <a href="#" onclick="abrirSaque(); return false;">SAQUE</a>
-    </div>
+<label>Seu nome</label>
+<input id="nomeCadastro" type="text" placeholder="Digite seu nome" required>
 
-    <div class="quick-actions">
-        <a href="#" class="action-btn" onclick="abrirDeposito(); return false;">
-            <span class="icon">💰</span>
-            Depositar
-        </a>
-        <a href="#" class="action-btn" onclick="abrirSaque(); return false;">
-            <span class="icon">💸</span>
-            Sacar
-        </a>
-        <a href="#" class="action-btn" onclick="abrirSuporte(); return false;">
-            <span class="icon">🎧</span>
-            Suporte
-        </a>
-        <a href="#" class="action-btn" onclick="copiarIndicacao(); return false;">
-            <span class="icon">🤝</span>
-            Indicar
-        </a>
-    </div>
+<label>E-mail</label>
+<input id="emailCadastro" type="email" placeholder="Digite seu e-mail" required>
 
-    <div class="marquee-bar">
-        <div class="usuario-id-barra">
-            <strong id="userIdDisplay">ID: ...</strong>
-            <button class="btn-copiar-id" onclick="copiarIdUsuario()" title="Copiar ID">📋</button>
-        </div>
-        <div class="marquee-text">
-            🎉 JOGADOR ***92 GANHOU R$ 450,00 NO TIGRINHO | 🚀 USUÁRIO ***11 RETIROU R$ 1.200,00 VIA PIX |  BÔNUS ATIVO PARA NOVOS CADASTROS!
-        </div>
-    </div>
+<label>Telefone</label>
+<input id="telefoneCadastro" type="tel" placeholder="Digite seu telefone" required>
 
-    <div class="nav-categories">
-        <div class="cat-item active"><span class="cat-icon">🔥</span>Popular</div>
-        <div class="cat-item"><span class="cat-icon">🎰</span>Slots</div>
-        <div class="cat-item"><span class="cat-icon">⚡</span>Minijogos</div>
-        <div class="cat-item"><span class="cat-icon">⚽</span>Esportes</div>
-    </div>
-
-    <div class="jackpot-banner">
-        <div class="jackpot-title">JACKPOT ACUMULADO</div>
-        <div class="jackpot-value" id="jackpotValor">R$ 145.230,50</div>
-        <div class="jackpot-animals">
-            <div class="jackpot-animal"></div>
-            <div class="jackpot-animal">🐂</div>
-        </div>
-    </div>
-
-    <div class="games-section">
-        <div class="section-title">🔥 Jogos em Alta</div>
-        <div class="games-grid">
-            <!-- TIGRINHO INTEGRADO -->
-            <div class="game-card" data-link="jogos/tigrinho-clone.html" data-jogo="Fortune Tiger" data-icon="🐯" data-capa="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pgadmin/pgadmin-original.svg">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Tiger_rolling.jpg/640px-Tiger_rolling.jpg" class="game-img" alt="Tigrinho">
-                <div class="game-overlay">
-                    <span class="game-name">Fortune Tiger</span>
-                    <span class="provider-tag">PG Soft</span>
-                </div>
-                <span class="bonus-badge">HOT</span>
-            </div>
-
-            <!-- DRAGON INTEGRADO -->
-            <div class="game-card" data-link="jogos/dragon-clone.html" data-jogo="Fortune Dragon" data-icon="🐉" data-capa="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pgadmin/pgadmin-original.svg">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Dragon_chinese.jpg/640px-Dragon_chinese.jpg" class="game-img" alt="Dragon">
-                <div class="game-overlay">
-                    <span class="game-name">Fortune Dragon</span>
-                    <span class="provider-tag">PG Soft</span>
-                </div>
-            </div>
-
-            <!-- RABBIT INTEGRADO -->
-            <div class="game-card" data-link="jogos/rabbit-clone.html" data-jogo="Fortune Rabbit" data-icon="" data-capa="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pgadmin/pgadmin-original.svg">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Oryctolagus_cuniculus_Rcdo.jpg/640px-Oryctolagus_cuniculus_Rcdo.jpg" class="game-img" alt="Rabbit">
-                <div class="game-overlay">
-                    <span class="game-name">Fortune Rabbit</span>
-                    <span class="provider-tag">PG Soft</span>
-                </div>
-            </div>
-
-            <!-- OX INTEGRADO -->
-            <div class="game-card" data-link="jogos/ox-clone.html" data-jogo="Fortune Ox" data-icon="🐂" data-capa="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pgadmin/pgadmin-original.svg">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Bos_taurus_indicus_humpless.jpg/640px-Bos_taurus_indicus_humpless.jpg" class="game-img" alt="Ox">
-                <div class="game-overlay">
-                    <span class="game-name">Fortune Ox</span>
-                    <span class="provider-tag">PG Soft</span>
-                </div>
-            </div>
-
-            <!-- MINES INTEGRADO -->
-            <div class="game-card" data-link="jogos/mines.html" data-jogo="Mines" data-icon="💣" data-capa="">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Minesweeper_screenshot.png/640px-Minesweeper_screenshot.png" class="game-img" alt="Mines">
-                <div class="game-overlay">
-                    <span class="game-name">Mines</span>
-                    <span class="provider-tag">Spribe</span>
-                </div>
-            </div>
-
-            <!-- CRASH INTEGRADO -->
-            <div class="game-card" data-link="jogos/crash.html" data-jogo="Aviator" data-icon="✈️" data-capa="">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Airbus_A320neo_takeoff.jpg/640px-Airbus_A320neo_takeoff.jpg" class="game-img" alt="Crash">
-                <div class="game-overlay">
-                    <span class="game-name">Aviator</span>
-                    <span class="provider-tag">Spribe</span>
-                </div>
-            </div>
-        </div>
-    </div>
+<label>Criar senha</label>
+<div class="campo-senha">
+<input id="senhaCadastro" type="password" minlength="6" required>
+<span class="olho" onclick="mostrarSenha('senhaCadastro')">👁️</span>
 </div>
 
-<!-- PÁGINA DE CONTA -->
-<div id="paginaConta">
-    <div class="conta-header">
-        <button class="btn-voltar-conta" onclick="mostrarInicio()">←</button>
-        <h2>Minha Conta</h2>
-    </div>
-    <div class="conta-container">
-        <div class="conta-card conta-saldo">
-            <small>Saldo Disponível</small>
-            <div class="valor">R$ 0,00</div>
-        </div>
-        
-        <div class="conta-card">
-            <h3>Dados Pessoais</h3>
-            <div class="conta-dados">
-                <div class="conta-dado">
-                    <small>Nome</small>
-                    <strong id="contaNome">...</strong>
-                </div>
-                <div class="conta-dado">
-                    <small>E-mail</small>
-                    <strong id="contaEmail">...</strong>
-                </div>
-                <div class="conta-dado">
-                    <small>Telefone</small>
-                    <strong id="contaTelefone">...</strong>
-                </div>
-                <div class="conta-dado">
-                    <small>CPF</small>
-                    <strong id="contaCpf">...</strong>
-                </div>
-            </div>
-        </div>
-
-        <button class="btn-sair" onclick="sair()">SAIR DA CONTA</button>
-    </div>
+<label>Confirmar senha</label>
+<div class="campo-senha">
+<input id="confirmarSenha" type="password" minlength="6" required>
+<span class="olho" onclick="mostrarSenha('confirmarSenha')">👁️</span>
 </div>
 
-<!-- PÁGINA DE DEPÓSITO -->
-<div id="paginaDeposito">
-    <div class="deposito-header">
-        <button class="btn-voltar-conta" onclick="mostrarInicio()">←</button>
-        <h2>Depósito PIX</h2>
-    </div>
-    <div class="deposito-container">
-        <div class="deposito-card">
-            <h3>Gerar Pagamento</h3>
-            <div class="valor-deposito">R$ 50,00</div>
-            <div class="pix-area">
-                <p>Chave PIX Copia e Cola:</p>
-                <div class="pix-chave">00020126580014BR.GOV.BCB.PIX0136123e4567-e89b-12d3-a456-426614174000</div>
-                <button class="btn-pix">COPIAR CÓDIGO</button>
-            </div>
-        </div>
-    </div>
+<button class="btn-principal" id="btnCadastro">CRIAR CONTA</button>
+<div id="mensagemCadastro" class="mensagem"></div>
+</form>
+
+<form id="formLogin" class="form" onsubmit="entrar(event)">
+
+<label>E-mail</label>
+<input id="emailLogin" type="email" placeholder="Digite seu e-mail" required>
+
+<label>Senha</label>
+<div class="campo-senha">
+<input id="senhaLogin" type="password" required>
+<span class="olho" onclick="mostrarSenha('senhaLogin')">👁️</span>
 </div>
 
-<!-- PÁGINA DE SAQUE -->
-<div id="paginaSaque">
-    <div class="saque-header">
-        <button class="btn-voltar-conta" onclick="mostrarInicio()">←</button>
-        <h2>Solicitar Saque</h2>
-    </div>
-    <div class="saque-container">
-        <div class="saque-card">
-            <div class="saque-saldo">
-                <small>Saldo para saque</small>
-                <strong>R$ 0,00</strong>
-            </div>
-            <label>Chave PIX</label>
-            <input type="text" placeholder="CPF, E-mail ou Telefone">
-            <label>Valor do Saque</label>
-            <input type="number" placeholder="R$ 0,00">
-            <button class="btn-saque">SACAR AGORA</button>
-        </div>
-    </div>
+<button class="btn-principal" id="btnLogin">ENTRAR</button>
+
+<button type="button" class="esqueci" onclick="mostrarRecuperacao()">
+Esqueci minha senha?
+</button>
+
+<div id="mensagemLogin" class="mensagem"></div>
+</form>
+
+<div class="termos">
+Ao criar uma conta, você concorda com os termos de uso e política de privacidade do ApostaXBet.
 </div>
 
-<!-- JANELA DE SUPORTE -->
+</div>
+</div>
+</section>
+
+<!-- RECUPERAÇÃO -->
+<section id="telaRecuperacao" style="display:none">
+<div class="recuperacao-container">
+
+<div class="logo">Aposta<span>X</span>Bet</div>
+
+<div class="recuperacao-box">
+
+<h2 style="text-align:center;color:#facc15;margin-bottom:10px">
+🔐 Recuperar senha
+</h2>
+
+<p style="text-align:center;color:#bbf7d0;line-height:1.5;margin-bottom:15px">
+Digite o e-mail usado no cadastro. Vamos enviar um link para você criar uma nova senha.
+</p>
+
+<form onsubmit="enviarRecuperacao(event)">
+<label>E-mail</label>
+<input id="emailRecuperacao" type="email" required>
+
+<button class="btn-principal" id="btnRecuperacao">
+ENVIAR LINK
+</button>
+
+<div id="mensagemRecuperacao" class="mensagem"></div>
+</form>
+
+<button class="voltar" onclick="voltarLogin">
+← Voltar para o login
+</button>
+
+</div>
+</div>
+</section>
+
+<!-- NOVA SENHA -->
+<section id="telaNovaSenha" style="display:none">
+<div class="nova-senha-container">
+
+<div class="logo">Aposta<span>X</span>Bet</div>
+
+<div class="nova-senha-box">
+
+<h2 style="text-align:center;color:#facc15;margin-bottom:10px">
+Criar nova senha
+</h2>
+
+<p style="text-align:center;color:#bbf7d0;margin-bottom:15px">
+Digite sua nova senha abaixo.
+</p>
+
+<form onsubmit="salvarNovaSenha(event)">
+
+<label>Nova senha</label>
+<div class="campo-senha">
+<input id="novaSenha" type="password" minlength="6" required>
+<span class="olho" onclick="mostrarSenha('novaSenha')">👁️</span>
+</div>
+
+<label>Confirmar nova senha</label>
+<div class="campo-senha">
+<input id="confirmarNovaSenha" type="password" minlength="6" required>
+<span class="olho" onclick="mostrarSenha('confirmarNovaSenha')">👁️</span>
+</div>
+
+<button class="btn-principal" id="btnNovaSenha">
+SALVAR NOVA SENHA
+</button>
+
+<div id="mensagemNovaSenha" class="mensagem"></div>
+
+</form>
+</div>
+</div>
+</section>
+
+<!-- SITE -->
+<section id="site">
+
+<header class="site-header">
+
+<div class="site-logo">
+Aposta<span>X</span>Bet
+</div>
+
+<div class="site-saldo">
+💰 R$ <span id="saldoValor">0,00</span>
+</div>
+
+</header>
+
+<div style="display:flex;align-items:stretch;gap:10px;margin:8px 15px 0;">
+
+<div class="mini-financeiro" style="margin:0;">
+<a href="saque.html">💵 SAQUE</a>
+<a href="deposito.html">💰 DEPÓSITO</a>
+</div>
+
+<div class="topo-apostaxbet">
+<div>Aposta<span>X</span>Bet</div>
+<div class="topo-bonus">🎁 GANHE BÔNUS DE <strong>ATÉ R$ 100,00</strong></div>
+</div>
+
+</div>
+
+<div class="quick-actions">
+
+<a href="#" class="action-btn">
+<span class="icon">👑</span>VIP
+</a>
+
+<a href="divulgacao.html" class="action-btn" id="btnConvite" onclick="abrirConvite(event)">
+<span class="icon">🤝</span>CONVITE
+</a>
+
+<a href="#" class="action-btn">
+<span class="icon">🎟️</span>CÓDIGO
+</a>
+
+<a href="#" class="action-btn">
+<span class="icon">📋</span>MISSÃO
+</a>
+
+<a href="#" class="action-btn">
+<span class="icon">🎁</span>COLEÇÃO
+</a>
+
+<a href="#" class="action-btn">
+<span class="icon">🏷️</span>DESCONTO
+</a>
+
+</div>
+
+<div class="marquee-bar">
+
+<div class="usuario-id-barra">
+<span>🔥</span>
+<span>ID:</span>
+
+<strong id="usuarioIdDisplay">
+Carregando...
+</strong>
+
+<button
+type="button"
+class="btn-copiar-id"
+onclick="copiarIdUsuario()"
+title="Copiar ID">
+📋
+</button>
+</div>
+
+<div class="marquee-text">
+COMPARTILHE O LINK DO AGENTE E GANHE BÔNUS EXCLUSIVOS NO APOSTAXBET!
+🔥 CADASTRE-SE AGORA E RECEBA SEU BÔNUS DE BOAS-VINDAS! 🎁
+</div>
+
+</div>
+
+<div class="nav-categories">
+
+<div class="cat-item active" onclick="filtrarJogos('todos',this)">
+<span class="cat-icon">🔍</span>
+<span>Pesquisar</span>
+</div>
+
+<div class="cat-item" onclick="filtrarJogos('popular',this)">
+<span class="cat-icon">🔥</span>
+<span>Popular</span>
+</div>
+
+<div class="cat-item" onclick="filtrarJogos('slots',this)">
+<span class="cat-icon">🎰</span>
+<span>Slots</span>
+</div>
+
+<div class="cat-item" onclick="filtrarJogos('mini',this)">
+<span class="cat-icon">🎮</span>
+<span>Minijogos</span>
+</div>
+
+</div>
+
+<!-- JACKPOT -->
+<div class="jackpot-banner">
+
+<div class="jackpot-label">
+JACKPOT
+</div>
+
+<div class="jackpot-numero-area">
+
+<img
+class="jackpot-animal"
+src="jogos/tigrinho.png"
+alt="Tigrinho">
+
+<div class="jackpot-value" id="jackpotValue">
+15.617.132,96
+</div>
+
+<img
+class="jackpot-animal"
+src="jogos/touro.png"
+alt="Touro">
+
+</div>
+
+<div class="providers">
+
+<div class="prov-badge">PG Slots</div>
+<div class="prov-badge">JDB Slots</div>
+<div class="prov-badge">WG Slots</div>
+<div class="prov-badge">2J Slots</div>
+
+</div>
+
+</div>
+
+<!-- JOGOS -->
+<div id="areaJogos" class="games-section">
+
+<div class="games-grid" id="gamesGrid">
+
+<div class="game-card"
+data-cat="popular slots"
+data-jogo="Roleta"
+data-capa="jogos/banner-roleta.png"
+data-icon="🎰"
+data-link="jogos/roleta.html">
+
+<img class="game-img"
+src="jogos/banner-roleta.png"
+alt="Roleta"
+loading="eager">
+
+<span class="like-icon">👍</span>
+<span class="fav-icon">⭐</span>
+
+<div class="game-overlay">
+<span class="game-name">Roleta</span>
+<span class="provider-tag">AX</span>
+</div>
+</div>
+
+<div class="game-card"
+data-cat="popular slots"
+data-jogo="Roleta Premium"
+data-capa="jogos/banner-roleta-premium.png"
+data-icon="🎡"
+data-link="jogos/roleta2.html">
+
+<img class="game-img"
+src="jogos/banner-roleta-premium.png"
+alt="Roleta Premium"
+loading="lazy">
+
+<span class="like-icon">👍</span>
+<span class="fav-icon">⭐</span>
+
+<div class="game-overlay">
+<span class="game-name">Roleta Premium</span>
+<span class="provider-tag">AX</span>
+</div>
+</div>
+
+<div class="game-card"
+data-cat="slots"
+data-jogo="Roleta Cassino"
+data-capa="jogos/banner-roleta-cassino.png"
+data-icon="🎰"
+data-link="jogos/roleta-cassino.html">
+
+<img class="game-img"
+src="jogos/banner-roleta-cassino.png"
+alt="Roleta Cassino"
+loading="lazy">
+
+<span class="like-icon">👍</span>
+<span class="fav-icon">⭐</span>
+
+<div class="game-overlay">
+<span class="game-name">Roleta Cassino</span>
+<span class="provider-tag">AX</span>
+</div>
+</div>
+
+<div class="game-card"
+data-cat="popular mini"
+data-jogo="Mines"
+data-capa="jogos/banner-mines.png"
+data-icon="💣"
+data-link="jogos/mines.html">
+
+<img class="game-img"
+src="jogos/banner-mines.png"
+alt="Mines"
+loading="lazy">
+
+<span class="like-icon">👍</span>
+<span class="fav-icon">⭐</span>
+
+<div class="game-overlay">
+<span class="game-name">Mines</span>
+<span class="provider-tag">AX</span>
+</div>
+</div>
+
+<div class="game-card"
+data-cat="popular slots"
+data-jogo="Crash"
+data-capa="jogos/banner-crash.png"
+data-icon="🚀"
+data-link="jogos/crash.html">
+
+<img class="game-img"
+src="jogos/banner-crash.png"
+alt="Crash"
+loading="lazy">
+
+<span class="like-icon">👍</span>
+<span class="fav-icon">⭐</span>
+
+<div class="game-overlay">
+<span class="game-name">Crash</span>
+<span class="provider-tag">AX</span>
+</div>
+</div>
+
+<div class="game-card"
+data-cat="mini"
+data-jogo="Plinko"
+data-capa="jogos/banner-plinko.png"
+data-icon="🎯"
+data-link="jogos/plinko.html">
+
+<img class="game-img"
+src="jogos/banner-plinko.png"
+alt="Plinko"
+loading="lazy">
+
+<span class="like-icon">👍</span>
+<span class="fav-icon">⭐</span>
+
+<div class="game-overlay">
+<span class="game-name">Plinko</span>
+<span class="provider-tag">AX</span>
+</div>
+</div>
+
+<div class="game-card"
+data-cat="slots"
+data-jogo="Dice"
+data-capa="jogos/banner-dice.png"
+data-icon="🎲"
+data-link="jogos/dice.html">
+
+<img class="game-img"
+src="jogos/banner-dice.png"
+alt="Dice"
+loading="lazy">
+
+<span class="like-icon">👍</span>
+<span class="fav-icon">⭐</span>
+
+<div class="game-overlay">
+<span class="game-name">Dice</span>
+<span class="provider-tag">AX</span>
+</div>
+</div>
+
+<div class="game-card"
+data-cat="popular"
+data-jogo="Lobby"
+data-capa="jogos/banner-lobby.png"
+data-icon="🐺"
+data-link="jogos/lobby.html">
+
+<img class="game-img"
+src="jogos/banner-lobby.png"
+alt="Lobby"
+loading="lazy">
+
+<span class="like-icon">👍</span>
+<span class="fav-icon">⭐</span>
+
+<div class="game-overlay">
+<span class="game-name">Lobby</span>
+<span class="provider-tag">AX</span>
+</div>
+</div>
+
+<div class="game-card"
+data-cat="slots"
+data-jogo="Night Monsters"
+data-capa="jogos/banner-night-monsters.png"
+data-icon="🧛"
+data-link="jogos/hotel-transylvania/index.html">
+
+<img class="game-img"
+src="jogos/banner-night-monsters.png"
+alt="Night Monsters"
+loading="lazy">
+
+<span class="like-icon">👍</span>
+<span class="fav-icon">⭐</span>
+
+<div class="bonus-badge">Novo</div>
+
+<div class="game-overlay">
+<span class="game-name">Night Monsters</span>
+<span class="provider-tag">AX</span>
+</div>
+</div>
+
+<div class="game-card"
+data-cat="popular slots"
+data-jogo="Fortune Snake"
+data-capa="jogos/banner-fortune-snake.png"
+data-icon="🐍"
+data-link="jogos/fortune-snake.html">
+
+<img class="game-img"
+src="jogos/banner-fortune-snake.png"
+alt="Fortune Snake"
+loading="lazy">
+
+<span class="like-icon">👍</span>
+<span class="fav-icon">⭐</span>
+
+<div class="bonus-badge">Bônus R$20,00</div>
+
+<div class="game-overlay">
+<span class="game-name">Fortune Snake</span>
+<span class="provider-tag">AX</span>
+</div>
+</div>
+
+<div class="game-card ilustrativo"
+data-cat="popular slots"
+data-jogo="Tigrinho"
+data-capa="jogos/tigrinho.png"
+data-icon="🐯"
+data-ilustrativo="true">
+
+<img class="game-img"
+src="jogos/tigrinho.png"
+alt="Tigrinho"
+loading="lazy">
+
+<span class="like-icon">👍</span>
+<span class="fav-icon">⭐</span>
+
+<div class="game-overlay">
+<span class="game-name">Tigrinho</span>
+<span class="provider-tag">AX</span>
+</div>
+</div>
+
+<div class="game-card ilustrativo"
+data-cat="popular slots"
+data-jogo="Touro"
+data-capa="jogos/touro.png"
+data-icon="🐂"
+data-ilustrativo="true">
+
+<img class="game-img"
+src="jogos/touro.png"
+alt="Touro"
+loading="lazy">
+
+<span class="like-icon">👍</span>
+<span class="fav-icon">⭐</span>
+
+<div class="game-overlay">
+<span class="game-name">Touro</span>
+<span class="provider-tag">AX</span>
+</div>
+</div>
+
+<div class="game-card ilustrativo"
+data-cat="popular slots"
+data-jogo="Fortune Dragon"
+data-capa="jogos/fortune-dragon.png"
+data-icon="🐉"
+data-ilustrativo="true">
+
+<img class="game-img"
+src="jogos/fortune-dragon.png"
+alt="Fortune Dragon"
+loading="lazy">
+
+<span class="like-icon">👍</span>
+<span class="fav-icon">⭐</span>
+
+<div class="game-overlay">
+<span class="game-name">Fortune Dragon</span>
+<span class="provider-tag">AX</span>
+</div>
+</div>
+
+<div class="game-card ilustrativo"
+data-cat="popular slots"
+data-jogo="Fortune Rabbit"
+data-capa="jogos/fortune-rabbit.png"
+data-icon="🐰"
+data-ilustrativo="true">
+
+<img class="game-img"
+src="jogos/fortune-rabbit.png"
+alt="Fortune Rabbit"
+loading="lazy">
+
+<span class="like-icon">👍</span>
+<span class="fav-icon">⭐</span>
+
+<div class="game-overlay">
+<span class="game-name">Fortune Rabbit</span>
+<span class="provider-tag">AX</span>
+</div>
+</div>
+
+<div class="game-card ilustrativo"
+data-cat="popular slots"
+data-jogo="Fortune Touro Ox"
+data-capa="jogos/fortune-touro-ox.png"
+data-icon="🐂"
+data-ilustrativo="true">
+
+<img class="game-img"
+src="jogos/fortune-touro-ox.png"
+alt="Fortune Touro Ox"
+loading="lazy">
+
+<span class="like-icon">👍</span>
+<span class="fav-icon">⭐</span>
+
+<div class="game-overlay">
+<span class="game-name">Fortune Touro Ox</span>
+<span class="provider-tag">AX</span>
+</div>
+</div>
+
+<div class="game-card ilustrativo"
+data-cat="popular slots"
+data-jogo="Cashmania"
+data-capa="jogos/Cashmania.png"
+data-icon="🎰"
+data-ilustrativo="true">
+
+<img class="game-img"
+src="jogos/Cashmania.png"
+alt="Cashmania"
+loading="lazy">
+
+<span class="like-icon">👍</span>
+<span class="fav-icon">⭐</span>
+
+<div class="game-overlay">
+<span class="game-name">Cashmania</span>
+<span class="provider-tag">AX</span>
+</div>
+</div>
+
+<div class="game-card ilustrativo"
+data-cat="popular slots"
+data-jogo="Clash Mania"
+data-capa="jogos/clash-mania.png"
+data-icon="🎰"
+data-ilustrativo="true">
+
+<img class="game-img"
+src="jogos/clash-mania.png"
+alt="Clash Mania"
+loading="lazy">
+
+<span class="like-icon">👍</span>
+<span class="fav-icon">⭐</span>
+
+<div class="game-overlay">
+<span class="game-name">Clash Mania</span>
+<span class="provider-tag">AX</span>
+</div>
+</div>
+
+</div>
+</div>
+
+</section>
+
+<!-- CONTA -->
+<section id="paginaConta">
+
+<div class="conta-container">
+
+<h2 class="conta-titulo">👤 Minha Conta</h2>
+
+<div class="conta-card">
+
+<div class="avatar">👤</div>
+
+<div class="conta-nome" id="contaNome">
+Nome do usuário
+</div>
+
+<div class="conta-email" id="contaEmail"></div>
+
+<div class="conta-item">
+<strong>👤 Nome completo</strong>
+<div class="conta-dado" id="contaNomeCompleto">
+Não informado
+</div>
+</div>
+
+<div class="conta-item">
+<strong>📧 E-mail</strong>
+<div class="conta-dado" id="contaEmailDetalhe">
+Não informado
+</div>
+</div>
+
+<div class="conta-item">
+<strong>📱 Telefone</strong>
+<div class="conta-dado" id="contaTelefone">
+Não informado
+</div>
+</div>
+
+<div class="conta-item">
+<strong>🪪 CPF</strong>
+<div class="conta-dado" id="contaCpf">
+Não informado
+</div>
+</div>
+
+<div class="conta-item">
+<strong>🆔 ID do usuário</strong>
+<div class="conta-id" id="contaId">
+Não informado
+</div>
+</div>
+
+<div class="conta-item">
+
+<strong>💰 Seu saldo</strong>
+
+<div class="conta-saldo">
+R$ <span id="contaSaldo">0,00</span>
+</div>
+
+</div>
+
+<button class="btn-sair-conta" onclick="sair()">
+🚪 Sair da conta
+</button>
+
+</div>
+</div>
+
+</section>
+
+<!-- MENU -->
+<nav class="bottom-nav" id="menuPrincipal">
+
+<div class="nav-link active" onclick="mostrarInicio()">
+<span class="nav-icon">🏠</span>
+<span>Início</span>
+</div>
+
+<div class="nav-link" onclick="abrirJogos()">
+<span class="nav-icon">🎮</span>
+<span>Jogos</span>
+</div>
+
+<div class="nav-link has-badge" data-badge="5" onclick="mostrarConta()">
+<span class="nav-icon">🎁</span>
+<span>Ofertas</span>
+</div>
+
+<div class="nav-link" onclick="abrirSuporte()">
+<span class="nav-icon">🎧</span>
+<span>Suporte</span>
+</div>
+
+<div class="nav-link" onclick="mostrarConta()">
+<span class="nav-icon">👤</span>
+<span>Perfil</span>
+</div>
+
+</nav>
+
+<button class="btn-topo" id="btnTopo"
+onclick="window.scrollTo({top:0,behavior:'smooth'})">
+↑
+</button>
+
+<!-- SUPORTE -->
 <div id="janelaSuporte">
-    <div class="suporte-box">
-        <div class="suporte-topo">
-            <h3>Central de Ajuda</h3>
-            <button class="btn-fechar-suporte" onclick="fecharSuporte()">✕</button>
-        </div>
-        <div class="suporte-conteudo">
-            <p>Olá! Como podemos ajudar você hoje?</p>
-            <a href="#" class="suporte-opcao">💬 Falar no WhatsApp</a>
-            <a href="#" class="suporte-opcao">📧 Enviar E-mail</a>
-            <a href="#" class="suporte-opcao">❓ Perguntas Frequentes</a>
-        </div>
-    </div>
+
+<div class="suporte-topo">
+
+<div>
+<div class="suporte-titulo">🤖 Assistente ApostaXBet</div>
+<div class="suporte-status">● Atendimento automático</div>
+</div>
+
+<button class="fechar-suporte" onclick="fecharSuporte()">×</button>
+
+</div>
+
+<div id="suporteMensagens">
+
+<div class="msg-suporte msg-bot">
+👋 Olá! Sou o assistente do ApostaXBet.
+
+Como posso ajudar?
+</div>
+
+</div>
+
+<div class="suporte-opcoes">
+
+<button onclick="perguntaSuporte('saldo')">💰 Saldo</button>
+<button onclick="perguntaSuporte('jogos')">🎮 Jogos</button>
+<button onclick="perguntaSuporte('deposito')">💵 Depósito</button>
+<button onclick="perguntaSuporte('saque')">🏦 Saque</button>
+<button onclick="perguntaSuporte('conta')">👤 Conta</button>
+<button onclick="perguntaSuporte('problema')">❓ Problema</button>
+
+</div>
+
+<div class="suporte-escrever">
+
+<input id="entradaSuporte"
+type="text"
+placeholder="Digite sua pergunta..."
+onkeydown="if(event.key==='Enter')enviarPerguntaSuporte()">
+
+<button id="enviarSuporte"
+onclick="enviarPerguntaSuporte()">
+➤
+</button>
+
+</div>
+
 </div>
 
 <!-- LOADER -->
 <div id="loader">
-    <div class="loader-spinner"></div>
-    <div class="loader-info">
-        <div class="loader-nome" id="loaderNome">Carregando...</div>
-        <img id="loaderImagem" class="loader-imagem" style="display:none;">
-        <div id="loaderIconeNormal" class="loader-icone-normal">🎮</div>
-    </div>
+
+<div class="loader-card">
+
+<div id="loaderIcone" class="loader-icone">
+
+<img id="loaderImagem" src="" alt="Capa do jogo">
+
+<div id="loaderIconeNormal" class="icone-normal">
+🎮
 </div>
 
-<!-- MENU INFERIOR -->
-<nav class="bottom-nav">
-    <button class="nav-btn active" onclick="mostrarInicio()">
-        <span class="nav-icon">🏠</span>
-        Início
-    </button>
-    <button class="nav-btn" onclick="mostrarInicio()">
-        <span class="nav-icon">🎰</span>
-        Jogos
-    </button>
-    <button class="nav-btn" onclick="abrirDeposito()">
-        <span class="nav-icon"></span>
-        Bônus
-    </button>
-    <button class="nav-btn" onclick="abrirSuporte()">
-        <span class="nav-icon">🎧</span>
-        Suporte
-    </button>
-    <button class="nav-btn" onclick="mostrarConta()">
-        <span class="nav-icon">👤</span>
-        Perfil
-    </button>
-</nav>
+</div>
+
+<div id="loaderNome">Carregando...</div>
+
+<div class="loader-status">
+Carregando jogo...
+</div>
+
+<div class="loader-dots">
+<span></span>
+<span></span>
+<span></span>
+</div>
+
+</div>
+
+</div>
 
 <script>
 "use strict";
 
 /* ========================= SUPABASE ========================= */
-const SUPABASE_URL = "https://jxbzjiwmajjzxgihfjgt.supabase.co";
-const SUPABASE_KEY = "sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ";
-const CASA_VANTAGEM = 0.95;
 
-if (window.supabase && typeof window.supabase.createClient === "function") {
-    if (!window.supabaseClient) {
-        window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_URL="https://jxbzjiwmajjzxgihfjgt.supabase.co";
+
+const SUPABASE_KEY=
+"sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ";
+
+const CASA_VANTAGEM=0.95;
+
+if(window.supabase && typeof window.supabase.createClient==="function"){
+
+    if(!window.supabaseClient){
+
+        window.supabaseClient=
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_KEY
+            );
     }
 }
 
-function clienteSupabase() {
+function clienteSupabase(){
     return window.supabaseClient;
 }
 
 /* ELEMENTOS */
-const telaLogin = document.getElementById("telaLogin");
-const site = document.getElementById("site");
-const paginaConta = document.getElementById("paginaConta");
-const paginaDeposito = document.getElementById("paginaDeposito");
-const paginaSaque = document.getElementById("paginaSaque");
-const janelaSuporte = document.getElementById("janelaSuporte");
-const loader = document.getElementById("loader");
-const loaderNome = document.getElementById("loaderNome");
-const loaderImagem = document.getElementById("loaderImagem");
-const loaderIconeNormal = document.getElementById("loaderIconeNormal");
 
-let carregando = false;
+const telaLogin=document.getElementById("telaLogin");
+const telaRecuperacao=document.getElementById("telaRecuperacao");
+const telaNovaSenha=document.getElementById("telaNovaSenha");
+const site=document.getElementById("site");
+const paginaConta=document.getElementById("paginaConta");
+const menuPrincipal=document.getElementById("menuPrincipal");
+const janelaSuporte=document.getElementById("janelaSuporte");
+const btnTopo=document.getElementById("btnTopo");
+const loader=document.getElementById("loader");
+const loaderNome=document.getElementById("loaderNome");
+const loaderImagem=document.getElementById("loaderImagem");
+const loaderIconeNormal=document.getElementById("loaderIconeNormal");
 
-/* ========================= NAVEGAÇÃO ========================= */
-function mostrarTela(id) {
-    const telas = [telaLogin, site, paginaConta, paginaDeposito, paginaSaque];
-    telas.forEach(t => { if (t) t.style.display = "none"; });
-    
-    const alvo = document.getElementById(id);
-    if (alvo) alvo.style.display = "block";
-    
-    // Atualiza menu ativo
-    document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
-}
+let carregando=false;
 
-function mostrarInicio() {
-    mostrarTela("site");
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+/* ========================= JACKPOT ========================= */
 
-function mostrarConta() {
-    mostrarTela("paginaConta");
-    getUsuarioLogado().then(user => {
-        if (user) atualizarDadosConta(user);
+const JACKPOT_INICIAL=15617132.96;
+let jackpotAtual=JACKPOT_INICIAL;
+let jackpotAnimacao=false;
+
+function formatarJackpot(valor){
+
+    return Number(valor).toLocaleString("pt-BR",{
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
     });
 }
 
-function abrirDeposito() {
-    mostrarTela("paginaDeposito");
-}
+function atualizarTextoJackpot(){
 
-function abrirSaque() {
-    mostrarTela("paginaSaque");
-    buscarSaldo().then(s => {
-        const el = document.querySelector(".saque-saldo strong");
-        if (el) el.innerText = `R$ ${s.toFixed(2).replace('.', ',')}`;
-    });
-}
+    const elemento=
+        document.getElementById("jackpotValue");
 
-function abrirSuporte() {
-    if (janelaSuporte) janelaSuporte.style.display = "block";
-}
+    if(elemento){
 
-function fecharSuporte() {
-    if (janelaSuporte) janelaSuporte.style.display = "none";
-}
+        elemento.textContent=
+            formatarJackpot(jackpotAtual);
 
-/* ========================= JOGOS E CAPAS ========================= */
-function configurarImagemCapa(img) {
-    if (!img) return;
-    img.addEventListener("error", function () {
-        const card = img.closest(".game-card");
-        if (card) card.classList.add("imagem-falhou");
-        img.style.display = "none";
-    });
-    img.addEventListener("load", function () {
-        const card = img.closest(".game-card");
-        if (card) card.classList.remove("imagem-falhou");
-        img.style.display = "block";
-    });
-    if (img.complete && img.naturalWidth === 0) {
-        img.style.display = "none";
-        const card = img.closest(".game-card");
-        if (card) card.classList.add("imagem-falhou");
     }
 }
 
-function ativarEventosJogos() {
-    document.querySelectorAll(".game-card").forEach(card => {
-        const novoCard = card.cloneNode(true);
+function efeitoJackpot(){
+
+    const elemento=
+        document.getElementById("jackpotValue");
+
+    if(!elemento)return;
+
+    elemento.classList.add("subindo");
+
+    setTimeout(()=>{
+
+        elemento.classList.remove("subindo");
+
+    },600);
+}
+
+function pequenoMovimentoJackpot(){
+
+    if(jackpotAnimacao)return;
+
+    jackpotAnimacao=true;
+
+    const chanceDescer=Math.random();
+
+    let variacao;
+
+    if(chanceDescer<0.18){
+
+        variacao=
+            -(Math.random()*1.50+0.20);
+
+    }else{
+
+        variacao=
+            Math.random()*3.50+0.50;
+
+    }
+
+    jackpotAtual+=variacao;
+
+    if(jackpotAtual<JACKPOT_INICIAL){
+
+        jackpotAtual=JACKPOT_INICIAL;
+
+    }
+
+    jackpotAtual=
+        Number(jackpotAtual.toFixed(2));
+
+    efeitoJackpot();
+
+    atualizarTextoJackpot();
+
+    setTimeout(()=>{
+
+        jackpotAnimacao=false;
+
+    },600);
+
+    setTimeout(
+        pequenoMovimentoJackpot,
+        1800+Math.random()*500
+    );
+}
+
+/* ========================= CAPAS ========================= */
+
+function configurarImagemCapa(img){
+
+    if(!img)return;
+
+    img.addEventListener("error",function(){
+
+        const card=img.closest(".game-card");
+
+        if(card){
+            card.classList.add("imagem-falhou");
+        }
+
+        img.style.display="none";
+    });
+
+    img.addEventListener("load",function(){
+
+        const card=img.closest(".game-card");
+
+        if(card){
+            card.classList.remove("imagem-falhou");
+        }
+
+        img.style.display="block";
+    });
+
+    if(img.complete){
+
+        if(img.naturalWidth>0){
+
+            img.style.display="block";
+
+        }else{
+
+            const card=
+                img.closest(".game-card");
+
+            if(card){
+                card.classList.add("imagem-falhou");
+            }
+
+            img.style.display="none";
+        }
+    }
+}
+
+function configurarTodasAsCapas(){
+
+    document.querySelectorAll(".game-img")
+    .forEach(configurarImagemCapa);
+
+}
+
+/* ========================= SCROLL ========================= */
+
+window.addEventListener("scroll",()=>{
+
+    btnTopo.style.display=
+        window.scrollY>300
+        ?"block"
+        :"none";
+
+});
+
+/* ========================= MENU ========================= */
+
+function mostrarMenu(){
+    menuPrincipal.style.display="flex";
+}
+
+function esconderMenu(){
+    menuPrincipal.style.display="none";
+}
+
+/* ========================= JOGOS ========================= */
+
+function abrirJogos(){
+
+    site.style.display="block";
+    paginaConta.style.display="none";
+
+    mostrarMenu();
+    fecharSuporte();
+
+    document.querySelectorAll(".nav-link")
+    .forEach(l=>l.classList.remove("active"));
+
+    const links=
+        document.querySelectorAll(".nav-link");
+
+    if(links[1]){
+        links[1].classList.add("active");
+    }
+
+    document.querySelectorAll(".game-card")
+    .forEach(card=>{
+        card.style.display="flex";
+    });
+
+    document.querySelectorAll(".cat-item")
+    .forEach(c=>c.classList.remove("active"));
+
+    const primeiraCategoria=
+        document.querySelector(".cat-item");
+
+    if(primeiraCategoria){
+        primeiraCategoria.classList.add("active");
+    }
+
+    const area=
+        document.getElementById("areaJogos");
+
+    if(area){
+
+        setTimeout(()=>{
+
+            area.scrollIntoView({
+                behavior:"smooth",
+                block:"start"
+            });
+
+        },100);
+    }
+}
+
+/* ========================= SUPORTE ========================= */
+
+function resetarSuporte(){
+
+    const mensagens=
+        document.getElementById("suporteMensagens");
+
+    if(!mensagens)return;
+
+    mensagens.innerHTML=`
+        <div class="msg-suporte msg-bot">
+            👋 Olá! Sou o assistente do ApostaXBet.
+
+            Como posso ajudar?
+        </div>
+    `;
+}
+
+function abrirSuporte(){
+
+    resetarSuporte();
+
+    janelaSuporte.style.display="block";
+
+    setTimeout(()=>{
+
+        const campo=
+            document.getElementById("entradaSuporte");
+
+        if(campo)campo.focus();
+
+    },100);
+}
+
+function fecharSuporte(){
+
+    const d=
+        document.getElementById("mensagemDigitando");
+
+    if(d)d.remove();
+
+    janelaSuporte.style.display="none";
+}
+
+function adicionarMensagemSuporte(texto,usuario=false){
+
+    const mensagens=
+        document.getElementById("suporteMensagens");
+
+    if(!mensagens)return;
+
+    const div=
+        document.createElement("div");
+
+    div.className=
+        usuario
+        ?"msg-suporte msg-usuario"
+        :"msg-suporte msg-bot";
+
+    div.innerText=texto;
+
+    mensagens.appendChild(div);
+
+    mensagens.scrollTop=
+        mensagens.scrollHeight;
+}
+
+function mostrarDigitando(){
+
+    const mensagens=
+        document.getElementById("suporteMensagens");
+
+    if(!mensagens)return;
+
+    const antigo=
+        document.getElementById("mensagemDigitando");
+
+    if(antigo)antigo.remove();
+
+    const div=
+        document.createElement("div");
+
+    div.id="mensagemDigitando";
+    div.className="msg-suporte msg-bot";
+
+    div.innerHTML="⌛ Digitando...";
+
+    mensagens.appendChild(div);
+
+    mensagens.scrollTop=
+        mensagens.scrollHeight;
+}
+
+function responderSuporte(texto){
+
+    const p=
+        texto.toLowerCase().trim();
+
+    if(
+        p.includes("oi")||
+        p.includes("olá")||
+        p.includes("ola")||
+        p.includes("bom dia")||
+        p.includes("boa tarde")||
+        p.includes("boa noite")
+    ){
+
+        return "👋 Olá! Seja bem-vindo ao suporte ApostaXBet. Como posso ajudar?";
+    }
+
+    if(
+        p.includes("saldo")||
+        p.includes("dinheiro")||
+        p.includes("quanto tenho")
+    ){
+
+        return "💰 Para consultar seu saldo, veja o valor no topo da página ou entre em 👤 Perfil.";
+    }
+
+    if(
+        p.includes("jogo")||
+        p.includes("jogar")||
+        p.includes("games")||
+        p.includes("jogos")
+    ){
+
+        return "🎮 Toque em Jogos no menu inferior para visualizar os jogos disponíveis.";
+    }
+
+    if(
+        p.includes("deposit")||
+        p.includes("pix")||
+        p.includes("colocar dinheiro")
+    ){
+
+        return "💵 Para depositar, toque em 💰 DEPÓSITO e siga as instruções.";
+    }
+
+    if(
+        p.includes("saque")||
+        p.includes("sacar")||
+        p.includes("retirar")
+    ){
+
+        return "🏦 Para solicitar um saque, toque em 💵 SAQUE e preencha as informações.";
+    }
+
+    if(
+        p.includes("conta")||
+        p.includes("cadastro")||
+        p.includes("login")||
+        p.includes("senha")
+    ){
+
+        return "👤 Para acessar sua conta, use Perfil. Se esqueceu sua senha, use a opção de recuperação na tela de login.";
+    }
+
+    if(
+        p.includes("erro")||
+        p.includes("problema")||
+        p.includes("não funciona")||
+        p.includes("bug")
+    ){
+
+        return "❓ Descreva o problema que aconteceu e tente informar em qual parte do site ocorreu.";
+    }
+
+    return "🤖 Ainda não tenho uma resposta cadastrada para essa pergunta. Tente perguntar sobre saldo, jogos, depósito, saque, conta ou algum problema.";
+}
+
+function responderComDigitacao(pergunta){
+
+    mostrarDigitando();
+
+    setTimeout(()=>{
+
+        const d=
+            document.getElementById("mensagemDigitando");
+
+        if(d)d.remove();
+
+        if(janelaSuporte.style.display==="none")return;
+
+        adicionarMensagemSuporte(
+            responderSuporte(pergunta)
+        );
+
+    },1100);
+}
+
+function perguntaSuporte(tipo){
+
+    const respostas={
+
+        saldo:"Como posso consultar meu saldo?",
+        jogos:"Como faço para jogar?",
+        deposito:"Como faço um depósito?",
+        saque:"Como faço um saque?",
+        conta:"Como acesso minha conta?",
+        problema:"Estou com um problema no site."
+
+    };
+
+    const pergunta=respostas[tipo];
+
+    if(!pergunta)return;
+
+    adicionarMensagemSuporte(
+        pergunta,
+        true
+    );
+
+    responderComDigitacao(pergunta);
+}
+
+function enviarPerguntaSuporte(){
+
+    const campo=
+        document.getElementById("entradaSuporte");
+
+    if(!campo)return;
+
+    const texto=
+        campo.value.trim();
+
+    if(!texto)return;
+
+    adicionarMensagemSuporte(
+        texto,
+        true
+    );
+
+    campo.value="";
+
+    responderComDigitacao(texto);
+}
+
+/* ========================= ABAS ========================= */
+
+function mostrarCadastro(){
+
+    document.getElementById("formCadastro")
+    .classList.add("active");
+
+    document.getElementById("formLogin")
+    .classList.remove("active");
+
+    document.getElementById("tabCadastro")
+    .classList.add("active");
+
+    document.getElementById("tabLogin")
+    .classList.remove("active");
+}
+
+function mostrarLogin(){
+
+    document.getElementById("formLogin")
+    .classList.add("active");
+
+    document.getElementById("formCadastro")
+    .classList.remove("active");
+
+    document.getElementById("tabLogin")
+    .classList.add("active");
+
+    document.getElementById("tabCadastro")
+    .classList.remove("active");
+}
+
+function mostrarSenha(id){
+
+    const campo=
+        document.getElementById(id);
+
+    if(!campo)return;
+
+    campo.type=
+        campo.type==="password"
+        ?"text"
+        :"password";
+}
+
+function mensagem(id,texto,tipo){
+
+    const el=
+        document.getElementById(id);
+
+    if(!el)return;
+
+    el.style.display="block";
+    el.className="mensagem "+tipo;
+    el.innerText=texto;
+}
+
+/* ========================= RECUPERAÇÃO ========================= */
+
+function mostrarRecuperacao(){
+
+    const email=
+        document.getElementById("emailLogin")
+        .value.trim();
+
+    telaLogin.style.display="none";
+    telaRecuperacao.style.display="block";
+    telaNovaSenha.style.display="none";
+    site.style.display="none";
+    paginaConta.style.display="none";
+
+    esconderMenu();
+
+    if(email){
+
+        document.getElementById(
+            "emailRecuperacao"
+        ).value=email;
+    }
+}
+
+function voltarLogin(){
+
+    telaRecuperacao.style.display="none";
+    telaNovaSenha.style.display="none";
+    telaLogin.style.display="block";
+
+    mostrarLogin();
+    esconderMenu();
+}
+
+async function enviarRecuperacao(event){
+
+    event.preventDefault();
+
+    const email=
+        document.getElementById(
+            "emailRecuperacao"
+        ).value.trim();
+
+    const botao=
+        document.getElementById(
+            "btnRecuperacao"
+        );
+
+    botao.disabled=true;
+    botao.innerText="ENVIANDO...";
+
+    try{
+
+        const {error}=
+            await clienteSupabase()
+            .auth
+            .resetPasswordForEmail(
+                email,
+                {
+                    redirectTo:
+                        window.location.origin+
+                        window.location.pathname
+                }
+            );
+
+        if(error)throw error;
+
+        mensagem(
+            "mensagemRecuperacao",
+            "Se esse e-mail estiver cadastrado, enviamos o link de recuperação. Verifique também o spam.",
+            "sucesso"
+        );
+
+    }catch(error){
+
+        mensagem(
+            "mensagemRecuperacao",
+            traduzirErro(error.message),
+            "erro"
+        );
+    }
+
+    botao.disabled=false;
+    botao.innerText="ENVIAR LINK";
+}
+
+async function salvarNovaSenha(event){
+
+    event.preventDefault();
+
+    const senha=
+        document.getElementById(
+            "novaSenha"
+        ).value;
+
+    const confirmar=
+        document.getElementById(
+            "confirmarNovaSenha"
+        ).value;
+
+    const botao=
+        document.getElementById(
+            "btnNovaSenha"
+        );
+
+    if(senha.length<6){
+
+        mensagem(
+            "mensagemNovaSenha",
+            "A senha precisa ter pelo menos 6 caracteres.",
+            "erro"
+        );
+
+        return;
+    }
+
+    if(senha!==confirmar){
+
+        mensagem(
+            "mensagemNovaSenha",
+            "As senhas não são iguais.",
+            "erro"
+        );
+
+        return;
+    }
+
+    botao.disabled=true;
+    botao.innerText="SALVANDO...";
+
+    try{
+
+        const {error}=
+            await clienteSupabase()
+            .auth
+            .updateUser({
+                password:senha
+            });
+
+        if(error)throw error;
+
+        mensagem(
+            "mensagemNovaSenha",
+            "Senha alterada com sucesso!",
+            "sucesso"
+        );
+
+        setTimeout(async()=>{
+
+            await clienteSupabase()
+            .auth
+            .signOut();
+
+            telaNovaSenha.style.display="none";
+            telaLogin.style.display="block";
+
+            mostrarLogin();
+
+        },1800);
+
+    }catch(error){
+
+        mensagem(
+            "mensagemNovaSenha",
+            traduzirErro(error.message),
+            "erro"
+        );
+    }
+
+    botao.disabled=false;
+    botao.innerText="SALVAR NOVA SENHA";
+}
+
+/* ========================= CADASTRO ========================= */
+
+async function cadastrar(event){
+
+    event.preventDefault();
+
+    const nome=
+        document.getElementById(
+            "nomeCadastro"
+        ).value.trim();
+
+    const email=
+        document.getElementById(
+            "emailCadastro"
+        ).value.trim();
+
+    const telefone=
+        document.getElementById(
+            "telefoneCadastro"
+        ).value.trim();
+
+
+    const senha=
+        document.getElementById(
+            "senhaCadastro"
+        ).value;
+
+    const confirmar=
+        document.getElementById(
+            "confirmarSenha"
+        ).value;
+
+    const botao=
+        document.getElementById(
+            "btnCadastro"
+        );
+
+    if(senha!==confirmar){
+
+        mensagem(
+            "mensagemCadastro",
+            "As senhas não são iguais.",
+            "erro"
+        );
+
+        return;
+    }
+
+    if(senha.length<6){
+
+        mensagem(
+            "mensagemCadastro",
+            "A senha precisa ter pelo menos 6 caracteres.",
+            "erro"
+        );
+
+        return;
+    }
+
+    if(!telefone){
+
+        mensagem(
+            "mensagemCadastro",
+            "Digite seu telefone.",
+            "erro"
+        );
+
+        return;
+    }
+
+    botao.disabled=true;
+    botao.innerText="CRIANDO CONTA...";
+
+    try{
+
+        const {data,error}=
+            await clienteSupabase()
+            .auth
+            .signUp({
+                email,
+                password:senha,
+                options:{
+                    data:{
+                        nome,
+                        full_name:nome,
+                        telefone,
+                        phone:telefone
+                    }
+                }
+            });
+
+        if(error)throw error;
+
+        if(data.session){
+
+            sessionStorage.removeItem(
+                "apostaxbet_logout"
+            );
+
+            mensagem(
+                "mensagemCadastro",
+                "Conta criada com sucesso!",
+                "sucesso"
+            );
+
+            setTimeout(
+                ()=>mostrarSite(data.session.user),
+                800
+            );
+
+        }else{
+
+            mensagem(
+                "mensagemCadastro",
+                "Conta criada! Verifique seu e-mail para confirmar a conta.",
+                "sucesso"
+            );
+        }
+
+    }catch(error){
+
+        mensagem(
+            "mensagemCadastro",
+            traduzirErro(error.message),
+            "erro"
+        );
+    }
+
+    botao.disabled=false;
+    botao.innerText="CRIAR CONTA";
+}
+
+/* ========================= LOGIN ========================= */
+
+async function entrar(event){
+
+    event.preventDefault();
+
+    const email=
+        document.getElementById(
+            "emailLogin"
+        ).value.trim();
+
+    const senha=
+        document.getElementById(
+            "senhaLogin"
+        ).value;
+
+    const botao=
+        document.getElementById(
+            "btnLogin"
+        );
+
+    botao.disabled=true;
+    botao.innerText="ENTRANDO...";
+
+    try{
+
+        const {data,error}=
+            await clienteSupabase()
+            .auth
+            .signInWithPassword({
+                email,
+                password:senha
+            });
+
+        if(error)throw error;
+
+        sessionStorage.removeItem(
+            "apostaxbet_logout"
+        );
+
+        mensagem(
+            "mensagemLogin",
+            "Login realizado! Entrando...",
+            "sucesso"
+        );
+
+        setTimeout(
+            ()=>mostrarSite(data.user),
+            700
+        );
+
+    }catch(error){
+
+        mensagem(
+            "mensagemLogin",
+            traduzirErro(error.message),
+            "erro"
+        );
+    }
+
+    botao.disabled=false;
+    botao.innerText="ENTRAR";
+}
+
+/* ========================= DADOS DA CONTA ========================= */
+
+function textoSeguro(valor){
+
+    if(
+        valor===undefined||
+        valor===null||
+        String(valor).trim()===""
+    ){
+
+        return "Não informado";
+    }
+
+    return String(valor).trim();
+}
+
+function atualizarDadosConta(user){
+
+    if(!user)return;
+
+    const meta=
+        user.user_metadata||{};
+
+    const nome=
+        meta.nome||
+        meta.full_name||
+        meta.name||
+        "Não informado";
+
+    const email=
+        user.email||
+        "Não informado";
+
+    const telefone=
+        meta.telefone||
+        meta.phone||
+        meta.celular||
+        meta.telefone_celular||
+        "Não informado";
+
+    const cpf=
+        meta.cpf||
+        meta.CPF||
+        "Não informado";
+
+    const contaNome=
+        document.getElementById("contaNome");
+
+    const contaEmail=
+        document.getElementById("contaEmail");
+
+    const contaNomeCompleto=
+        document.getElementById("contaNomeCompleto");
+
+    const contaEmailDetalhe=
+        document.getElementById("contaEmailDetalhe");
+
+    const contaTelefone=
+        document.getElementById("contaTelefone");
+
+    const contaCpf=
+        document.getElementById("contaCpf");
+
+    const contaId=
+        document.getElementById("contaId");
+
+    if(contaNome)
+        contaNome.innerText=textoSeguro(nome);
+
+    if(contaEmail)
+        contaEmail.innerText=textoSeguro(email);
+
+    if(contaNomeCompleto)
+        contaNomeCompleto.innerText=textoSeguro(nome);
+
+    if(contaEmailDetalhe)
+        contaEmailDetalhe.innerText=textoSeguro(email);
+
+    if(contaTelefone)
+        contaTelefone.innerText=textoSeguro(telefone);
+
+    if(contaCpf){
+
+        const cpfTexto=
+            textoSeguro(cpf);
+
+        if(
+            cpfTexto!=="Não informado" &&
+            cpfTexto.length===11
+        ){
+
+            contaCpf.innerText=
+                cpfTexto.replace(
+                    /(\d{3})(\d{3})(\d{3})(\d{2})/,
+                    "$1.$2.$3-$4"
+                );
+
+        }else{
+
+            contaCpf.innerText=cpfTexto;
+        }
+    }
+
+    if(contaId)
+        contaId.innerText=
+            textoSeguro(user.id);
+}
+
+/* ========================= ID DO USUÁRIO ========================= */
+
+function atualizarIdUsuario(user){
+
+    const elemento=
+        document.getElementById(
+            "usuarioIdDisplay"
+        );
+
+    if(!elemento)return;
+
+    if(user && user.id){
+
+        elemento.textContent=user.id;
+
+    }else{
+
+        elemento.textContent="ID indisponível";
+
+    }
+}
+
+function obterCodigoIndicacao(){
+
+    try{
+        return new URLSearchParams(window.location.search).get("ref") || "";
+    }catch(error){
+        return "";
+    }
+}
+
+function gerarLinkDivulgacao(userId){
+
+    if(!userId)return "";
+
+    const base=new URL("divulgacao.html",window.location.href);
+    base.searchParams.set("ref",userId);
+    return base.href;
+}
+
+async function abrirConvite(event){
+
+    event.preventDefault();
+
+    const user=window._apostaxbetUsuarioAtual;
+
+    if(!user || !user.id){
+        alert("Entre na sua conta para gerar seu link de divulgação.");
+        return;
+    }
+
+    const link=gerarLinkDivulgacao(user.id);
+    const botao=document.getElementById("btnConvite");
+
+    try{
+        await navigator.clipboard.writeText(link);
+        if(botao){
+            const textoOriginal=botao.innerHTML;
+            botao.innerHTML='<span class="icon">✅</span>LINK COPIADO';
+            setTimeout(()=>{ botao.innerHTML=textoOriginal; },1800);
+        }
+    }catch(error){
+        console.log("Não foi possível copiar automaticamente:",error);
+    }
+
+    window.location.href=link;
+}
+
+async function copiarIdUsuario(){
+
+    const elemento=
+        document.getElementById(
+            "usuarioIdDisplay"
+        );
+
+    if(!elemento)return;
+
+    const id=
+        elemento.textContent.trim();
+
+    if(
+        !id ||
+        id==="Carregando..." ||
+        id==="ID indisponível"
+    ){
+        return;
+    }
+
+    try{
+
+        await navigator.clipboard.writeText(id);
+
+    }catch(error){
+
+        console.error(
+            "Erro ao copiar ID:",
+            error
+        );
+
+        const campo=
+            document.createElement("textarea");
+
+        campo.value=id;
+        campo.style.position="fixed";
+        campo.style.opacity="0";
+
+        document.body.appendChild(campo);
+
+        campo.focus();
+        campo.select();
+
+        try{
+
+            document.execCommand("copy");
+
+        }catch(e){
+
+            console.error(e);
+
+        }
+
+        campo.remove();
+    }
+
+    const botao=
+        document.querySelector(
+            ".btn-copiar-id"
+        );
+
+    if(botao){
+
+        const original=
+            botao.innerText;
+
+        botao.innerText="✅";
+
+        setTimeout(()=>{
+
+            botao.innerText=original;
+
+        },1200);
+    }
+}
+
+/* ========================= SITE ========================= */
+
+function mostrarSite(user){
+
+    if(!user){
+        window._apostaxbetUsuarioLogado=false;
+        mostrarSitePublico();
+        return;
+    }
+
+    window._apostaxbetUsuarioLogado=true;
+    window._apostaxbetUsuarioAtual=user;
+
+    telaLogin.style.display="none";
+    telaRecuperacao.style.display="none";
+    telaNovaSenha.style.display="none";
+
+    paginaConta.style.display="none";
+    site.style.display="block";
+
+    mostrarMenu();
+
+    resetarSuporte();
+    ativarEventosJogos();
+    configurarTodasAsCapas();
+
+    atualizarDadosConta(user);
+    atualizarIdUsuario(user);
+
+    atualizarSaldoVisual();
+}
+
+/* ========================= SITE PÚBLICO ========================= */
+function mostrarSitePublico(){
+
+    sessionStorage.removeItem("apostaxbet_logout");
+
+    telaLogin.style.display="none";
+    telaRecuperacao.style.display="none";
+    telaNovaSenha.style.display="none";
+    paginaConta.style.display="none";
+    site.style.display="block";
+
+    mostrarMenu();
+
+    resetarSuporte();
+    ativarEventosJogos();
+    configurarTodasAsCapas();
+}
+
+function mostrarInicio(){
+
+    site.style.display="block";
+    paginaConta.style.display="none";
+
+    document.querySelectorAll(".nav-link")
+    .forEach(l=>l.classList.remove("active"));
+
+    const inicio=
+        document.querySelector(
+            ".nav-link:first-child"
+        );
+
+    if(inicio){
+        inicio.classList.add("active");
+    }
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+}
+
+function mostrarConta(){
+
+    site.style.display="none";
+    paginaConta.style.display="block";
+
+    document.querySelectorAll(".nav-link")
+    .forEach(l=>l.classList.remove("active"));
+
+    fecharSuporte();
+
+    getUsuarioLogado().then(user=>{
+
+        if(user){
+
+            atualizarDadosConta(user);
+            atualizarIdUsuario(user);
+
+        }
+
+        atualizarSaldoVisual();
+
+    });
+}
+
+/* ========================= EVENTOS DOS JOGOS ========================= */
+
+function ativarEventosJogos(){
+
+    document.querySelectorAll(".game-card")
+    .forEach(card=>{
+
+        const novoCard=
+            card.cloneNode(true);
+
         card.replaceWith(novoCard);
     });
 
-    document.querySelectorAll(".game-card").forEach(card => {
-        configurarImagemCapa(card.querySelector(".game-img"));
+    document.querySelectorAll(".game-card")
+    .forEach(card=>{
 
-        card.addEventListener("click", async function (e) {
-            e.preventDefault();
-            if (this.getAttribute("data-ilustrativo") === "true") return;
-            if (carregando) return;
+        const imagem=
+            card.querySelector(".game-img");
 
-            // VERIFICAÇÃO DE LOGIN
-            const user = await getUsuarioLogado();
-            if (!user) {
-                alert("🔒 Para jogar, faça seu cadastro primeiro!");
-                mostrarTela("telaLogin");
-                return;
+        configurarImagemCapa(imagem);
+
+        card.addEventListener(
+            "click",
+            function(e){
+
+                e.preventDefault();
+
+                if(
+                    this.getAttribute("data-ilustrativo")==="true"
+                ){
+                    return;
+                }
+
+                if(carregando)return;
+
+                
+                /* VISITANTE: vê a página, mas precisa entrar/cadastrar para abrir jogos reais. */
+                if(!window._apostaxbetUsuarioLogado){
+                    mostrarLoginTela();
+                    return;
+                }
+
+                carregando=true;
+
+                const destino=
+                    this.getAttribute("data-link");
+
+                const nome=
+                    this.getAttribute("data-jogo");
+
+                const icone=
+                    this.getAttribute("data-icon");
+
+                const capa=
+                    this.getAttribute("data-capa");
+
+                loaderNome.textContent=
+                    nome||"Carregando...";
+
+                loaderImagem.onload=null;
+                loaderImagem.onerror=null;
+
+                loaderImagem.onerror=function(){
+
+                    loaderImagem.style.display="none";
+
+                    loaderIconeNormal.textContent=
+                        icone||"🎮";
+
+                    loaderIconeNormal.style.display=
+                        "flex";
+                };
+
+                loaderImagem.onload=function(){
+
+                    loaderImagem.style.display=
+                        "block";
+
+                    loaderIconeNormal.style.display=
+                        "none";
+                };
+
+                if(capa){
+
+                    loaderImagem.style.display=
+                        "block";
+
+                    loaderIconeNormal.style.display=
+                        "none";
+
+                    loaderImagem.src=capa;
+
+                }else{
+
+                    loaderImagem.removeAttribute(
+                        "src"
+                    );
+
+                    loaderImagem.style.display=
+                        "none";
+
+                    loaderIconeNormal.textContent=
+                        icone||"🎮";
+
+                    loaderIconeNormal.style.display=
+                        "flex";
+                }
+
+                loader.classList.add("ativo");
+
+                setTimeout(()=>{
+
+                    window.location.href=
+                        destino;
+
+                },1800);
+
             }
+        );
 
-            carregando = true;
-            const destino = this.getAttribute("data-link");
-            const nome = this.getAttribute("data-jogo");
-            const icone = this.getAttribute("data-icon");
-            const capa = this.getAttribute("data-capa");
+    });
 
-            loaderNome.textContent = nome || "Carregando...";
-            
-            if (capa) {
-                loaderImagem.src = capa;
-                loaderImagem.style.display = "block";
-                loaderIconeNormal.style.display = "none";
-            } else {
-                loaderImagem.style.display = "none";
-                loaderIconeNormal.textContent = icone || "🎮";
-                loaderIconeNormal.style.display = "flex";
-            }
+}
 
-            loader.classList.add("ativo");
-            setTimeout(() => { window.location.href = destino; }, 1800);
-        });
+/* ========================= FILTRO ========================= */
+
+function filtrarJogos(cat,el){
+
+    document.querySelectorAll(".cat-item")
+    .forEach(c=>c.classList.remove("active"));
+
+    if(el){
+        el.classList.add("active");
+    }
+
+    document.querySelectorAll(".game-card")
+    .forEach(card=>{
+
+        if(cat==="todos"){
+
+            card.style.display="flex";
+            return;
+        }
+
+        const cats=
+            card.getAttribute("data-cat")||"";
+
+        card.style.display=
+            cats.includes(cat)
+            ?"flex"
+            :"none";
     });
 }
 
-/* ========================= USUÁRIO E SALDO ========================= */
-async function getUsuarioLogado() {
-    try {
-        const { data } = await clienteSupabase().auth.getSession();
-        return data?.session?.user || null;
-    } catch (e) { return null; }
-}
+/* ========================= USUÁRIO ========================= */
 
-async function buscarSaldo() {
-    const user = await getUsuarioLogado();
-    if (!user) return 0;
-    try {
-        const { data } = await clienteSupabase().from("saldos").select("valor").eq("user_id", user.id).maybeSingle();
-        return data ? parseFloat(data.valor) : 0;
-    } catch (e) { return 0; }
-}
+async function getUsuarioLogado(){
 
-function atualizarDadosConta(user) {
-    if (!user) return;
-    const meta = user.user_metadata || {};
-    const els = {
-        "contaNome": meta.nome || "Usuário",
-        "contaEmail": user.email,
-        "contaTelefone": meta.telefone || "Não informado",
-        "contaCpf": meta.cpf || "Não informado"
-    };
-    
-    for (const [id, val] of Object.entries(els)) {
-        const el = document.getElementById(id);
-        if (el) el.innerText = val;
-    }
-    
-    buscarSaldo().then(s => {
-        const el = document.querySelector(".conta-saldo .valor");
-        if (el) el.innerText = `R$ ${s.toFixed(2).replace('.', ',')}`;
-    });
-}
+    try{
 
-/* ========================= LOGIN/CADASTRO ========================= */
-function mostrarForm(tipo) {
-    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-    document.querySelectorAll(".form").forEach(f => f.classList.remove("active"));
-    
-    if (tipo === 'login') {
-        document.querySelectorAll(".tab")[0].classList.add("active");
-        document.getElementById("formLogin").classList.add("active");
-    } else {
-        document.querySelectorAll(".tab")[1].classList.add("active");
-        document.getElementById("formCadastro").classList.add("active");
+        const {data,error}=
+            await clienteSupabase()
+            .auth
+            .getSession();
+
+        if(error){
+
+            console.error(error);
+            return null;
+        }
+
+        return data?.session?.user||null;
+
+    }catch(error){
+
+        console.error(error);
+        return null;
     }
 }
 
-function verSenha(id) {
-    const input = document.getElementById(id);
-    input.type = input.type === "password" ? "text" : "password";
-}
+/* ========================= SALDO ========================= */
 
-async function entrar(event) {
-    event.preventDefault();
-    const email = document.getElementById("emailLogin").value;
-    const senha = document.getElementById("senhaLogin").value;
-    
-    const { data, error } = await clienteSupabase().auth.signInWithPassword({ email, password: senha });
-    
-    if (error) {
-        alert("Erro: " + error.message);
-    } else {
-        mostrarInicio();
-        atualizarSaldoTopo();
+async function buscarSaldo(){
+
+    const user=
+        await getUsuarioLogado();
+
+    if(!user)return 0;
+
+    try{
+
+        const {data,error}=
+            await clienteSupabase()
+            .from("saldos")
+            .select("valor")
+            .eq("user_id",user.id)
+            .maybeSingle();
+
+        if(error){
+
+            console.error(error);
+            return 0;
+        }
+
+        if(!data)return 0;
+
+        const saldo=
+            parseFloat(data.valor);
+
+        return Number.isFinite(saldo)
+            ?saldo
+            :0;
+
+    }catch(error){
+
+        console.error(error);
+        return 0;
     }
 }
 
-async function cadastrar(event) {
-    event.preventDefault();
-    const nome = document.getElementById("nomeCadastro").value;
-    const email = document.getElementById("emailCadastro").value;
-    const senha = document.getElementById("senhaCadastro").value;
-    const telefone = document.getElementById("telefoneCadastro").value;
-    const cpf = document.getElementById("cpfCadastro").value;
+async function salvarSaldo(novoValor){
 
-    const { data, error } = await clienteSupabase().auth.signUp({
+    const user=
+        await getUsuarioLogado();
+
+    if(!user)return false;
+
+    const valor=
+        Number(novoValor);
+
+    if(!Number.isFinite(valor))
+        return false;
+
+    try{
+
+        const {error}=
+            await clienteSupabase()
+            .from("saldos")
+            .upsert(
+                {
+                    user_id:user.id,
+                    valor
+                },
+                {
+                    onConflict:"user_id"
+                }
+            );
+
+        if(error){
+
+            console.error(error);
+            return false;
+        }
+
+        return true;
+
+    }catch(error){
+
+        console.error(error);
+        return false;
+    }
+}
+
+async function atualizarSaldoVisual(){
+
+    const saldo=
+        await buscarSaldo();
+
+    const vf=
+        saldo.toFixed(2)
+        .replace(".",",");
+
+    const sv=
+        document.getElementById(
+            "saldoValor"
+        );
+
+    if(sv)sv.innerText=vf;
+
+    const cs=
+        document.getElementById(
+            "contaSaldo"
+        );
+
+    if(cs)cs.innerText=vf;
+
+    return saldo;
+}
+
+async function carregarSaldoDisplay(){
+
+    return await atualizarSaldoVisual();
+}
+
+async function descontarSaldo(valor){
+
+    const vn=Number(valor);
+
+    if(
+        !Number.isFinite(vn)||
+        vn<=0
+    ){
+        return false;
+    }
+
+    const atual=
+        await buscarSaldo();
+
+    if(atual<vn){
+        return false;
+    }
+
+    const salvo=
+        await salvarSaldo(
+            atual-vn
+        );
+
+    if(salvo){
+        await carregarSaldoDisplay();
+    }
+
+    return salvo;
+}
+
+async function processarVitoria(
+    aposta,
+    multiplicador
+){
+
+    const an=Number(aposta);
+    const mn=Number(multiplicador);
+
+    if(
+        !Number.isFinite(an)||
+        !Number.isFinite(mn)
+    ){
+        return 0;
+    }
+
+    const ganho=
+        (an*mn)*CASA_VANTAGEM;
+
+    const atual=
+        await buscarSaldo();
+
+    const salvo=
+        await salvarSaldo(
+            atual+ganho
+        );
+
+    if(salvo){
+        await carregarSaldoDisplay();
+    }
+
+    return ganho;
+}
+
+/* ========================= SAQUE ========================= */
+
+async function processarSaque(
+    valor,
+    chavePix
+){
+
+    const user=
+        await getUsuarioLogado();
+
+    if(!user){
+
+        alert(
+            "⚠️ Você precisa estar logado para sacar!"
+        );
+
+        return false;
+    }
+
+    const vn=Number(valor);
+
+    if(
+        !Number.isFinite(vn)||
+        vn<=0
+    ){
+
+        alert(
+            "❌ Valor de saque inválido."
+        );
+
+        return false;
+    }
+
+    if(!chavePix){
+
+        alert(
+            "❌ Informe sua chave Pix."
+        );
+
+        return false;
+    }
+
+    try{
+
+        const {data,error}=
+            await clienteSupabase()
+            .functions
+            .invoke(
+                "quick-endpoint",
+                {
+                    body:{
+                        userId:user.id,
+                        valor:vn,
+                        chavePix
+                    }
+                }
+            );
+
+        if(error)throw error;
+
+        if(data?.mensagem){
+
+            alert(
+                "✅ "+data.mensagem
+            );
+
+        }else if(data?.erro){
+
+            alert(
+                "❌ "+data.erro
+            );
+
+            return false;
+
+        }else{
+
+            alert(
+                "✅ Solicitação enviada para análise!"
+            );
+        }
+
+        await carregarSaldoDisplay();
+
+        return true;
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "❌ Erro ao processar saque:\n"+
+            (error?.message||String(error))
+        );
+
+        return false;
+    }
+}
+
+/* ========================= SAIR ========================= */
+
+async function sair(){
+
+    sessionStorage.setItem(
+        "apostaxbet_logout",
+        "1"
+    );
+
+    fecharSuporte();
+
+    site.style.display="none";
+    paginaConta.style.display="none";
+
+    esconderMenu();
+
+    try{
+
+        await clienteSupabase()
+        .auth
+        .signOut();
+
+    }catch(error){
+
+        console.error(error);
+    }
+
+    mostrarSitePublico();
+}
+
+function mostrarLoginTela(){
+
+    telaLogin.style.display="block";
+    telaRecuperacao.style.display="none";
+    telaNovaSenha.style.display="none";
+
+    site.style.display="none";
+    paginaConta.style.display="none";
+
+    esconderMenu();
+
+    mostrarLogin();
+}
+
+/* ========================= ERROS ========================= */
+
+function traduzirErro(erro){
+
+    if(!erro){
+        return "Ocorreu um erro.";
+    }
+
+    const t=
+        String(erro).toLowerCase();
+
+    if(
+        t.includes(
+            "invalid login credentials"
+        )
+    ){
+        return "E-mail ou senha incorretos.";
+    }
+
+    if(
+        t.includes(
+            "user already registered"
+        )
+    ){
+        return "Esse e-mail já está cadastrado.";
+    }
+
+    if(
+        t.includes(
+            "email rate limit exceeded"
+        )
+    ){
+        return "Muitas tentativas. Aguarde alguns minutos.";
+    }
+
+    if(
+        t.includes(
+            "password should be at least"
+        )
+    ){
+        return "A senha precisa ter pelo menos 6 caracteres.";
+    }
+
+    if(
+        t.includes(
+            "unable to validate email"
+        )
+    ){
+        return "Digite um e-mail válido.";
+    }
+
+    if(
+        t.includes(
+            "email not confirmed"
+        )
+    ){
+        return "Confirme seu e-mail antes de entrar.";
+    }
+
+    if(
+        t.includes(
+            "database error saving new user"
+        )
+    ){
+        return "Problema na configuração do banco de dados.";
+    }
+
+    return String(erro);
+}
+
+/* ========================= SESSÃO ========================= */
+
+async function verificarSessao(){
+
+    try{
+
+        const {data,error}=
+            await clienteSupabase()
+            .auth
+            .getSession();
+
+        if(error){
+            console.error(error);
+            mostrarSitePublico();
+            return;
+        }
+
+        if(data?.session){
+            sessionStorage.removeItem("apostaxbet_logout");
+            mostrarSite(data.session.user);
+        }else{
+            // VISITANTE: entra direto na página principal.
+            mostrarSitePublico();
+        }
+
+    }catch(error){
+
+        console.error(error);
+        // Mesmo se o Supabase falhar, o visitante continua vendo a página pública.
+        mostrarSitePublico();
+    }
+}
+
+/* ========================= API GLOBAL ========================= */
+
+window.SistemaSaldo={
+
+    get:buscarSaldo,
+
+    debitar:descontarSaldo,
+
+    ganhar:processarVitoria,
+
+    atualizarTela:
+        carregarSaldoDisplay,
+
+    salvar:salvarSaldo
+};
+
+window.ApostaXBet={
+
+    supabase:
+        window.supabaseClient,
+
+    getUsuarioLogado,
+    buscarSaldo,
+    salvarSaldo,
+    descontarSaldo,
+    processarVitoria,
+    processarSaque,
+
+    cadastrar:async(
+        nome,
         email,
-        password: senha,
-        options: { data: { nome, telefone, cpf } }
-    });
+        senha,
+        telefone=""
+    )=>{
 
-    if (error) {
-        alert("Erro: " + error.message);
-    } else {
-        alert("Conta criada! Faça login.");
-        mostrarForm('login');
-    }
-}
+        try{
 
-async function recuperarSenha(event) {
-    event.preventDefault();
-    const email = document.getElementById("emailRecuperacao").value;
-    const msg = document.getElementById("msgRecuperacao");
-    
-    const { error } = await clienteSupabase().auth.resetPasswordForEmail(email);
-    
-    if (error) {
-        msg.className = "mensagem erro";
-        msg.innerText = "Erro: " + error.message;
-    } else {
-        msg.className = "mensagem sucesso";
-        msg.innerText = "Link enviado para seu e-mail!";
-    }
-    msg.style.display = "block";
-}
+            const {data,error}=
+                await clienteSupabase()
+                .auth
+                .signUp({
+                    email,
+                    password:senha,
+                    options:{
+                        data:{
+                            nome,
+                            full_name:nome,
+                            telefone,
+                            phone:telefone
+                        }
+                    }
+                });
 
-async function atualizarSenha(event) {
-    event.preventDefault();
-    const novaSenha = document.getElementById("novaSenhaInput").value;
-    const msg = document.getElementById("msgNovaSenha");
-    
-    const { error } = await clienteSupabase().auth.updateUser({ password: novaSenha });
-    
-    if (error) {
-        msg.className = "mensagem erro";
-        msg.innerText = "Erro: " + error.message;
-    } else {
-        msg.className = "mensagem sucesso";
-        msg.innerText = "Senha atualizada com sucesso!";
-        setTimeout(() => mostrarTela("telaLogin"), 2000);
-    }
-    msg.style.display = "block";
-}
+            if(error)throw error;
 
-async function sair() {
-    await clienteSupabase().auth.signOut();
-    mostrarTela("telaLogin");
-}
+            return{
+                sucesso:true,
+                data
+            };
 
-/* ========================= UTILITÁRIOS ========================= */
-function atualizarSaldoTopo() {
-    buscarSaldo().then(s => {
-        document.getElementById("saldoTopo").innerText = s.toFixed(2).replace('.', ',');
-    });
-}
+        }catch(error){
 
-function copiarIdUsuario() {
-    const id = document.getElementById("userIdDisplay").innerText.replace('ID: ', '');
-    navigator.clipboard.writeText(id);
-    alert("ID copiado!");
-}
-
-function copiarIndicacao() {
-    getUsuarioLogado().then(user => {
-        if (user) {
-            const link = `https://apostaxbet.com/?ref=${user.id}`;
-            navigator.clipboard.writeText(link);
-            alert("Link de indicação copiado!");
-        } else {
-            alert("Faça login para indicar amigos!");
+            return{
+                sucesso:false,
+                erro:error
+            };
         }
-    });
-}
+    },
 
-/* ========================= INICIALIZAÇÃO ========================= */
-document.addEventListener("DOMContentLoaded", () => {
-    ativarEventosJogos();
-    
-    // Verifica sessão ao carregar
-    getUsuarioLogado().then(user => {
-        if (user) {
-            mostrarInicio();
-            atualizarSaldoTopo();
-            document.getElementById("userIdDisplay").innerText = "ID: " + user.id.substring(0, 8) + "...";
-        } else {
-            mostrarTela("telaLogin");
+    login:async(
+        email,
+        senha
+    )=>{
+
+        try{
+
+            const {data,error}=
+                await clienteSupabase()
+                .auth
+                .signInWithPassword({
+                    email,
+                    password:senha
+                });
+
+            if(error)throw error;
+
+            return{
+                sucesso:true,
+                data
+            };
+
+        }catch(error){
+
+            return{
+                sucesso:false,
+                erro:error
+            };
         }
-    });
+    }
+};
 
-    // Animação do Jackpot
-    let jackpot = 145230.50;
-    setInterval(() => {
-        jackpot += Math.random() * 5;
-        document.getElementById("jackpotValor").innerText = "R$ " + jackpot.toFixed(2).replace('.', ',');
-    }, 3000);
+/* ========================= AUTH STATE ========================= */
+
+clienteSupabase()
+.auth
+.onAuthStateChange(
+    (event,session)=>{
+
+        if(
+            event==="PASSWORD_RECOVERY"
+        ){
+
+            telaLogin.style.display="none";
+            telaRecuperacao.style.display="none";
+            telaNovaSenha.style.display="block";
+            site.style.display="none";
+            paginaConta.style.display="none";
+
+            esconderMenu();
+
+            return;
+        }
+
+        if(session){
+
+            sessionStorage.removeItem("apostaxbet_logout");
+
+            mostrarSite(
+                session.user
+            );
+
+        }else{
+
+            // Sem sessão = visitante. Não abrir a tela de login automaticamente.
+            mostrarSitePublico();
+        }
+    }
+);
+
+/* ========================= VOLTAR APÓS LOGOUT ========================= */
+
+window.addEventListener("popstate",function(){
+
+    // O botão voltar nunca deve transformar um visitante em tela de login.
+    clienteSupabase().auth.getSession().then(({data})=>{
+        if(data?.session){
+            mostrarSite(data.session.user);
+        }else{
+            mostrarSitePublico();
+        }
+    }).catch(()=>mostrarSitePublico());
+
 });
+
+/* ========================= INICIAR ========================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    ()=>{
+
+        console.log(
+            "✅ ApostaXBet carregado."
+        );
+
+        console.log(
+            "✅ Capas dos jogos usando a pasta jogos/."
+        );
+
+        console.log(
+            "✅ Nomes dos jogos visíveis nas capas."
+        );
+
+        console.log(
+            "✅ Botão Jogos corrigido."
+        );
+
+        console.log(
+            "✅ Jackpot com movimento suave."
+        );
+
+        console.log(
+            "✅ Sistema de saldo preservado."
+        );
+
+        console.log(
+            "✅ Cadastro com nome, telefone."
+        );
+
+        console.log(
+            "✅ Minha Conta com dados completos."
+        );
+
+        console.log(
+            "✅ Bônus de até R$ 100,00 adicionado."
+        );
+
+        configurarTodasAsCapas();
+
+        jackpotAtual=
+            JACKPOT_INICIAL;
+
+        atualizarTextoJackpot();
+
+        setTimeout(
+            pequenoMovimentoJackpot,
+            2000
+        );
+
+        verificarSessao();
+    }
+);
 </script>
+
 </body>
 </html>
