@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>ApostaXBet</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+</script>
 
 <style>
 *{
@@ -266,96 +267,6 @@ input:focus{
     white-space:nowrap;
 }
 
-/* EFEITOS VISUAIS DO TOPO — somente animações, sem alterar a estrutura */
-.topo-apostaxbet{
-    position:relative;
-    overflow:hidden;
-    padding:3px 8px;
-    border-radius:10px;
-    text-shadow:0 0 6px rgba(250,204,21,.35);
-}
-
-.topo-apostaxbet:before{
-    content:"";
-    position:absolute;
-    top:-35%;
-    bottom:-35%;
-    left:-35%;
-    width:24%;
-    background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
-    transform:skewX(-18deg);
-    animation:luzPassandoTopo 3.8s ease-in-out infinite;
-    pointer-events:none;
-}
-
-.topo-apostaxbet:after{
-    content:"✦  ·  ✧  ·  ✦  ·  ✧";
-    position:absolute;
-    inset:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:rgba(250,204,21,.42);
-    font-size:11px;
-    letter-spacing:8px;
-    white-space:nowrap;
-    pointer-events:none;
-    animation:brilhoParticulasTopo 2.8s ease-in-out infinite;
-}
-
-.topo-apostaxbet > div{
-    position:relative;
-    z-index:2;
-}
-
-.topo-apostaxbet > div:first-child{
-    font-size:25px;
-    line-height:1.05;
-    letter-spacing:.4px;
-    animation:pulsarLogoTopo 2.2s ease-in-out infinite;
-}
-
-.topo-bonus{
-    position:relative;
-    font-size:13px;
-    line-height:1.15;
-    text-shadow:0 0 5px rgba(134,239,172,.35),0 0 10px rgba(250,204,21,.15);
-    animation:brilhoBonusTopo 1.8s ease-in-out infinite;
-}
-
-.topo-bonus strong{
-    display:inline-block;
-    font-size:15px;
-    animation:pulsarBonusTopo 1.5s ease-in-out infinite;
-}
-
-@keyframes luzPassandoTopo{
-    0%{left:-35%;opacity:0}
-    15%{opacity:1}
-    55%{opacity:1}
-    75%,100%{left:125%;opacity:0}
-}
-
-@keyframes pulsarLogoTopo{
-    0%,100%{transform:scale(1);filter:drop-shadow(0 0 2px rgba(250,204,21,.2))}
-    50%{transform:scale(1.035);filter:drop-shadow(0 0 9px rgba(250,204,21,.65))}
-}
-
-@keyframes brilhoBonusTopo{
-    0%,100%{opacity:.88}
-    50%{opacity:1;text-shadow:0 0 7px rgba(134,239,172,.75),0 0 14px rgba(250,204,21,.35)}
-}
-
-@keyframes pulsarBonusTopo{
-    0%,100%{transform:scale(1)}
-    50%{transform:scale(1.06)}
-}
-
-@keyframes brilhoParticulasTopo{
-    0%,100%{opacity:.15;transform:translateX(-8px)}
-    50%{opacity:.65;transform:translateX(8px)}
-}
-
 /* BÔNUS ABAIXO DO APOSTAXBET */
 .topo-bonus{
     margin-top:4px;
@@ -373,11 +284,6 @@ input:focus{
 .topo-apostaxbet span{
     color:#fff;
 }
-
-/* Ajustes finais dos efeitos do topo */
-.topo-apostaxbet > div:first-child{font-size:25px;}
-.topo-apostaxbet .topo-bonus{font-size:13px;}
-.topo-apostaxbet .topo-bonus strong{font-size:15px;}
 
 .mini-financeiro{
     margin:8px 15px 0;
@@ -1201,19 +1107,10 @@ input:focus{
     .topo-apostaxbet{
         font-size:14px;
         margin:0 5px;
-        padding:2px 4px;
-    }
-
-    .topo-apostaxbet > div:first-child{
-        font-size:20px;
     }
 
     .topo-bonus{
-        font-size:10px;
-    }
-
-    .topo-apostaxbet .topo-bonus strong{
-        font-size:12px;
+        font-size:8px;
     }
 
     .jackpot-numero-area{
@@ -1284,19 +1181,10 @@ input:focus{
     .topo-apostaxbet{
         font-size:12px;
         margin:0 3px;
-        padding:2px 3px;
-    }
-
-    .topo-apostaxbet > div:first-child{
-        font-size:17px;
     }
 
     .topo-bonus{
-        font-size:8px;
-    }
-
-    .topo-apostaxbet .topo-bonus strong{
-        font-size:10px;
+        font-size:7px;
     }
 
     .site-saldo{
@@ -1308,134 +1196,16 @@ input:focus{
         font-size:8px;
     }
 }
+
+/* FORTUNE EBE EMBUTIDO — evita 404 quando o jogo não estiver em /jogos */
+#fortuneEmbedded{position:fixed;inset:0;z-index:99999;background:#000;display:none}
+#fortuneEmbedded iframe{width:100%;height:100%;border:0;display:block;background:#000}
+#fortuneEmbedded .feClose{position:absolute;top:10px;right:10px;z-index:2;width:40px;height:40px;border:1px solid #ffffff55;border-radius:50%;background:#120b18;color:#fff;font-size:24px;font-weight:700;box-shadow:0 4px 15px #000;cursor:pointer}
 </style>
-
-<style id="apostaxbet-bg-controls">
-/* Efeitos decorativos do fundo — não interferem na lógica dos jogos */
-body{
-  position:relative;
-  overflow-x:hidden;
-}
-.ax-bg-decor{
-  position:fixed;
-  inset:0;
-  z-index:0;
-  pointer-events:none;
-  overflow:hidden;
-}
-.ax-bg-grid{
-  position:absolute;
-  inset:-20%;
-  opacity:.12;
-  background-image:
-    linear-gradient(90deg, transparent 0 46px, rgba(255,255,255,.16) 47px, transparent 48px),
-    linear-gradient(0deg, transparent 0 46px, rgba(255,255,255,.11) 47px, transparent 48px);
-  transform:rotate(-8deg);
-  animation:axGridMove 18s linear infinite;
-}
-.ax-bg-line{
-  position:absolute;
-  width:180px;
-  height:2px;
-  border-radius:50%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
-  box-shadow:0 0 12px rgba(255,255,255,.25);
-  opacity:.35;
-  animation:axLineFloat 8s ease-in-out infinite;
-}
-.ax-bg-line.l1{top:16%;left:-30px;transform:rotate(24deg);animation-delay:-2s}
-.ax-bg-line.l2{top:64%;right:-35px;transform:rotate(-24deg);animation-delay:-5s}
-.ax-bg-line.l3{top:38%;left:8%;width:110px;transform:rotate(-35deg);animation-delay:-7s}
-.ax-bg-line.l4{bottom:12%;right:12%;width:130px;transform:rotate(32deg);animation-delay:-1s}
-
-.ax-game-control{
-  position:absolute;
-  width:92px;
-  height:42px;
-  border:1px solid rgba(255,255,255,.22);
-  border-radius:13px;
-  background:rgba(0,0,0,.16);
-  box-shadow:0 0 18px rgba(255,255,255,.06), inset 0 0 14px rgba(255,255,255,.03);
-  opacity:.5;
-  transform:rotate(-8deg);
-}
-.ax-game-control::before,
-.ax-game-control::after{
-  content:"";
-  position:absolute;
-}
-.ax-game-control::before{
-  width:20px;height:20px;left:13px;top:10px;
-  background:
-    linear-gradient(rgba(255,255,255,.48),rgba(255,255,255,.48)) center/100% 3px no-repeat,
-    linear-gradient(rgba(255,255,255,.48),rgba(255,255,255,.48)) center/3px 100% no-repeat;
-  filter:drop-shadow(0 0 4px rgba(255,255,255,.25));
-}
-.ax-game-control::after{
-  width:7px;height:7px;right:17px;top:11px;border-radius:50%;
-  background:rgba(255,255,255,.42);
-  box-shadow:11px 10px 0 rgba(255,255,255,.28);
-}
-.ax-game-control.c1{top:11%;left:3%}
-.ax-game-control.c2{top:27%;right:3%;transform:rotate(9deg);animation:axPulse 4s ease-in-out infinite}
-.ax-game-control.c3{bottom:18%;left:4%;transform:rotate(8deg);animation:axPulse 5s ease-in-out infinite -2s}
-.ax-game-control.c4{bottom:7%;right:5%;transform:rotate(-11deg);animation:axPulse 4.5s ease-in-out infinite -1s}
-.ax-bg-dot{
-  position:absolute;width:4px;height:4px;border-radius:50%;
-  background:rgba(255,255,255,.5);
-  box-shadow:0 0 9px rgba(255,255,255,.35);
-  animation:axDot 6s ease-in-out infinite;
-}
-.ax-bg-dot.d1{top:20%;left:24%}
-.ax-bg-dot.d2{top:72%;left:72%;animation-delay:-2s}
-.ax-bg-dot.d3{top:48%;right:19%;animation-delay:-4s}
-.ax-bg-dot.d4{bottom:17%;left:29%;animation-delay:-1s}
-
-@keyframes axGridMove{
-  from{transform:translate3d(0,0,0) rotate(-8deg)}
-  to{transform:translate3d(48px,48px,0) rotate(-8deg)}
-}
-@keyframes axLineFloat{
-  0%,100%{opacity:.18;transform:translateX(0) rotate(24deg)}
-  50%{opacity:.55;transform:translateX(45px) rotate(24deg)}
-}
-@keyframes axPulse{
-  0%,100%{opacity:.3;box-shadow:0 0 14px rgba(255,255,255,.04),inset 0 0 12px rgba(255,255,255,.02)}
-  50%{opacity:.62;box-shadow:0 0 24px rgba(255,255,255,.10),inset 0 0 18px rgba(255,255,255,.05)}
-}
-@keyframes axDot{
-  0%,100%{transform:translate(0,0);opacity:.15}
-  50%{transform:translate(14px,-10px);opacity:.65}
-}
-@media(max-width:600px){
-  .ax-game-control{transform:scale(.78) rotate(-8deg);opacity:.38}
-  .ax-game-control.c2{transform:scale(.78) rotate(9deg)}
-  .ax-game-control.c3{transform:scale(.78) rotate(8deg)}
-  .ax-game-control.c4{transform:scale(.78) rotate(-11deg)}
-  .ax-bg-grid{opacity:.07}
-}
-</style>
-
 </head>
 
 <body>
-
-<div class="ax-bg-decor" aria-hidden="true">
-  <div class="ax-bg-grid"></div>
-  <div class="ax-bg-line l1"></div>
-  <div class="ax-bg-line l2"></div>
-  <div class="ax-bg-line l3"></div>
-  <div class="ax-bg-line l4"></div>
-  <div class="ax-game-control c1"></div>
-  <div class="ax-game-control c2"></div>
-  <div class="ax-game-control c3"></div>
-  <div class="ax-game-control c4"></div>
-  <span class="ax-bg-dot d1"></span>
-  <span class="ax-bg-dot d2"></span>
-  <span class="ax-bg-dot d3"></span>
-  <span class="ax-bg-dot d4"></span>
-</div>
-
+<div id="fortuneEmbedded"><button class="feClose" type="button" aria-label="Fechar">×</button><iframe title="Fortune Ebe" id="fortuneEmbeddedFrame"></iframe></div>
 
 
 <!-- LOGIN -->
@@ -1468,6 +1238,9 @@ body{
 
 <label>Telefone</label>
 <input id="telefoneCadastro" type="tel" placeholder="Digite seu telefone" required>
+
+<label>CPF</label>
+<input id="cpfCadastro" type="text" inputmode="numeric" maxlength="14" placeholder="Digite seu CPF" required>
 
 <label>Criar senha</label>
 <div class="campo-senha">
@@ -1947,6 +1720,29 @@ loading="lazy">
 
 <div class="game-overlay">
 <span class="game-name">Fortune Snake</span>
+<span class="provider-tag">AX</span>
+</div>
+</div>
+
+<div class="game-card"
+data-cat="popular slots"
+data-jogo="Fortune Ebe"
+data-capa="jogos/banner-fortune-ember.svg"
+data-icon="🐭"
+data-link="#fortune-ebe">
+
+<img class="game-img"
+src="jogos/banner-fortune-ember.svg"
+alt="Fortune Ebe"
+loading="lazy">
+
+<span class="like-icon">👍</span>
+<span class="fav-icon">⭐</span>
+
+<div class="bonus-badge">NOVO</div>
+
+<div class="game-overlay">
+<span class="game-name">Fortune Ebe</span>
 <span class="provider-tag">AX</span>
 </div>
 </div>
@@ -2849,6 +2645,53 @@ function mensagem(id,texto,tipo){
     el.innerText=texto;
 }
 
+/* ========================= MÁSCARA CPF ========================= */
+
+const campoCpfCadastro=
+    document.getElementById("cpfCadastro");
+
+if(campoCpfCadastro){
+
+    campoCpfCadastro.addEventListener(
+        "input",
+        function(){
+
+            let valor=
+                this.value.replace(/\D/g,"");
+
+            valor=
+                valor.substring(0,11);
+
+            if(valor.length>9){
+
+                valor=
+                    valor.replace(
+                        /(\d{3})(\d{3})(\d{3})(\d{1,2})/,
+                        "$1.$2.$3-$4"
+                    );
+
+            }else if(valor.length>6){
+
+                valor=
+                    valor.replace(
+                        /(\d{3})(\d{3})(\d{1,3})/,
+                        "$1.$2.$3"
+                    );
+
+            }else if(valor.length>3){
+
+                valor=
+                    valor.replace(
+                        /(\d{3})(\d{1,3})/,
+                        "$1.$2"
+                    );
+            }
+
+            this.value=valor;
+        }
+    );
+}
+
 /* ========================= RECUPERAÇÃO ========================= */
 
 function mostrarRecuperacao(){
@@ -3043,6 +2886,10 @@ async function cadastrar(event){
             "telefoneCadastro"
         ).value.trim();
 
+    const cpf=
+        document.getElementById(
+            "cpfCadastro"
+        ).value.trim();
 
     const senha=
         document.getElementById(
@@ -3092,6 +2939,20 @@ async function cadastrar(event){
         return;
     }
 
+    const cpfNumeros=
+        cpf.replace(/\D/g,"");
+
+    if(cpfNumeros.length!==11){
+
+        mensagem(
+            "mensagemCadastro",
+            "Digite um CPF válido com 11 números.",
+            "erro"
+        );
+
+        return;
+    }
+
     botao.disabled=true;
     botao.innerText="CRIANDO CONTA...";
 
@@ -3108,7 +2969,8 @@ async function cadastrar(event){
                         nome,
                         full_name:nome,
                         telefone,
-                        phone:telefone
+                        phone:telefone,
+                        cpf:cpfNumeros
                     }
                 }
             });
@@ -3429,12 +3291,10 @@ async function copiarIdUsuario(){
 function mostrarSite(user){
 
     if(!user){
-        window._apostaxbetUsuarioLogado=false;
-        mostrarSitePublico();
+
+        mostrarLoginTela();
         return;
     }
-
-    window._apostaxbetUsuarioLogado=true;
 
     telaLogin.style.display="none";
     telaRecuperacao.style.display="none";
@@ -3453,24 +3313,6 @@ function mostrarSite(user){
     atualizarIdUsuario(user);
 
     atualizarSaldoVisual();
-}
-
-/* ========================= SITE PÚBLICO ========================= */
-function mostrarSitePublico(){
-
-    sessionStorage.removeItem("apostaxbet_logout");
-
-    telaLogin.style.display="none";
-    telaRecuperacao.style.display="none";
-    telaNovaSenha.style.display="none";
-    paginaConta.style.display="none";
-    site.style.display="block";
-
-    mostrarMenu();
-
-    resetarSuporte();
-    ativarEventosJogos();
-    configurarTodasAsCapas();
 }
 
 function mostrarInicio(){
@@ -3524,7 +3366,9 @@ function mostrarConta(){
 
 function ativarEventosJogos(){
 
-    document.querySelectorAll(".game-card")
+    const FORTUNE_EMBER_HTML="<!DOCTYPE html><html lang=\"pt-BR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no\"><title>Fortune Ebe \u2014 Rato da Fortuna</title><style>\n*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% 0,#44203f,#170b1b 35%,#07050b 80%);color:#fff;font-family:system-ui,sans-serif}body{display:flex;justify-content:center}.app{width:min(100%,560px);min-height:100vh;padding:10px}.top{display:flex;justify-content:space-between;align-items:center;height:56px}.brand{display:flex;align-items:center;gap:9px}.mark{width:43px;height:43px;border-radius:14px;display:grid;place-items:center;font-size:25px;background:linear-gradient(145deg,#fff0a0,#d99e35,#8b5014);box-shadow:0 0 22px #e2ad4435}.brand b{font-size:15px}.brand small{display:block;color:#9d8ba5;font-size:8px;letter-spacing:1.5px}.balance{background:#160d1e;border:1px solid #59405f;border-radius:13px;padding:7px 10px;text-align:right}.balance small{display:block;color:#93839b;font-size:8px}.balance strong{color:#ffe39a;font-size:15px}.hero{text-align:center;padding:8px 0 11px}.hero h1{margin:0;font-size:clamp(28px,8vw,42px);letter-spacing:3px;background:linear-gradient(#fff5b5,#f2c34d,#a55e18);-webkit-background-clip:text;color:transparent}.hero p{margin:7px 0 0;color:#a998af;font-size:9px;letter-spacing:2px;text-transform:uppercase}.machine{padding:8px;border-radius:27px;background:linear-gradient(145deg,#ffe17b,#80501a 12%,#30162f 18%,#100912 80%,#d09b37);box-shadow:0 20px 45px #000b}.inside{padding:10px;border-radius:21px;background:linear-gradient(#2b172f,#100912 55%,#190d1e);box-shadow:inset 0 1px #fff2}.mh{text-align:center;color:#f8d879;font-size:10px;font-weight:900;letter-spacing:2px;height:36px;padding-top:5px}.reels{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:8px;border-radius:18px;background:#08050b;border:1px solid #765536;position:relative;overflow:hidden}.reels:after{content:\"\";position:absolute;left:4%;right:4%;top:50%;height:2px;background:#ffd96966;box-shadow:0 0 10px #ffd96966;z-index:4}.reel{height:205px;overflow:hidden;border-radius:13px;background:linear-gradient(#100913,#2a1930,#0d0811);border:1px solid #61466a;position:relative}.reel:before,.reel:after{content:\"\";position:absolute;left:0;right:0;height:28%;z-index:3;pointer-events:none}.reel:before{top:0;background:linear-gradient(#09050ef2,transparent)}.reel:after{bottom:0;background:linear-gradient(transparent,#09050ef2)}.strip{position:absolute;left:0;right:0;top:0}.sym{height:68px;display:grid;place-items:center;font-size:38px;position:relative;filter:drop-shadow(0 5px 7px #000)}.sym small{position:absolute;bottom:1px;font-size:6px;color:#bba9c0;letter-spacing:1px}.spinning .sym{filter:blur(2px) brightness(1.15)}.win{box-shadow:inset 0 0 25px #ffd65b55,0 0 22px #ffd65b99}.win .sym{animation:pulse .5s infinite alternate}@keyframes pulse{to{filter:brightness(1.5) drop-shadow(0 0 10px #ffd65b)}}.status{margin-top:7px;min-height:32px;display:flex;align-items:center;justify-content:center;border-radius:11px;background:#0b0710;border:1px solid #39283e;color:#cdbbd2;font-size:10px;text-align:center}.line{height:25px;display:flex;align-items:center;justify-content:center;color:#a998af;font-size:9px;letter-spacing:1px}.controls{display:grid;grid-template-columns:1fr 1.55fr 1fr;gap:8px;margin-top:10px}.box{min-height:61px;border-radius:15px;background:linear-gradient(#2b1932,#160c1d);border:1px solid #59405f;display:flex;flex-direction:column;justify-content:center;align-items:center}.box small{color:#94849c;font-size:7px;letter-spacing:1px}.box b{margin-top:3px;color:#ffe39a;font-size:15px}.spin{min-height:61px;border-radius:18px;background:radial-gradient(circle at 50% 20%,#fff3ac,#f1bd45 45%,#9a5015);border:3px solid #fff0a1;color:#351407;font-size:20px;font-weight:1000;box-shadow:0 7px 0 #62330e,0 12px 22px #0009,inset 0 2px #fff8}.spin:active{transform:translateY(5px);box-shadow:0 2px 0 #62330e}.spin:disabled{opacity:.55}.bets{margin-top:9px;padding:9px;border-radius:15px;background:#120b18;border:1px solid #3d2b45;display:flex;align-items:center;justify-content:space-between;gap:6px}.bets span{font-size:8px;color:#95849d;letter-spacing:1px}.bet{padding:8px 7px;border-radius:9px;background:#21142a;border:1px solid #4b3653;color:#d8c5dc;font-size:10px}.bet.active{border-color:#dfb84e;color:#ffe99c}.extras{margin-top:8px;display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.extra{padding:10px 4px;border-radius:11px;background:#17101e;border:1px solid #3d2c45;color:#c6b7cb;font-size:9px}.extra.active{color:#ffe08b;border-color:#d7a83f}.extra:disabled{opacity:.4}.info{margin-top:8px;padding:11px;border-radius:14px;background:#100a15;border:1px solid #30213a;color:#97899e;font-size:9px;line-height:1.55}.info b{color:#d5c3d9}.p{position:fixed;width:6px;height:6px;border-radius:50%;background:#ffd967;pointer-events:none;z-index:20;animation:fly .85s forwards}.c{position:fixed;font-size:17px;pointer-events:none;z-index:21;animation:flyc .9s forwards}@keyframes fly{to{transform:translate(var(--x),var(--y)) scale(.1);opacity:0}}@keyframes flyc{to{transform:translate(var(--x),var(--y)) rotate(360deg) scale(.2);opacity:0}}@media(max-width:390px){.reel{height:184px}.sym{height:61px;font-size:34px}.bet{padding:8px 5px}}\n</style></head><body><main class=\"app\"><header class=\"top\"><div class=\"brand\"><div class=\"mark\">\ud83d\udc2d</div><div><b>FORTUNE EBE</b><small>ORIGINAL 3\u00d73 SLOT</small></div></div><div class=\"balance\"><small>SALDO</small><strong id=\"saldo\">R$ 0,00</strong></div></header><section class=\"hero\"><h1>RATO DA FORTUNA</h1><p>A chama dourada da sorte</p></section><section class=\"machine\"><div class=\"inside\"><div class=\"mh\">FORTUNE EBE \u2022 WILD \u2022 RESPIN</div><div class=\"reels\"><div class=\"reel\"><div class=\"strip\" id=\"r1\"></div></div><div class=\"reel\"><div class=\"strip\" id=\"r2\"></div></div><div class=\"reel\"><div class=\"strip\" id=\"r3\"></div></div></div><div class=\"line\" id=\"line\">Encontre tr\u00eas s\u00edmbolos na mesma linha</div><div class=\"status\" id=\"status\">Pronto para girar</div></div></section><section class=\"controls\"><div class=\"box\"><small>APOSTA</small><b id=\"betDisplay\">R$ 1,00</b></div><button class=\"spin\" id=\"spin\">GIRAR</button><div class=\"box\"><small>PR\u00caMIO</small><b id=\"win\">R$ 0,00</b></div></section><section class=\"bets\"><span>VALOR DA APOSTA</span><div><button class=\"bet\" data-b=\"0.5\">0,50</button><button class=\"bet active\" data-b=\"1\">1,00</button><button class=\"bet\" data-b=\"2\">2,00</button><button class=\"bet\" data-b=\"5\">5,00</button></div></section><section class=\"extras\"><button class=\"extra\" id=\"turbo\">\u26a1 Turbo</button><button class=\"extra active\" id=\"sound\">\ud83d\udd0a Som</button><button class=\"extra\" id=\"infoBtn\">\u24d8 Info</button><button class=\"extra\" id=\"respin\" disabled>\u21bb Respin</button></section><section class=\"info\" id=\"info\" hidden><b>Wild \ud83d\udd25</b> substitui s\u00edmbolos comuns nas linhas vencedoras.<br><b>Respin</b> pode ser liberado por tr\u00eas Wilds.<br>Os pagamentos ficam configurados no c\u00f3digo e a integra\u00e7\u00e3o de saldo utiliza somente o <b>SistemaSaldo</b> existente.</section></main><script>\n(()=>{const CFG={pesos:{'\ud83c\udf52':24,'\ud83c\udf4b':22,'\ud83e\ude99':18,'\ud83c\udfee':14,'\ud83d\udc8e':9,'\ud83d\udc2d':7,'\ud83d\udd25':6},pag:{'\ud83c\udf52':1.2,'\ud83c\udf4b':1.5,'\ud83e\ude99':2,'\ud83c\udfee':3,'\ud83d\udc8e':5,'\ud83d\udc2d':8,'\ud83d\udd25':12},respin:.45,tempos:[1050,1350,1650]};const sy=Object.keys(CFG.pesos),names={'\ud83c\udf52':'CHERRY','\ud83c\udf4b':'CITRUS','\ud83e\ude99':'COIN','\ud83c\udfee':'LANTERN','\ud83d\udc8e':'JADE','\ud83d\udc2d':'FORTUNE','\ud83d\udd25':'WILD'};let bet=1,spin=false,turbo=false,sound=true,audio;\nconst $=id=>document.getElementById(id),rs=[$('r1'),$('r2'),$('r3')],rb=[...document.querySelectorAll('.reel')];function money(n){return Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}function getSaldo(){try{if(window.SistemaSaldo&&typeof window.SistemaSaldo.get==='function'){let v=Number(window.SistemaSaldo.get());return Number.isFinite(v)?v:0}}catch(e){}return 0}function refresh(){ $('saldo').textContent=money(getSaldo());try{if(window.SistemaSaldo&&typeof window.SistemaSaldo.atualizarTela==='function')window.SistemaSaldo.atualizarTela()}catch(e){}}function debit(v){try{if(window.SistemaSaldo&&typeof window.SistemaSaldo.debitar==='function')return window.SistemaSaldo.debitar(v)}catch(e){console.error(e)}return false}function pick(){let t=sy.reduce((a,s)=>a+CFG.pesos[s],0),r=Math.random()*t;for(const s of sy){r-=CFG.pesos[s];if(r<=0)return s}return sy[0]}function html(s){return `<div class=\"sym\"><span>${s}</span><small>${names[s]}</small></div>`}function fill(e,n=18){e.innerHTML=Array.from({length:n},pick).map(html).join('')}function setFinal(e,v){let ex=Array.from({length:7},pick),a=[...ex,...v,...ex];e.innerHTML=a.map(html).join('');e.style.transition='none';e.style.transform=`translateY(${-7*e.querySelector('.sym').offsetHeight}px)`}function lines(g){return [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]].filter(l=>{let v=l.map(i=>g[i]),n=v.filter(x=>x!=='\ud83d\udd25');return !n.length||n.every(x=>x===n[0])})}function evaluate(g){let ls=lines(g),pr=0;ls.forEach(l=>{let v=l.map(i=>g[i]),s=v.find(x=>x!=='\ud83d\udd25')||'\ud83d\udd25';pr+=bet*(CFG.pag[s]||0)});return{pr,ls}}function beep(f,d,t='sine',gain=.035){if(!sound)return;try{audio||=new(window.AudioContext||window.webkitAudioContext)();let o=audio.createOscillator(),g=audio.createGain();o.type=t;o.frequency.value=f;g.gain.setValueAtTime(.0001,audio.currentTime);g.gain.exponentialRampToValueAtTime(gain,audio.currentTime+.015);g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+d);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+d+.02)}catch(e){}}function winSound(){[523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,.22),i*90))}function effects(){for(let i=0;i<25;i++){let p=document.createElement('i');p.className='p';p.style.left=innerWidth/2+'px';p.style.top=innerHeight*.48+'px';p.style.setProperty('--x',((Math.random()-.5)*220)+'px');p.style.setProperty('--y',((Math.random()-.7)*190)+'px');document.body.appendChild(p);setTimeout(()=>p.remove(),900)}for(let i=0;i<14;i++){let c=document.createElement('i');c.className='c';c.textContent='\ud83e\ude99';c.style.left=innerWidth/2+'px';c.style.top=innerHeight*.48+'px';c.style.setProperty('--x',((Math.random()-.5)*250)+'px');c.style.setProperty('--y',((Math.random()-.8)*240)+'px');document.body.appendChild(c);setTimeout(()=>c.remove(),950)}}async function go(respin=false){if(spin)return;spin=true;$('spin').disabled=true;$('respin').disabled=true;if(!respin){if(getSaldo()<bet){$('status').textContent='Saldo insuficiente para esta aposta.';spin=false;$('spin').disabled=false;return}if(debit(bet)===false){$('status').textContent='N\u00e3o foi poss\u00edvel registrar a aposta.';spin=false;$('spin').disabled=false;return}}$('win').textContent=money(0);$('status').textContent=respin?'\u21bb RESPIN \u2022 a chama continua acesa!':'Os rolos est\u00e3o girando...';$('line').textContent='Acelerando...';rb.forEach(x=>x.classList.add('spinning'));beep(120,.18,'sawtooth',.025);let g=Array.from({length:9},pick),cols=[[g[0],g[3],g[6]],[g[1],g[4],g[7]],[g[2],g[5],g[8]]];rs.forEach(fill);let ts=turbo?[420,520,620]:CFG.tempos;await Promise.all(rs.map((e,i)=>new Promise(resolve=>{let h=68,d=-(11+Math.floor(Math.random()*5))*h;e.style.transition=`transform ${ts[i]}ms cubic-bezier(.12,.72,.16,1)`;e.style.transform=`translateY(${d}px)`;setTimeout(()=>{setFinal(e,cols[i]);beep(230+i*75,.12,'triangle',.04);resolve()},ts[i])})));rb.forEach(x=>x.classList.remove('spinning'));let r=evaluate(g);if(r.pr>0){$('win').textContent=money(r.pr);$('status').textContent=`\u2728 Vit\u00f3ria! ${money(r.pr)}`;$('line').textContent=`${r.ls.length} linha(s) premiada(s)`;r.ls.flat().filter((x,i,a)=>a.indexOf(x)===i).forEach(i=>{rs[i%3].querySelectorAll('.sym')[7+Math.floor(i/3)]?.classList.add('win')});winSound();effects()}else{$('status').textContent='Quase! Tente novamente.';$('line').textContent='Nenhuma linha premiada'}if(g.filter(x=>x==='\ud83d\udd25').length>=3&&Math.random()<CFG.respin){$('respin').disabled=false;$('status').textContent+=' \u2022 Respin liberado!'}refresh();spin=false;$('spin').disabled=false}\ndocument.querySelectorAll('.bet').forEach(b=>b.onclick=()=>{if(spin)return;bet=Number(b.dataset.b);document.querySelectorAll('.bet').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('betDisplay').textContent=money(bet)});$('spin').onclick=()=>go(false);$('respin').onclick=()=>go(true);$('turbo').onclick=()=>{turbo=!turbo;$('turbo').classList.toggle('active',turbo);$('turbo').textContent=turbo?'\u26a1 Turbo ON':'\u26a1 Turbo'};$('sound').onclick=()=>{sound=!sound;$('sound').classList.toggle('active',sound);$('sound').textContent=sound?'\ud83d\udd0a Som':'\ud83d\udd07 Som'};$('infoBtn').onclick=()=>{$('info').hidden=!$('info').hidden;$('infoBtn').classList.toggle('active',!$('info').hidden)};rs.forEach(fill);rs.forEach(e=>setFinal(e,[pick(),pick(),pick()]));refresh();$('betDisplay').textContent=money(bet);window.addEventListener('saldoAtualizado',refresh)})();\n<\/script></body></html>\n";
+
+document.querySelectorAll(".game-card")
     .forEach(card=>{
 
         const novoCard=
@@ -3554,13 +3398,6 @@ function ativarEventosJogos(){
                 }
 
                 if(carregando)return;
-
-                
-                /* VISITANTE: vê a página, mas precisa entrar/cadastrar para abrir jogos reais. */
-                if(!window._apostaxbetUsuarioLogado){
-                    mostrarLoginTela();
-                    return;
-                }
 
                 carregando=true;
 
@@ -3632,8 +3469,20 @@ function ativarEventosJogos(){
 
                 setTimeout(()=>{
 
-                    window.location.href=
-                        destino;
+                    if((nome||"").trim().toLowerCase() === "fortune ebe"){
+                        const box=document.getElementById("fortuneEmbedded");
+                        const frame=document.getElementById("fortuneEmbeddedFrame");
+                        if(box && frame){
+                            frame.srcdoc=FORTUNE_EMBER_HTML;
+                            box.style.display="block";
+                            document.body.style.overflow="hidden";
+                        }
+                        loader.classList.remove("ativo");
+                        carregando=false;
+                        return;
+                    }
+
+                    window.location.href=destino;
 
                 },1800);
 
@@ -4002,7 +3851,16 @@ async function sair(){
         console.error(error);
     }
 
-    mostrarSitePublico();
+    history.pushState(
+        {
+            apostaxbetLogin:true,
+            aposLogout:true
+        },
+        "",
+        window.location.href
+    );
+
+    mostrarLoginTela();
 }
 
 function mostrarLoginTela(){
@@ -4093,6 +3951,18 @@ function traduzirErro(erro){
 
 async function verificarSessao(){
 
+    esconderMenu();
+
+    if(
+        sessionStorage.getItem(
+            "apostaxbet_logout"
+        )==="1"
+    ){
+
+        mostrarLoginTela();
+        return;
+    }
+
     try{
 
         const {data,error}=
@@ -4101,24 +3971,27 @@ async function verificarSessao(){
             .getSession();
 
         if(error){
+
             console.error(error);
-            mostrarSitePublico();
+            mostrarLoginTela();
             return;
         }
 
         if(data?.session){
-            sessionStorage.removeItem("apostaxbet_logout");
-            mostrarSite(data.session.user);
+
+            mostrarSite(
+                data.session.user
+            );
+
         }else{
-            // VISITANTE: entra direto na página principal.
-            mostrarSitePublico();
+
+            mostrarLoginTela();
         }
 
     }catch(error){
 
         console.error(error);
-        // Mesmo se o Supabase falhar, o visitante continua vendo a página pública.
-        mostrarSitePublico();
+        mostrarLoginTela();
     }
 }
 
@@ -4154,7 +4027,8 @@ window.ApostaXBet={
         nome,
         email,
         senha,
-        telefone=""
+        telefone="",
+        cpf=""
     )=>{
 
         try{
@@ -4170,7 +4044,8 @@ window.ApostaXBet={
                             nome,
                             full_name:nome,
                             telefone,
-                            phone:telefone
+                            phone:telefone,
+                            cpf:cpf.replace(/\D/g,"")
                         }
                     }
                 });
@@ -4245,9 +4120,20 @@ clienteSupabase()
             return;
         }
 
-        if(session){
+        if(
+            sessionStorage.getItem(
+                "apostaxbet_logout"
+            )==="1"
+        ){
 
-            sessionStorage.removeItem("apostaxbet_logout");
+            if(!session){
+                mostrarLoginTela();
+            }
+
+            return;
+        }
+
+        if(session){
 
             mostrarSite(
                 session.user
@@ -4255,8 +4141,7 @@ clienteSupabase()
 
         }else{
 
-            // Sem sessão = visitante. Não abrir a tela de login automaticamente.
-            mostrarSitePublico();
+            mostrarLoginTela();
         }
     }
 );
@@ -4265,14 +4150,23 @@ clienteSupabase()
 
 window.addEventListener("popstate",function(){
 
-    // O botão voltar nunca deve transformar um visitante em tela de login.
-    clienteSupabase().auth.getSession().then(({data})=>{
-        if(data?.session){
-            mostrarSite(data.session.user);
-        }else{
-            mostrarSitePublico();
-        }
-    }).catch(()=>mostrarSitePublico());
+    if(
+        sessionStorage.getItem(
+            "apostaxbet_logout"
+        )==="1"
+    ){
+
+        history.pushState(
+            {
+                apostaxbetLogin:true,
+                aposLogout:true
+            },
+            "",
+            window.location.href
+        );
+
+        mostrarLoginTela();
+    }
 
 });
 
@@ -4307,7 +4201,7 @@ document.addEventListener(
         );
 
         console.log(
-            "✅ Cadastro com nome, telefone."
+            "✅ Cadastro com nome, telefone e CPF."
         );
 
         console.log(
@@ -4330,9 +4224,37 @@ document.addEventListener(
             2000
         );
 
+        if(
+            sessionStorage.getItem(
+                "apostaxbet_logout"
+            )==="1"
+        ){
+
+            history.replaceState(
+                {
+                    apostaxbetLogin:true,
+                    aposLogout:true
+                },
+                "",
+                window.location.href
+            );
+
+            history.pushState(
+                {
+                    apostaxbetLogin:true,
+                    aposLogout:true
+                },
+                "",
+                window.location.href
+            );
+        }
+
         verificarSessao();
     }
 );
+const __feBox=document.getElementById("fortuneEmbedded");
+const __feClose=document.querySelector("#fortuneEmbedded .feClose");
+if(__feClose){__feClose.onclick=()=>{__feBox.style.display="none";document.getElementById("fortuneEmbeddedFrame").srcdoc="";document.body.style.overflow="";carregando=false;};}
 </script>
 
 </body>
