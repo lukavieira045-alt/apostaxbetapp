@@ -2304,34 +2304,17 @@ function abrirFortuneEmber(){
  }catch(e){
    try{gameHtml=decodeURIComponent(escape(atob(FORTUNE_EMBER_B64)))}catch(err){console.error(err);return;}
  }
- // O jogo roda dentro de um iframe. O saldo do site principal fica no
- // window.parent; fazemos uma ponte explícita para o SistemaSaldo existente.
- gameHtml=gameHtml.replace(
-   /function getSaldo\(\)\{[\s\S]*?return 0\}/,
-   `async function getSaldo(){try{if(window.parent&&window.parent.SistemaSaldo&&typeof window.parent.SistemaSaldo.get==="function"){const v=Number(await window.parent.SistemaSaldo.get());return Number.isFinite(v)?v:0}}catch(e){console.error(e)}return 0}`
- );
- gameHtml=gameHtml.replace(
-   /function debit\(v\)\{[\s\S]*?return false\}/,
-   `async function debit(v){try{if(window.parent&&window.parent.SistemaSaldo&&typeof window.parent.SistemaSaldo.debitar==="function"){return await window.parent.SistemaSaldo.debitar(v)}}catch(e){console.error(e)}return false}`
- );
- gameHtml=gameHtml.replace(
-   /function refresh\(\)\{[\s\S]*?\}/,
-   `async function refresh(){ $('saldo').textContent=money(await getSaldo());try{if(window.parent&&window.parent.SistemaSaldo&&typeof window.parent.SistemaSaldo.atualizarTela==="function")await window.parent.SistemaSaldo.atualizarTela()}catch(e){}}`
- );
- gameHtml=gameHtml.replace(
-   /if\(getSaldo\(\)<bet\)/,
-   `if(await getSaldo()<bet)`
- );
- gameHtml=gameHtml.replace(
-   /if\(debit\(bet\)===false\)/,
-   `if(await debit(bet)===false)`
- );
+ /* Ponte o SistemaSaldo da página principal para o jogo embutido. */
+ try{
+  const ponte=`<script>try{if(window.parent&&window.parent!==window&&window.parent.SistemaSaldo){window.SistemaSaldo=window.parent.SistemaSaldo;}}catch(e){console.error(e)}<\/script>`;
+  gameHtml=gameHtml.replace("</head>",ponte+"</head>");
+ }catch(e){console.error("Fortune Ember: erro ao preparar o jogo",e)}
  if(fortuneEmberBlobUrl){try{URL.revokeObjectURL(fortuneEmberBlobUrl)}catch(e){}}
  const blob=new Blob([gameHtml],{type:"text/html;charset=utf-8"});
  fortuneEmberBlobUrl=URL.createObjectURL(blob);
  frame.src=fortuneEmberBlobUrl;
 }
-function fecharFortuneEmber(){{
+function fecharFortuneEmber(){
  const overlay=document.getElementById("fortuneEmberOverlay"),frame=document.getElementById("fortuneEmberFrame");
  if(!overlay||!frame)return; overlay.classList.remove("ativo"); overlay.setAttribute("aria-hidden","true"); frame.src="about:blank";
 }
