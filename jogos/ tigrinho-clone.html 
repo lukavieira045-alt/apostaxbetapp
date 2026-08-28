@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fortune Tiger - ApostaXBet</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+    body { background: #0b3b24; color: #fff; font-family: sans-serif; text-align: center; padding: 10px; }
+    .slot-machine { display: flex; justify-content: center; gap: 10px; margin: 20px 0; }
+    .reel { width: 80px; height: 80px; background: #145a38; border: 2px solid #facc15; border-radius: 10px; font-size: 40px; display: flex; align-items: center; justify-content: center; }
+    button { padding: 15px 30px; background: #facc15; color: #0b3b24; border: none; border-radius: 10px; font-weight: bold; font-size: 18px; cursor: pointer; }
+    #saldoDisplay { color: #facc15; font-size: 20px; margin-bottom: 20px; }
+    input { padding: 10px; border-radius: 5px; border: none; width: 100px; text-align: center; margin-right: 10px; }
+</style>
+</head>
+<body>
+
+<h2>🐯 FORTUNE TIGER 🐯</h2>
+<div id="saldoDisplay">Saldo: Carregando...</div>
+
+<div class="slot-machine">
+    <div class="reel" id="r1">🐯</div>
+    <div class="reel" id="r2">🐯</div>
+    <div class="reel" id="r3">🐯</div>
+</div>
+
+<div>
+    <input type="number" id="aposta" value="1.00">
+    <button onclick="girar()">GIRAR</button>
+</div>
+
+<script>
+// MESMA CONFIGURAÇÃO DO SEU INDEX
+const SUPABASE_URL = "https://jxbzjiwmajjzxgihfjgt.supabase.co";
+const SUPABASE_KEY = "sb_publishable_XSQ0Lb5v5QD6tQ_xOao_sA_QfxqqhuJ";
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let saldoAtual = 0;
+const simbolos = ['🐯', '💰', '🧧', '🍊'];
+
+async function carregarSaldo() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { alert("Faça login!"); window.location.href = "../index.html"; return; }
+    
+    const { data } = await supabase.from('saldos').select('valor').eq('user_id', session.user.id).single();
+    saldoAtual = data ? parseFloat(data.valor) : 0;
+    document.getElementById('saldoDisplay').innerText = `Saldo: R$ ${saldoAtual.toFixed(2)}`;
+}
+
+async function girar() {
+    const valor = parseFloat(document.getElementById('aposta').value);
+    if (valor > saldoAtual || valor <= 0) { alert("Saldo insuficiente!"); return; }
+
+    // Desconta a aposta
+    saldoAtual -= valor;
+    const { data: { session } } = await supabase.auth.getSession();
+    await supabase.from('saldos').update({ valor: saldoAtual }).eq('user_id', session.user.id);
+    document.getElementById('saldoDisplay').innerText = `Saldo: R$ ${saldoAtual.toFixed(2)}`;
+
+    // Lógica do giro
+    const r1 = simbolos[Math.floor(Math.random() * simbolos.length)];
+    const r2 = simbolos[Math.floor(Math.random() * simbolos.length)];
+    const r3 = simbolos[Math.floor(Math.random() * simbolos.length)];
+
+    document.getElementById('r1').innerText = r1;
+    document.getElementById('r2').innerText = r2;
+    document.getElementById('r3').innerText = r3;
+
+    // Verifica vitória (3 iguais)
+    if (r1 === r2 && r2 === r3) {
+        const premio = valor * 10;
+        saldoAtual += premio;
+        await supabase.from('saldos').update({ valor: saldoAtual }).eq('user_id', session.user.id);
+        alert(`🎉 GANHOU R$ ${premio.toFixed(2)}!`);
+        carregarSaldo();
+    }
+}
+
+carregarSaldo(); 
+</script>
+</body>
+</html>
