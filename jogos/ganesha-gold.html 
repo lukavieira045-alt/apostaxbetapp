@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ganesha Gold - ApostaXBet</title>
+    <style>
+        body { background: #0b3b24; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
+        .game-container { max-width: 400px; margin: auto; background: #145a38; padding: 20px; border-radius: 15px; border: 2px solid #facc15; }
+        .slots { display: flex; justify-content: center; gap: 10px; margin: 20px 0; font-size: 50px; background: #072a1a; padding: 10px; border-radius: 10px; }
+        .btn-spin { width: 100%; padding: 15px; background: #facc15; border: none; border-radius: 10px; font-weight: bold; font-size: 18px; cursor: pointer; color: #0b3b24; }
+        .info { margin-top: 15px; font-size: 14px; }
+        .saldo-display { color: #4ade80; font-weight: bold; font-size: 18px; }
+    </style>
+</head>
+<body>
+
+    <h2>🐘 Ganesha Gold</h2>
+    
+    <div class="game-container">
+        <div class="saldo-display">Saldo: R$ <span id="saldoAtual">0,00</span></div>
+        
+        <div class="slots">
+            <span id="s1">❓</span>
+            <span id="s2">❓</span>
+            <span id="s3">❓</span>
+        </div>
+
+        <input type="number" id="valorAposta" placeholder="Valor da aposta" value="1.00" style="width: 90%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: none;">
+        
+        <button class="btn-spin" onclick="girar()">GIRAR 🎰</button>
+        
+        <div class="info" id="mensagem">Faça sua aposta!</div>
+    </div>
+
+    <script>
+        // Ícones do jogo
+        const icones = ['🐘', '🪷', '💎', '🔔'];
+        
+        async function atualizarSaldoTela() {
+            if (window.SistemaSaldo) {
+                const s = await window.SistemaSaldo.get();
+                document.getElementById('saldoAtual').innerText = s.toFixed(2).replace('.', ',');
+            }
+        }
+
+        async function girar() {
+            const aposta = parseFloat(document.getElementById('valorAposta').value);
+            const msg = document.getElementById('mensagem');
+            
+            if (!aposta || aposta <= 0) {
+                msg.innerText = "Digite um valor válido!";
+                return;
+            }
+
+            if (window.SistemaSaldo) {
+                const saldo = await window.SistemaSaldo.get();
+                if (saldo < aposta) {
+                    msg.innerText = "Saldo insuficiente! Faça um depósito.";
+                    msg.style.color = "#fca5a5";
+                    return;
+                }
+                await window.SistemaSaldo.debitar(aposta);
+                atualizarSaldoTela();
+            }
+
+            msg.innerText = "Girando...";
+            
+            let giros = 0;
+            const intervalo = setInterval(() => {
+                document.getElementById('s1').innerText = icones[Math.floor(Math.random() * icones.length)];
+                document.getElementById('s2').innerText = icones[Math.floor(Math.random() * icones.length)];
+                document.getElementById('s3').innerText = icones[Math.floor(Math.random() * icones.length)];
+                giros++;
+                
+                if (giros > 10) {
+                    clearInterval(intervalo);
+                    verificarVitoria(aposta);
+                }
+            }, 100);
+        }
+
+        async function verificarVitoria(aposta) {
+            const s1 = document.getElementById('s1').innerText;
+            const s2 = document.getElementById('s2').innerText;
+            const s3 = document.getElementById('s3').innerText;
+            const msg = document.getElementById('mensagem');
+
+            if (s1 === s2 && s2 === s3) {
+                const ganho = aposta * 10;
+                msg.innerText = `GANHOU R$ ${ganho.toFixed(2)}! 🎉`;
+                msg.style.color = "#4ade80";
+                if (window.SistemaSaldo) await window.SistemaSaldo.ganhar(aposta, 10);
+            } else if (s1 === s2 || s2 === s3 || s1 === s3) {
+                const ganho = aposta * 2;
+                msg.innerText = `GANHOU R$ ${ganho.toFixed(2)}! ✨`;
+                msg.style.color = "#facc15";
+                if (window.SistemaSaldo) await window.SistemaSaldo.ganhar(aposta, 2);
+            } else {
+                msg.innerText = "Tente novamente!";
+                msg.style.color = "#fff";
+            }
+            atualizarSaldoTela();
+        }
+
+        atualizarSaldoTela();
+    </script>
+</body>
+</html>
