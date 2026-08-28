@@ -5,109 +5,269 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fortune Mouse - ApostaXBet</title>
     <style>
-        body { background: #0b3b24; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
-        .game-container { max-width: 400px; margin: auto; background: #145a38; padding: 20px; border-radius: 15px; border: 2px solid #facc15; }
-        .slots { display: flex; justify-content: center; gap: 10px; margin: 20px 0; font-size: 50px; background: #072a1a; padding: 10px; border-radius: 10px; }
-        .btn-spin { width: 100%; padding: 15px; background: #facc15; border: none; border-radius: 10px; font-weight: bold; font-size: 18px; cursor: pointer; color: #0b3b24; }
-        .info { margin-top: 15px; font-size: 14px; }
-        .saldo-display { color: #4ade80; font-weight: bold; font-size: 18px; }
+        /* Reset e Base */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            background-color: #051f12; 
+            background-image: radial-gradient(circle at center, #145a38 0%, #051f12 100%);
+            color: white; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+        }
+
+        /* Container do Jogo (Estilo Mobile) */
+        .game-wrapper {
+            width: 100%;
+            max-width: 420px;
+            background: #0b3b24;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8), 0 0 10px #facc15;
+            border: 2px solid #facc15;
+            position: relative;
+        }
+
+        /* Cabeçalho */
+        .header {
+            background: linear-gradient(90deg, #072a1a, #145a38);
+            padding: 15px;
+            text-align: center;
+            border-bottom: 2px solid #facc15;
+        }
+        .header h2 { color: #facc15; text-transform: uppercase; letter-spacing: 2px; font-size: 1.2rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+
+        /* Área dos Slots */
+        .slot-machine {
+            padding: 30px 20px;
+            background: url('https://www.transparenttextures.com/patterns/cubes.png'), #072a1a;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .reel {
+            flex: 1;
+            height: 120px;
+            background: #02120a;
+            border: 2px solid #b45309;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            box-shadow: inset 0 0 15px #000;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Efeito de Brilho nos Slots */
+        .reel::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(255,255,255,0.1) 50%, rgba(0,0,0,0.6) 100%);
+            pointer-events: none;
+        }
+
+        /* Painel de Controle */
+        .controls {
+            padding: 20px;
+            background: #0b3b24;
+            text-align: center;
+        }
+
+        .balance-box {
+            background: #02120a;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #1e7a4d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .balance-label { font-size: 0.8rem; color: #86efac; }
+        .balance-value { font-size: 1.2rem; font-weight: bold; color: #fff; }
+
+        .bet-control {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .bet-btn {
+            background: #1e7a4d;
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        .bet-display {
+            background: #02120a;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            min-width: 80px;
+        }
+
+        /* Botão Girar Profissional */
+        .spin-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(180deg, #facc15 0%, #ca8a04 100%);
+            border: none;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #0b3b24;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #854d0e, 0 10px 10px rgba(0,0,0,0.3);
+            transition: all 0.1s;
+            position: relative;
+            overflow: hidden;
+        }
+        .spin-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #854d0e, 0 4px 4px rgba(0,0,0,0.3);
+        }
+        .spin-btn:disabled {
+            filter: grayscale(1);
+            cursor: not-allowed;
+        }
+
+        /* Mensagens */
+        .message-area {
+            height: 30px;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #facc15;
+            text-shadow: 0 1px 2px black;
+        }
     </style>
 </head>
 <body>
 
-    <h2>🐭 Fortune Mouse</h2>
-    
-    <div class="game-container">
-        <div class="saldo-display">Saldo: R$ <span id="saldoAtual">0,00</span></div>
-        
-        <div class="slots">
-            <span id="s1">❓</span>
-            <span id="s2">❓</span>
-            <span id="s3">❓</span>
+    <div class="game-wrapper">
+        <div class="header">
+            <h2>🐭 Fortune Mouse</h2>
         </div>
 
-        <input type="number" id="valorAposta" placeholder="Valor da aposta" value="1.00" style="width: 90%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: none;">
-        
-        <button class="btn-spin" onclick="girar()">GIRAR 🎰</button>
-        
-        <div class="info" id="mensagem">Faça sua aposta!</div>
+        <div class="slot-machine">
+            <div class="reel" id="r1">❓</div>
+            <div class="reel" id="r2">❓</div>
+            <div class="reel" id="r3">❓</div>
+        </div>
+
+        <div class="controls">
+            <div class="balance-box">
+                <span class="balance-label">SALDO</span>
+                <span class="balance-value">R$ <span id="saldo">0,00</span></span>
+            </div>
+
+            <div class="bet-control">
+                <button class="bet-btn" onclick="mudarAposta(-1)">-</button>
+                <div class="bet-display">R$ <span id="apostaValor">2.00</span></div>
+                <button class="bet-btn" onclick="mudarAposta(1)">+</button>
+            </div>
+
+            <button class="spin-btn" id="btnGirar" onclick="girar()">GIRAR</button>
+            
+            <div class="message-area" id="msg">Boa sorte!</div>
+        </div>
     </div>
 
     <script>
-        // Ícones do jogo
-        const icones = ['🐭', '💰', '🧨', '🏮'];
+        // Configurações
+        const simbolos = ['🐭', '💰', '🧨', '🏮', '🧧'];
+        let aposta = 2.00;
         
-        async function atualizarSaldoTela() {
-            if (window.SistemaSaldo) {
-                const s = await window.SistemaSaldo.get();
-                document.getElementById('saldoAtual').innerText = s.toFixed(2).replace('.', ',');
+        // Simulação de Saldo (Substitua pelo seu SistemaSaldo real)
+        let saldoSimulado = 100.00; 
+
+        function atualizarDisplay() {
+            document.getElementById('saldo').innerText = saldoSimulado.toFixed(2).replace('.', ',');
+            document.getElementById('apostaValor').innerText = aposta.toFixed(2).replace('.', ',');
+        }
+
+        function mudarAposta(valor) {
+            if (aposta + valor >= 1 && aposta + valor <= 100) {
+                aposta += valor;
+                atualizarDisplay();
             }
         }
 
         async function girar() {
-            const aposta = parseFloat(document.getElementById('valorAposta').value);
-            const msg = document.getElementById('mensagem');
+            const btn = document.getElementById('btnGirar');
+            const msg = document.getElementById('msg');
             
-            if (!aposta || aposta <= 0) {
-                msg.innerText = "Digite um valor válido!";
+            if (saldoSimulado < aposta) {
+                msg.innerText = "Saldo Insuficiente!";
+                msg.style.color = "red";
                 return;
             }
 
-            // Verifica saldo usando seu sistema global
-            if (window.SistemaSaldo) {
-                const saldo = await window.SistemaSaldo.get();
-                if (saldo < aposta) {
-                    msg.innerText = "Saldo insuficiente! Faça um depósito.";
-                    msg.style.color = "#fca5a5";
-                    return;
-                }
-                
-                // Desconta a aposta
-                await window.SistemaSaldo.debitar(aposta);
-                atualizarSaldoTela();
-            }
+            // Início do Giro
+            btn.disabled = true;
+            msg.innerText = "";
+            saldoSimulado -= aposta;
+            atualizarDisplay();
 
-            msg.innerText = "Girando...";
+            // Animação Visual
+            let voltas = 0;
+            const reels = [document.getElementById('r1'), document.getElementById('r2'), document.getElementById('r3')];
             
-            // Simulação simples de giro
-            let giros = 0;
             const intervalo = setInterval(() => {
-                document.getElementById('s1').innerText = icones[Math.floor(Math.random() * icones.length)];
-                document.getElementById('s2').innerText = icones[Math.floor(Math.random() * icones.length)];
-                document.getElementById('s3').innerText = icones[Math.floor(Math.random() * icones.length)];
-                giros++;
-                
-                if (giros > 10) {
+                reels.forEach(r => r.innerText = simbolos[Math.floor(Math.random() * simbolos.length)]);
+                voltas++;
+                if (voltas > 20) {
                     clearInterval(intervalo);
-                    verificarVitoria(aposta);
+                    finalizarGiro(reels);
                 }
             }, 100);
         }
 
-        async function verificarVitoria(aposta) {
-            const s1 = document.getElementById('s1').innerText;
-            const s2 = document.getElementById('s2').innerText;
-            const s3 = document.getElementById('s3').innerText;
-            const msg = document.getElementById('mensagem');
+        function finalizarGiro(reels) {
+            // Resultado Final (Lógica de Vitória)
+            const res = [
+                simbolos[Math.floor(Math.random() * simbolos.length)],
+                simbolos[Math.floor(Math.random() * simbolos.length)],
+                simbolos[Math.floor(Math.random() * simbolos.length)]
+            ];
 
-            if (s1 === s2 && s2 === s3) {
-                const ganho = aposta * 10;
-                msg.innerText = `GANHOU R$ ${ganho.toFixed(2)}! 🎉`;
+            // Forçar vitória às vezes para teste (remova em produção)
+            // if (Math.random() > 0.7) res[0] = res[1] = res[2] = '🐭';
+
+            reels[0].innerText = res[0];
+            reels[1].innerText = res[1];
+            reels[2].innerText = res[2];
+
+            const msg = document.getElementById('msg');
+            const btn = document.getElementById('btnGirar');
+
+            if (res[0] === res[1] && res[1] === res[2]) {
+                const premio = aposta * 10;
+                saldoSimulado += premio;
+                msg.innerText = `GANHOU R$ ${premio.toFixed(2)}! 🎉`;
                 msg.style.color = "#4ade80";
-                if (window.SistemaSaldo) await window.SistemaSaldo.ganhar(aposta, 10);
-            } else if (s1 === s2 || s2 === s3 || s1 === s3) {
-                const ganho = aposta * 2;
-                msg.innerText = `GANHOU R$ ${ganho.toFixed(2)}! ✨`;
-                msg.style.color = "#facc15";
-                if (window.SistemaSaldo) await window.SistemaSaldo.ganhar(aposta, 2);
             } else {
                 msg.innerText = "Tente novamente!";
                 msg.style.color = "#fff";
             }
-            atualizarSaldoTela();
+
+            atualizarDisplay();
+            btn.disabled = false;
         }
 
-        atualizarSaldoTela();
+        atualizarDisplay();
     </script>
 </body>
 </html>
