@@ -2,112 +2,217 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Fortune Mouse - Web Version</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fortune Mouse - Replica Premium</title>
     <style>
-        body { margin: 0; background: #111; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Arial', sans-serif; }
-        
-        .phone {
-            width: 375px; height: 667px;
-            background: url('https://i.imgur.com/8QJkZ9l.png') no-repeat center center; /* Fundo genérico vermelho/dourado */
-            background-size: cover;
-            border: 5px solid #d4af37;
-            border-radius: 25px;
-            position: relative;
-            box-shadow: 0 0 40px rgba(212, 175, 55, 0.6);
-            overflow: hidden;
+        body {
+            margin: 0;
+            background-color: #0a0a0a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        .slots-frame {
-            position: absolute; top: 200px; left: 25px; right: 25px; height: 180px;
-            background: rgba(0,0,0,0.6);
-            border: 3px solid #ffd700;
-            border-radius: 15px;
-            display: flex; justify-content: space-around; align-items: center;
-            padding: 10px;
+        .mobile-frame {
+            width: 375px;
+            height: 720px;
+            background: linear-gradient(180deg, #b91c1c 0%, #450a0a 100%);
+            border-radius: 30px;
+            border: 6px solid #fbbf24;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 60px rgba(251, 191, 36, 0.4);
+        }
+
+        /* Efeito de brilho no fundo */
+        .glow-effect {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, rgba(251, 191, 36, 0.2) 0%, transparent 70%);
+            z-index: 1;
+        }
+
+        .header-logo {
+            text-align: center;
+            padding-top: 50px;
+            z-index: 2;
+            position: relative;
+        }
+        
+        .logo-text {
+            font-size: 32px;
+            color: #fbbf24;
+            font-weight: 900;
+            text-transform: uppercase;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.6);
+            letter-spacing: 3px;
+        }
+
+        .slots-container {
+            position: absolute;
+            top: 220px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 88%;
+            height: 200px;
+            background: rgba(10, 10, 10, 0.85);
+            border: 3px solid #fbbf24;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            z-index: 2;
+            box-shadow: inset 0 0 30px #000;
         }
 
         .reel {
-            width: 30%; height: 100%;
+            width: 28%;
+            height: 85%;
             background: #fff;
-            border-radius: 10px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
             overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
         }
 
-        .reel img { width: 80%; height: auto; }
+        /* Brilho interno dos slots */
+        .reel::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(255,255,255,0.1) 50%, rgba(0,0,0,0.5) 100%);
+            pointer-events: none;
+        }
 
-        .spin-btn {
-            position: absolute; bottom: 120px; left: 50%; transform: translateX(-50%);
-            width: 110px; height: 110px;
-            background: radial-gradient(circle, #ffd700 0%, #b8860b 100%);
-            border-radius: 50%; border: 4px solid #fff;
-            box-shadow: 0 0 25px #ffd700;
+        .spin-button {
+            position: absolute;
+            bottom: 140px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, #fbbf24 0%, #d97706 100%);
+            border-radius: 50%;
+            border: 6px solid #fff;
+            box-shadow: 0 0 40px #fbbf24;
             cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 900; color: #5c4003; font-size: 20px;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 22px;
+            color: #450a0a;
+            transition: all 0.1s;
         }
 
-        .ui-bar {
-            position: absolute; bottom: 20px; width: 90%; left: 5%;
-            background: rgba(0,0,0,0.8);
-            border-radius: 20px; padding: 10px;
-            display: flex; justify-content: space-between; color: #ffd700; font-weight: bold;
-            border: 1px solid #ffd700;
+        .spin-button:active {
+            transform: translateX(-50%) scale(0.92);
+            box-shadow: 0 0 20px #fbbf24;
+        }
+
+        .bottom-ui {
+            position: absolute;
+            bottom: 25px;
+            width: 90%;
+            left: 5%;
+            background: rgba(0,0,0,0.9);
+            border-radius: 25px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 2;
+            border: 1px solid #fbbf24;
+        }
+
+        .ui-item {
+            color: #fbbf24;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .ui-value {
+            color: #fff;
+            font-size: 16px;
+            margin-left: 5px;
+        }
+
+        @keyframes spinBlur {
+            0% { filter: blur(0px); transform: translateY(0); }
+            50% { filter: blur(6px); transform: translateY(-5px); }
+            100% { filter: blur(0px); transform: translateY(0); }
+        }
+
+        .spinning-reel {
+            animation: spinBlur 0.1s infinite;
         }
     </style>
 </head>
 <body>
 
-    <div class="phone">
-        <div class="slots-frame">
-            <!-- Usando imagens placeholder da internet para simular -->
-            <div class="reel"><img src="https://cdn-icons-png.flaticon.com/512/2829/2829878.png" id="r1"></div>
-            <div class="reel"><img src="https://cdn-icons-png.flaticon.com/512/2454/2454269.png" id="r2"></div>
-            <div class="reel"><img src="https://cdn-icons-png.flaticon.com/512/2665/2665479.png" id="r3"></div>
+    <div class="mobile-frame">
+        <div class="glow-effect"></div>
+        
+        <div class="header-logo">
+            <div class="logo-text">FORTUNE MOUSE</div>
         </div>
 
-        <button class="spin-btn" onclick="girar()">GIRAR</button>
+        <div class="slots-container">
+            <div class="reel"><div id="r1">🐭</div></div>
+            <div class="reel"><div id="r2">💰</div></div>
+            <div class="reel"><div id="r3">🧨</div></div>
+        </div>
 
-        <div class="ui-bar">
-            <span>Saldo: R$ <span id="saldo">100,00</span></span>
-            <span>Aposta: R$ 2,00</span>
+        <button class="spin-button" onclick="startGame()">GIRAR</button>
+
+        <div class="bottom-ui">
+            <div class="ui-item">SALDO <span class="ui-value">R$ <span id="saldo">100,00</span></span></div>
+            <div class="ui-item">APOSTA <span class="ui-value">R$ 2,00</span></div>
         </div>
     </div>
 
     <script>
-        // Links de imagens públicas para teste
-        const icons = [
-            'https://cdn-icons-png.flaticon.com/512/2829/2829878.png', // Rato
-            'https://cdn-icons-png.flaticon.com/512/2454/2454269.png', // Moeda
-            'https://cdn-icons-png.flaticon.com/512/2665/2665479.png'  // Fogos
-        ];
-        
-        let saldo = 100;
+        const simbolos = ['🐭', '💰', '🧨', '🏮', '🧧'];
+        let saldo = 100.00;
+        let isSpinning = false;
 
-        function girar() {
-            if(saldo < 2) return alert("Sem saldo!");
+        function startGame() {
+            if (isSpinning || saldo < 2) return;
+            
+            isSpinning = true;
             saldo -= 2;
             document.getElementById('saldo').innerText = saldo.toFixed(2).replace('.', ',');
             
-            const r1 = document.getElementById('r1');
-            const r2 = document.getElementById('r2');
-            const r3 = document.getElementById('r3');
+            const reels = [document.getElementById('r1'), document.getElementById('r2'), document.getElementById('r3')];
             
-            let count = 0;
+            reels.forEach(r => r.parentElement.classList.add('spinning-reel'));
+
+            let spins = 0;
             const interval = setInterval(() => {
-                r1.src = icons[Math.floor(Math.random()*3)];
-                r2.src = icons[Math.floor(Math.random()*3)];
-                r3.src = icons[Math.floor(Math.random()*3)];
-                count++;
-                if(count > 15) {
+                reels.forEach(r => r.innerText = simbolos[Math.floor(Math.random() * simbolos.length)]);
+                spins++;
+                
+                if (spins > 25) {
                     clearInterval(interval);
-                    // Resultado final
-                    r1.src = icons[0]; r2.src = icons[0]; r3.src = icons[0];
+                    reels.forEach(r => r.parentElement.classList.remove('spinning-reel'));
+                    
+                    // Resultado final (simulado)
+                    reels[0].innerText = simbolos[0];
+                    reels[1].innerText = simbolos[0];
+                    reels[2].innerText = simbolos[0];
+                    
                     saldo += 20;
                     document.getElementById('saldo').innerText = saldo.toFixed(2).replace('.', ',');
+                    isSpinning = false;
                 }
-            }, 100);
+            }, 80);
         }
     </script>
 </body>
