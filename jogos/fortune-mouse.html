@@ -3,271 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fortune Mouse - ApostaXBet</title>
+    <title>Fortune Mouse - Clone Premium</title>
     <style>
-        /* Reset e Base */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            background-color: #051f12; 
-            background-image: radial-gradient(circle at center, #145a38 0%, #051f12 100%);
-            color: white; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
+        body {
+            margin: 0;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
         }
 
-        /* Container do Jogo (Estilo Mobile) */
-        .game-wrapper {
-            width: 100%;
-            max-width: 420px;
-            background: #0b3b24;
-            border-radius: 25px;
+        .phone-frame {
+            width: 360px;
+            height: 720px;
+            background: linear-gradient(180deg, #8B0000 0%, #4a0404 100%);
+            border-radius: 30px;
+            border: 8px solid #d4af37;
+            position: relative;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.5);
             overflow: hidden;
-            box-shadow: 0 0 30px rgba(0,0,0,0.8), 0 0 10px #facc15;
-            border: 2px solid #facc15;
+        }
+
+        /* Fundo decorativo */
+        .bg-decoration {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(circle, transparent 20%, #000 120%);
+            z-index: 1;
+        }
+
+        .game-header {
+            text-align: center;
+            padding-top: 40px;
+            z-index: 2;
             position: relative;
         }
-
-        /* Cabeçalho */
-        .header {
-            background: linear-gradient(90deg, #072a1a, #145a38);
-            padding: 15px;
-            text-align: center;
-            border-bottom: 2px solid #facc15;
+        
+        .logo {
+            font-size: 28px;
+            color: #ffd700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            font-weight: 900;
+            letter-spacing: 2px;
         }
-        .header h2 { color: #facc15; text-transform: uppercase; letter-spacing: 2px; font-size: 1.2rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 
-        /* Área dos Slots */
-        .slot-machine {
-            padding: 30px 20px;
-            background: url('https://www.transparenttextures.com/patterns/cubes.png'), #072a1a;
+        .slots-container {
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            height: 200px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 3px solid #ffd700;
+            border-radius: 15px;
             display: flex;
-            justify-content: space-between;
-            gap: 10px;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 2;
+            box-shadow: inset 0 0 20px #000;
         }
 
         .reel {
-            flex: 1;
-            height: 120px;
-            background: #02120a;
-            border: 2px solid #b45309;
+            width: 30%;
+            height: 80%;
+            background: #fff;
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 60px;
-            box-shadow: inset 0 0 15px #000;
-            position: relative;
             overflow: hidden;
-        }
-        
-        /* Efeito de Brilho nos Slots */
-        .reel::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(255,255,255,0.1) 50%, rgba(0,0,0,0.6) 100%);
-            pointer-events: none;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
 
-        /* Painel de Controle */
-        .controls {
-            padding: 20px;
-            background: #0b3b24;
+        .reel-content {
+            position: absolute;
+            width: 100%;
             text-align: center;
         }
 
-        .balance-box {
-            background: #02120a;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border: 1px solid #1e7a4d;
+        .spin-btn {
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, #ffd700 0%, #b8860b 100%);
+            border-radius: 50%;
+            border: 5px solid #fff;
+            box-shadow: 0 0 30px #ffd700;
+            cursor: pointer;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 20px;
+            color: #4a0404;
+            transition: transform 0.1s;
+        }
+
+        .spin-btn:active {
+            transform: translateX(-50%) scale(0.95);
+        }
+
+        .info-bar {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-        }
-        .balance-label { font-size: 0.8rem; color: #86efac; }
-        .balance-value { font-size: 1.2rem; font-weight: bold; color: #fff; }
-
-        .bet-control {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .bet-btn {
-            background: #1e7a4d;
-            border: none;
-            color: white;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 1.2rem;
-        }
-        .bet-display {
-            background: #02120a;
-            padding: 5px 15px;
-            border-radius: 5px;
-            font-weight: bold;
-            min-width: 80px;
+            padding: 0 20px;
+            box-sizing: border-box;
+            z-index: 2;
         }
 
-        /* Botão Girar Profissional */
-        .spin-btn {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(180deg, #facc15 0%, #ca8a04 100%);
-            border: none;
-            border-radius: 50px;
-            font-size: 1.5rem;
-            font-weight: 900;
-            color: #0b3b24;
-            text-transform: uppercase;
-            cursor: pointer;
-            box-shadow: 0 6px 0 #854d0e, 0 10px 10px rgba(0,0,0,0.3);
-            transition: all 0.1s;
-            position: relative;
-            overflow: hidden;
-        }
-        .spin-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #854d0e, 0 4px 4px rgba(0,0,0,0.3);
-        }
-        .spin-btn:disabled {
-            filter: grayscale(1);
-            cursor: not-allowed;
+        .balance-display {
+            background: rgba(0,0,0,0.8);
+            color: #ffd700;
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 1px solid #ffd700;
+            font-weight: bold;
         }
 
-        /* Mensagens */
-        .message-area {
-            height: 30px;
-            margin-top: 15px;
-            font-weight: bold;
-            color: #facc15;
-            text-shadow: 0 1px 2px black;
+        /* Animação de Giro */
+        @keyframes blurSpin {
+            0% { filter: blur(0px); transform: translateY(0); }
+            50% { filter: blur(5px); transform: translateY(-10px); }
+            100% { filter: blur(0px); transform: translateY(0); }
+        }
+
+        .spinning {
+            animation: blurSpin 0.1s infinite;
         }
     </style>
 </head>
 <body>
 
-    <div class="game-wrapper">
-        <div class="header">
-            <h2>🐭 Fortune Mouse</h2>
+    <div class="phone-frame">
+        <div class="bg-decoration"></div>
+        
+        <div class="game-header">
+            <div class="logo">FORTUNE MOUSE</div>
         </div>
 
-        <div class="slot-machine">
-            <div class="reel" id="r1">❓</div>
-            <div class="reel" id="r2">❓</div>
-            <div class="reel" id="r3">❓</div>
+        <div class="slots-container">
+            <div class="reel"><div class="reel-content" id="r1">🐭</div></div>
+            <div class="reel"><div class="reel-content" id="r2">💰</div></div>
+            <div class="reel"><div class="reel-content" id="r3">🧨</div></div>
         </div>
 
-        <div class="controls">
-            <div class="balance-box">
-                <span class="balance-label">SALDO</span>
-                <span class="balance-value">R$ <span id="saldo">0,00</span></span>
-            </div>
+        <button class="spin-btn" onclick="startSpin()">GIRAR</button>
 
-            <div class="bet-control">
-                <button class="bet-btn" onclick="mudarAposta(-1)">-</button>
-                <div class="bet-display">R$ <span id="apostaValor">2.00</span></div>
-                <button class="bet-btn" onclick="mudarAposta(1)">+</button>
-            </div>
-
-            <button class="spin-btn" id="btnGirar" onclick="girar()">GIRAR</button>
-            
-            <div class="message-area" id="msg">Boa sorte!</div>
+        <div class="info-bar">
+            <div class="balance-display">Saldo: R$ <span id="saldo">100,00</span></div>
+            <div class="balance-display">Aposta: R$ 2,00</div>
         </div>
     </div>
 
     <script>
-        // Configurações
-        const simbolos = ['🐭', '💰', '🧨', '🏮', '🧧'];
-        let aposta = 2.00;
-        
-        // Simulação de Saldo (Substitua pelo seu SistemaSaldo real)
-        let saldoSimulado = 100.00; 
+        let saldo = 100.00;
+        const icones = ['🐭', '💰', '🧨', '🏮', '🧧'];
+        let isSpinning = false;
 
-        function atualizarDisplay() {
-            document.getElementById('saldo').innerText = saldoSimulado.toFixed(2).replace('.', ',');
-            document.getElementById('apostaValor').innerText = aposta.toFixed(2).replace('.', ',');
-        }
-
-        function mudarAposta(valor) {
-            if (aposta + valor >= 1 && aposta + valor <= 100) {
-                aposta += valor;
-                atualizarDisplay();
-            }
-        }
-
-        async function girar() {
-            const btn = document.getElementById('btnGirar');
-            const msg = document.getElementById('msg');
+        function startSpin() {
+            if (isSpinning || saldo < 2) return;
             
-            if (saldoSimulado < aposta) {
-                msg.innerText = "Saldo Insuficiente!";
-                msg.style.color = "red";
-                return;
-            }
-
-            // Início do Giro
-            btn.disabled = true;
-            msg.innerText = "";
-            saldoSimulado -= aposta;
-            atualizarDisplay();
-
-            // Animação Visual
-            let voltas = 0;
+            isSpinning = true;
+            saldo -= 2;
+            document.getElementById('saldo').innerText = saldo.toFixed(2).replace('.', ',');
+            
             const reels = [document.getElementById('r1'), document.getElementById('r2'), document.getElementById('r3')];
             
-            const intervalo = setInterval(() => {
-                reels.forEach(r => r.innerText = simbolos[Math.floor(Math.random() * simbolos.length)]);
-                voltas++;
-                if (voltas > 20) {
-                    clearInterval(intervalo);
-                    finalizarGiro(reels);
+            // Adiciona efeito de blur/velocidade
+            reels.forEach(r => r.parentElement.classList.add('spinning'));
+
+            let spins = 0;
+            const interval = setInterval(() => {
+                reels.forEach(r => r.innerText = icones[Math.floor(Math.random() * icones.length)]);
+                spins++;
+                
+                if (spins > 20) {
+                    clearInterval(interval);
+                    finishSpin(reels);
                 }
             }, 100);
         }
 
-        function finalizarGiro(reels) {
-            // Resultado Final (Lógica de Vitória)
-            const res = [
-                simbolos[Math.floor(Math.random() * simbolos.length)],
-                simbolos[Math.floor(Math.random() * simbolos.length)],
-                simbolos[Math.floor(Math.random() * simbolos.length)]
-            ];
-
-            // Forçar vitória às vezes para teste (remova em produção)
-            // if (Math.random() > 0.7) res[0] = res[1] = res[2] = '🐭';
-
+        function finishSpin(reels) {
+            reels.forEach(r => r.parentElement.classList.remove('spinning'));
+            
+            // Resultado final (simulado)
+            const res = [icones[0], icones[0], icones[0]]; // Força vitória do rato para teste
+            
             reels[0].innerText = res[0];
             reels[1].innerText = res[1];
             reels[2].innerText = res[2];
-
-            const msg = document.getElementById('msg');
-            const btn = document.getElementById('btnGirar');
-
-            if (res[0] === res[1] && res[1] === res[2]) {
-                const premio = aposta * 10;
-                saldoSimulado += premio;
-                msg.innerText = `GANHOU R$ ${premio.toFixed(2)}! 🎉`;
-                msg.style.color = "#4ade80";
-            } else {
-                msg.innerText = "Tente novamente!";
-                msg.style.color = "#fff";
-            }
-
-            atualizarDisplay();
-            btn.disabled = false;
+            
+            saldo += 20;
+            document.getElementById('saldo').innerText = saldo.toFixed(2).replace('.', ',');
+            isSpinning = false;
         }
-
-        atualizarDisplay();
     </script>
 </body>
 </html>
