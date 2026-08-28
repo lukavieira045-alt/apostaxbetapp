@@ -1469,9 +1469,6 @@ body{
 <label>Telefone</label>
 <input id="telefoneCadastro" type="tel" placeholder="Digite seu telefone" required>
 
-<label>CPF</label>
-<input id="cpfCadastro" type="text" inputmode="numeric" maxlength="14" placeholder="Digite seu CPF" required>
-
 <label>Criar senha</label>
 <div class="campo-senha">
 <input id="senhaCadastro" type="password" minlength="6" required>
@@ -2852,53 +2849,6 @@ function mensagem(id,texto,tipo){
     el.innerText=texto;
 }
 
-/* ========================= MÁSCARA CPF ========================= */
-
-const campoCpfCadastro=
-    document.getElementById("cpfCadastro");
-
-if(campoCpfCadastro){
-
-    campoCpfCadastro.addEventListener(
-        "input",
-        function(){
-
-            let valor=
-                this.value.replace(/\D/g,"");
-
-            valor=
-                valor.substring(0,11);
-
-            if(valor.length>9){
-
-                valor=
-                    valor.replace(
-                        /(\d{3})(\d{3})(\d{3})(\d{1,2})/,
-                        "$1.$2.$3-$4"
-                    );
-
-            }else if(valor.length>6){
-
-                valor=
-                    valor.replace(
-                        /(\d{3})(\d{3})(\d{1,3})/,
-                        "$1.$2.$3"
-                    );
-
-            }else if(valor.length>3){
-
-                valor=
-                    valor.replace(
-                        /(\d{3})(\d{1,3})/,
-                        "$1.$2"
-                    );
-            }
-
-            this.value=valor;
-        }
-    );
-}
-
 /* ========================= RECUPERAÇÃO ========================= */
 
 function mostrarRecuperacao(){
@@ -3093,10 +3043,6 @@ async function cadastrar(event){
             "telefoneCadastro"
         ).value.trim();
 
-    const cpf=
-        document.getElementById(
-            "cpfCadastro"
-        ).value.trim();
 
     const senha=
         document.getElementById(
@@ -3146,20 +3092,6 @@ async function cadastrar(event){
         return;
     }
 
-    const cpfNumeros=
-        cpf.replace(/\D/g,"");
-
-    if(cpfNumeros.length!==11){
-
-        mensagem(
-            "mensagemCadastro",
-            "Digite um CPF válido com 11 números.",
-            "erro"
-        );
-
-        return;
-    }
-
     botao.disabled=true;
     botao.innerText="CRIANDO CONTA...";
 
@@ -3176,8 +3108,7 @@ async function cadastrar(event){
                         nome,
                         full_name:nome,
                         telefone,
-                        phone:telefone,
-                        cpf:cpfNumeros
+                        phone:telefone
                     }
                 }
             });
@@ -4223,8 +4154,7 @@ window.ApostaXBet={
         nome,
         email,
         senha,
-        telefone="",
-        cpf=""
+        telefone=""
     )=>{
 
         try{
@@ -4240,8 +4170,7 @@ window.ApostaXBet={
                             nome,
                             full_name:nome,
                             telefone,
-                            phone:telefone,
-                            cpf:cpf.replace(/\D/g,"")
+                            phone:telefone
                         }
                     }
                 });
@@ -4378,7 +4307,7 @@ document.addEventListener(
         );
 
         console.log(
-            "✅ Cadastro com nome, telefone e CPF."
+            "✅ Cadastro com nome, telefone."
         );
 
         console.log(
