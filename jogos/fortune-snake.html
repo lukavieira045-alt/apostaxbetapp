@@ -30,16 +30,8 @@ html, body{
 
 body{ 
     display:flex; justify-content:center; align-items:center; height:100vh; 
-    /* Efeito de trovão na tela inteira */
-    animation: stormFlash 6s infinite;
-}
-
-@keyframes stormFlash{
-    0%, 90%, 100%{ background-color: #050207; }
-    92%{ background-color: #2a0e45; } /* Clarão roxo */
-    93%{ background-color: #050207; }
-    94%{ background-color: #4a2c7a; } /* Clarão forte */
-    95%{ background-color: #050207; }
+    /* Efeito de trovão na tela inteira via CSS e JS */
+    transition: background-color 0.1s;
 }
 
 button{ font-family:inherit; border:0; cursor:pointer; touch-action:manipulation; }
@@ -88,7 +80,7 @@ button{ font-family:inherit; border:0; cursor:pointer; touch-action:manipulation
 }
 .strip{ position:absolute; top:0; left:0; width:100%; will-change:transform; }
 
-/* IMAGENS 3D REAIS (SEM EMOJIS) */
+/* IMAGENS REAIS (PNG) */
 .symbol{ height:60px; display:grid; place-items:center; }
 .symbol img{
     width:55px; height:55px; object-fit:contain;
@@ -165,19 +157,20 @@ button{ font-family:inherit; border:0; cursor:pointer; touch-action:manipulation
 "use strict";
 const CONFIG = {
     apostaInicial: 1.00,
-    pesos: { "snake": 3, "diamond": 5, "trophy": 10, "coin": 25, "lemon": 30, "cherry": 35 },
-    pagamentos: { "snake": 10.00, "diamond": 6.00, "trophy": 4.00, "coin": 2.50, "lemon": 1.50, "cherry": 1.20 },
+    pesos: { "cobra": 3, "diamante": 5, "trofeu": 10, "moeda": 25, "limao": 30, "cereja": 35 },
+    pagamentos: { "cobra": 10.00, "diamante": 6.00, "trofeu": 4.00, "moeda": 2.50, "limao": 1.50, "cereja": 1.20 },
     tempos: [1200, 1700, 2200]
 };
 
-// IMAGENS 3D REAIS (PNGs) - SEM EMOJIS
+// CONFIGURAÇÃO DAS IMAGENS LOCAIS
+// Certifique-se de que estes arquivos estão na mesma pasta do index.html
 const IMAGENS = {
-    "snake": "https://cdn-icons-png.flaticon.com/512/616/616408.png",
-    "diamond": "https://cdn-icons-png.flaticon.com/512/2933/2933116.png",
-    "trophy": "https://cdn-icons-png.flaticon.com/512/3112/3112946.png",
-    "coin": "https://cdn-icons-png.flaticon.com/512/2535/2535063.png",
-    "lemon": "https://cdn-icons-png.flaticon.com/512/1135/1135543.png",
-    "cherry": "https://cdn-icons-png.flaticon.com/512/1135/1135548.png"
+    "cobra": "cobra.png",
+    "diamante": "diamante.png",
+    "trofeu": "trofeu.png",
+    "moeda": "moeda.png",
+    "limao": "limao.png",
+    "cereja": "cereja.png"
 };
 
 const saldoEl = document.getElementById("saldo");
@@ -192,6 +185,21 @@ const reelBoxes = [...document.querySelectorAll(".reel")];
 let aposta = CONFIG.apostaInicial;
 let girando = false;
 let audioContext = null;
+
+// EFEITO DE TROVÃO NA TELA INTEIRA
+function iniciarTempestade(){
+    setInterval(() => {
+        if(Math.random() > 0.8){ // 20% de chance a cada ciclo
+            document.body.style.backgroundColor = "#4a2c7a"; // Clarão roxo
+            setTimeout(() => {
+                document.body.style.backgroundColor = "#ffffff"; // Clarão branco forte
+                setTimeout(() => {
+                    document.body.style.backgroundColor = "#050207"; // Volta ao escuro
+                }, 50);
+            }, 50);
+        }
+    }, 2000);
+}
 
 // SISTEMA DE SALDO PADRÃO
 function obterSaldo(){ return window.SistemaSaldo ? Number(window.SistemaSaldo.get()) || 0 : 0; }
@@ -211,7 +219,7 @@ function escolherSimbolo(){
 }
 
 function criarSimbolo(key){
-    return `<div class="symbol"><img src="${IMAGENS[key]}" draggable="false"></div>`;
+    return `<div class="symbol"><img src="${IMAGENS[key]}" alt="${key}" draggable="false"></div>`;
 }
 
 function preencherRolo(el){ el.innerHTML = Array(20).fill(0).map(()=>criarSimbolo(escolherSimbolo())).join(""); }
@@ -308,6 +316,7 @@ document.querySelectorAll(".bet-opt").forEach(b => b.onclick = () => {
 });
 
 spinButton.onclick = girar;
+iniciarTempestade();
 atualizarSaldoVisual();
 reels.forEach(preencherRolo);
 </script>
