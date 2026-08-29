@@ -3,132 +3,125 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Fortune Snake - PG Style</title>
+<title>Fortune Snake - Sem Quadrado</title>
 <style>
-    /* RESET TOTAL */
+    /* RESET E BASE */
     * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
-    body, html { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', sans-serif; background: #0f0518; }
+    body, html { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', sans-serif; background: #1a0b2e; }
 
-    /* CONTAINER PRINCIPAL - PROPORÇÃO EXATA DA FOTO */
+    /* FUNDO ROXO SEM BORDAS (IGUAL FOTO ORIGINAL) */
     .app-container {
         width: 100%; height: 100%; max-width: 480px; margin: 0 auto;
         position: relative; display: flex; flex-direction: column;
-        background: linear-gradient(180deg, #2e1065 0%, #4c1d95 30%, #1e1b4b 100%);
+        background: linear-gradient(180deg, #2e1065 0%, #4c1d95 40%, #1e1b4b 100%);
         overflow: hidden;
     }
 
-    /* TOPO (LOBBY + TROFÉU) */
+    /* TOPO LIMPO */
     .top-bar {
-        height: 60px; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;
+        height: 50px; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;
         z-index: 20; color: white;
     }
-    .lobby-icon { display: flex; flex-direction: column; align-items: center; font-size: 10px; opacity: 0.8; gap: 2px; }
+    .lobby-text { font-size: 12px; opacity: 0.8; }
+    .title-text { font-size: 12px; letter-spacing: 1px; opacity: 0.9; }
     .trophy { 
-        width: 36px; height: 36px; 
+        width: 32px; height: 32px; 
         background: radial-gradient(circle, #fbbf24, #b45309); 
         border-radius: 50%; border: 2px solid #fff; 
-        display: grid; place-items: center; font-size: 18px; 
-        box-shadow: 0 0 15px rgba(251,191,36,0.6); 
+        display: grid; place-items: center; font-size: 16px; 
+        box-shadow: 0 0 10px rgba(251,191,36,0.5); 
     }
 
-    /* ÁREA CENTRAL (MÁQUINA + MASCOTE) */
+    /* ÁREA DOS ROLOS - SEM QUADRADO EM VOLTA */
     .game-stage {
         flex: 1; position: relative; display: flex; justify-content: center; align-items: center;
-        padding-bottom: 20px;
+        padding: 0 5px; /* Margem mínima para não colar na borda */
     }
 
-    /* MASCOTE COBRA (PLACEHOLDER PARA IMAGEM REAL) */
-    .mascot-layer {
-        position: absolute; top: -5%; left: 50%; transform: translateX(-50%);
-        width: 90%; height: 70%; z-index: 1; pointer-events: none;
-        /* IMPORTANTE: Substitua este background pela imagem real da cobra */
-        /* background-image: url('cobra-mascote.png'); */
-        /* background-size: contain; background-repeat: no-repeat; background-position: bottom center; */
-        background: radial-gradient(circle at 50% 40%, rgba(74, 222, 128, 0.2) 0%, transparent 60%);
-        display: flex; justify-content: center; align-items: flex-end;
-    }
-    .mascot-placeholder-text { 
-        color: #4ade80; font-size: 12px; opacity: 0.5; 
-        text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20%; 
-    }
-
-    /* FRAME DOS ROLOS (IGUAL À FOTO: ROXO COM BORDA NEON) */
+    /* ROLAS OCUPANDO A TELA INTEIRA (SEM CAIXA) */
     .reels-wrapper {
-        width: 88%; height: 55%; background: rgba(30, 27, 75, 0.85);
-        border: 3px solid #d946ef; border-radius: 12px;
-        box-shadow: 0 0 25px rgba(217, 70, 239, 0.4), inset 0 0 40px #000;
-        z-index: 5; position: relative;
-        display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; padding: 6px;
+        width: 100%; height: 60%; 
+        /* REMOVIDO: border, box-shadow externo, background de caixa */
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; 
+        position: relative; z-index: 5;
     }
 
     .reel {
-        background: #1e1b4b; border-radius: 6px; overflow: hidden;
-        display: flex; flex-direction: column; justify-content: space-evenly;
-        border: 1px solid #312e81;
+        background: rgba(30, 27, 75, 0.6); /* Fundo semi-transparente integrado */
+        border-radius: 8px; overflow: hidden;
+        display: flex; flex-direction: column;
+        /* Sombra interna suave para dar profundidade sem criar caixa */
+        box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        position: relative;
     }
 
-    /* SÍMBOLOS (PLACEHOLDERS PARA AS IMAGENS OFICIAIS) */
+    /* LINHA DE PAGAMENTO CENTRAL (OPCIONAL, MAS COMUM NA PG) */
+    .payline-indicator {
+        position: absolute; top: 50%; left: 0; right: 0; height: 2px;
+        background: rgba(255,255,255,0.1); z-index: 10; pointer-events: none;
+    }
+
+    /* SÍMBOLOS */
     .sym-cell { 
-        height: 33%; display: grid; place-items: center; 
-        font-size: 32px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); 
+        height: 33.33%; display: grid; place-items: center; 
+        font-size: 40px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6)); 
+        position: relative;
     }
     
-    /* PAINEL INFERIOR VERMELHO ESCURO (ESTILO PG) */
+    /* TEXTO FLUTUANTE */
+    .feature-banner {
+        position: absolute; bottom: 10px; width: 100%; text-align: center;
+        color: #bef264; font-style: italic; font-weight: bold; font-size: 14px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.9); pointer-events: none; z-index: 6;
+    }
+
+    /* PAINEL INFERIOR VERMELHO (MANTIDO IGUAL) */
     .control-panel {
         background: linear-gradient(180deg, #7f1d1d 0%, #450a0a 60%, #2a0505 100%);
-        border-top-left-radius: 35px; border-top-right-radius: 35px;
-        border-top: 2px solid #fca5a5; padding: 15px 10px 25px;
-        z-index: 10; box-shadow: 0 -10px 40px rgba(0,0,0,0.7);
+        border-top-left-radius: 30px; border-top-right-radius: 30px;
+        border-top: 1px solid rgba(252, 165, 165, 0.3); 
+        padding: 15px 10px 25px; z-index: 10;
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.7);
         display: flex; flex-direction: column; align-items: center; gap: 12px;
     }
 
-    /* BARRA DE INFORMAÇÃO (SALDO / APOSTA) */
+    /* BARRA DE INFO */
     .info-strip {
-        width: 96%; background: #2a0505; border-radius: 25px;
+        width: 96%; background: rgba(42, 5, 5, 0.8); border-radius: 20px;
         display: flex; justify-content: space-between; align-items: center;
-        padding: 10px 20px; border: 1px solid #555; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+        padding: 8px 15px; border: 1px solid rgba(85,85,85,0.5);
     }
-    .info-group { display: flex; align-items: center; gap: 10px; color: #fca5a5; font-weight: bold; font-size: 15px; }
-    .info-label { font-size: 9px; color: #888; text-transform: uppercase; display: block; margin-bottom: 2px; }
-    .pg-logo { 
-        font-size: 10px; color: #aaa; font-weight: 900; 
-        border: 1px solid #666; padding: 2px 6px; border-radius: 4px; 
-    }
+    .info-group { display: flex; align-items: center; gap: 8px; color: #fca5a5; font-weight: bold; font-size: 14px; }
+    .info-label { font-size: 8px; color: #888; text-transform: uppercase; display: block; margin-bottom: 1px; }
+    .pg-logo { font-size: 9px; color: #aaa; font-weight: 900; border: 1px solid #666; padding: 2px 5px; border-radius: 3px; }
 
-    /* BOTÕES DE CONTROLE */
-    .btn-row { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; }
+    /* BOTÕES */
+    .btn-row { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 10px; }
     
     .ctrl-btn {
-        width: 48px; height: 48px; border-radius: 50%;
-        background: #2a0505; border: 1px solid #555; color: #ddd;
-        display: grid; place-items: center; font-size: 18px;
-        box-shadow: 0 4px 0 #1a0505; transition: all 0.1s;
+        width: 44px; height: 44px; border-radius: 50%;
+        background: #2a0505; border: 1px solid #444; color: #ccc;
+        display: grid; place-items: center; font-size: 16px;
+        box-shadow: 0 3px 0 #1a0505; transition: all 0.1s;
     }
-    .ctrl-btn:active { transform: translateY(4px); box-shadow: none; }
+    .ctrl-btn:active { transform: translateY(3px); box-shadow: none; }
 
-    /* BOTÃO GIRAR CENTRAL (EXATO DA FOTO) */
+    /* BOTÃO GIRAR */
     .spin-button {
-        width: 85px; height: 85px; border-radius: 50%;
+        width: 80px; height: 80px; border-radius: 50%;
         background: radial-gradient(circle at 50% 35%, #e9d5ff 0%, #a855f7 40%, #6b21a8 100%);
-        border: 4px solid #4ade80; outline: 4px solid #166534;
-        box-shadow: 0 0 30px rgba(168, 85, 247, 0.6), inset 0 5px 15px rgba(255,255,255,0.4);
+        border: 3px solid #4ade80; outline: 3px solid #166534;
+        box-shadow: 0 0 20px rgba(168, 85, 247, 0.5), inset 0 5px 10px rgba(255,255,255,0.3);
         display: grid; place-items: center; cursor: pointer; position: relative;
     }
     .spin-inner {
-        width: 45px; height: 45px; border-radius: 50%;
-        border: 3px solid rgba(255,255,255,0.4); border-top-color: #fff;
+        width: 40px; height: 40px; border-radius: 50%;
+        border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
         animation: rotate 1.5s linear infinite;
     }
     @keyframes rotate { to { transform: rotate(360deg); } }
     
     .spin-button.disabled { filter: grayscale(1); opacity: 0.6; pointer-events: none; }
-
-    /* TEXTO FLUTUANTE */
-    .feature-banner {
-        position: absolute; bottom: 120px; width: 100%; text-align: center;
-        color: #bef264; font-style: italic; font-weight: bold; font-size: 13px;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.9); pointer-events: none; z-index: 6;
-    }
 
     .status-text { color: #fca5a5; font-size: 11px; font-weight: bold; min-height: 14px; letter-spacing: 0.5px; }
 </style>
@@ -138,20 +131,14 @@
 <div class="app-container">
     <!-- TOPO -->
     <div class="top-bar">
-        <div class="lobby-icon"><span style="font-size:18px;"></span>Lobby</div>
-        <div style="font-size:11px; color:#ccc; letter-spacing:1px;">FORTUNE SNAKE</div>
+        <div class="lobby-text">Lobby</div>
+        <div class="title-text">FORTUNE SNAKE</div>
         <div class="trophy">🏆</div>
     </div>
 
-    <!-- PALCO DO JOGO -->
+    <!-- PALCO DO JOGO (SEM QUADRADO) -->
     <div class="game-stage">
-        <!-- CAMADA DO MASCOTE (SUBSTITUA O BACKGROUND POR UMA IMAGEM PNG TRANSPARENTE DA COBRA) -->
-        <div class="mascot-layer">
-            <!-- <img src="cobra-mascote.png" style="width:100%; height:auto; object-fit:contain;"> -->
-            <div class="mascot-placeholder-text">[INSERIR IMAGEM DA COBRA AQUI]</div>
-        </div>
-
-        <!-- ROLAS -->
+        <!-- ROLAS INTEGRADAS AO FUNDO -->
         <div class="reels-wrapper">
             <div class="reel" id="r1">
                 <div class="sym-cell">🥣</div><div class="sym-cell"></div><div class="sym-cell"></div>
@@ -160,29 +147,29 @@
                 <div class="sym-cell">🐍</div><div class="sym-cell">🐍</div><div class="sym-cell">🐍</div>
             </div>
             <div class="reel" id="r3">
-                <div class="sym-cell">💲</div><div class="sym-cell">💲</div><div class="sym-cell">💲</div>
+                <div class="sym-cell">💲</div><div class="sym-cell"></div><div class="sym-cell">💲</div>
             </div>
         </div>
         
         <div class="feature-banner">Novas Rodadas na Funcionalidade Cobra</div>
     </div>
 
-    <!-- PAINEL DE CONTROLE VERMELHO -->
+    <!-- PAINEL DE CONTROLE -->
     <div class="control-panel">
         <div class="info-strip">
             <div class="info-group">
-                <div style="border:1px solid #fca5a5; border-radius:50%; width:22px; height:22px; display:grid; place-items:center; font-size:10px;">👤</div>
-                <div><span class="info-label">Saldo</span><span id="saldo-display">R$0,00</span></div>
+                <div style="border:1px solid #fca5a5; border-radius:50%; width:20px; height:20px; display:grid; place-items:center; font-size:9px;"></div>
+                <div><span class="info-label">SALDO</span><span id="saldo-display">R$0,00</span></div>
             </div>
             <div class="pg-logo">PG</div>
             <div class="info-group" style="flex-direction:row-reverse;">
-                <div style="border:1px solid #fca5a5; border-radius:50%; width:22px; height:22px; display:grid; place-items:center; font-size:10px;">$</div>
-                <div style="text-align:right;"><span class="info-label">Aposta</span><span id="bet-display">R$5,00</span></div>
+                <div style="border:1px solid #fca5a5; border-radius:50%; width:20px; height:20px; display:grid; place-items:center; font-size:9px;">$</div>
+                <div style="text-align:right;"><span class="info-label">APOSTA</span><span id="bet-display">R$1,00</span></div>
             </div>
         </div>
 
         <div class="btn-row">
-            <button class="ctrl-btn" onclick="toggleSound()">🔇</button>
+            <button class="ctrl-btn" onclick="toggleSound()"></button>
             <button class="ctrl-btn" onclick="changeBet(-1)">➖</button>
             
             <div class="spin-button" id="spin-btn" onclick="spin()">
@@ -198,8 +185,8 @@
 </div>
 
 <script>
-    // LÓGICA INTEGRADA AO SISTEMA DE SALDO
-    let currentBet = 5.00;
+    // LÓGICA DO JOGO
+    let currentBet = 1.00;
     let isSpinning = false;
 
     function getBalance() {
@@ -215,8 +202,9 @@
 
     function changeBet(dir) {
         if(isSpinning) return;
-        const bets = [0.50, 1.00, 2.00, 5.00, 10.00, 20.00];
+        const bets = [0.40, 0.60, 0.80, 1.00, 2.00, 4.00, 6.00, 8.00, 10.00];
         let idx = bets.indexOf(currentBet);
+        if(idx === -1) idx = 3; // Default para 1.00 se não achar
         if(dir > 0 && idx < bets.length - 1) idx++;
         if(dir < 0 && idx > 0) idx--;
         currentBet = bets[idx];
@@ -232,55 +220,68 @@
             return;
         }
 
-        // DEBITAR VIA SISTEMA
+        // DEBITAR
         try {
             if(window.SistemaSaldo?.debitar) {
                 if(!window.SistemaSaldo.debitar(currentBet)) return;
-            } else { console.warn("SistemaSaldo não encontrado"); }
+            }
         } catch(e) {}
         
         updateUI();
         isSpinning = true;
         document.getElementById('spin-btn').classList.add('disabled');
-        document.getElementById('status-msg').innerText = "GIRANDO...";
+        document.getElementById('status-msg').innerText = "";
 
-        // ANIMAÇÃO VISUAL DOS ROLOS
+        // ANIMAÇÃO DE GIRO PARA CIMA
         const reels = [document.getElementById('r1'), document.getElementById('r2'), document.getElementById('r3')];
-        const symbols = ['🥣','🐍','💲'];
+        const symbols = ['🥣','','💲','🍋','','🏆'];
         
-        const interval = setInterval(() => {
-            reels.forEach(r => {
-                r.innerHTML = Array(3).fill(0).map(() => 
-                    `<div class="sym-cell">${symbols[Math.floor(Math.random()*3)]}</div>`
-                ).join('');
-            });
-        }, 80);
+        // Criar tiras longas para simular giro contínuo
+        reels.forEach(r => {
+            r.innerHTML = '';
+            for(let i=0; i<20; i++) {
+                const sym = symbols[Math.floor(Math.random()*symbols.length)];
+                r.innerHTML += `<div class="sym-cell">${sym}</div>`;
+            }
+        });
 
-        // PARAR E MOSTRAR RESULTADO
+        // Animar transform Y para cima
+        reels.forEach((r, i) => {
+            r.style.transition = `transform ${1.5 + (i * 0.3)}s cubic-bezier(0.25, 0.1, 0.25, 1)`;
+            r.style.transform = `translateY(-${17 * 33.33}%)`; // Gira até perto do final da tira
+        });
+
+        // PARAR E MOSTRAR RESULTADO FINAL
         setTimeout(() => {
-            clearInterval(interval);
+            reels.forEach(r => {
+                r.style.transition = 'none';
+                r.style.transform = 'translateY(0)';
+                // Resultado fixo para demonstração (3 cobras no meio = vitória)
+                r.innerHTML = `
+                    <div class="sym-cell">${symbols[Math.floor(Math.random()*symbols.length)]}</div>
+                    <div class="sym-cell">🐍</div>
+                    <div class="sym-cell">${symbols[Math.floor(Math.random()*symbols.length)]}</div>
+                `;
+            });
+
             isSpinning = false;
             document.getElementById('spin-btn').classList.remove('disabled');
             
-            // SIMULAÇÃO DE VITÓRIA (WILD x10 COMO NA FOTO)
-            reels[0].innerHTML = `<div class="sym-cell">🥣</div><div class="sym-cell">🥣</div><div class="sym-cell">🥣</div>`;
-            reels[1].innerHTML = `<div class="sym-cell">🐍</div><div class="sym-cell">🐍</div><div class="sym-cell">🐍</div>`;
-            reels[2].innerHTML = `<div class="sym-cell">💲</div><div class="sym-cell">💲</div><div class="sym-cell"></div>`;
-            
-            const win = currentBet * 10;
-            document.getElementById('status-msg').innerText = `VITÓRIA! +${win.toFixed(2)}`;
+            // Simular vitória simples
+            const win = currentBet * 5;
+            document.getElementById('status-msg').innerText = `GANHOU R$ ${win.toFixed(2)}!`;
             
             try {
                 if(window.SistemaSaldo?.creditar) window.SistemaSaldo.creditar(win);
             } catch(e) {}
             updateUI();
             
-        }, 1500);
+        }, 2400); // Tempo total da animação do último rolo
     }
 
     function toggleSound() {
         const btn = event.currentTarget;
-        btn.innerText = btn.innerText === '' ? '🔊' : '';
+        btn.innerText = btn.innerText === '🔇' ? '🔊' : '🔇';
     }
 
     // INICIALIZAÇÃO
