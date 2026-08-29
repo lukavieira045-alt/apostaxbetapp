@@ -1191,7 +1191,8 @@ function iniciarAutoPlayPago(){
 
 async function iniciarLoopAuto(){
     while(rodadasRestantes > 0 && !girando){
-        await new Promise(resolve => setTimeout(resolve, 1500)); // Pausa entre giros
+        // Pausa entre giros para não ficar frenético
+        await new Promise(resolve => setTimeout(resolve, 1500)); 
         
         if(rodadasRestantes > 0){
             // Verifica saldo antes de cada giro no modo AUTO pago
@@ -1231,7 +1232,11 @@ async function girar(isFreeOrAuto = false){
 
     // Inicializa áudio e música na primeira interação
     initAudio();
-    if(bgMusic.paused) bgMusic.play().catch(()=>{});
+    // Força o play da música sempre que tentar girar
+    if(bgMusic.paused) {
+        bgMusic.volume = 0.4;
+        bgMusic.play().catch(e => console.log("Aguardando interação para música"));
+    }
 
     // DESCONTO IMEDIATO (SEGURANÇA TOTAL)
     // O dinheiro sai da conta ANTES de qualquer outra coisa
