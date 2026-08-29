@@ -3,306 +3,272 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Fortune Snake - Clone</title>
+<title>Fortune Snake - PG Style</title>
 <style>
-    /* RESET E BASE */
-    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
-    body, html { width: 100%; height: 100%; overflow: hidden; font-family: sans-serif; background: #000; }
+    /* RESET TOTAL */
+    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body, html { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', sans-serif; background: #0f0518; }
 
-    /* CONTAINER PRINCIPAL (CELULAR) */
-    .game-container {
-        width: 100%; height: 100%;
-        background: linear-gradient(180deg, #2a0e45 0%, #1a0530 100%); /* Fundo Roxo Templo */
-        display: flex; flex-direction: column; align-items: center;
-        position: relative;
+    /* CONTAINER PRINCIPAL - PROPORÇÃO EXATA DA FOTO */
+    .app-container {
+        width: 100%; height: 100%; max-width: 480px; margin: 0 auto;
+        position: relative; display: flex; flex-direction: column;
+        background: linear-gradient(180deg, #2e1065 0%, #4c1d95 30%, #1e1b4b 100%);
+        overflow: hidden;
     }
 
-    /* TOPO (LOBBY / TROFÉU) */
-    .top-ui {
-        width: 100%; padding: 10px 15px;
-        display: flex; justify-content: space-between; align-items: flex-start;
+    /* TOPO (LOBBY + TROFÉU) */
+    .top-bar {
+        height: 60px; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;
         z-index: 20; color: white;
     }
-    .lobby-btn { font-size: 12px; opacity: 0.8; display: flex; flex-direction: column; align-items: center; gap: 2px; }
-    .trophy-icon { width: 35px; height: 35px; background: radial-gradient(circle, #ffd700, #b8860b); border-radius: 50%; border: 2px solid #fff; display: grid; place-items: center; font-size: 20px; box-shadow: 0 0 10px rgba(255,215,0,0.5); }
+    .lobby-icon { display: flex; flex-direction: column; align-items: center; font-size: 10px; opacity: 0.8; gap: 2px; }
+    .trophy { width: 36px; height: 36px; background: radial-gradient(circle, #fbbf24, #b45309); border-radius: 50%; border: 2px solid #fff; display: grid; place-items: center; font-size: 18px; box-shadow: 0 0 15px rgba(251,191,36,0.6); }
 
-    /* ÁREA DA MÁQUINA E COBRA */
-    .slot-stage {
-        flex-grow: 1; width: 100%; max-width: 500px;
-        position: relative; display: flex; justify-content: center; align-items: center;
+    /* ÁREA CENTRAL (MÁQUINA + MASCOTE) */
+    .game-stage {
+        flex: 1; position: relative; display: flex; justify-content: center; align-items: center;
+        padding-bottom: 20px;
     }
 
-    /* COBRA GIGANTE (MASCOTE) - CSS PURO SIMULANDO A FOTO */
-    .snake-mascot {
-        position: absolute; top: -10%; left: 50%; transform: translateX(-50%);
-        width: 90%; height: 80%; z-index: 1; pointer-events: none;
-        /* Simulando a cobra verde com gradientes */
-        background: 
-            radial-gradient(circle at 30% 30%, #4ade80 0%, #166534 40%, transparent 60%), /* Cabeça/Corpo */
-            radial-gradient(circle at 70% 20%, #4ade80 0%, #166534 30%, transparent 50%); /* Cauda */
-        filter: drop-shadow(0 0 20px rgba(74, 222, 128, 0.4));
-        border-radius: 50% 50% 0 0;
+    /* MASCOTE COBRA (PLACEHOLDER PARA IMAGEM REAL) */
+    .mascot-layer {
+        position: absolute; top: -5%; left: 50%; transform: translateX(-50%);
+        width: 90%; height: 70%; z-index: 1; pointer-events: none;
+        /* Se tiver a imagem da cobra, substitua o background abaixo por: background-image: url('cobra.png'); background-size: contain; background-repeat: no-repeat; background-position: bottom center; */
+        background: radial-gradient(circle at 50% 40%, rgba(74, 222, 128, 0.2) 0%, transparent 60%);
+        display: flex; justify-content: center; align-items: flex-end;
     }
-    /* Detalhe do Boné da Cobra */
-    .snake-hat {
-        position: absolute; top: 15%; left: 50%; transform: translateX(-50%) rotate(-10deg);
-        width: 60px; height: 30px; background: #ef4444; border-radius: 10px 10px 0 0;
-        border-bottom: 4px solid #991b1b; z-index: 2;
-    }
-    .snake-hat::after { content: "PG"; position: absolute; top: 5px; left: 15px; color: white; font-weight: bold; font-size: 12px; }
+    .mascot-placeholder-text { color: #4ade80; font-size: 12px; opacity: 0.5; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20%; }
 
-    /* FRAME DOS ROLOS (ROXO COM BORDA DOURADA/NEON) */
-    .reels-frame {
-        width: 85%; height: 55%;
-        background: rgba(45, 27, 78, 0.9);
-        border: 3px solid #d946ef; /* Borda Neon Rosa/Roxo */
-        border-radius: 15px;
-        box-shadow: 0 0 20px rgba(217, 70, 239, 0.3), inset 0 0 30px #000;
+    /* FRAME DOS ROLOS (IGUAL À FOTO: ROXO COM BORDA NEON) */
+    .reels-wrapper {
+        width: 88%; height: 55%; background: rgba(30, 27, 75, 0.85);
+        border: 3px solid #d946ef; border-radius: 12px;
+        box-shadow: 0 0 25px rgba(217, 70, 239, 0.4), inset 0 0 40px #000;
         z-index: 5; position: relative;
-        display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; padding: 5px;
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; padding: 6px;
     }
 
-    .reel-col {
-        background: #1e1b4b; border-radius: 8px; overflow: hidden;
-        display: flex; flex-direction: column; justify-content: space-around;
-        border: 1px solid #4c1d95;
+    .reel {
+        background: #1e1b4b; border-radius: 6px; overflow: hidden;
+        display: flex; flex-direction: column; justify-content: space-evenly;
+        border: 1px solid #312e81;
     }
 
-    /* SÍMBOLOS (SIMULANDO OS DA FOTO) */
-    .symbol {
-        height: 33%; display: grid; place-items: center; font-size: 35px;
-        filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));
-    }
-    /* Tigela Dourada */
-    .sym-bowl { background: radial-gradient(circle at 30% 30%, #fef08a, #ca8a04); -webkit-background-clip: text; color: transparent; }
-    /* Corrente $ */
-    .sym-chain { background: radial-gradient(circle at 30% 30%, #fcd34d, #b45309); -webkit-background-clip: text; color: transparent; }
-    /* Cobra Wild */
-    .sym-wild { font-size: 40px; filter: drop-shadow(0 0 10px #4ade80); }
-
-    /* PAINEL INFERIOR (VERMELHO/BORDÔ) */
-    .bottom-panel {
-        width: 100%; background: linear-gradient(180deg, #7f1d1d 0%, #450a0a 100%);
-        border-top-left-radius: 30px; border-top-right-radius: 30px;
-        border-top: 2px solid #fca5a5;
-        padding: 15px 10px 25px; z-index: 10;
-        box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
-        display: flex; flex-direction: column; align-items: center; gap: 10px;
+    /* SÍMBOLOS (PLACEHOLDERS PARA AS IMAGENS OFICIAIS) */
+    .sym-cell { height: 33%; display: grid; place-items: center; font-size: 32px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); }
+    
+    /* PAINEL INFERIOR VERMELHO ESCURO (ESTILO PG) */
+    .control-panel {
+        background: linear-gradient(180deg, #7f1d1d 0%, #450a0a 60%, #2a0505 100%);
+        border-top-left-radius: 35px; border-top-right-radius: 35px;
+        border-top: 2px solid #fca5a5; padding: 15px 10px 25px;
+        z-index: 10; box-shadow: 0 -10px 40px rgba(0,0,0,0.7);
+        display: flex; flex-direction: column; align-items: center; gap: 12px;
     }
 
     /* BARRA DE INFORMAÇÃO (SALDO / APOSTA) */
-    .info-bar {
-        width: 95%; background: #2a0505; border-radius: 20px;
+    .info-strip {
+        width: 96%; background: #2a0505; border-radius: 25px;
         display: flex; justify-content: space-between; align-items: center;
-        padding: 8px 15px; border: 1px solid #555;
+        padding: 10px 20px; border: 1px solid #555; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
     }
-    .info-item { display: flex; align-items: center; gap: 8px; color: #fca5a5; font-weight: bold; font-size: 14px; }
-    .info-icon { width: 20px; height: 20px; border-radius: 50%; border: 1px solid #fca5a5; display: grid; place-items: center; font-size: 10px; }
+    .info-group { display: flex; align-items: center; gap: 10px; color: #fca5a5; font-weight: bold; font-size: 15px; }
+    .info-label { font-size: 9px; color: #888; text-transform: uppercase; display: block; margin-bottom: 2px; }
+    .pg-logo { font-size: 10px; color: #aaa; font-weight: 900; border: 1px solid #666; padding: 2px 6px; border-radius: 4px; }
+
+    /* BOTÕES DE CONTROLE */
+    .btn-row { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; }
     
-    /* CONTROLES DE APOSTA E GIRO */
-    .controls-row {
-        width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 10px;
-    }
-    
-    .btn-small {
-        width: 45px; height: 45px; border-radius: 50%;
-        background: #2a0505; border: 1px solid #555; color: white;
+    .ctrl-btn {
+        width: 48px; height: 48px; border-radius: 50%;
+        background: #2a0505; border: 1px solid #555; color: #ddd;
         display: grid; place-items: center; font-size: 18px;
-        box-shadow: 0 4px 0 #1a0505;
+        box-shadow: 0 4px 0 #1a0505; transition: all 0.1s;
     }
-    .btn-small:active { transform: translateY(4px); box-shadow: none; }
+    .ctrl-btn:active { transform: translateY(4px); box-shadow: none; }
 
-    /* BOTÃO GIRAR CENTRAL (ESTILO PG) */
-    .spin-btn {
-        width: 80px; height: 80px; border-radius: 50%;
-        background: radial-gradient(circle at 50% 40%, #d8b4fe 0%, #9333ea 50%, #581c87 100%);
-        border: 4px solid #4ade80; /* Borda Verde */
-        box-shadow: 0 0 0 4px #166534, 0 0 20px rgba(147, 51, 234, 0.6), inset 0 5px 10px rgba(255,255,255,0.3);
-        display: grid; place-items: center; cursor: pointer;
-        position: relative;
+    /* BOTÃO GIRAR CENTRAL (EXATO DA FOTO) */
+    .spin-button {
+        width: 85px; height: 85px; border-radius: 50%;
+        background: radial-gradient(circle at 50% 35%, #e9d5ff 0%, #a855f7 40%, #6b21a8 100%);
+        border: 4px solid #4ade80; outline: 4px solid #166534;
+        box-shadow: 0 0 30px rgba(168, 85, 247, 0.6), inset 0 5px 15px rgba(255,255,255,0.4);
+        display: grid; place-items: center; cursor: pointer; position: relative;
     }
-    .spin-btn::after {
-        content: ""; width: 40px; height: 40px; border-radius: 50%;
-        border: 3px solid rgba(255,255,255,0.3); border-top-color: #fff;
-        animation: spinAnim 2s linear infinite;
+    .spin-inner {
+        width: 45px; height: 45px; border-radius: 50%;
+        border: 3px solid rgba(255,255,255,0.4); border-top-color: #fff;
+        animation: rotate 1.5s linear infinite;
     }
-    @keyframes spinAnim { to { transform: rotate(360deg); } }
+    @keyframes rotate { to { transform: rotate(360deg); } }
     
-    .spin-btn:active { transform: scale(0.95); }
-    .spin-btn.disabled { filter: grayscale(1); opacity: 0.7; pointer-events: none; }
+    .spin-button.disabled { filter: grayscale(1); opacity: 0.6; pointer-events: none; }
 
-    /* TEXTO FLUTUANTE (NOVAS RODADAS...) */
-    .banner-text {
-        position: absolute; bottom: 110px; width: 100%; text-align: center;
-        color: #bef264; font-style: italic; font-weight: bold; font-size: 14px;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.8); pointer-events: none;
+    /* TEXTO FLUTUANTE */
+    .feature-banner {
+        position: absolute; bottom: 120px; width: 100%; text-align: center;
+        color: #bef264; font-style: italic; font-weight: bold; font-size: 13px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.9); pointer-events: none; z-index: 6;
     }
 
-    /* STATUS MSG */
-    .status-msg { color: #fca5a5; font-size: 12px; font-weight: bold; min-height: 15px; }
-
+    .status-text { color: #fca5a5; font-size: 11px; font-weight: bold; min-height: 14px; letter-spacing: 0.5px; }
 </style>
 </head>
 <body>
 
-<div class="game-container">
+<div class="app-container">
     <!-- TOPO -->
-    <div class="top-ui">
-        <div class="lobby-btn"><span>🏠</span><span>Lobby</span></div>
-        <div style="font-size:12px; color:#aaa;">Fortune Snake</div>
-        <div class="trophy-icon">🏆</div>
+    <div class="top-bar">
+        <div class="lobby-icon"><span style="font-size:18px;">🏠</span>Lobby</div>
+        <div style="font-size:11px; color:#ccc; letter-spacing:1px;">FORTUNE SNAKE</div>
+        <div class="trophy">🏆</div>
     </div>
 
     <!-- PALCO DO JOGO -->
-    <div class="slot-stage">
-        <!-- Cobra Mascote (CSS) -->
-        <div class="snake-mascot">
-            <div class="snake-hat"></div>
+    <div class="game-stage">
+        <!-- CAMADA DO MASCOTE (SUBSTITUA O BACKGROUND POR UMA IMAGEM PNG TRANSPARENTE DA COBRA) -->
+        <div class="mascot-layer">
+            <!-- <img src="cobra-mascote.png" style="width:100%; height:auto; object-fit:contain;"> -->
+            <div class="mascot-placeholder-text">[INSERIR IMAGEM DA COBRA AQUI]</div>
         </div>
 
-        <!-- Rolos -->
-        <div class="reels-frame">
-            <div class="reel-col" id="r1">
-                <div class="symbol sym-bowl">🥣</div>
-                <div class="symbol sym-bowl"></div>
-                <div class="symbol sym-bowl">🥣</div>
+        <!-- ROLAS -->
+        <div class="reels-wrapper">
+            <div class="reel" id="r1">
+                <div class="sym-cell">🥣</div><div class="sym-cell">🥣</div><div class="sym-cell">🥣</div>
             </div>
-            <div class="reel-col" id="r2">
-                <div class="symbol sym-wild">🐍</div>
-                <div class="symbol sym-wild">🐍</div>
-                <div class="symbol sym-wild">🐍</div>
+            <div class="reel" id="r2">
+                <div class="sym-cell">🐍</div><div class="sym-cell">🐍</div><div class="sym-cell">🐍</div>
             </div>
-            <div class="reel-col" id="r3">
-                <div class="symbol sym-chain">💲</div>
-                <div class="symbol sym-chain">💲</div>
-                <div class="symbol sym-chain">💲</div>
+            <div class="reel" id="r3">
+                <div class="sym-cell">💲</div><div class="sym-cell">💲</div><div class="sym-cell">💲</div>
             </div>
         </div>
         
-        <div class="banner-text">Novas Rodadas na Funcionalidade Cobra</div>
+        <div class="feature-banner">Novas Rodadas na Funcionalidade Cobra</div>
     </div>
 
-    <!-- PAINEL DE CONTROLE -->
-    <div class="bottom-panel">
-        <!-- Barra de Info -->
-        <div class="info-bar">
-            <div class="info-item"><div class="info-icon"></div> <span id="saldo">R$0,00</span></div>
-            <div class="info-item" style="color:#aaa; font-size:10px;">PG SOFT</div>
-            <div class="info-item"><span id="aposta">R$5,00</span> <div class="info-icon">$</div></div>
+    <!-- PAINEL DE CONTROLE VERMELHO -->
+    <div class="control-panel">
+        <div class="info-strip">
+            <div class="info-group">
+                <div style="border:1px solid #fca5a5; border-radius:50%; width:22px; height:22px; display:grid; place-items:center; font-size:10px;">👤</div>
+                <div><span class="info-label">Saldo</span><span id="saldo-display">R$0,00</span></div>
+            </div>
+            <div class="pg-logo">PG</div>
+            <div class="info-group" style="flex-direction:row-reverse;">
+                <div style="border:1px solid #fca5a5; border-radius:50%; width:22px; height:22px; display:grid; place-items:center; font-size:10px;">$</div>
+                <div style="text-align:right;"><span class="info-label">Aposta</span><span id="bet-display">R$5,00</span></div>
+            </div>
         </div>
 
-        <!-- Botões -->
-        <div class="controls-row">
-            <button class="btn-small" onclick="toggleSom()">🔇</button>
-            <button class="btn-small" onclick="mudarAposta(-1)">➖</button>
+        <div class="btn-row">
+            <button class="ctrl-btn" onclick="toggleSound()">🔇</button>
+            <button class="ctrl-btn" onclick="changeBet(-1)">➖</button>
             
-            <div class="spin-btn" id="btnGirar" onclick="girar()"></div>
+            <div class="spin-button" id="spin-btn" onclick="spin()">
+                <div class="spin-inner"></div>
+            </div>
             
-            <button class="btn-small" onclick="mudarAposta(1)">➕</button>
-            <button class="btn-small">🔄</button>
+            <button class="ctrl-btn" onclick="changeBet(1)">➕</button>
+            <button class="ctrl-btn">🔄</button>
         </div>
         
-        <div class="status-msg" id="msg">PRONTO</div>
+        <div class="status-text" id="status-msg">PRONTO PARA JOGAR</div>
     </div>
 </div>
 
 <script>
-    // LÓGICA DO SALDO E JOGO
-    let saldoAtual = 0;
-    let valorAposta = 5.00;
-    let girando = false;
+    // LÓGICA INTEGRADA AO SISTEMA DE SALDO
+    let currentBet = 5.00;
+    let isSpinning = false;
 
-    function atualizarDisplay() {
-        document.getElementById('saldo').innerText = saldoAtual.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
-        document.getElementById('aposta').innerText = valorAposta.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+    function getBalance() {
+        try { return window.SistemaSaldo?.get ? Number(window.SistemaSaldo.get()) || 0 : 0; } 
+        catch(e) { return 0; }
     }
 
-    // TENTAR PEGAR O SALDO DO SISTEMA EXTERNO (SE EXISTIR)
-    try {
-        if(window.SistemaSaldo && typeof window.SistemaSaldo.get === 'function') {
-            saldoAtual = Number(window.SistemaSaldo.get()) || 0;
-        }
-    } catch(e) {}
-    atualizarDisplay();
+    function updateUI() {
+        document.getElementById('saldo-display').innerText = getBalance().toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+        document.getElementById('bet-display').innerText = currentBet.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+        try { window.SistemaSaldo?.atualizarTela?.(); } catch(e){}
+    }
 
-    function mudarAposta(dir) {
-        if(girando) return;
-        const valores = [0.50, 1.00, 2.00, 5.00, 10.00, 20.00];
-        let idx = valores.indexOf(valorAposta);
-        if(dir > 0 && idx < valores.length - 1) idx++;
+    function changeBet(dir) {
+        if(isSpinning) return;
+        const bets = [0.50, 1.00, 2.00, 5.00, 10.00, 20.00];
+        let idx = bets.indexOf(currentBet);
+        if(dir > 0 && idx < bets.length - 1) idx++;
         if(dir < 0 && idx > 0) idx--;
-        valorAposta = valores[idx];
-        atualizarDisplay();
+        currentBet = bets[idx];
+        updateUI();
     }
 
-    async function girar() {
-        if(girando) return;
+    async function spin() {
+        if(isSpinning) return;
+        const bal = getBalance();
         
-        // CHECAGEM DE SALDO
-        if(saldoAtual < valorAposta) {
-            document.getElementById('msg').innerText = "SALDO INSUFICIENTE";
+        if(bal < currentBet) {
+            document.getElementById('status-msg').innerText = "SALDO INSUFICIENTE";
             return;
         }
 
-        // DEBITAR
+        // DEBITAR VIA SISTEMA
         try {
-            if(window.SistemaSaldo && typeof window.SistemaSaldo.debitar === 'function') {
-                if(!window.SistemaSaldo.debitar(valorAposta)) return;
-            } else {
-                saldoAtual -= valorAposta; // Fallback local
-            }
-        } catch(e) { saldoAtual -= valorAposta; }
+            if(window.SistemaSaldo?.debitar) {
+                if(!window.SistemaSaldo.debitar(currentBet)) return;
+            } else { console.warn("SistemaSaldo não encontrado"); }
+        } catch(e) {}
         
-        atualizarDisplay();
-        girando = true;
-        document.getElementById('btnGirar').classList.add('disabled');
-        document.getElementById('msg').innerText = "GIRANDO...";
+        updateUI();
+        isSpinning = true;
+        document.getElementById('spin-btn').classList.add('disabled');
+        document.getElementById('status-msg').innerText = "GIRANDO...";
 
-        // ANIMAÇÃO SIMPLES DOS ROLOS
+        // ANIMAÇÃO VISUAL DOS ROLOS
         const reels = [document.getElementById('r1'), document.getElementById('r2'), document.getElementById('r3')];
-        const simbolos = ['sym-bowl', 'sym-wild', 'sym-chain'];
-        const icones = ['🥣', '🐍', '💲'];
+        const symbols = ['🥣','🐍','💲'];
         
-        // Efeito visual de giro
-        let intervalo = setInterval(() => {
+        const interval = setInterval(() => {
             reels.forEach(r => {
-                r.innerHTML = `<div class="symbol ${simbolos[Math.floor(Math.random()*3)]}">${icones[Math.floor(Math.random()*3)]}</div>`.repeat(3);
+                r.innerHTML = Array(3).fill(0).map(() => 
+                    `<div class="sym-cell">${symbols[Math.floor(Math.random()*3)]}</div>`
+                ).join('');
             });
-        }, 100);
+        }, 80);
 
-        // PARAR APÓS 1.5 SEGUNDOS
+        // PARAR E MOSTRAR RESULTADO
         setTimeout(() => {
-            clearInterval(intervalo);
-            girando = false;
-            document.getElementById('btnGirar').classList.remove('disabled');
+            clearInterval(interval);
+            isSpinning = false;
+            document.getElementById('spin-btn').classList.remove('disabled');
             
-            // RESULTADO FIXO IGUAL À FOTO (3 BOWLS, 3 WILDS, 3 CHAINS)
-            reels[0].innerHTML = `<div class="symbol sym-bowl"></div><div class="symbol sym-bowl">🥣</div><div class="symbol sym-bowl">🥣</div>`;
-            reels[1].innerHTML = `<div class="symbol sym-wild">🐍</div><div class="symbol sym-wild">🐍</div><div class="symbol sym-wild">🐍</div>`;
-            reels[2].innerHTML = `<div class="symbol sym-chain">💲</div><div class="symbol sym-chain">💲</div><div class="symbol sym-chain">💲</div>`;
+            // SIMULAÇÃO DE VITÓRIA (WILD x10 COMO NA FOTO)
+            reels[0].innerHTML = `<div class="sym-cell">🥣</div><div class="sym-cell">🥣</div><div class="sym-cell">🥣</div>`;
+            reels[1].innerHTML = `<div class="sym-cell">🐍</div><div class="sym-cell">🐍</div><div class="sym-cell">🐍</div>`;
+            reels[2].innerHTML = `<div class="sym-cell">💲</div><div class="sym-cell">💲</div><div class="sym-cell">💲</div>`;
             
-            document.getElementById('msg').innerText = "WILD x10!";
+            const win = currentBet * 10;
+            document.getElementById('status-msg').innerText = `VITÓRIA! +${win.toFixed(2)}`;
             
-            // CREDITAR GANHO (EXEMPLO)
-            let ganho = valorAposta * 10;
             try {
-                if(window.SistemaSaldo && typeof window.SistemaSaldo.creditar === 'function') {
-                    window.SistemaSaldo.creditar(ganho);
-                } else {
-                    saldoAtual += ganho;
-                }
-            } catch(e) { saldoAtual += ganho; }
-            atualizarDisplay();
+                if(window.SistemaSaldo?.creditar) window.SistemaSaldo.creditar(win);
+            } catch(e) {}
+            updateUI();
             
         }, 1500);
     }
 
-    function toggleSom() {
-        // Apenas visual por enquanto
-        const btn = event.target;
-        btn.innerText = btn.innerText === '🔇' ? '🔊' : '🔇';
+    function toggleSound() {
+        const btn = event.currentTarget;
+        btn.innerText = btn.innerText === '' ? '🔊' : '';
     }
-</script>
 
+    // INICIALIZAÇÃO
+    updateUI();
+    window.addEventListener('focus', updateUI);
+</script>
 </body>
 </html>
