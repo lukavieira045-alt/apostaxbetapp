@@ -153,6 +153,13 @@ let girando = false;
 let som = true;
 let rodadasRestantes = 0;
 let modoAuto = false;
+let audioCtx = null;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+}
 
 function obterSaldo(){ return window.SistemaSaldo ? Number(window.SistemaSaldo.get()) || 0 : 0; }
 function debitar(v){ return window.SistemaSaldo ? window.SistemaSaldo.debitar(v) : false; }
@@ -200,16 +207,15 @@ function calcularPremio(res){
 }
 
 function tocarSom(f, d, t="sine"){
-    if(!som) return;
+    if(!som || !audioCtx) return;
     try{
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const o = ctx.createOscillator();
-        const g = ctx.createGain();
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
         o.type = t; o.frequency.value = f;
-        g.gain.setValueAtTime(0.05, ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + d);
-        o.connect(g); g.connect(ctx.destination);
-        o.start(); o.stop(ctx.currentTime + d);
+        g.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + d);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + d);
     }catch(e){}
 }
 
@@ -218,6 +224,9 @@ async function girar(isFreeOrAuto = false){
     girando = true;
     spinButton.disabled = true;
     auto10Button.disabled = true;
+    
+    initAudio();
+    if(audioCtx.state === 'suspended') audioCtx.resume();
 
     // Tocar música na primeira interação
     if(bgMusic.paused) bgMusic.play().catch(()=>{});
