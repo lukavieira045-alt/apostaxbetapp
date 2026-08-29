@@ -6,7 +6,7 @@
 
 <title>Fortune Ember — Rato da Fortuna</title>
 
-<!-- MÚSICA DE FUNDO COM LINK DIRETO -->
+<!-- MÚSICA DE FUNDO -->
 <audio id="bgMusic" loop preload="auto">
     <source src="https://github.com/lukavieira045-alt/apostaxbetapp/blob/main/jogos/fortune_ember.mp3?raw=true" type="audio/mpeg">
 </audio>
@@ -811,39 +811,10 @@ const CONFIG = {
     apostaInicial: 1.00,
     apostaMinima: 0.50,
     apostaMaxima: 5.00,
-
-    /* Pesos dos símbolos - VANTAGEM DA CASA */
-    pesos: {
-        "🍒": 35,      // Muito comum
-        "🍋": 30,      // Comum
-        "🪙": 20,      // Médio
-        "🏮": 12,      // Raro
-        "💎": 6,       // Muito raro
-        "🐭": 4,       // Ultra raro (Super Bônus)
-        "🔥": 3        // Wild super raro
-    },
-
-    pagamentos: {
-        "🍒": 1.20,
-        "🍋": 1.50,
-        "🪙": 2.00,
-        "🏮": 3.00,
-        "💎": 5.00,
-        "🐭": 8.00,
-        "🔥": 12.00
-    },
-
-    chanceRespin: 0.45,
-    chanceSuperBonus: 0.02, // 2% de chance de Super Bônus
-
-    /* TEMPOS DE GIRO - RÁPIDO E SECO */
-    tempos: [
-        1000,  // Rolo 1: 1s
-        1500,  // Rolo 2: 1.5s
-        2000   // Rolo 3: 2s
-    ]
+    pesos: { "🍒": 35, "🍋": 30, "🪙": 20, "🏮": 12, "💎": 6, "🐭": 4, "🔥": 3 },
+    pagamentos: { "🍒": 1.20, "🍋": 1.50, "🪙": 2.00, "🏮": 3.00, "💎": 5.00, "🐭": 8.00, "🔥": 12.00 },
+    tempos: [1000, 1500, 2000]
 };
-
 
 /* =====================================================
    ELEMENTOS
@@ -853,371 +824,101 @@ const saldoEl = document.getElementById("saldo");
 const betDisplay = document.getElementById("betDisplay");
 const winDisplay = document.getElementById("winDisplay");
 const statusEl = document.getElementById("status");
-const resultLineEl = document.getElementById("resultLine");
 const spinButton = document.getElementById("spinButton");
-const turboButton = document.getElementById("turbo");
-const soundButton = document.getElementById("sound");
-const infoButton = document.getElementById("infoButton");
-const infoEl = document.getElementById("info");
-const respinButton = document.getElementById("respin");
 const auto10Button = document.getElementById("auto10Button");
 const bgMusic = document.getElementById("bgMusic");
-
-const reels = [
-    document.getElementById("r1"),
-    document.getElementById("r2"),
-    document.getElementById("r3")
-];
-
+const reels = [document.getElementById("r1"), document.getElementById("r2"), document.getElementById("r3")];
 const reelBoxes = [...document.querySelectorAll(".reel")];
-const superBonusOverlay = document.getElementById("superBonusOverlay");
 const freeSpinsIndicator = document.getElementById("freeSpinsIndicator");
 const freeSpinsCount = document.getElementById("freeSpinsCount");
-const freeSpinsLabel = document.getElementById("freeSpinsLabel");
-
-
-/* =====================================================
-   ESTADO
-===================================================== */
+const superBonusOverlay = document.getElementById("superBonusOverlay");
 
 let aposta = CONFIG.apostaInicial;
 let girando = false;
-let turbo = false;
 let som = true;
-let ultimoPremio = 0;
-let audioContext = null;
-
-/* Estado das rodadas automáticas/grátis */
 let rodadasRestantes = 0;
-let modoAuto = false; // true se for 10x AUTO, false se for Super Bônus Grátis
-
+let modoAuto = false;
+let audioContext = null;
 
 /* =====================================================
    SISTEMA DE SALDO
 ===================================================== */
 
-function obterSaldo(){
-    try{
-        if(window.SistemaSaldo && typeof window.SistemaSaldo.get === "function"){
-            const valor = Number(window.SistemaSaldo.get());
-            if(Number.isFinite(valor)) return valor;
-        }
-    }catch(e){}
-    return 0;
+function obterSaldo(){ return window.SistemaSaldo ? Number(window.SistemaSaldo.get()) || 0 : 0; }
+function debitar(v){ return window.SistemaSaldo ? window.SistemaSaldo.debitar(v) : false; }
+function creditar(v){ return window.SistemaSaldo ? window.SistemaSaldo.creditar(v) : false; }
+function atualizarSaldoVisual(){ 
+    saldoEl.textContent = Number(obterSaldo()).toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
+    if(window.SistemaSaldo && window.SistemaSaldo.atualizarTela) window.SistemaSaldo.atualizarTela();
 }
-
-function debitar(valor){
-    try{
-        if(window.SistemaSaldo && typeof window.SistemaSaldo.debitar === "function"){
-            return window.SistemaSaldo.debitar(valor);
-        }
-    }catch(e){ console.error("Erro ao debitar:", e); return false; }
-    return false;
-}
-
-function creditar(valor){
-    try{
-        if(window.SistemaSaldo && typeof window.SistemaSaldo.creditar === "function"){
-            return window.SistemaSaldo.creditar(valor);
-        }
-    }catch(e){ console.error("Erro ao creditar:", e); return false; }
-    return false;
-}
-
-function atualizarSaldoVisual(){
-    const saldo = obterSaldo();
-    saldoEl.textContent = formatarDinheiro(saldo);
-    try{
-        if(window.SistemaSaldo && typeof window.SistemaSaldo.atualizarTela === "function"){
-            window.SistemaSaldo.atualizarTela();
-        }
-    }catch(e){}
-}
-
 
 /* =====================================================
-   FORMATAÇÃO
-===================================================== */
-
-function formatarDinheiro(valor){
-    return Number(valor || 0).toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
-}
-
-
-/* =====================================================
-   SÍMBOLOS
+   LÓGICA DO JOGO
 ===================================================== */
 
 const simbolos = Object.keys(CONFIG.pesos);
-const nomes = {
-    "🍒":"CHERRY", "🍋":"CITRUS", "🪙":"COIN",
-    "🏮":"LANTERN", "💎":"JADE", "🐭":"FORTUNE", "🔥":"WILD"
-};
-
 function escolherSimbolo(){
-    let total = simbolos.reduce((s, simbolo) => s + CONFIG.pesos[simbolo], 0);
-    let valor = Math.random() * total;
-    for(const simbolo of simbolos){
-        valor -= CONFIG.pesos[simbolo];
-        if(valor <= 0) return simbolo;
-    }
+    let total = simbolos.reduce((s, k) => s + CONFIG.pesos[k], 0);
+    let r = Math.random() * total;
+    for(let k of simbolos){ r -= CONFIG.pesos[k]; if(r <= 0) return k; }
     return simbolos[0];
 }
 
-function criarSimbolo(simbolo){
-    return `<div class="symbol"><span>${simbolo}</span><span class="symbol-label">${nomes[simbolo] || ""}</span></div>`;
+function criarSimbolo(s){ return `<div class="symbol">${s}</div>`; }
+function preencherRolo(el){ el.innerHTML = Array(18).fill(0).map(()=>criarSimbolo(escolherSimbolo())).join(""); }
+
+function prepararResultado(el, vals){
+    const extras = Array(7).fill(0).map(()=>escolherSimbolo());
+    el.innerHTML = [...extras, ...vals, ...extras].map(criarSimbolo).join("");
+    el.style.transition = "none";
+    el.style.transform = `translateY(${-7 * 68}px)`;
 }
 
-function preencherRolo(elemento){
-    let html = "";
-    for(let i = 0; i < 18; i++) html += criarSimbolo(escolherSimbolo());
-    elemento.innerHTML = html;
+function encontrarLinhas(res){
+    const linhas = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    return linhas.filter(l => {
+        const v = l.map(i => res[i]);
+        const normais = v.filter(x => x !== "🔥");
+        return normais.length === 0 || normais.every(x => x === normais[0]);
+    });
 }
 
-function gerarResultado(){
-    const resultado = [];
-    for(let i = 0; i < 9; i++) resultado.push(escolherSimbolo());
-    return resultado;
-}
-
-function prepararResultado(elemento, valores){
-    const extras = [];
-    for(let i = 0; i < 7; i++) extras.push(escolherSimbolo());
-    const lista = [...extras, ...valores, ...extras];
-    elemento.innerHTML = lista.map(criarSimbolo).join("");
-    
-    const altura = elemento.querySelector(".symbol").offsetHeight;
-    const inicio = extras.length;
-    elemento.style.transition = "none";
-    elemento.style.transform = `translateY(${-inicio * altura}px)`;
-}
-
-
-/* =====================================================
-   LÓGICA DE VITÓRIA (Corrigida: Só 3 iguais)
-===================================================== */
-
-function encontrarLinhas(resultado){
-    const linhas = [
-        [0,1,2], [3,4,5], [6,7,8], // Linhas
-        [0,3,6], [1,4,7], [2,5,8], // Colunas
-        [0,4,8], [2,4,6]           // Diagonais
-    ];
-
-    const vencedoras = [];
-    for(const linha of linhas){
-        const valores = linha.map(i => resultado[i]);
-        const normais = valores.filter(x => x !== "🔥");
-
-        // Se todos são Wild, ganha
-        if(normais.length === 0){
-            vencedoras.push(linha);
-            continue;
-        }
-
-        // Verifica se todos os não-Wild são IGUAIS
-        const primeiroSimbolo = normais[0];
-        const todosIguais = normais.every(x => x === primeiroSimbolo);
-
-        if(todosIguais){
-            vencedoras.push(linha);
-        }
-    }
-    return vencedoras;
-}
-
-function calcularPremio(resultado){
-    const linhas = encontrarLinhas(resultado);
+function calcularPremio(res){
     let premio = 0;
-    const detalhes = [];
-
-    for(const linha of linhas){
-        const valores = linha.map(i => resultado[i]);
-        const simbolo = valores.find(x => x !== "🔥") || "🔥";
-        const multiplicador = CONFIG.pagamentos[simbolo] || 0;
-
-        if(multiplicador > 0){
-            const valor = aposta * multiplicador;
-            premio += valor;
-            detalhes.push({ linha, simbolo, valor });
-        }
-    }
-    return { premio, linhas, detalhes };
+    encontrarLinhas(res).forEach(l => {
+        const v = l.map(i => res[i]);
+        const s = v.find(x => x !== "🔥") || "🔥";
+        premio += aposta * (CONFIG.pagamentos[s] || 0);
+    });
+    return premio;
 }
 
-
 /* =====================================================
-   ÁUDIO
+   ÁUDIO (CORRIGIDO)
 ===================================================== */
 
 function initAudio() {
-    if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    }
+    if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
 }
 
-// EFEITOS SONOROS COM VOLUME AUMENTADO (0.15)
-function tocarSom(frequencia, duracao, tipo = "sine", volume = 0.15){
+// EFEITOS ALTOS (0.15)
+function tocarSom(f, d, t="sine", v=0.15){
     if(!som || !audioContext) return;
     try{
-        const oscilador = audioContext.createOscillator();
-        const ganho = audioContext.createGain();
-        oscilador.type = tipo;
-        oscilador.frequency.value = frequencia;
-        ganho.gain.setValueAtTime(.0001, audioContext.currentTime);
-        ganho.gain.exponentialRampToValueAtTime(volume, audioContext.currentTime + .015);
-        ganho.gain.exponentialRampToValueAtTime(.0001, audioContext.currentTime + duracao);
-        oscilador.connect(ganho);
-        ganho.connect(audioContext.destination);
-        oscilador.start();
-        oscilador.stop(audioContext.currentTime + duracao + .03);
+        const o = audioContext.createOscillator();
+        const g = audioContext.createGain();
+        o.type = t; o.frequency.value = f;
+        g.gain.setValueAtTime(0.001, audioContext.currentTime);
+        g.gain.exponentialRampToValueAtTime(v, audioContext.currentTime + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + d);
+        o.connect(g); g.connect(audioContext.destination);
+        o.start(); o.stop(audioContext.currentTime + d);
     }catch(e){}
 }
 
-function somGiro(){
-    tocarSom(115, .18, "sawtooth", 0.15);
-    setTimeout(() => tocarSom(155, .15, "sawtooth", 0.15), 100);
-}
-
-function somParada(indice){
-    tocarSom(230 + indice * 80, .12, "triangle", 0.15);
-}
-
-function somVitoria(){
-    [523, 659, 784, 1046].forEach((frequencia, indice) => {
-        setTimeout(() => tocarSom(frequencia, .22, "sine", 0.15), indice * 90);
-    });
-}
-
-function somSuperBonus(){
-    [523, 659, 784, 1046, 1318].forEach((freq, i) => {
-        setTimeout(() => tocarSom(freq, 0.3, "sine", 0.15), i * 150);
-    });
-}
-
-
-/* =====================================================
-   EFEITOS VISUAIS
-===================================================== */
-
-function criarParticulas(quantidade = 20){
-    const x = window.innerWidth / 2;
-    const y = window.innerHeight * .48;
-    for(let i = 0; i < quantidade; i++){
-        const p = document.createElement("span");
-        p.className = "particle";
-        p.style.left = x + "px";
-        p.style.top = y + "px";
-        p.style.setProperty("--x", ((Math.random()-.5)*220) + "px");
-        p.style.setProperty("--y", ((Math.random()-.7)*190) + "px");
-        document.body.appendChild(p);
-        setTimeout(() => p.remove(), 900);
-    }
-}
-
-function criarMoedas(){
-    for(let i = 0; i < 15; i++){
-        const moeda = document.createElement("span");
-        moeda.className = "coin";
-        moeda.textContent = "🪙";
-        moeda.style.left = (window.innerWidth / 2 + (Math.random()-.5)*80) + "px";
-        moeda.style.top = (window.innerHeight*.48) + "px";
-        moeda.style.setProperty("--x", ((Math.random()-.5)*260) + "px");
-        moeda.style.setProperty("--y", ((Math.random()-.8)*250) + "px");
-        document.body.appendChild(moeda);
-        setTimeout(() => moeda.remove(), 950);
-    }
-}
-
-function destacarVitoria(linhas){
-    document.querySelectorAll(".symbol").forEach(el => el.classList.remove("win-symbol"));
-    document.querySelectorAll(".reel").forEach(el => el.classList.remove("win"));
-    
-    const indices = [...new Set(linhas.flat())];
-    indices.forEach(indice => {
-        const coluna = indice % 3;
-        const linha = Math.floor(indice / 3);
-        const rolo = reels[coluna];
-        const simbolosRolo = rolo.querySelectorAll(".symbol");
-        const alvo = simbolosRolo[7 + linha];
-        if(alvo) alvo.classList.add("win-symbol");
-        reelBoxes[coluna].classList.add("win");
-    });
-}
-
-
-/* =====================================================
-   SUPER BÔNUS & AUTO PLAY
-===================================================== */
-
-function ativarSuperBonus(){
-    superBonusOverlay.classList.add('active');
-    somSuperBonus();
-    criarParticulas(50);
-    criarMoedas();
-    
-    // Configura 10 rodadas GRÁTIS
-    rodadasRestantes = 10;
-    modoAuto = false; // É bônus grátis
-    
-    freeSpinsLabel.textContent = "GRÁTIS:";
-    freeSpinsCount.textContent = rodadasRestantes;
-    freeSpinsIndicator.classList.add('active');
-    
-    setTimeout(() => {
-        superBonusOverlay.classList.remove('active');
-        iniciarLoopAuto();
-    }, 3000);
-}
-
-// Função para o botão 10x AUTO
-function iniciarAutoPlayPago(){
-    const saldo = obterSaldo();
-
-    // Verifica se tem saldo para pelo menos 1 rodada
-    if(saldo < aposta){
-        statusEl.textContent = "Saldo insuficiente.";
-        return;
-    }
-
-    rodadasRestantes = 10;
-    modoAuto = true; // É auto play pago (desconta a cada giro)
-    
-    freeSpinsLabel.textContent = "AUTO:";
-    freeSpinsCount.textContent = rodadasRestantes;
-    freeSpinsIndicator.classList.add('active');
-    
-    iniciarLoopAuto();
-}
-
-async function iniciarLoopAuto(){
-    while(rodadasRestantes > 0 && !girando){
-        await new Promise(resolve => setTimeout(resolve, 1500)); // Pausa entre giros
-        
-        if(rodadasRestantes > 0){
-            // Verifica saldo antes de cada giro no modo AUTO pago
-            if(modoAuto){
-                const saldoAtual = obterSaldo();
-                if(saldoAtual < aposta){
-                    statusEl.textContent = "Saldo acabou! Auto Play parado.";
-                    rodadasRestantes = 0;
-                    break;
-                }
-            }
-            
-            await girar(true); // true = modo especial (auto/grátis)
-            rodadasRestantes--;
-            freeSpinsCount.textContent = rodadasRestantes;
-        }
-    }
-    
-    if(rodadasRestantes === 0){
-        freeSpinsIndicator.classList.remove('active');
-        statusEl.textContent = modoAuto ? "Auto Play finalizado!" : "Rodadas Grátis finalizadas!";
-        modoAuto = false;
-    }
-}
-
+function somGiro(){ tocarSom(115, 0.18, "sawtooth", 0.15); }
+function somParada(i){ tocarSom(230 + i*80, 0.12, "triangle", 0.15); }
+function somVitoria(){ [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => tocarSom(f, 0.22, "sine", 0.15), i*90)); }
 
 /* =====================================================
    GIRO PRINCIPAL
@@ -1227,127 +928,54 @@ async function girar(isFreeOrAuto = false){
     if(girando) return;
     girando = true;
     spinButton.disabled = true;
-    respinButton.disabled = true;
     auto10Button.disabled = true;
 
-    // Inicializa áudio e música na primeira interação
+    // FORÇAR MÚSICA E ÁUDIO NO CLIQUE
     initAudio();
-    // Força o play da música sempre que tentar girar
-    if(bgMusic.paused) {
-        bgMusic.volume = 0.4; // Volume da música mantido
-        bgMusic.play().catch(e => console.log("Aguardando interação para música"));
-    }
+    if(audioContext.state === 'suspended') audioContext.resume();
+    
+    // Tenta tocar a música de fundo
+    bgMusic.volume = 0.4;
+    bgMusic.play().then(() => {
+        console.log("Música iniciada com sucesso");
+    }).catch(err => {
+        console.warn("Erro ao tocar música (navegador bloqueou):", err);
+    });
 
-    // DESCONTO IMEDIATO (SEGURANÇA TOTAL)
-    // O dinheiro sai da conta ANTES de qualquer outra coisa
+    // DESCONTO IMEDIATO
     if(!isFreeOrAuto){
-        // Giro manual normal: Desconta AGORA
-        const saldo = obterSaldo();
-        if(saldo < aposta){
-            statusEl.textContent = "Saldo insuficiente.";
-            girando = false;
-            spinButton.disabled = false;
-            auto10Button.disabled = false;
-            return;
-        }
-        const sucesso = debitar(aposta);
-        if(!sucesso){
-            statusEl.textContent = "Erro ao registrar aposta.";
-            girando = false;
-            spinButton.disabled = false;
-            auto10Button.disabled = false;
-            return;
-        }
-    } else if (isFreeOrAuto && modoAuto) {
-        // É Auto Play PAGO: Desconta 1 aposta AGORA
-        const sucesso = debitar(aposta);
-        if(!sucesso){
-            // Se falhar, para o auto play
-            rodadasRestantes = 0;
-            girando = false;
-            spinButton.disabled = false;
-            auto10Button.disabled = false;
-            freeSpinsIndicator.classList.remove('active');
-            return;
-        }
+        if(obterSaldo() < aposta){ statusEl.textContent = "Saldo insuficiente."; girando=false; spinButton.disabled=false; return; }
+        if(!debitar(aposta)){ statusEl.textContent = "Erro ao apostar."; girando=false; spinButton.disabled=false; return; }
+    } else if(isFreeOrAuto && modoAuto){
+        if(!debitar(aposta)){ rodadasRestantes=0; girando=false; freeSpinsIndicator.classList.remove('active'); return; }
     }
-    // Se for isFreeOrAuto=true e modoAuto=false, é Super Bônus (Grátis), não cobra nada.
 
-    winDisplay.textContent = formatarDinheiro(0);
-    
-    if(isFreeOrAuto){
-        statusEl.textContent = modoAuto ? `🔄 AUTO (${rodadasRestantes} restantes)` : `🎰 GRÁTIS (${rodadasRestantes} restantes)`;
-    } else {
-        statusEl.textContent = "Girando...";
-    }
-    
-    resultLineEl.textContent = "Boa sorte...";
-    reelBoxes.forEach(reel => reel.classList.add("spinning"));
+    statusEl.textContent = modoAuto ? `AUTO (${rodadasRestantes})` : "Girando...";
+    reelBoxes.forEach(r => r.classList.add("spinning"));
     somGiro();
 
-    const resultado = gerarResultado();
-    const colunas = [
-        [resultado[0], resultado[3], resultado[6]],
-        [resultado[1], resultado[4], resultado[7]],
-        [resultado[2], resultado[5], resultado[8]]
-    ];
-
+    const res = Array(9).fill(0).map(escolherSimbolo);
+    const cols = [[res[0],res[3],res[6]], [res[1],res[4],res[7]], [res[2],res[5],res[8]]];
+    
     reels.forEach(preencherRolo);
+    
+    await Promise.all(reels.map((el, i) => new Promise(resolve => {
+        el.style.transition = `transform ${CONFIG.tempos[i]}ms cubic-bezier(.1,.8,.1,1)`;
+        el.style.transform = `translateY(-${(11+Math.random()*5)*68}px)`;
+        setTimeout(() => { prepararResultado(el, cols[i]); somParada(i); resolve(); }, CONFIG.tempos[i]);
+    })));
 
-    const tempos = turbo ? [450,550,650] : CONFIG.tempos;
-
-    // Animação dos rolos
-    await Promise.all(reels.map((elemento, indice) => {
-        return new Promise(resolve => {
-            const altura = 68;
-            const distancia = -(11 + Math.floor(Math.random()*6)) * altura;
-            
-            elemento.style.transition = `transform ${tempos[indice]}ms cubic-bezier(.12,.72,.16,1)`;
-            elemento.style.transform = `translateY(${distancia}px)`;
-
-            setTimeout(() => {
-                prepararResultado(elemento, colunas[indice]);
-                somParada(indice);
-                resolve();
-            }, tempos[indice]);
-        });
-    }));
-
-    reelBoxes.forEach(reel => reel.classList.remove("spinning"));
-
-    const resultadoFinal = calcularPremio(resultado);
-    ultimoPremio = resultadoFinal.premio;
-
-    if(resultadoFinal.premio > 0){
-        winDisplay.textContent = formatarDinheiro(resultadoFinal.premio);
-        statusEl.textContent = `✨ Vitória! ${formatarDinheiro(resultadoFinal.premio)}`;
-        resultLineEl.textContent = `${resultadoFinal.linhas.length} linha(s) premiada(s)`;
-        destacarVitoria(resultadoFinal.linhas);
+    reelBoxes.forEach(r => r.classList.remove("spinning"));
+    
+    const premio = calcularPremio(res);
+    if(premio > 0){
+        winDisplay.textContent = Number(premio).toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
+        statusEl.textContent = `Vitória! ${Number(premio).toLocaleString("pt-BR", { style:"currency", currency:"BRL" })}`;
+        creditar(premio);
         somVitoria();
-        criarParticulas(28);
-        criarMoedas();
-        
-        // Credita o prêmio (seja auto ou grátis)
-        creditar(resultadoFinal.premio);
     } else {
-        winDisplay.textContent = formatarDinheiro(0);
-        statusEl.textContent = isFreeOrAuto ? `Quase! (${rodadasRestantes} restantes)` : "Quase! Tente novamente.";
-        resultLineEl.textContent = "Nenhuma linha premiada";
-    }
-
-    // Checar Super Bônus (3 Ratinhos) - Só em giro manual ou auto pago, não em grátis
-    const quantidadeRatinho = resultado.filter(x => x === "🐭").length;
-    if(quantidadeRatinho >= 3 && Math.random() < CONFIG.chanceSuperBonus && !isFreeOrAuto){
-        ativarSuperBonus();
-        girando = false;
-        return; 
-    }
-
-    // Checar Respin (3 Wilds)
-    const quantidadeWild = resultado.filter(x => x === "🔥").length;
-    if(quantidadeWild >= 3 && Math.random() < CONFIG.chanceRespin && !isFreeOrAuto){
-        respinButton.disabled = false;
-        statusEl.textContent += " • Respin liberado!";
+        winDisplay.textContent = "R$ 0,00";
+        statusEl.textContent = modoAuto ? `Quase! (${rodadasRestantes})` : "Quase!";
     }
 
     atualizarSaldoVisual();
@@ -1356,71 +984,48 @@ async function girar(isFreeOrAuto = false){
     auto10Button.disabled = false;
 }
 
+// AUTO PLAY
+async function iniciarLoopAuto(){
+    while(rodadasRestantes > 0 && !girando){
+        await new Promise(r => setTimeout(r, 1500));
+        if(rodadasRestantes > 0){
+            if(modoAuto && obterSaldo() < aposta){ rodadasRestantes=0; break; }
+            await girar(true);
+            rodadasRestantes--;
+            freeSpinsCount.textContent = rodadasRestantes;
+        }
+    }
+    if(rodadasRestantes === 0){ freeSpinsIndicator.classList.remove('active'); modoAuto = false; }
+}
 
 /* =====================================================
    EVENTOS
 ===================================================== */
 
-document.querySelectorAll(".bet").forEach(botao => {
-    botao.addEventListener("click", () => {
-        if(girando || rodadasRestantes > 0) return;
-        aposta = Number(botao.dataset.bet);
-        aposta = Math.max(CONFIG.apostaMinima, Math.min(CONFIG.apostaMaxima, aposta));
-        document.querySelectorAll(".bet").forEach(b => b.classList.remove("active"));
-        botao.classList.add("active");
-        betDisplay.textContent = formatarDinheiro(aposta);
-    });
+document.querySelectorAll(".bet").forEach(b => b.onclick = () => {
+    if(girando) return;
+    aposta = Number(b.dataset.bet);
+    document.querySelectorAll(".bet").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    betDisplay.textContent = Number(aposta).toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
 });
 
-spinButton.addEventListener("click", () => girar(false));
+spinButton.onclick = () => girar(false);
+auto10Button.onclick = () => {
+    if(girando || obterSaldo() < aposta) return;
+    rodadasRestantes = 10; modoAuto = true;
+    freeSpinsIndicator.classList.add('active');
+    iniciarLoopAuto();
+};
 
-respinButton.addEventListener("click", () => girar(true));
-
-// Botão 10x AUTO
-auto10Button.addEventListener("click", () => {
-    if(girando || rodadasRestantes > 0) return;
-    iniciarAutoPlayPago();
-});
-
-turboButton.addEventListener("click", () => {
-    turbo = !turbo;
-    turboButton.classList.toggle("active", turbo);
-    turboButton.textContent = turbo ? "⚡ Turbo ON" : "⚡ Turbo";
-});
-
-soundButton.addEventListener("click", () => {
+document.getElementById("sound").onclick = function(){
     som = !som;
-    soundButton.classList.toggle("active", som);
-    soundButton.textContent = som ? "🔊 Som" : "🔇 Som";
-    
-    // Controlar música de fundo também
-    if(som) {
-        bgMusic.play().catch(e => {});
-    } else {
-        bgMusic.pause();
-    }
-});
-
-infoButton.addEventListener("click", () => {
-    infoEl.hidden = !infoEl.hidden;
-    infoButton.classList.toggle("active", !infoEl.hidden);
-});
-
-
-/* =====================================================
-   INICIALIZAÇÃO
-===================================================== */
+    this.textContent = som ? "🔊 Som" : "🔇 Som";
+    som ? bgMusic.play().catch(()=>{}) : bgMusic.pause();
+};
 
 reels.forEach(preencherRolo);
-reels.forEach((elemento, indice) => {
-    prepararResultado(elemento, [escolherSimbolo(), escolherSimbolo(), escolherSimbolo()]);
-});
-
-betDisplay.textContent = formatarDinheiro(aposta);
 atualizarSaldoVisual();
-
-window.addEventListener("saldoAtualizado", atualizarSaldoVisual);
-
 </script>
 </body>
 </html>
