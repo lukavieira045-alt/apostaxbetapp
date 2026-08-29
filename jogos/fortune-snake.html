@@ -6,966 +6,245 @@
 
 <title>Fortune Snake - ApostaXBet</title>
 
-<!-- MÚSICA DE FUNDO -->
+<!-- MÚSICA ORIGINAL DO SNAKE -->
 <audio id="bgMusic" loop preload="auto">
-    <source src="https://github.com/lukavieira045-alt/apostaxbetapp/blob/main/jogos/fortune_ember.mp3?raw=true" type="audio/mpeg">
+    <source src="musica-fortune-snake.mp3" type="audio/mpeg">
 </audio>
 
 <style>
 :root{
     --bg:#07050b;
     --panel:#140d19;
-    --panel2:#211426;
     --gold:#f3c65b;
     --gold2:#fff0a1;
-    --gold3:#9b641b;
-    --red:#7e1d2c;
+    --purple:#9100ff;
     --text:#fff8e4;
-    --muted:#a99aad;
 }
 
-*{
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
-}
-
-html,
-body{
-    margin:0;
-    width:100%;
-    min-height:100%;
-    background: radial-gradient(circle at 50% 0%,#3a1b38 0%,#160b1c 32%,#07050b 78%);
-    color:white;
-    font-family: system-ui, sans-serif;
-}
-
-body{
-    display:flex;
-    justify-content:center;
-    overflow-x:hidden;
-}
-
-button{
-    font-family:inherit;
-    border:0;
-    cursor:pointer;
-}
-
-.game{
-    width:min(100%,560px);
-    min-height:100vh;
-    padding:10px 10px 22px;
-    position:relative;
-    overflow:hidden;
-}
-
-/* =========================================
-   FUNDO
-========================================= */
-
-.game::before{
-    content:"";
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    opacity:.13;
-    background-image: radial-gradient(#fff 0.7px,transparent .8px);
-    background-size:20px 20px;
-}
-
-.glow{
-    position:fixed;
-    width:500px;
-    height:500px;
-    left:50%;
-    top:-260px;
-    transform:translateX(-50%);
-    pointer-events:none;
-    background: radial-gradient(circle, rgba(243,198,91,.25), rgba(243,198,91,.08) 35%, transparent 70%);
-    filter:blur(10px);
-}
-
-/* =========================================
-   TOPO
-========================================= */
-
-.top{
-    height:58px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    position:relative;
-    z-index:5;
-}
-
-.brand{
-    display:flex;
-    align-items:center;
-    gap:9px;
-}
-
-.brand-icon{
-    width:43px;
-    height:43px;
-    border-radius:14px;
-    display:grid;
-    place-items:center;
-    font-size:25px;
-    background: linear-gradient(145deg, #fff0a0, #e3ad3d 48%, #8d5315);
-    box-shadow: inset 0 1px 2px rgba(255,255,255,.8), 0 5px 20px rgba(0,0,0,.5), 0 0 22px rgba(243,198,91,.2);
-}
-
-.brand-title{
-    font-weight:1000;
-    font-size:15px;
-    letter-spacing:1px;
-}
-
-.brand-sub{
-    margin-top:3px;
-    color:#a997ae;
-    font-size:8px;
-    letter-spacing:1.8px;
-}
-
-.balance{
-    min-width:108px;
-    padding:7px 10px;
-    border-radius:13px;
-    text-align:right;
-    background: linear-gradient(180deg, #24162b, #120b17);
-    border:1px solid #58405f;
-    box-shadow: inset 0 1px rgba(255,255,255,.06), 0 5px 15px rgba(0,0,0,.35);
-}
-
-.balance-label{
-    display:block;
-    color:#938298;
-    font-size:8px;
-    letter-spacing:1px;
-}
-
-.balance-value{
-    display:block;
-    margin-top:2px;
-    color:var(--gold2);
-    font-size:15px;
-    font-weight:900;
-}
-
-/* =========================================
-   TÍTULO
-========================================= */
-
-.title-area{
-    position:relative;
-    z-index:2;
-    text-align:center;
-    padding:4px 0 10px;
-}
-
-.title{
-    margin:0;
-    font-size: clamp(27px, 8vw, 42px);
-    line-height:1;
-    font-weight:1000;
-    letter-spacing:3px;
-    text-transform:uppercase;
-    background: linear-gradient(180deg, #fff6bc 0%, #f4ca58 42%, #ad6919 100%);
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,.8));
-}
-
-.subtitle{
-    margin-top:7px;
-    color:#aa99b0;
-    font-size:9px;
-    letter-spacing:2.5px;
-    text-transform:uppercase;
-}
-
-/* =========================================
-   MÁQUINA
-========================================= */
-
-.machine{
-    position:relative;
-    z-index:3;
-    padding:8px;
-    border-radius:27px;
-    background: linear-gradient(145deg, #ffe17b 0%, #9a641d 10%, #351a35 17%, #100913 78%, #d09b37 100%);
-    box-shadow: 0 20px 45px rgba(0,0,0,.65), 0 0 0 1px rgba(255,220,116,.35);
-}
-
-.machine-inner{
-    padding:10px;
-    border-radius:21px;
-    background: linear-gradient(180deg, #29172e, #100912 48%, #190c1e);
-    box-shadow: inset 0 1px rgba(255,255,255,.12), inset 0 -20px 40px rgba(0,0,0,.5);
-}
-
-.machine-header{
-    height:40px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    position:relative;
-}
-
-.machine-header-line{
-    width:25%;
-    height:1px;
-    background: linear-gradient(90deg, transparent, #d9aa49, transparent);
-}
-
-.machine-header-text{
-    margin:0 12px;
-    color:#f8d879;
-    font-size:10px;
-    font-weight:900;
-    letter-spacing:2px;
-}
-
-.machine-feature{
-    position:absolute;
-    right:4px;
-    top:5px;
-    color:#76657a;
-    font-size:7px;
-    letter-spacing:1px;
-}
-
-/* =========================================
-   ROLOS
-========================================= */
-
-.reels{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:7px;
-    padding:8px;
-    border-radius:18px;
-    background:#08050b;
-    border:1px solid #725333;
-    box-shadow: inset 0 0 30px #000, 0 7px 18px rgba(0,0,0,.5);
-    position:relative;
-    overflow:hidden;
-}
-
-.reels::before{
-    content:"";
-    position:absolute;
-    left:5%;
-    right:5%;
-    top:50%;
-    height:2px;
-    transform:translateY(-50%);
-    background: linear-gradient(90deg, transparent, rgba(255,221,112,.45), transparent);
-    box-shadow: 0 0 12px rgba(255,216,100,.4);
-    z-index:10;
-    pointer-events:none;
-}
-
-.reel{
-    height:205px;
-    border-radius:13px;
-    overflow:hidden;
-    position:relative;
-    background: linear-gradient(180deg, #100913, #2b1a31 50%, #0d0811);
-    border:1px solid #62466c;
-    box-shadow: inset 0 0 20px rgba(0,0,0,.8), 0 4px 10px rgba(0,0,0,.45);
-}
-
-.reel::before,
-.reel::after{
-    content:"";
-    position:absolute;
-    left:0;
-    right:0;
-    height:28%;
-    z-index:4;
-    pointer-events:none;
-}
-
-.reel::before{
-    top:0;
-    background: linear-gradient(rgba(6,3,9,.95), transparent);
-}
-
-.reel::after{
-    bottom:0;
-    background: linear-gradient(transparent, rgba(6,3,9,.95));
-}
-
-.strip{
-    position:absolute;
-    left:0;
-    right:0;
-    top:0;
-    will-change:transform;
-}
-
-.symbol{
-    height:68px;
-    display:grid;
-    place-items:center;
-    position:relative;
-    font-size:38px;
-    filter: drop-shadow(0 5px 7px rgba(0,0,0,.8));
-}
-
-.symbol-label{
-    position:absolute;
-    bottom:1px;
-    color:#bba9c0;
-    font-size:6px;
-    letter-spacing:1px;
-}
-
-.reel.spinning .symbol{
-    filter: blur(1.8px) brightness(1.15);
-}
-
-.reel.win{
-    box-shadow: inset 0 0 25px rgba(255,210,80,.35), 0 0 24px rgba(255,210,80,.7);
-}
-
-@keyframes winPulse{
-    from{ filter: brightness(1) drop-shadow(0 0 0 rgba(255,220,90,0)); }
-    to{ filter: brightness(1.45) drop-shadow(0 0 10px rgba(255,220,90,.9)); }
-}
-
-.symbol.win-symbol{
-    animation: winPulse .5s ease-in-out infinite alternate;
-}
-
-/* =========================================
-   MENSAGEM
-========================================= */
-
-.status{
-    min-height:32px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin-top:7px;
-    padding:7px 10px;
-    border-radius:11px;
-    background:#0b0710;
-    border:1px solid #3b293f;
-    color:#cbbbd0;
-    font-size:10px;
-    text-align:center;
-}
-
-.result-line{
-    height:25px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:#a998af;
-    font-size:9px;
-    letter-spacing:1px;
-}
-
-/* =========================================
-   CONTROLES
-========================================= */
-
-.main-controls{
-    display:grid;
-    grid-template-columns: 1fr 1.55fr 1fr;
-    gap:8px;
-    margin-top:10px;
-}
-
-.control-box{
-    min-height:61px;
-    padding:9px 6px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    border-radius:15px;
-    background: linear-gradient(180deg, #2a1931, #160c1d);
-    border:1px solid #59405f;
-    box-shadow: inset 0 1px rgba(255,255,255,.08), 0 5px 14px rgba(0,0,0,.4);
-}
-
-.control-label{
-    color:#94849c;
-    font-size:7px;
-    letter-spacing:1px;
-}
-
-.control-value{
-    margin-top:3px;
-    color:#ffe39a;
-    font-size:15px;
-    font-weight:900;
-}
-
-.spin-button{
-    min-height:61px;
-    border-radius:18px;
-    background: radial-gradient(circle at 50% 18%, #fff4b0 0%, #f4c64d 35%, #d38b20 68%, #8c4813 100%);
-    color:#351407;
-    font-size:20px;
-    font-weight:1000;
-    letter-spacing:1px;
-    border:3px solid #fff3b0;
-    box-shadow: 0 7px 0 #62330e, 0 12px 22px rgba(0,0,0,.55), inset 0 2px 3px rgba(255,255,255,.8);
-    transition: transform .1s, filter .15s;
-}
-
-.spin-button:active{
-    transform:translateY(5px);
-    box-shadow: 0 2px 0 #62330e, 0 6px 12px rgba(0,0,0,.5);
-}
-
-.spin-button:disabled{
-    opacity:.55;
-    filter:grayscale(.4);
-}
-
-/* =========================================
-   APOSTA
-========================================= */
-
-.bet-panel{
-    margin-top:9px;
-    padding:9px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:7px;
-    border-radius:15px;
-    background:#120b18;
-    border:1px solid #3b2942;
-}
-
-.bet-label{
-    color:#95849d;
-    font-size:8px;
-    letter-spacing:1px;
-}
-
-.bet-buttons{
-    display:flex;
-    gap:5px;
-}
-
-.bet{
-    min-width:47px;
-    padding:8px 4px;
-    border-radius:9px;
-    background:#21142a;
-    border:1px solid #4a3552;
-    color:#d8c5dd;
-    font-size:10px;
-}
-
-.bet.active{
-    color:#ffe99c;
-    border-color:#dfb84e;
-    box-shadow: 0 0 12px rgba(218,166,54,.2);
-}
-
-/* =========================================
-   BOTÕES EXTRAS
-========================================= */
-
-.extra-controls{
-    margin-top:8px;
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:7px;
-}
-
-.extra{
-    padding:10px 4px;
-    border-radius:11px;
-    background:#17101e;
-    border:1px solid #3d2c45;
-    color:#c6b7cb;
-    font-size:9px;
-}
-
-.extra.active{
-    color:#ffe08b;
-    border-color:#d7a83f;
-    background:#24172b;
-}
-
-.extra:disabled{
-    opacity:.4;
-}
-
-/* =========================================
-   MOBILE
-========================================= */
-
-@media(max-width:390px){
-    .game{ padding:7px 7px 16px; }
-    .reel{ height:184px; }
-    .symbol{ height:61px; font-size:34px; }
-    .bet{ min-width:43px; padding:8px 2px; }
-    .control-value{ font-size:14px; }
-}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body{ margin:0; width:100%; min-height:100%; background: radial-gradient(circle at 50% 0%,#3a1b38 0%,#160b1c 32%,#07050b 78%); color:white; font-family: system-ui, sans-serif; }
+body{ display:flex; justify-content:center; overflow-x:hidden; }
+button{ font-family:inherit; border:0; cursor:pointer; }
+
+.game{ width:min(100%,560px); min-height:100vh; padding:10px; position:relative; overflow:hidden; }
+
+/* FUNDO */
+.game::before{ content:""; position:fixed; inset:0; pointer-events:none; opacity:.13; background-image: radial-gradient(#fff 0.7px,transparent .8px); background-size:20px 20px; }
+.glow{ position:fixed; width:500px; height:500px; left:50%; top:-260px; transform:translateX(-50%); pointer-events:none; background: radial-gradient(circle, rgba(145,0,255,.25), rgba(255,215,0,.08) 35%, transparent 70%); filter:blur(10px); }
+
+/* TOPO */
+.top{ height:58px; display:flex; align-items:center; justify-content:space-between; z-index:5; position:relative; }
+.brand{ display:flex; align-items:center; gap:9px; }
+.brand-icon{ width:43px; height:43px; border-radius:14px; display:grid; place-items:center; font-size:25px; background: linear-gradient(145deg, #ffd700, #9100ff 48%, #5b00a8); box-shadow: 0 5px 20px rgba(0,0,0,.5), 0 0 22px rgba(145,0,255,.4); }
+.brand-title{ font-weight:1000; font-size:15px; color:var(--gold); text-shadow: 0 0 10px rgba(255,215,0,.6); }
+.balance{ min-width:108px; padding:7px 10px; border-radius:13px; text-align:right; background: rgba(5,5,15,.94); border:1px solid #5b00a8; box-shadow: 0 0 15px rgba(170,255,93,.25); }
+.balance-value{ display:block; color:#aaff5d; font-size:15px; font-weight:900; }
+
+/* MÁQUINA */
+.machine{ padding:8px; border-radius:27px; background: linear-gradient(145deg, #ffd700 0%, #9100ff 10%, #321957 17%, #160922 78%, #5b00a8 100%); box-shadow: 0 20px 45px rgba(0,0,0,.65); }
+.machine-inner{ padding:10px; border-radius:21px; background: linear-gradient(180deg, #321957, #160922 48%, #08000f); }
+.reels{ display:grid; grid-template-columns:repeat(3,1fr); gap:7px; padding:8px; border-radius:18px; background:#050207; border:1px solid #4a2c7a; position:relative; overflow:hidden; }
+.reel{ height:205px; border-radius:13px; overflow:hidden; position:relative; background: linear-gradient(180deg, #29153c, #13091d 50%, #050207); border:1px solid #51306d; }
+.strip{ position:absolute; left:0; right:0; top:0; will-change:transform; }
+
+/* SÍMBOLOS COM IMAGENS */
+.symbol{ height:68px; display:grid; place-items:center; position:relative; }
+.symbol img{ width:50px; height:50px; object-fit:contain; filter: drop-shadow(0 5px 7px rgba(0,0,0,.8)); }
+.reel.spinning .symbol img{ filter: blur(2px) brightness(1.2); }
+.reel.win{ box-shadow: inset 0 0 25px rgba(255,215,0,.35), 0 0 24px rgba(255,215,0,.7); }
+
+/* CONTROLES */
+.main-controls{ display:grid; grid-template-columns: 1fr 1.55fr 1fr; gap:8px; margin-top:10px; }
+.control-box{ min-height:61px; padding:9px; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:15px; background: linear-gradient(180deg, #2a1931, #160c1d); border:1px solid #59405f; }
+.control-value{ color:#ffe39a; font-size:15px; font-weight:900; }
+.spin-button{ min-height:61px; border-radius:18px; background: radial-gradient(circle at 50% 18%, #fff4b0 0%, #9100ff 35%, #5b00a8 100%); color:#fff; font-size:20px; font-weight:1000; border:3px solid #ffd700; box-shadow: 0 7px 0 #321957; transition: transform .1s; }
+.spin-button:active{ transform:translateY(5px); }
+.bet-panel{ margin-top:9px; padding:9px; display:flex; justify-content:space-between; border-radius:15px; background:#120b18; border:1px solid #3b2942; }
+.bet{ min-width:47px; padding:8px; border-radius:9px; background:#21142a; border:1px solid #4a3552; color:#d8c5dd; }
+.bet.active{ color:#ffd700; border-color:#ffd700; }
+.status{ min-height:32px; display:flex; align-items:center; justify-content:center; margin-top:7px; padding:7px; border-radius:11px; background:#0b0710; border:1px solid #3b293f; font-size:10px; text-align:center; }
 </style>
 </head>
 
 <body>
 
 <div class="game">
-
 <div class="glow"></div>
-
-<!-- =====================================
-     TOPO
-===================================== -->
 
 <header class="top">
     <div class="brand">
         <div class="brand-icon">🐍</div>
         <div>
             <div class="brand-title">FORTUNE SNAKE</div>
-            <div class="brand-sub">ORIGINAL 3×3 SLOT</div>
+            <div style="font-size:8px;color:#c5b7d6">PREMIUM SLOT</div>
         </div>
     </div>
     <div class="balance">
-        <span class="balance-label">SALDO</span>
+        <span style="font-size:8px;color:#aaff5d">SALDO</span>
         <span class="balance-value" id="saldo">R$ 0,00</span>
     </div>
 </header>
 
-<!-- =====================================
-     TÍTULO
-===================================== -->
-
-<section class="title-area">
-    <h1 class="title">COBRA DA FORTUNA</h1>
-    <div class="subtitle">O veneno dourado da sorte</div>
-</section>
-
-<!-- =====================================
-     MÁQUINA
-===================================== -->
-
 <section class="machine">
 <div class="machine-inner">
-    <div class="machine-header">
-        <div class="machine-header-line"></div>
-        <div class="machine-header-text">FORTUNE SNAKE</div>
-        <div class="machine-header-line"></div>
-        <div class="machine-feature">WILD • BONUS</div>
-    </div>
-
     <div class="reels" id="reels">
         <div class="reel"><div class="strip" id="r1"></div></div>
         <div class="reel"><div class="strip" id="r2"></div></div>
         <div class="reel"><div class="strip" id="r3"></div></div>
     </div>
-
-    <div class="result-line" id="resultLine">Encontre três símbolos na mesma linha</div>
     <div class="status" id="status">Pronto para girar</div>
 </div>
 </section>
 
-<!-- =====================================
-     CONTROLES PRINCIPAIS
-===================================== -->
-
 <section class="main-controls">
-    <div class="control-box">
-        <span class="control-label">APOSTA</span>
-        <span class="control-value" id="betDisplay">R$ 1,00</span>
-    </div>
+    <div class="control-box"><span style="font-size:7px;color:#94849c">APOSTA</span><span class="control-value" id="betDisplay">R$ 1,00</span></div>
     <button class="spin-button" id="spinButton">GIRAR</button>
-    <div class="control-box">
-        <span class="control-label">PRÊMIO</span>
-        <span class="control-value" id="winDisplay">R$ 0,00</span>
-    </div>
+    <div class="control-box"><span style="font-size:7px;color:#94849c">PRÊMIO</span><span class="control-value" id="winDisplay">R$ 0,00</span></div>
 </section>
 
-<!-- =====================================
-     VALOR DA APOSTA
-===================================== -->
-
 <section class="bet-panel">
-    <span class="bet-label">VALOR DA APOSTA</span>
-    <div class="bet-buttons">
+    <span style="color:#95849d;font-size:8px">VALOR</span>
+    <div style="display:flex;gap:5px">
         <button class="bet" data-bet="0.50">0,50</button>
         <button class="bet active" data-bet="1.00">1,00</button>
         <button class="bet" data-bet="2.00">2,00</button>
-        <button class="bet" data-bet="5.00">5,00</button>
     </div>
-</section>
-
-<!-- =====================================
-     EXTRAS
-===================================== -->
-
-<section class="extra-controls">
-    <button class="extra" id="turbo">⚡ Turbo</button>
-    <button class="extra active" id="sound">🔊 Som</button>
 </section>
 
 </div>
 
 <script>
 "use strict";
-
-/* =====================================================
-   CONFIGURAÇÃO
-===================================================== */
-
 const CONFIG = {
     apostaInicial: 1.00,
-    apostaMinima: 0.50,
-    apostaMaxima: 5.00,
-
-    /* Pesos dos símbolos */
-    pesos: {
-        "🍒": 35,
-        "🍋": 30,
-        "💰": 20,
-        "💎": 12,
-        "🏆": 6,
-        "🐍": 4 // Símbolo principal
-    },
-
-    pagamentos: {
-        "🍒": 1.20,
-        "🍋": 1.50,
-        "💰": 2.00,
-        "💎": 3.00,
-        "🏆": 5.00,
-        "🐍": 8.00
-    },
-
+    pesos: { "snake": 4, "diamond": 6, "trophy": 12, "coin": 20, "lemon": 30, "cherry": 35 },
+    pagamentos: { "snake": 8.00, "diamond": 5.00, "trophy": 3.00, "coin": 2.00, "lemon": 1.50, "cherry": 1.20 },
     tempos: [1000, 1500, 2000]
 };
 
-
-/* =====================================================
-   ELEMENTOS
-===================================================== */
+// LINKS DE IMAGENS PROFISSIONAIS (PNG Transparente)
+const IMAGENS = {
+    "snake": "https://cdn-icons-png.flaticon.com/512/616/616408.png", // Cobra Dourada
+    "diamond": "https://cdn-icons-png.flaticon.com/512/2933/2933116.png", // Diamante
+    "trophy": "https://cdn-icons-png.flaticon.com/512/3112/3112946.png", // Troféu
+    "coin": "https://cdn-icons-png.flaticon.com/512/2535/2535063.png", // Moeda
+    "lemon": "https://cdn-icons-png.flaticon.com/512/1135/1135543.png", // Limão
+    "cherry": "https://cdn-icons-png.flaticon.com/512/1135/1135548.png" // Cereja
+};
 
 const saldoEl = document.getElementById("saldo");
 const betDisplay = document.getElementById("betDisplay");
 const winDisplay = document.getElementById("winDisplay");
 const statusEl = document.getElementById("status");
-const resultLineEl = document.getElementById("resultLine");
 const spinButton = document.getElementById("spinButton");
-const turboButton = document.getElementById("turbo");
-const soundButton = document.getElementById("sound");
 const bgMusic = document.getElementById("bgMusic");
-
-const reels = [
-    document.getElementById("r1"),
-    document.getElementById("r2"),
-    document.getElementById("r3")
-];
-
+const reels = [document.getElementById("r1"), document.getElementById("r2"), document.getElementById("r3")];
 const reelBoxes = [...document.querySelectorAll(".reel")];
-
-
-/* =====================================================
-   ESTADO
-===================================================== */
 
 let aposta = CONFIG.apostaInicial;
 let girando = false;
-let turbo = false;
-let som = true;
 let audioContext = null;
 
-
-/* =====================================================
-   SISTEMA DE SALDO
-===================================================== */
-
-function obterSaldo(){
-    try{
-        if(window.SistemaSaldo && typeof window.SistemaSaldo.get === "function"){
-            const valor = Number(window.SistemaSaldo.get());
-            if(Number.isFinite(valor)) return valor;
-        }
-    }catch(e){}
-    return 0;
+function obterSaldo(){ return window.SistemaSaldo ? Number(window.SistemaSaldo.get()) || 0 : 0; }
+function debitar(v){ return window.SistemaSaldo ? window.SistemaSaldo.debitar(v) : false; }
+function creditar(v){ return window.SistemaSaldo ? window.SistemaSaldo.creditar(v) : false; }
+function atualizarSaldoVisual(){ 
+    saldoEl.textContent = Number(obterSaldo()).toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
+    if(window.SistemaSaldo && window.SistemaSaldo.atualizarTela) window.SistemaSaldo.atualizarTela();
 }
-
-function debitar(valor){
-    try{
-        if(window.SistemaSaldo && typeof window.SistemaSaldo.debitar === "function"){
-            return window.SistemaSaldo.debitar(valor);
-        }
-    }catch(e){ console.error("Erro ao debitar:", e); return false; }
-    return false;
-}
-
-function creditar(valor){
-    try{
-        if(window.SistemaSaldo && typeof window.SistemaSaldo.creditar === "function"){
-            return window.SistemaSaldo.creditar(valor);
-        }
-    }catch(e){ console.error("Erro ao creditar:", e); return false; }
-    return false;
-}
-
-function atualizarSaldoVisual(){
-    const saldo = obterSaldo();
-    saldoEl.textContent = formatarDinheiro(saldo);
-    try{
-        if(window.SistemaSaldo && typeof window.SistemaSaldo.atualizarTela === "function"){
-            window.SistemaSaldo.atualizarTela();
-        }
-    }catch(e){}
-}
-
-
-/* =====================================================
-   FORMATAÇÃO
-===================================================== */
-
-function formatarDinheiro(valor){
-    return Number(valor || 0).toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
-}
-
-
-/* =====================================================
-   SÍMBOLOS
-===================================================== */
 
 const simbolos = Object.keys(CONFIG.pesos);
-const nomes = {
-    "🍒":"CHERRY", "🍋":"CITRUS", "💰":"COIN",
-    "💎":"DIAMOND", "🏆":"TROPHY", "🐍":"SNAKE"
-};
-
 function escolherSimbolo(){
-    let total = simbolos.reduce((s, simbolo) => s + CONFIG.pesos[simbolo], 0);
-    let valor = Math.random() * total;
-    for(const simbolo of simbolos){
-        valor -= CONFIG.pesos[simbolo];
-        if(valor <= 0) return simbolo;
-    }
+    let total = simbolos.reduce((s, k) => s + CONFIG.pesos[k], 0);
+    let r = Math.random() * total;
+    for(let k of simbolos){ r -= CONFIG.pesos[k]; if(r <= 0) return k; }
     return simbolos[0];
 }
 
-function criarSimbolo(simbolo){
-    return `<div class="symbol"><span>${simbolo}</span><span class="symbol-label">${nomes[simbolo] || ""}</span></div>`;
+function criarSimbolo(key){
+    return `<div class="symbol"><img src="${IMAGENS[key]}" alt="${key}"></div>`;
 }
 
-function preencherRolo(elemento){
-    let html = "";
-    for(let i = 0; i < 18; i++) html += criarSimbolo(escolherSimbolo());
-    elemento.innerHTML = html;
+function preencherRolo(el){ el.innerHTML = Array(18).fill(0).map(()=>criarSimbolo(escolherSimbolo())).join(""); }
+
+function prepararResultado(el, vals){
+    const extras = Array(7).fill(0).map(()=>escolherSimbolo());
+    el.innerHTML = [...extras, ...vals, ...extras].map(criarSimbolo).join("");
+    el.style.transition = "none";
+    el.style.transform = `translateY(${-7 * 68}px)`;
 }
 
-function gerarResultado(){
-    const resultado = [];
-    for(let i = 0; i < 9; i++) resultado.push(escolherSimbolo());
-    return resultado;
+function encontrarLinhas(res){
+    const linhas = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    return linhas.filter(l => {
+        const v = l.map(i => res[i]);
+        return v.every(x => x === v[0]);
+    });
 }
 
-function prepararResultado(elemento, valores){
-    const extras = [];
-    for(let i = 0; i < 7; i++) extras.push(escolherSimbolo());
-    const lista = [...extras, ...valores, ...extras];
-    elemento.innerHTML = lista.map(criarSimbolo).join("");
-    
-    const altura = elemento.querySelector(".symbol").offsetHeight;
-    const inicio = extras.length;
-    elemento.style.transition = "none";
-    elemento.style.transform = `translateY(${-inicio * altura}px)`;
-}
-
-
-/* =====================================================
-   LÓGICA DE VITÓRIA
-===================================================== */
-
-function encontrarLinhas(resultado){
-    const linhas = [
-        [0,1,2], [3,4,5], [6,7,8], // Linhas
-        [0,3,6], [1,4,7], [2,5,8], // Colunas
-        [0,4,8], [2,4,6]           // Diagonais
-    ];
-
-    const vencedoras = [];
-    for(const linha of linhas){
-        const valores = linha.map(i => resultado[i]);
-        const primeiro = valores[0];
-        if(valores.every(v => v === primeiro)){
-            vencedoras.push(linha);
-        }
-    }
-    return vencedoras;
-}
-
-function calcularPremio(resultado){
-    const linhas = encontrarLinhas(resultado);
+function calcularPremio(res){
     let premio = 0;
-
-    for(const linha of linhas){
-        const simbolo = resultado[linha[0]];
-        const multiplicador = CONFIG.pagamentos[simbolo] || 0;
-        if(multiplicador > 0){
-            premio += aposta * multiplicador;
-        }
-    }
-    return { premio, linhas };
+    encontrarLinhas(res).forEach(l => {
+        premio += aposta * (CONFIG.pagamentos[res[l[0]]] || 0);
+    });
+    return premio;
 }
 
-
-/* =====================================================
-   ÁUDIO
-===================================================== */
-
-function initAudio() {
-    if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    }
-}
-
-function tocarSom(frequencia, duracao, tipo = "sine", volume = 0.15){
-    if(!som || !audioContext) return;
+function initAudio() { if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)(); }
+function tocarSom(f, d, t="sine", v=0.15){
+    if(!audioContext) return;
     try{
-        const oscilador = audioContext.createOscillator();
-        const ganho = audioContext.createGain();
-        oscilador.type = tipo;
-        oscilador.frequency.value = frequencia;
-        ganho.gain.setValueAtTime(.0001, audioContext.currentTime);
-        ganho.gain.exponentialRampToValueAtTime(volume, audioContext.currentTime + .015);
-        ganho.gain.exponentialRampToValueAtTime(.0001, audioContext.currentTime + duracao);
-        oscilador.connect(ganho);
-        ganho.connect(audioContext.destination);
-        oscilador.start();
-        oscilador.stop(audioContext.currentTime + duracao + .03);
+        const o = audioContext.createOscillator();
+        const g = audioContext.createGain();
+        o.type = t; o.frequency.value = f;
+        g.gain.setValueAtTime(0.001, audioContext.currentTime);
+        g.gain.exponentialRampToValueAtTime(v, audioContext.currentTime + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + d);
+        o.connect(g); g.connect(audioContext.destination);
+        o.start(); o.stop(audioContext.currentTime + d);
     }catch(e){}
 }
-
-function somGiro(){
-    tocarSom(115, .18, "sawtooth", 0.15);
-    setTimeout(() => tocarSom(155, .15, "sawtooth", 0.15), 100);
-}
-
-function somParada(indice){
-    tocarSom(230 + indice * 80, .12, "triangle", 0.15);
-}
-
-function somVitoria(){
-    [523, 659, 784, 1046].forEach((frequencia, indice) => {
-        setTimeout(() => tocarSom(frequencia, .22, "sine", 0.15), indice * 90);
-    });
-}
-
-
-/* =====================================================
-   EFEITOS VISUAIS
-===================================================== */
-
-function destacarVitoria(linhas){
-    document.querySelectorAll(".symbol").forEach(el => el.classList.remove("win-symbol"));
-    document.querySelectorAll(".reel").forEach(el => el.classList.remove("win"));
-    
-    const indices = [...new Set(linhas.flat())];
-    indices.forEach(indice => {
-        const coluna = indice % 3;
-        const linha = Math.floor(indice / 3);
-        const rolo = reels[coluna];
-        const simbolosRolo = rolo.querySelectorAll(".symbol");
-        const alvo = simbolosRolo[7 + linha];
-        if(alvo) alvo.classList.add("win-symbol");
-        reelBoxes[coluna].classList.add("win");
-    });
-}
-
-
-/* =====================================================
-   GIRO PRINCIPAL
-===================================================== */
 
 async function girar(){
     if(girando) return;
     girando = true;
     spinButton.disabled = true;
 
-    // Inicializa áudio e música
     initAudio();
-    if(bgMusic.paused) {
-        bgMusic.volume = 0.4;
-        bgMusic.play().catch(()=>{});
-    }
+    if(bgMusic.paused) bgMusic.play().catch(()=>{});
 
     // DESCONTO IMEDIATO
-    const saldo = obterSaldo();
-    if(saldo < aposta){
-        statusEl.textContent = "Saldo insuficiente.";
-        girando = false;
-        spinButton.disabled = false;
-        return;
-    }
-    const sucesso = debitar(aposta);
-    if(!sucesso){
-        statusEl.textContent = "Erro ao registrar aposta.";
-        girando = false;
-        spinButton.disabled = false;
-        return;
-    }
+    if(obterSaldo() < aposta){ statusEl.textContent = "Saldo insuficiente."; girando=false; spinButton.disabled=false; return; }
+    if(!debitar(aposta)){ statusEl.textContent = "Erro ao apostar."; girando=false; spinButton.disabled=false; return; }
 
-    winDisplay.textContent = formatarDinheiro(0);
     statusEl.textContent = "Girando...";
-    resultLineEl.textContent = "Boa sorte...";
-    reelBoxes.forEach(reel => reel.classList.add("spinning"));
-    somGiro();
+    reelBoxes.forEach(r => r.classList.add("spinning"));
+    tocarSom(115, 0.18, "sawtooth", 0.15);
 
-    const resultado = gerarResultado();
-    const colunas = [
-        [resultado[0], resultado[3], resultado[6]],
-        [resultado[1], resultado[4], resultado[7]],
-        [resultado[2], resultado[5], resultado[8]]
-    ];
-
+    const res = Array(9).fill(0).map(escolherSimbolo);
+    const cols = [[res[0],res[3],res[6]], [res[1],res[4],res[7]], [res[2],res[5],res[8]]];
+    
     reels.forEach(preencherRolo);
+    
+    await Promise.all(reels.map((el, i) => new Promise(resolve => {
+        el.style.transition = `transform ${CONFIG.tempos[i]}ms cubic-bezier(.1,.8,.1,1)`;
+        el.style.transform = `translateY(-${(11+Math.random()*5)*68}px)`;
+        setTimeout(() => { prepararResultado(el, cols[i]); tocarSom(230+i*80, 0.12, "triangle", 0.15); resolve(); }, CONFIG.tempos[i]);
+    })));
 
-    const tempos = turbo ? [450,550,650] : CONFIG.tempos;
-
-    await Promise.all(reels.map((elemento, indice) => {
-        return new Promise(resolve => {
-            const altura = 68;
-            const distancia = -(11 + Math.floor(Math.random()*6)) * altura;
-            
-            elemento.style.transition = `transform ${tempos[indice]}ms cubic-bezier(.12,.72,.16,1)`;
-            elemento.style.transform = `translateY(${distancia}px)`;
-
-            setTimeout(() => {
-                prepararResultado(elemento, colunas[indice]);
-                somParada(indice);
-                resolve();
-            }, tempos[indice]);
-        });
-    }));
-
-    reelBoxes.forEach(reel => reel.classList.remove("spinning"));
-
-    const resultadoFinal = calcularPremio(resultado);
-
-    if(resultadoFinal.premio > 0){
-        winDisplay.textContent = formatarDinheiro(resultadoFinal.premio);
-        statusEl.textContent = `✨ Vitória! ${formatarDinheiro(resultadoFinal.premio)}`;
-        resultLineEl.textContent = `${resultadoFinal.linhas.length} linha(s) premiada(s)`;
-        destacarVitoria(resultadoFinal.linhas);
-        somVitoria();
-        creditar(resultadoFinal.premio);
+    reelBoxes.forEach(r => r.classList.remove("spinning"));
+    
+    const premio = calcularPremio(res);
+    if(premio > 0){
+        winDisplay.textContent = Number(premio).toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
+        statusEl.textContent = `Vitória! ${Number(premio).toLocaleString("pt-BR", { style:"currency", currency:"BRL" })}`;
+        creditar(premio);
+        tocarSom(600, 0.3, "sine", 0.15);
+        reelBoxes.forEach(r => r.classList.add("win"));
     } else {
-        winDisplay.textContent = formatarDinheiro(0);
-        statusEl.textContent = "Quase! Tente novamente.";
-        resultLineEl.textContent = "Nenhuma linha premiada";
+        winDisplay.textContent = "R$ 0,00";
+        statusEl.textContent = "Quase!";
+        reelBoxes.forEach(r => r.classList.remove("win"));
     }
 
     atualizarSaldoVisual();
@@ -973,53 +252,17 @@ async function girar(){
     spinButton.disabled = false;
 }
 
-
-/* =====================================================
-   EVENTOS
-===================================================== */
-
-document.querySelectorAll(".bet").forEach(botao => {
-    botao.addEventListener("click", () => {
-        if(girando) return;
-        aposta = Number(botao.dataset.bet);
-        aposta = Math.max(CONFIG.apostaMinima, Math.min(CONFIG.apostaMaxima, aposta));
-        document.querySelectorAll(".bet").forEach(b => b.classList.remove("active"));
-        botao.classList.add("active");
-        betDisplay.textContent = formatarDinheiro(aposta);
-    });
+document.querySelectorAll(".bet").forEach(b => b.onclick = () => {
+    if(girando) return;
+    aposta = Number(b.dataset.bet);
+    document.querySelectorAll(".bet").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    betDisplay.textContent = Number(aposta).toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
 });
 
-spinButton.addEventListener("click", () => girar());
-
-turboButton.addEventListener("click", () => {
-    turbo = !turbo;
-    turboButton.classList.toggle("active", turbo);
-    turboButton.textContent = turbo ? "⚡ Turbo ON" : "⚡ Turbo";
-});
-
-soundButton.addEventListener("click", () => {
-    som = !som;
-    soundButton.classList.toggle("active", som);
-    soundButton.textContent = som ? "🔊 Som" : "🔇 Som";
-    if(som) bgMusic.play().catch(()=>{});
-    else bgMusic.pause();
-});
-
-
-/* =====================================================
-   INICIALIZAÇÃO
-===================================================== */
-
-reels.forEach(preencherRolo);
-reels.forEach((elemento, indice) => {
-    prepararResultado(elemento, [escolherSimbolo(), escolherSimbolo(), escolherSimbolo()]);
-});
-
-betDisplay.textContent = formatarDinheiro(aposta);
+spinButton.onclick = girar;
 atualizarSaldoVisual();
-
-window.addEventListener("saldoAtualizado", atualizarSaldoVisual);
-
+reels.forEach(preencherRolo);
 </script>
 </body>
 </html>
