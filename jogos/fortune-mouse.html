@@ -854,6 +854,91 @@ button{
 }
 
 /* =========================================
+   SUPER BÔNUS - TELA AMARELA
+========================================= */
+
+.super-bonus-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 215, 0, 0.95);
+    z-index: 1000;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: bonusFlash 0.5s ease-in-out;
+}
+
+.super-bonus-overlay.active {
+    display: flex;
+}
+
+@keyframes bonusFlash {
+    0% { opacity: 0; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.05); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.bonus-text {
+    font-size: clamp(32px, 10vw, 64px);
+    font-weight: 1000;
+    color: #8B4513;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    text-shadow: 
+        0 0 20px rgba(255, 255, 255, 0.8),
+        0 0 40px rgba(255, 215, 0, 1);
+    animation: bonusPulse 1s ease-in-out infinite;
+}
+
+@keyframes bonusPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.bonus-subtext {
+    font-size: clamp(18px, 5vw, 28px);
+    color: #A0522D;
+    margin-top: 20px;
+    font-weight: 900;
+    text-align: center;
+}
+
+.bonus-spins {
+    font-size: clamp(48px, 15vw, 96px);
+    color: #FF4500;
+    margin-top: 30px;
+    font-weight: 1000;
+    text-shadow: 0 0 30px rgba(255, 69, 0, 0.8);
+}
+
+.free-spins-indicator {
+    position: absolute;
+    top: 70px;
+    right: 10px;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #8B4513;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-weight: 900;
+    font-size: 11px;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.6);
+    display: none;
+    z-index: 100;
+}
+
+.free-spins-indicator.active {
+    display: block;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* =========================================
    MOBILE
 ========================================= */
 
@@ -889,6 +974,19 @@ button{
 <div class="game">
 
 <div class="glow"></div>
+
+<!-- Indicador de Rodadas Grátis -->
+<div class="free-spins-indicator" id="freeSpinsIndicator">
+    🎰 RODADAS GRÁTIS: <span id="freeSpinsCount">0</span>
+</div>
+
+<!-- Overlay Super Bônus -->
+<div class="super-bonus-overlay" id="superBonusOverlay">
+    <div class="bonus-text">🏆 PRÊMIO<br>SUPER BÔNUS 🏆</div>
+    <div class="bonus-subtext">VOCÊ GANHOU</div>
+    <div class="bonus-spins">10</div>
+    <div class="bonus-subtext">RODADAS GRÁTIS!</div>
+</div>
 
 <!-- =====================================
      TOPO
@@ -1205,17 +1303,19 @@ const CONFIG = {
 
     apostaMaxima: 5.00,
 
-    /* Pesos dos símbolos */
+    /* Pesos dos símbolos - AJUSTADO PARA VANTAGEM DA CASA */
+    /* Símbolos comuns têm maior peso (mais frequentes) */
+    /* Símbolos valiosos têm menor peso (mais raros) */
 
     pesos: {
 
-        "🍒": 24,
-        "🍋": 22,
-        "🪙": 18,
-        "🏮": 14,
-        "💎": 9,
-        "🐭": 7,
-        "🔥": 6
+        "🍒": 35,      // Mais comum, menor prêmio
+        "🍋": 30,      // Comum
+        "🪙": 20,      // Médio
+        "🏮": 12,      // Raro
+        "💎": 6,       // Muito raro
+        "🐭": 4,       // Ultra raro
+        "🔥": 3        // Wild super raro
 
     },
 
@@ -1244,14 +1344,17 @@ const CONFIG = {
     chanceRespin: 0.45,
 
     /*
-     Tempo dos três rolos.
+     Tempo dos três rolos - MAIS LENTOS (efeito cassino)
     */
 
     tempos: [
-        1100,
-        1400,
-        1700
-    ]
+        2800,  // Rolo 1: 2.8 segundos
+        3200,  // Rolo 2: 3.2 segundos
+        3600   // Rolo 3: 3.6 segundos
+    ],
+
+    /* Chance de Super Bônus (muito baixa) */
+    chanceSuperBonus: 0.02  // 2% de chance
 
 };
 
@@ -1306,6 +1409,15 @@ const reels = [
 const reelBoxes =
     [...document.querySelectorAll(".reel")];
 
+const superBonusOverlay =
+    document.getElementById("superBonusOverlay");
+
+const freeSpinsIndicator =
+    document.getElementById("freeSpinsIndicator");
+
+const freeSpinsCount =
+    document.getElementById("freeSpinsCount");
+
 
 /* =====================================================
    ESTADO
@@ -1328,6 +1440,10 @@ let ultimoPremio =
 
 let audioContext =
     null;
+
+/* Estado das rodadas grátis */
+let rodadasGratis = 0;
+let emRodadasGratis = false;
 
 
 /* =====================================================
@@ -1390,10 +1506,35 @@ function debitar(valor){
 
     }
 
-    /*
-       Se SistemaSaldo ainda não estiver
-       disponível, não inventamos um saldo local.
-    */
+    return false;
+}
+
+
+function creditar(valor){
+
+    try{
+
+        if(
+            window.SistemaSaldo &&
+            typeof window.SistemaSaldo.creditar === "function"
+        ){
+
+            return window.SistemaSaldo.creditar(
+                valor
+            );
+
+        }
+
+    }catch(e){
+
+        console.error(
+            "Erro ao creditar prêmio:",
+            e
+        );
+
+        return false;
+
+    }
 
     return false;
 }
@@ -1633,28 +1774,21 @@ function prepararResultado(
 
 
 /* =====================================================
-   LINHAS VENCEDORAS
+   LINHAS VENCEDORAS - LÓGICA CORRIGIDA
 ===================================================== */
 
 function encontrarLinhas(resultado){
 
     const linhas = [
 
-        [0,1,2],
-
-        [3,4,5],
-
-        [6,7,8],
-
-        [0,3,6],
-
-        [1,4,7],
-
-        [2,5,8],
-
-        [0,4,8],
-
-        [2,4,6]
+        [0,1,2],  // Linha 1
+        [3,4,5],  // Linha 2
+        [6,7,8],  // Linha 3
+        [0,3,6],  // Coluna 1
+        [1,4,7],  // Coluna 2
+        [2,5,8],  // Coluna 3
+        [0,4,8],  // Diagonal 1
+        [2,4,6]   // Diagonal 2
 
     ];
 
@@ -1669,27 +1803,30 @@ function encontrarLinhas(resultado){
                 i => resultado[i]
             );
 
-        const normais =
-            valores.filter(
-                x => x !== "🔥"
-            );
-
         /*
-           Linha com Wilds e um símbolo comum.
+           LÓGICA CORRIGIDA:
+           Só ganha se TODOS os 3 símbolos forem IGUAIS
+           OU se tiver Wilds completando o mesmo símbolo
+           
+           2 iguais + 1 diferente = NÃO É PRÊMIO
         */
 
-        if(
-            normais.length === 0
-            ||
-            normais.every(
-                x => x === normais[0]
-            )
-        ){
+        // Filtra os símbolos que não são Wild
+        const normais = valores.filter(x => x !== "🔥");
 
-            vencedoras.push(
-                linha
-            );
+        // Se todos são Wild, é vitória
+        if(normais.length === 0){
+            vencedoras.push(linha);
+            continue;
+        }
 
+        // Verifica se todos os não-Wild são IGUAIS
+        const primeiroSimbolo = normais[0];
+        const todosIguais = normais.every(x => x === primeiroSimbolo);
+
+        // Só é vitória se todos forem iguais (ou Wild completando)
+        if(todosIguais){
+            vencedoras.push(linha);
         }
 
     }
@@ -1907,6 +2044,13 @@ function somVitoria(){
 
 }
 
+function somSuperBonus(){
+    // Som especial para super bônus
+    [523, 659, 784, 1046, 1318].forEach((freq, i) => {
+        setTimeout(() => tocarSom(freq, 0.3, "sine", 0.08), i * 150);
+    });
+}
+
 
 /* =====================================================
    PARTÍCULAS
@@ -2057,12 +2201,6 @@ function destacarVitoria(
             )
         ];
 
-    /*
-       Como os três rolos são verticais,
-       destacamos visualmente os símbolos
-       correspondentes.
-    */
-
     indices.forEach(
         indice => {
 
@@ -2081,11 +2219,6 @@ function destacarVitoria(
                 rolo.querySelectorAll(
                     ".symbol"
                 );
-
-            /*
-               Os sete símbolos extras
-               ficam antes do resultado.
-            */
 
             const alvo =
                 simbolosRolo[
@@ -2112,6 +2245,63 @@ function destacarVitoria(
 
 
 /* =====================================================
+   SUPER BÔNUS
+===================================================== */
+
+function ativarSuperBonus(){
+    
+    // Mostrar overlay amarelo
+    superBonusOverlay.classList.add('active');
+    
+    // Tocar som especial
+    somSuperBonus();
+    
+    // Criar muitas partículas
+    criarParticulas(50);
+    criarMoedas();
+    
+    // Configurar 10 rodadas grátis
+    rodadasGratis = 10;
+    emRodadasGratis = true;
+    
+    // Atualizar indicador
+    freeSpinsCount.textContent = rodadasGratis;
+    freeSpinsIndicator.classList.add('active');
+    
+    // Esconder overlay após 3 segundos
+    setTimeout(() => {
+        superBonusOverlay.classList.remove('active');
+        
+        // Iniciar automaticamente as rodadas grátis
+        iniciarRodadasGratis();
+        
+    }, 3000);
+}
+
+async function iniciarRodadasGratis(){
+    
+    while(rodadasGratis > 0 && !girando){
+        
+        // Aguardar um pouco entre cada rodada
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        if(rodadasGratis > 0){
+            await girar(true); // true = é rodada grátis
+            rodadasGratis--;
+            freeSpinsCount.textContent = rodadasGratis;
+        }
+    }
+    
+    // Quando acabar as rodadas grátis
+    if(rodadasGratis === 0){
+        emRodadasGratis = false;
+        freeSpinsIndicator.classList.remove('active');
+        statusEl.textContent = "Rodadas grátis finalizadas!";
+    }
+}
+
+
+/* =====================================================
    GIRO
 ===================================================== */
 
@@ -2134,17 +2324,13 @@ async function girar(
         true;
 
     /*
-       Respin não gera nova aposta.
+       Respin e rodadas grátis não geram nova aposta.
     */
 
-    if(!isRespin){
+    if(!isRespin && !emRodadasGratis){
 
         const saldo =
             obterSaldo();
-
-        /*
-           SistemaSaldo é a fonte de verdade.
-        */
 
         if(
             saldo < aposta
@@ -2191,7 +2377,9 @@ async function girar(
     statusEl.textContent =
         isRespin
             ? "↻ RESPIN • a chama continua acesa!"
-            : "Os rolos estão acelerando...";
+            : emRodadasGratis
+                ? `🎰 RODADA GRÁTIS (${rodadasGratis} restantes)`
+                : "Os rolos estão acelerando...";
 
     resultLineEl.textContent =
         "Boa sorte...";
@@ -2207,13 +2395,6 @@ async function girar(
 
     const resultado =
         gerarResultado();
-
-    /*
-       Separação por colunas:
-       coluna 1 = posições 0,3,6
-       coluna 2 = posições 1,4,7
-       coluna 3 = posições 2,5,8
-    */
 
     const colunas = [
 
@@ -2342,12 +2523,8 @@ async function girar(
 
         criarMoedas();
 
-        /*
-           NÃO existe crédito automático aqui.
-
-           O seu SistemaSaldo permanece responsável
-           pelo fluxo de saldo/pagamento existente.
-        */
+        /* Credita o prêmio */
+        creditar(resultadoFinal.premio);
 
     }else{
 
@@ -2355,10 +2532,33 @@ async function girar(
             formatarDinheiro(0);
 
         statusEl.textContent =
-            "Quase! Tente novamente.";
+            emRodadasGratis
+                ? `Quase! (${rodadasGratis} rodadas restantes)`
+                : "Quase! Tente novamente.";
 
         resultLineEl.textContent =
             "Nenhuma linha premiada";
+
+    }
+
+    /*
+       Verificar Super Bônus (3 ratinhos 🐭)
+    */
+
+    const quantidadeRatinho =
+        resultado.filter(
+            x => x === "🐭"
+        ).length;
+
+    if(
+        quantidadeRatinho >= 3 &&
+        Math.random() < CONFIG.chanceSuperBonus &&
+        !emRodadasGratis
+    ){
+
+        ativarSuperBonus();
+        girando = false;
+        return;
 
     }
 
@@ -2373,7 +2573,8 @@ async function girar(
 
     if(
         quantidadeWild >= 3 &&
-        Math.random() < CONFIG.chanceRespin
+        Math.random() < CONFIG.chanceRespin &&
+        !emRodadasGratis
     ){
 
         respinButton.disabled =
@@ -2409,7 +2610,7 @@ document
                 "click",
                 () => {
 
-                    if(girando){
+                    if(girando || emRodadasGratis){
 
                         return;
 
@@ -2581,12 +2782,6 @@ betDisplay.textContent =
 
 atualizarSaldoVisual();
 
-
-/*
-   Caso o sistema externo dispare
-   um evento de atualização de saldo,
-   apenas atualizamos nossa visualização.
-*/
 
 window.addEventListener(
     "saldoAtualizado",
