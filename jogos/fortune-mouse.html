@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+
 <title>Fortune Ember — Rato da Fortuna</title>
 
 <!-- MÚSICA DE FUNDO -->
@@ -12,268 +13,1335 @@
 
 <style>
 :root{
-    --bg:#07050b; --panel:#140d19; --gold:#f3c65b; --gold2:#fff0a1;
-    --text:#fff8e4; --muted:#a99aad;
+    --bg:#07050b;
+    --panel:#140d19;
+    --panel2:#211426;
+    --gold:#f3c65b;
+    --gold2:#fff0a1;
+    --gold3:#9b641b;
+    --red:#7e1d2c;
+    --red2:#c83d4d;
+    --text:#fff8e4;
+    --muted:#a99aad;
 }
-*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html, body{ margin:0; width:100%; min-height:100%; background: radial-gradient(circle at 50% 0%,#3a1b38 0%,#07050b 78%); color:white; font-family: system-ui, sans-serif; }
-body{ display:flex; justify-content:center; overflow-x:hidden; }
-button{ font-family:inherit; border:0; cursor:pointer; }
-.game{ width:min(100%,560px); min-height:100vh; padding:10px; position:relative; }
-.glow{ position:fixed; width:500px; height:500px; left:50%; top:-260px; transform:translateX(-50%); pointer-events:none; background: radial-gradient(circle, rgba(243,198,91,.25), transparent 70%); filter:blur(10px); }
 
-/* TOPO */
-.top{ height:58px; display:flex; align-items:center; justify-content:space-between; z-index:5; position:relative; }
-.brand{ display:flex; align-items:center; gap:9px; }
-.brand-icon{ width:43px; height:43px; border-radius:14px; display:grid; place-items:center; font-size:25px; background: linear-gradient(145deg, #fff0a0, #8d5315); box-shadow: 0 5px 20px rgba(0,0,0,.5); }
-.balance{ min-width:108px; padding:7px 10px; border-radius:13px; text-align:right; background: linear-gradient(180deg, #24162b, #120b17); border:1px solid #58405f; }
-.balance-label{ display:block; color:#938298; font-size:8px; }
-.balance-value{ display:block; color:var(--gold2); font-size:15px; font-weight:900; }
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
 
-/* TÍTULO */
-.title-area{ text-align:center; padding:4px 0 10px; }
-.title{ margin:0; font-size: clamp(27px, 8vw, 42px); font-weight:1000; letter-spacing:3px; text-transform:uppercase; background: linear-gradient(180deg, #fff6bc, #ad6919); -webkit-background-clip:text; color:transparent; }
-.subtitle{ color:#aa99b0; font-size:9px; letter-spacing:2.5px; }
+html,
+body{
+    margin:0;
+    width:100%;
+    min-height:100%;
+    background:
+        radial-gradient(circle at 50% 0%,#3a1b38 0%,#160b1c 32%,#07050b 78%);
+    color:white;
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
 
-/* MÁQUINA */
-.machine{ padding:8px; border-radius:27px; background: linear-gradient(145deg, #ffe17b, #100913); box-shadow: 0 20px 45px rgba(0,0,0,.65); }
-.machine-inner{ padding:10px; border-radius:21px; background: linear-gradient(180deg, #29172e, #100912); }
-.reels{ display:grid; grid-template-columns:repeat(3,1fr); gap:7px; padding:8px; border-radius:18px; background:#08050b; border:1px solid #725333; position:relative; overflow:hidden; }
-.reel{ height:205px; border-radius:13px; overflow:hidden; position:relative; background: linear-gradient(180deg, #100913, #2b1a31 50%, #0d0811); border:1px solid #62466c; }
-.strip{ position:absolute; left:0; right:0; top:0; will-change:transform; }
-.symbol{ height:68px; display:grid; place-items:center; font-size:38px; filter: drop-shadow(0 5px 7px rgba(0,0,0,.8)); }
-.reel.spinning .symbol{ filter: blur(1.8px) brightness(1.15); }
-.reel.win{ box-shadow: inset 0 0 25px rgba(255,210,80,.35), 0 0 24px rgba(255,210,80,.7); }
-@keyframes winPulse{ from{ filter:brightness(1); } to{ filter:brightness(1.45) drop-shadow(0 0 10px gold); } }
-.symbol.win-symbol{ animation: winPulse .5s ease-in-out infinite alternate; }
+body{
+    display:flex;
+    justify-content:center;
+    overflow-x:hidden;
+}
 
-/* CONTROLES */
-.status{ min-height:32px; display:flex; align-items:center; justify-content:center; margin-top:7px; padding:7px; border-radius:11px; background:#0b0710; border:1px solid #3b293f; font-size:10px; text-align:center; }
-.main-controls{ display:grid; grid-template-columns: 1fr 1.55fr 1fr; gap:8px; margin-top:10px; }
-.control-box{ min-height:61px; padding:9px; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:15px; background: linear-gradient(180deg, #2a1931, #160c1d); border:1px solid #59405f; }
-.control-label{ color:#94849c; font-size:7px; }
-.control-value{ margin-top:3px; color:#ffe39a; font-size:15px; font-weight:900; }
-.spin-button{ min-height:61px; border-radius:18px; background: radial-gradient(circle at 50% 18%, #fff4b0, #8c4813); color:#351407; font-size:20px; font-weight:1000; border:3px solid #fff3b0; box-shadow: 0 7px 0 #62330e; transition: transform .1s; }
-.spin-button:active{ transform:translateY(5px); box-shadow: 0 2px 0 #62330e; }
-.spin-button:disabled{ opacity:.55; }
+button{
+    font-family:inherit;
+    border:0;
+    cursor:pointer;
+}
 
-.bet-panel{ margin-top:9px; padding:9px; display:flex; align-items:center; justify-content:space-between; border-radius:15px; background:#120b18; border:1px solid #3b2942; }
-.bet{ min-width:47px; padding:8px; border-radius:9px; background:#21142a; border:1px solid #4a3552; color:#d8c5dd; font-size:10px; }
-.bet.active{ color:#ffe99c; border-color:#dfb84e; }
+.game{
+    width:min(100%,560px);
+    min-height:100vh;
+    padding:10px 10px 22px;
+    position:relative;
+    overflow:hidden;
+}
 
-.extra-controls{ margin-top:8px; display:grid; grid-template-columns:repeat(4,1fr); gap:7px; }
-.extra{ padding:10px; border-radius:11px; background:#17101e; border:1px solid #3d2c45; color:#c6b7cb; font-size:9px; }
-.extra.active{ color:#ffe08b; border-color:#d7a83f; }
+/* =========================================
+   FUNDO
+========================================= */
 
-/* SUPER BÔNUS */
-.super-bonus-overlay { position: fixed; inset: 0; background: rgba(255, 215, 0, 0.95); z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; }
-.super-bonus-overlay.active { display: flex; animation: bonusFlash 0.5s; }
-@keyframes bonusFlash { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
-.bonus-text { font-size: 40px; font-weight: 1000; color: #8B4513; text-align: center; }
-.free-spins-indicator { position: absolute; top: 70px; right: 10px; background: gold; color: #8B4513; padding: 8px; border-radius: 10px; font-weight: 900; display: none; z-index: 100; }
-.free-spins-indicator.active { display: block; }
+.game::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:.13;
+    background-image: radial-gradient(#fff 0.7px,transparent .8px);
+    background-size:20px 20px;
+}
+
+.glow{
+    position:fixed;
+    width:500px;
+    height:500px;
+    left:50%;
+    top:-260px;
+    transform:translateX(-50%);
+    pointer-events:none;
+    background: radial-gradient(circle, rgba(243,198,91,.25), rgba(243,198,91,.08) 35%, transparent 70%);
+    filter:blur(10px);
+}
+
+/* =========================================
+   TOPO
+========================================= */
+
+.top{
+    height:58px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    position:relative;
+    z-index:5;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+.brand-icon{
+    width:43px;
+    height:43px;
+    border-radius:14px;
+    display:grid;
+    place-items:center;
+    font-size:25px;
+    background: linear-gradient(145deg, #fff0a0, #e3ad3d 48%, #8d5315);
+    box-shadow: inset 0 1px 2px rgba(255,255,255,.8), 0 5px 20px rgba(0,0,0,.5), 0 0 22px rgba(243,198,91,.2);
+}
+
+.brand-title{
+    font-weight:1000;
+    font-size:15px;
+    letter-spacing:1px;
+}
+
+.brand-sub{
+    margin-top:3px;
+    color:#a997ae;
+    font-size:8px;
+    letter-spacing:1.8px;
+}
+
+.balance{
+    min-width:108px;
+    padding:7px 10px;
+    border-radius:13px;
+    text-align:right;
+    background: linear-gradient(180deg, #24162b, #120b17);
+    border:1px solid #58405f;
+    box-shadow: inset 0 1px rgba(255,255,255,.06), 0 5px 15px rgba(0,0,0,.35);
+}
+
+.balance-label{
+    display:block;
+    color:#938298;
+    font-size:8px;
+    letter-spacing:1px;
+}
+
+.balance-value{
+    display:block;
+    margin-top:2px;
+    color:var(--gold2);
+    font-size:15px;
+    font-weight:900;
+}
+
+/* =========================================
+   TÍTULO
+========================================= */
+
+.title-area{
+    position:relative;
+    z-index:2;
+    text-align:center;
+    padding:4px 0 10px;
+}
+
+.title{
+    margin:0;
+    font-size: clamp(27px, 8vw, 42px);
+    line-height:1;
+    font-weight:1000;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    background: linear-gradient(180deg, #fff6bc 0%, #f4ca58 42%, #ad6919 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,.8));
+}
+
+.subtitle{
+    margin-top:7px;
+    color:#aa99b0;
+    font-size:9px;
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+}
+
+/* =========================================
+   MÁQUINA
+========================================= */
+
+.machine{
+    position:relative;
+    z-index:3;
+    padding:8px;
+    border-radius:27px;
+    background: linear-gradient(145deg, #ffe17b 0%, #9a641d 10%, #351a35 17%, #100913 78%, #d09b37 100%);
+    box-shadow: 0 20px 45px rgba(0,0,0,.65), 0 0 0 1px rgba(255,220,116,.35);
+}
+
+.machine-inner{
+    padding:10px;
+    border-radius:21px;
+    background: linear-gradient(180deg, #29172e, #100912 48%, #190c1e);
+    box-shadow: inset 0 1px rgba(255,255,255,.12), inset 0 -20px 40px rgba(0,0,0,.5);
+}
+
+.machine-header{
+    height:40px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+}
+
+.machine-header-line{
+    width:25%;
+    height:1px;
+    background: linear-gradient(90deg, transparent, #d9aa49, transparent);
+}
+
+.machine-header-text{
+    margin:0 12px;
+    color:#f8d879;
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:2px;
+}
+
+.machine-feature{
+    position:absolute;
+    right:4px;
+    top:5px;
+    color:#76657a;
+    font-size:7px;
+    letter-spacing:1px;
+}
+
+/* =========================================
+   ROLOS
+========================================= */
+
+.reels{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:7px;
+    padding:8px;
+    border-radius:18px;
+    background:#08050b;
+    border:1px solid #725333;
+    box-shadow: inset 0 0 30px #000, 0 7px 18px rgba(0,0,0,.5);
+    position:relative;
+    overflow:hidden;
+}
+
+.reels::before{
+    content:"";
+    position:absolute;
+    left:5%;
+    right:5%;
+    top:50%;
+    height:2px;
+    transform:translateY(-50%);
+    background: linear-gradient(90deg, transparent, rgba(255,221,112,.45), transparent);
+    box-shadow: 0 0 12px rgba(255,216,100,.4);
+    z-index:10;
+    pointer-events:none;
+}
+
+.reel{
+    height:205px;
+    border-radius:13px;
+    overflow:hidden;
+    position:relative;
+    background: linear-gradient(180deg, #100913, #2b1a31 50%, #0d0811);
+    border:1px solid #62466c;
+    box-shadow: inset 0 0 20px rgba(0,0,0,.8), 0 4px 10px rgba(0,0,0,.45);
+}
+
+.reel::before,
+.reel::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    height:28%;
+    z-index:4;
+    pointer-events:none;
+}
+
+.reel::before{
+    top:0;
+    background: linear-gradient(rgba(6,3,9,.95), transparent);
+}
+
+.reel::after{
+    bottom:0;
+    background: linear-gradient(transparent, rgba(6,3,9,.95));
+}
+
+.strip{
+    position:absolute;
+    left:0;
+    right:0;
+    top:0;
+    will-change:transform;
+}
+
+.symbol{
+    height:68px;
+    display:grid;
+    place-items:center;
+    position:relative;
+    font-size:38px;
+    filter: drop-shadow(0 5px 7px rgba(0,0,0,.8));
+}
+
+.symbol-label{
+    position:absolute;
+    bottom:1px;
+    color:#bba9c0;
+    font-size:6px;
+    letter-spacing:1px;
+}
+
+.reel.spinning .symbol{
+    filter: blur(1.8px) brightness(1.15);
+}
+
+.reel.win{
+    box-shadow: inset 0 0 25px rgba(255,210,80,.35), 0 0 24px rgba(255,210,80,.7);
+}
+
+@keyframes winPulse{
+    from{ filter: brightness(1) drop-shadow(0 0 0 rgba(255,220,90,0)); }
+    to{ filter: brightness(1.45) drop-shadow(0 0 10px rgba(255,220,90,.9)); }
+}
+
+.symbol.win-symbol{
+    animation: winPulse .5s ease-in-out infinite alternate;
+}
+
+/* =========================================
+   MENSAGEM
+========================================= */
+
+.status{
+    min-height:32px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-top:7px;
+    padding:7px 10px;
+    border-radius:11px;
+    background:#0b0710;
+    border:1px solid #3b293f;
+    color:#cbbbd0;
+    font-size:10px;
+    text-align:center;
+}
+
+.result-line{
+    height:25px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#a998af;
+    font-size:9px;
+    letter-spacing:1px;
+}
+
+/* =========================================
+   CONTROLES
+========================================= */
+
+.main-controls{
+    display:grid;
+    grid-template-columns: 1fr 1.55fr 1fr;
+    gap:8px;
+    margin-top:10px;
+}
+
+.control-box{
+    min-height:61px;
+    padding:9px 6px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    border-radius:15px;
+    background: linear-gradient(180deg, #2a1931, #160c1d);
+    border:1px solid #59405f;
+    box-shadow: inset 0 1px rgba(255,255,255,.08), 0 5px 14px rgba(0,0,0,.4);
+}
+
+.control-label{
+    color:#94849c;
+    font-size:7px;
+    letter-spacing:1px;
+}
+
+.control-value{
+    margin-top:3px;
+    color:#ffe39a;
+    font-size:15px;
+    font-weight:900;
+}
+
+.spin-button{
+    min-height:61px;
+    border-radius:18px;
+    background: radial-gradient(circle at 50% 18%, #fff4b0 0%, #f4c64d 35%, #d38b20 68%, #8c4813 100%);
+    color:#351407;
+    font-size:20px;
+    font-weight:1000;
+    letter-spacing:1px;
+    border:3px solid #fff3b0;
+    box-shadow: 0 7px 0 #62330e, 0 12px 22px rgba(0,0,0,.55), inset 0 2px 3px rgba(255,255,255,.8);
+    transition: transform .1s, filter .15s;
+}
+
+.spin-button:active{
+    transform:translateY(5px);
+    box-shadow: 0 2px 0 #62330e, 0 6px 12px rgba(0,0,0,.5);
+}
+
+.spin-button:disabled{
+    opacity:.55;
+    filter:grayscale(.4);
+}
+
+/* =========================================
+   APOSTA
+========================================= */
+
+.bet-panel{
+    margin-top:9px;
+    padding:9px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:7px;
+    border-radius:15px;
+    background:#120b18;
+    border:1px solid #3b2942;
+}
+
+.bet-label{
+    color:#95849d;
+    font-size:8px;
+    letter-spacing:1px;
+}
+
+.bet-buttons{
+    display:flex;
+    gap:5px;
+}
+
+.bet{
+    min-width:47px;
+    padding:8px 4px;
+    border-radius:9px;
+    background:#21142a;
+    border:1px solid #4a3552;
+    color:#d8c5dd;
+    font-size:10px;
+}
+
+.bet.active{
+    color:#ffe99c;
+    border-color:#dfb84e;
+    box-shadow: 0 0 12px rgba(218,166,54,.2);
+}
+
+/* =========================================
+   BOTÕES EXTRAS
+========================================= */
+
+.extra-controls{
+    margin-top:8px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:7px;
+}
+
+.extra{
+    padding:10px 4px;
+    border-radius:11px;
+    background:#17101e;
+    border:1px solid #3d2c45;
+    color:#c6b7cb;
+    font-size:9px;
+}
+
+.extra.active{
+    color:#ffe08b;
+    border-color:#d7a83f;
+    background:#24172b;
+}
+
+.extra:disabled{
+    opacity:.4;
+}
+
+/* =========================================
+   INFO
+========================================= */
+
+.info{
+    margin-top:8px;
+    padding:11px;
+    border-radius:14px;
+    background:#100a15;
+    border:1px solid #30213a;
+    color:#97899e;
+    font-size:9px;
+    line-height:1.55;
+}
+
+.info b{
+    color:#d5c3d9;
+}
+
+/* =========================================
+   PARTÍCULAS
+========================================= */
+
+.particle{
+    position:fixed;
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#ffd967;
+    z-index:50;
+    pointer-events:none;
+    animation: particleFly .85s ease-out forwards;
+}
+
+@keyframes particleFly{
+    to{
+        transform: translate(var(--x), var(--y)) scale(.1);
+        opacity:0;
+    }
+}
+
+.coin{
+    position:fixed;
+    z-index:51;
+    pointer-events:none;
+    font-size:17px;
+    animation: coinFly .9s ease-out forwards;
+}
+
+@keyframes coinFly{
+    to{
+        transform: translate(var(--x), var(--y)) rotate(360deg) scale(.25);
+        opacity:0;
+    }
+}
+
+/* =========================================
+   SUPER BÔNUS - TELA AMARELA
+========================================= */
+
+.super-bonus-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 215, 0, 0.95);
+    z-index: 1000;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: bonusFlash 0.5s ease-in-out;
+}
+
+.super-bonus-overlay.active {
+    display: flex;
+}
+
+@keyframes bonusFlash {
+    0% { opacity: 0; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.05); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.bonus-text {
+    font-size: clamp(32px, 10vw, 64px);
+    font-weight: 1000;
+    color: #8B4513;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    text-shadow: 
+        0 0 20px rgba(255, 255, 255, 0.8),
+        0 0 40px rgba(255, 215, 0, 1);
+    animation: bonusPulse 1s ease-in-out infinite;
+}
+
+@keyframes bonusPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.bonus-subtext {
+    font-size: clamp(18px, 5vw, 28px);
+    color: #A0522D;
+    margin-top: 20px;
+    font-weight: 900;
+    text-align: center;
+}
+
+.bonus-spins {
+    font-size: clamp(48px, 15vw, 96px);
+    color: #FF4500;
+    margin-top: 30px;
+    font-weight: 1000;
+    text-shadow: 0 0 30px rgba(255, 69, 0, 0.8);
+}
+
+.free-spins-indicator {
+    position: absolute;
+    top: 70px;
+    right: 10px;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #8B4513;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-weight: 900;
+    font-size: 11px;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.6);
+    display: none;
+    z-index: 100;
+}
+
+.free-spins-indicator.active {
+    display: block;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media(max-width:390px){
+    .game{ padding:7px 7px 16px; }
+    .reel{ height:184px; }
+    .symbol{ height:61px; font-size:34px; }
+    .bet{ min-width:43px; padding:8px 2px; }
+    .control-value{ font-size:14px; }
+}
 </style>
 </head>
+
 <body>
 
 <div class="game">
+
 <div class="glow"></div>
-<div class="free-spins-indicator" id="freeSpinsIndicator">🎰 <span id="freeSpinsLabel">AUTO:</span> <span id="freeSpinsCount">0</span></div>
-<div class="super-bonus-overlay" id="superBonusOverlay">
-    <div class="bonus-text">🏆 SUPER BÔNUS 🏆<br>10 RODADAS GRÁTIS!</div>
+
+<!-- Indicador de Rodadas Grátis / Auto -->
+<div class="free-spins-indicator" id="freeSpinsIndicator">
+    🎰 <span id="freeSpinsLabel">AUTO:</span> <span id="freeSpinsCount">0</span>
 </div>
 
+<!-- Overlay Super Bônus -->
+<div class="super-bonus-overlay" id="superBonusOverlay">
+    <div class="bonus-text">🏆 PRÊMIO<br>SUPER BÔNUS 🏆</div>
+    <div class="bonus-subtext">VOCÊ GANHOU</div>
+    <div class="bonus-spins">10</div>
+    <div class="bonus-subtext">RODADAS GRÁTIS!</div>
+</div>
+
+<!-- =====================================
+     TOPO
+===================================== -->
+
 <header class="top">
-    <div class="brand"><div class="brand-icon">🐭</div><div><div style="font-weight:1000">FORTUNE EMBER</div></div></div>
-    <div class="balance"><span class="balance-label">SALDO</span><span class="balance-value" id="saldo">R$ 0,00</span></div>
+    <div class="brand">
+        <div class="brand-icon">🐭</div>
+        <div>
+            <div class="brand-title">FORTUNE EMBER</div>
+            <div class="brand-sub">ORIGINAL 3×3 SLOT</div>
+        </div>
+    </div>
+    <div class="balance">
+        <span class="balance-label">SALDO</span>
+        <span class="balance-value" id="saldo">R$ 0,00</span>
+    </div>
 </header>
 
-<section class="title-area"><h1 class="title">RATO DA FORTUNA</h1></section>
+<!-- =====================================
+     TÍTULO
+===================================== -->
+
+<section class="title-area">
+    <h1 class="title">RATO DA FORTUNA</h1>
+    <div class="subtitle">A chama dourada da sorte</div>
+</section>
+
+<!-- =====================================
+     MÁQUINA
+===================================== -->
 
 <section class="machine">
 <div class="machine-inner">
+    <div class="machine-header">
+        <div class="machine-header-line"></div>
+        <div class="machine-header-text">FORTUNE EMBER</div>
+        <div class="machine-header-line"></div>
+        <div class="machine-feature">WILD • RESPIN</div>
+    </div>
+
     <div class="reels" id="reels">
         <div class="reel"><div class="strip" id="r1"></div></div>
         <div class="reel"><div class="strip" id="r2"></div></div>
         <div class="reel"><div class="strip" id="r3"></div></div>
     </div>
+
+    <div class="result-line" id="resultLine">Encontre três símbolos na mesma linha</div>
     <div class="status" id="status">Pronto para girar</div>
 </div>
 </section>
 
+<!-- =====================================
+     CONTROLES PRINCIPAIS
+===================================== -->
+
 <section class="main-controls">
-    <div class="control-box"><span class="control-label">APOSTA</span><span class="control-value" id="betDisplay">R$ 1,00</span></div>
+    <div class="control-box">
+        <span class="control-label">APOSTA</span>
+        <span class="control-value" id="betDisplay">R$ 1,00</span>
+    </div>
     <button class="spin-button" id="spinButton">GIRAR</button>
-    <div class="control-box"><span class="control-label">PRÊMIO</span><span class="control-value" id="winDisplay">R$ 0,00</span></div>
+    <div class="control-box">
+        <span class="control-label">PRÊMIO</span>
+        <span class="control-value" id="winDisplay">R$ 0,00</span>
+    </div>
 </section>
 
+<!-- =====================================
+     VALOR DA APOSTA
+===================================== -->
+
 <section class="bet-panel">
-    <span style="color:#95849d;font-size:8px">VALOR</span>
-    <div style="display:flex;gap:5px">
+    <span class="bet-label">VALOR DA APOSTA</span>
+    <div class="bet-buttons">
         <button class="bet" data-bet="0.50">0,50</button>
         <button class="bet active" data-bet="1.00">1,00</button>
         <button class="bet" data-bet="2.00">2,00</button>
+        <button class="bet" data-bet="5.00">5,00</button>
     </div>
 </section>
+
+<!-- =====================================
+     EXTRAS
+===================================== -->
 
 <section class="extra-controls">
     <button class="extra" id="turbo">⚡ Turbo</button>
     <button class="extra active" id="sound">🔊 Som</button>
+    <button class="extra" id="infoButton">ℹ Info</button>
     <button class="extra" id="respin" disabled>↻ Respin</button>
 </section>
 
-<button class="extra" id="auto10Button" style="width:100%;margin-top:8px;background:#2a1931;border-color:#f3c65b;color:#fff0a1;font-weight:bold">🔄 10x AUTO</button>
+<!-- Botão 10x AUTO (Novo) -->
+<section style="margin-top: 8px; display: grid; grid-template-columns: 1fr; gap: 7px;">
+    <button class="extra" id="auto10Button" style="background: linear-gradient(135deg, #2a1931, #4a3552); border-color: #f3c65b; color: #fff0a1; font-weight: bold;">
+        🔄 10x AUTO (Girar Sozinho)
+    </button>
+</section>
+
+<!-- =====================================
+     INFORMAÇÕES
+===================================== -->
+
+<section class="info" id="info" hidden>
+    <b>FORTUNE EMBER</b><br>
+    Um slot 3×3 com identidade visual própria.<br><br>
+    <b>🔥 WILD</b><br>
+    O símbolo de chama funciona como Wild.<br><br>
+    <b>↻ RESPIN</b><br>
+    Três Wilds podem liberar uma rodada extra.<br><br>
+    <b>🔄 10x AUTO</b><br>
+    Gira automaticamente 10 vezes.
+</section>
 
 </div>
 
 <script>
 "use strict";
+
+/* =====================================================
+   CONFIGURAÇÃO
+===================================================== */
+
 const CONFIG = {
     apostaInicial: 1.00,
-    pesos: { "🍒": 35, "🍋": 30, "🪙": 20, "🏮": 12, "💎": 6, "🐭": 4, "🔥": 3 },
-    pagamentos: { "🍒": 1.20, "🍋": 1.50, "🪙": 2.00, "🏮": 3.00, "💎": 5.00, "🐭": 8.00, "🔥": 12.00 },
-    tempos: [1000, 1500, 2000] // VELOCIDADE RÁPIDA
+    apostaMinima: 0.50,
+    apostaMaxima: 5.00,
+
+    /* Pesos dos símbolos - VANTAGEM DA CASA */
+    pesos: {
+        "🍒": 35,      // Muito comum
+        "🍋": 30,      // Comum
+        "🪙": 20,      // Médio
+        "🏮": 12,      // Raro
+        "💎": 6,       // Muito raro
+        "🐭": 4,       // Ultra raro (Super Bônus)
+        "🔥": 3        // Wild super raro
+    },
+
+    pagamentos: {
+        "🍒": 1.20,
+        "🍋": 1.50,
+        "🪙": 2.00,
+        "🏮": 3.00,
+        "💎": 5.00,
+        "🐭": 8.00,
+        "🔥": 12.00
+    },
+
+    chanceRespin: 0.45,
+    chanceSuperBonus: 0.02, // 2% de chance de Super Bônus
+
+    /* TEMPOS DE GIRO - RÁPIDO E SECO */
+    tempos: [
+        1000,  // Rolo 1: 1s
+        1500,  // Rolo 2: 1.5s
+        2000   // Rolo 3: 2s
+    ]
 };
+
+
+/* =====================================================
+   ELEMENTOS
+===================================================== */
 
 const saldoEl = document.getElementById("saldo");
 const betDisplay = document.getElementById("betDisplay");
 const winDisplay = document.getElementById("winDisplay");
 const statusEl = document.getElementById("status");
+const resultLineEl = document.getElementById("resultLine");
 const spinButton = document.getElementById("spinButton");
+const turboButton = document.getElementById("turbo");
+const soundButton = document.getElementById("sound");
+const infoButton = document.getElementById("infoButton");
+const infoEl = document.getElementById("info");
+const respinButton = document.getElementById("respin");
 const auto10Button = document.getElementById("auto10Button");
 const bgMusic = document.getElementById("bgMusic");
-const reels = [document.getElementById("r1"), document.getElementById("r2"), document.getElementById("r3")];
+
+const reels = [
+    document.getElementById("r1"),
+    document.getElementById("r2"),
+    document.getElementById("r3")
+];
+
 const reelBoxes = [...document.querySelectorAll(".reel")];
+const superBonusOverlay = document.getElementById("superBonusOverlay");
 const freeSpinsIndicator = document.getElementById("freeSpinsIndicator");
 const freeSpinsCount = document.getElementById("freeSpinsCount");
-const superBonusOverlay = document.getElementById("superBonusOverlay");
+const freeSpinsLabel = document.getElementById("freeSpinsLabel");
+
+
+/* =====================================================
+   ESTADO
+===================================================== */
 
 let aposta = CONFIG.apostaInicial;
 let girando = false;
+let turbo = false;
 let som = true;
+let ultimoPremio = 0;
+let audioContext = null;
+
+/* Estado das rodadas automáticas/grátis */
 let rodadasRestantes = 0;
-let modoAuto = false;
-let audioCtx = null;
+let modoAuto = false; // true se for 10x AUTO, false se for Super Bônus Grátis
 
-function initAudio() {
-    if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
+
+/* =====================================================
+   SISTEMA DE SALDO
+===================================================== */
+
+function obterSaldo(){
+    try{
+        if(window.SistemaSaldo && typeof window.SistemaSaldo.get === "function"){
+            const valor = Number(window.SistemaSaldo.get());
+            if(Number.isFinite(valor)) return valor;
+        }
+    }catch(e){}
+    return 0;
 }
 
-function obterSaldo(){ return window.SistemaSaldo ? Number(window.SistemaSaldo.get()) || 0 : 0; }
-function debitar(v){ return window.SistemaSaldo ? window.SistemaSaldo.debitar(v) : false; }
-function creditar(v){ return window.SistemaSaldo ? window.SistemaSaldo.creditar(v) : false; }
-function atualizarSaldoVisual(){ 
-    saldoEl.textContent = Number(obterSaldo()).toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
-    if(window.SistemaSaldo && window.SistemaSaldo.atualizarTela) window.SistemaSaldo.atualizarTela();
+function debitar(valor){
+    try{
+        if(window.SistemaSaldo && typeof window.SistemaSaldo.debitar === "function"){
+            return window.SistemaSaldo.debitar(valor);
+        }
+    }catch(e){ console.error("Erro ao debitar:", e); return false; }
+    return false;
 }
+
+function creditar(valor){
+    try{
+        if(window.SistemaSaldo && typeof window.SistemaSaldo.creditar === "function"){
+            return window.SistemaSaldo.creditar(valor);
+        }
+    }catch(e){ console.error("Erro ao creditar:", e); return false; }
+    return false;
+}
+
+function atualizarSaldoVisual(){
+    const saldo = obterSaldo();
+    saldoEl.textContent = formatarDinheiro(saldo);
+    try{
+        if(window.SistemaSaldo && typeof window.SistemaSaldo.atualizarTela === "function"){
+            window.SistemaSaldo.atualizarTela();
+        }
+    }catch(e){}
+}
+
+
+/* =====================================================
+   FORMATAÇÃO
+===================================================== */
+
+function formatarDinheiro(valor){
+    return Number(valor || 0).toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
+}
+
+
+/* =====================================================
+   SÍMBOLOS
+===================================================== */
 
 const simbolos = Object.keys(CONFIG.pesos);
+const nomes = {
+    "🍒":"CHERRY", "🍋":"CITRUS", "🪙":"COIN",
+    "🏮":"LANTERN", "💎":"JADE", "🐭":"FORTUNE", "🔥":"WILD"
+};
+
 function escolherSimbolo(){
-    let total = simbolos.reduce((s, k) => s + CONFIG.pesos[k], 0);
-    let r = Math.random() * total;
-    for(let k of simbolos){ r -= CONFIG.pesos[k]; if(r <= 0) return k; }
+    let total = simbolos.reduce((s, simbolo) => s + CONFIG.pesos[simbolo], 0);
+    let valor = Math.random() * total;
+    for(const simbolo of simbolos){
+        valor -= CONFIG.pesos[simbolo];
+        if(valor <= 0) return simbolo;
+    }
     return simbolos[0];
 }
 
-function criarSimbolo(s){ return `<div class="symbol">${s}</div>`; }
-function preencherRolo(el){ el.innerHTML = Array(18).fill(0).map(()=>criarSimbolo(escolherSimbolo())).join(""); }
-
-function prepararResultado(el, vals){
-    const extras = Array(7).fill(0).map(()=>escolherSimbolo());
-    el.innerHTML = [...extras, ...vals, ...extras].map(criarSimbolo).join("");
-    el.style.transition = "none";
-    el.style.transform = `translateY(${-7 * 68}px)`;
+function criarSimbolo(simbolo){
+    return `<div class="symbol"><span>${simbolo}</span><span class="symbol-label">${nomes[simbolo] || ""}</span></div>`;
 }
 
-function encontrarLinhas(res){
-    const linhas = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-    return linhas.filter(l => {
-        const v = l.map(i => res[i]);
-        const normais = v.filter(x => x !== "🔥");
-        return normais.length === 0 || normais.every(x => x === normais[0]);
-    });
+function preencherRolo(elemento){
+    let html = "";
+    for(let i = 0; i < 18; i++) html += criarSimbolo(escolherSimbolo());
+    elemento.innerHTML = html;
 }
 
-function calcularPremio(res){
+function gerarResultado(){
+    const resultado = [];
+    for(let i = 0; i < 9; i++) resultado.push(escolherSimbolo());
+    return resultado;
+}
+
+function prepararResultado(elemento, valores){
+    const extras = [];
+    for(let i = 0; i < 7; i++) extras.push(escolherSimbolo());
+    const lista = [...extras, ...valores, ...extras];
+    elemento.innerHTML = lista.map(criarSimbolo).join("");
+    
+    const altura = elemento.querySelector(".symbol").offsetHeight;
+    const inicio = extras.length;
+    elemento.style.transition = "none";
+    elemento.style.transform = `translateY(${-inicio * altura}px)`;
+}
+
+
+/* =====================================================
+   LÓGICA DE VITÓRIA (Corrigida: Só 3 iguais)
+===================================================== */
+
+function encontrarLinhas(resultado){
+    const linhas = [
+        [0,1,2], [3,4,5], [6,7,8], // Linhas
+        [0,3,6], [1,4,7], [2,5,8], // Colunas
+        [0,4,8], [2,4,6]           // Diagonais
+    ];
+
+    const vencedoras = [];
+    for(const linha of linhas){
+        const valores = linha.map(i => resultado[i]);
+        const normais = valores.filter(x => x !== "🔥");
+
+        // Se todos são Wild, ganha
+        if(normais.length === 0){
+            vencedoras.push(linha);
+            continue;
+        }
+
+        // Verifica se todos os não-Wild são IGUAIS
+        const primeiroSimbolo = normais[0];
+        const todosIguais = normais.every(x => x === primeiroSimbolo);
+
+        if(todosIguais){
+            vencedoras.push(linha);
+        }
+    }
+    return vencedoras;
+}
+
+function calcularPremio(resultado){
+    const linhas = encontrarLinhas(resultado);
     let premio = 0;
-    encontrarLinhas(res).forEach(l => {
-        const v = l.map(i => res[i]);
-        const s = v.find(x => x !== "🔥") || "🔥";
-        premio += aposta * (CONFIG.pagamentos[s] || 0);
-    });
-    return premio;
+    const detalhes = [];
+
+    for(const linha of linhas){
+        const valores = linha.map(i => resultado[i]);
+        const simbolo = valores.find(x => x !== "🔥") || "🔥";
+        const multiplicador = CONFIG.pagamentos[simbolo] || 0;
+
+        if(multiplicador > 0){
+            const valor = aposta * multiplicador;
+            premio += valor;
+            detalhes.push({ linha, simbolo, valor });
+        }
+    }
+    return { premio, linhas, detalhes };
 }
 
-function tocarSom(f, d, t="sine"){
-    if(!som || !audioCtx) return;
+
+/* =====================================================
+   ÁUDIO
+===================================================== */
+
+function initAudio() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+}
+
+function tocarSom(frequencia, duracao, tipo = "sine", volume = .035){
+    if(!som || !audioContext) return;
     try{
-        const o = audioCtx.createOscillator();
-        const g = audioCtx.createGain();
-        o.type = t; o.frequency.value = f;
-        g.gain.setValueAtTime(0.05, audioCtx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + d);
-        o.connect(g); g.connect(audioCtx.destination);
-        o.start(); o.stop(audioCtx.currentTime + d);
+        const oscilador = audioContext.createOscillator();
+        const ganho = audioContext.createGain();
+        oscilador.type = tipo;
+        oscilador.frequency.value = frequencia;
+        ganho.gain.setValueAtTime(.0001, audioContext.currentTime);
+        ganho.gain.exponentialRampToValueAtTime(volume, audioContext.currentTime + .015);
+        ganho.gain.exponentialRampToValueAtTime(.0001, audioContext.currentTime + duracao);
+        oscilador.connect(ganho);
+        ganho.connect(audioContext.destination);
+        oscilador.start();
+        oscilador.stop(audioContext.currentTime + duracao + .03);
     }catch(e){}
 }
+
+function somGiro(){
+    tocarSom(115, .18, "sawtooth", .025);
+    setTimeout(() => tocarSom(155, .15, "sawtooth", .022), 100);
+}
+
+function somParada(indice){
+    tocarSom(230 + indice * 80, .12, "triangle", .04);
+}
+
+function somVitoria(){
+    [523, 659, 784, 1046].forEach((frequencia, indice) => {
+        setTimeout(() => tocarSom(frequencia, .22, "sine", .055), indice * 90);
+    });
+}
+
+function somSuperBonus(){
+    [523, 659, 784, 1046, 1318].forEach((freq, i) => {
+        setTimeout(() => tocarSom(freq, 0.3, "sine", 0.08), i * 150);
+    });
+}
+
+
+/* =====================================================
+   EFEITOS VISUAIS
+===================================================== */
+
+function criarParticulas(quantidade = 20){
+    const x = window.innerWidth / 2;
+    const y = window.innerHeight * .48;
+    for(let i = 0; i < quantidade; i++){
+        const p = document.createElement("span");
+        p.className = "particle";
+        p.style.left = x + "px";
+        p.style.top = y + "px";
+        p.style.setProperty("--x", ((Math.random()-.5)*220) + "px");
+        p.style.setProperty("--y", ((Math.random()-.7)*190) + "px");
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 900);
+    }
+}
+
+function criarMoedas(){
+    for(let i = 0; i < 15; i++){
+        const moeda = document.createElement("span");
+        moeda.className = "coin";
+        moeda.textContent = "🪙";
+        moeda.style.left = (window.innerWidth / 2 + (Math.random()-.5)*80) + "px";
+        moeda.style.top = (window.innerHeight*.48) + "px";
+        moeda.style.setProperty("--x", ((Math.random()-.5)*260) + "px");
+        moeda.style.setProperty("--y", ((Math.random()-.8)*250) + "px");
+        document.body.appendChild(moeda);
+        setTimeout(() => moeda.remove(), 950);
+    }
+}
+
+function destacarVitoria(linhas){
+    document.querySelectorAll(".symbol").forEach(el => el.classList.remove("win-symbol"));
+    document.querySelectorAll(".reel").forEach(el => el.classList.remove("win"));
+    
+    const indices = [...new Set(linhas.flat())];
+    indices.forEach(indice => {
+        const coluna = indice % 3;
+        const linha = Math.floor(indice / 3);
+        const rolo = reels[coluna];
+        const simbolosRolo = rolo.querySelectorAll(".symbol");
+        const alvo = simbolosRolo[7 + linha];
+        if(alvo) alvo.classList.add("win-symbol");
+        reelBoxes[coluna].classList.add("win");
+    });
+}
+
+
+/* =====================================================
+   SUPER BÔNUS & AUTO PLAY
+===================================================== */
+
+function ativarSuperBonus(){
+    superBonusOverlay.classList.add('active');
+    somSuperBonus();
+    criarParticulas(50);
+    criarMoedas();
+    
+    // Configura 10 rodadas GRÁTIS
+    rodadasRestantes = 10;
+    modoAuto = false; // É bônus grátis
+    
+    freeSpinsLabel.textContent = "GRÁTIS:";
+    freeSpinsCount.textContent = rodadasRestantes;
+    freeSpinsIndicator.classList.add('active');
+    
+    setTimeout(() => {
+        superBonusOverlay.classList.remove('active');
+        iniciarLoopAuto();
+    }, 3000);
+}
+
+// Função para o botão 10x AUTO
+function iniciarAutoPlayPago(){
+    const saldo = obterSaldo();
+
+    // Verifica se tem saldo para pelo menos 1 rodada
+    if(saldo < aposta){
+        statusEl.textContent = "Saldo insuficiente.";
+        return;
+    }
+
+    rodadasRestantes = 10;
+    modoAuto = true; // É auto play pago (desconta a cada giro)
+    
+    freeSpinsLabel.textContent = "AUTO:";
+    freeSpinsCount.textContent = rodadasRestantes;
+    freeSpinsIndicator.classList.add('active');
+    
+    iniciarLoopAuto();
+}
+
+async function iniciarLoopAuto(){
+    while(rodadasRestantes > 0 && !girando){
+        await new Promise(resolve => setTimeout(resolve, 1500)); // Pausa entre giros
+        
+        if(rodadasRestantes > 0){
+            // Verifica saldo antes de cada giro no modo AUTO pago
+            if(modoAuto){
+                const saldoAtual = obterSaldo();
+                if(saldoAtual < aposta){
+                    statusEl.textContent = "Saldo acabou! Auto Play parado.";
+                    rodadasRestantes = 0;
+                    break;
+                }
+            }
+            
+            await girar(true); // true = modo especial (auto/grátis)
+            rodadasRestantes--;
+            freeSpinsCount.textContent = rodadasRestantes;
+        }
+    }
+    
+    if(rodadasRestantes === 0){
+        freeSpinsIndicator.classList.remove('active');
+        statusEl.textContent = modoAuto ? "Auto Play finalizado!" : "Rodadas Grátis finalizadas!";
+        modoAuto = false;
+    }
+}
+
+
+/* =====================================================
+   GIRO PRINCIPAL
+===================================================== */
 
 async function girar(isFreeOrAuto = false){
     if(girando) return;
     girando = true;
     spinButton.disabled = true;
+    respinButton.disabled = true;
     auto10Button.disabled = true;
-    
-    initAudio();
-    if(audioCtx.state === 'suspended') audioCtx.resume();
 
-    // Tocar música na primeira interação
+    // Inicializa áudio e música na primeira interação
+    initAudio();
     if(bgMusic.paused) bgMusic.play().catch(()=>{});
 
-    // DESCONTO IMEDIATO
+    // Lógica de cobrança IMEDIATA (Segurança)
     if(!isFreeOrAuto){
-        if(obterSaldo() < aposta){ statusEl.textContent = "Saldo insuficiente."; girando=false; spinButton.disabled=false; return; }
-        if(!debitar(aposta)){ statusEl.textContent = "Erro ao apostar."; girando=false; spinButton.disabled=false; return; }
-    } else if(isFreeOrAuto && modoAuto){
-        if(!debitar(aposta)){ rodadasRestantes=0; girando=false; freeSpinsIndicator.classList.remove('active'); return; }
+        // Giro manual normal: Desconta AGORA
+        const saldo = obterSaldo();
+        if(saldo < aposta){
+            statusEl.textContent = "Saldo insuficiente.";
+            girando = false;
+            spinButton.disabled = false;
+            auto10Button.disabled = false;
+            return;
+        }
+        const sucesso = debitar(aposta);
+        if(!sucesso){
+            statusEl.textContent = "Erro ao registrar aposta.";
+            girando = false;
+            spinButton.disabled = false;
+            auto10Button.disabled = false;
+            return;
+        }
+    } else if (isFreeOrAuto && modoAuto) {
+        // É Auto Play PAGO: Desconta 1 aposta AGORA
+        const sucesso = debitar(aposta);
+        if(!sucesso){
+            // Se falhar, para o auto play
+            rodadasRestantes = 0;
+            girando = false;
+            spinButton.disabled = false;
+            auto10Button.disabled = false;
+            freeSpinsIndicator.classList.remove('active');
+            return;
+        }
     }
+    // Se for isFreeOrAuto=true e modoAuto=false, é Super Bônus (Grátis), não cobra nada.
 
-    statusEl.textContent = modoAuto ? `AUTO (${rodadasRestantes})` : "Girando...";
-    reelBoxes.forEach(r => r.classList.add("spinning"));
-    tocarSom(150, 0.1, "sawtooth");
-
-    const res = Array(9).fill(0).map(escolherSimbolo);
-    const cols = [[res[0],res[3],res[6]], [res[1],res[4],res[7]], [res[2],res[5],res[8]]];
+    winDisplay.textContent = formatarDinheiro(0);
     
-    reels.forEach(preencherRolo);
-    
-    await Promise.all(reels.map((el, i) => new Promise(resolve => {
-        el.style.transition = `transform ${CONFIG.tempos[i]}ms cubic-bezier(.1,.8,.1,1)`;
-        el.style.transform = `translateY(-${(11+Math.random()*5)*68}px)`;
-        setTimeout(() => { prepararResultado(el, cols[i]); tocarSom(300+i*100, 0.1); resolve(); }, CONFIG.tempos[i]);
-    })));
-
-    reelBoxes.forEach(r => r.classList.remove("spinning"));
-    
-    const premio = calcularPremio(res);
-    if(premio > 0){
-        winDisplay.textContent = Number(premio).toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
-        statusEl.textContent = `Vitória! ${Number(premio).toLocaleString("pt-BR", { style:"currency", currency:"BRL" })}`;
-        creditar(premio);
-        tocarSom(600, 0.3);
+    if(isFreeOrAuto){
+        statusEl.textContent = modoAuto ? `🔄 AUTO (${rodadasRestantes} restantes)` : `🎰 GRÁTIS (${rodadasRestantes} restantes)`;
     } else {
-        winDisplay.textContent = "R$ 0,00";
-        statusEl.textContent = modoAuto ? `Quase! (${rodadasRestantes})` : "Quase!";
+        statusEl.textContent = "Girando...";
+    }
+    
+    resultLineEl.textContent = "Boa sorte...";
+    reelBoxes.forEach(reel => reel.classList.add("spinning"));
+    somGiro();
+
+    const resultado = gerarResultado();
+    const colunas = [
+        [resultado[0], resultado[3], resultado[6]],
+        [resultado[1], resultado[4], resultado[7]],
+        [resultado[2], resultado[5], resultado[8]]
+    ];
+
+    reels.forEach(preencherRolo);
+
+    const tempos = turbo ? [450,550,650] : CONFIG.tempos;
+
+    // Animação dos rolos
+    await Promise.all(reels.map((elemento, indice) => {
+        return new Promise(resolve => {
+            const altura = 68;
+            const distancia = -(11 + Math.floor(Math.random()*6)) * altura;
+            
+            elemento.style.transition = `transform ${tempos[indice]}ms cubic-bezier(.12,.72,.16,1)`;
+            elemento.style.transform = `translateY(${distancia}px)`;
+
+            setTimeout(() => {
+                prepararResultado(elemento, colunas[indice]);
+                somParada(indice);
+                resolve();
+            }, tempos[indice]);
+        });
+    }));
+
+    reelBoxes.forEach(reel => reel.classList.remove("spinning"));
+
+    const resultadoFinal = calcularPremio(resultado);
+    ultimoPremio = resultadoFinal.premio;
+
+    if(resultadoFinal.premio > 0){
+        winDisplay.textContent = formatarDinheiro(resultadoFinal.premio);
+        statusEl.textContent = `✨ Vitória! ${formatarDinheiro(resultadoFinal.premio)}`;
+        resultLineEl.textContent = `${resultadoFinal.linhas.length} linha(s) premiada(s)`;
+        destacarVitoria(resultadoFinal.linhas);
+        somVitoria();
+        criarParticulas(28);
+        criarMoedas();
+        
+        // Credita o prêmio (seja auto ou grátis)
+        creditar(resultadoFinal.premio);
+    } else {
+        winDisplay.textContent = formatarDinheiro(0);
+        statusEl.textContent = isFreeOrAuto ? `Quase! (${rodadasRestantes} restantes)` : "Quase! Tente novamente.";
+        resultLineEl.textContent = "Nenhuma linha premiada";
     }
 
-    // Super Bônus (3 Ratinhos)
-    if(res.filter(x=>x==="🐭").length >= 3 && Math.random() < 0.02 && !isFreeOrAuto){
-        superBonusOverlay.classList.add('active');
-        rodadasRestantes = 10; modoAuto = false;
-        freeSpinsIndicator.classList.add('active');
-        setTimeout(() => { superBonusOverlay.classList.remove('active'); iniciarLoop(); }, 2000);
-        girando = false; return;
+    // Checar Super Bônus (3 Ratinhos) - Só em giro manual ou auto pago, não em grátis
+    const quantidadeRatinho = resultado.filter(x => x === "🐭").length;
+    if(quantidadeRatinho >= 3 && Math.random() < CONFIG.chanceSuperBonus && !isFreeOrAuto){
+        ativarSuperBonus();
+        girando = false;
+        return; 
+    }
+
+    // Checar Respin (3 Wilds)
+    const quantidadeWild = resultado.filter(x => x === "🔥").length;
+    if(quantidadeWild >= 3 && Math.random() < CONFIG.chanceRespin && !isFreeOrAuto){
+        respinButton.disabled = false;
+        statusEl.textContent += " • Respin liberado!";
     }
 
     atualizarSaldoVisual();
@@ -282,42 +1350,71 @@ async function girar(isFreeOrAuto = false){
     auto10Button.disabled = false;
 }
 
-async function iniciarLoop(){
-    while(rodadasRestantes > 0 && !girando){
-        await new Promise(r => setTimeout(r, 1000));
-        if(rodadasRestantes > 0){
-            await girar(true);
-            rodadasRestantes--;
-            freeSpinsCount.textContent = rodadasRestantes;
-        }
-    }
-    if(rodadasRestantes === 0){ freeSpinsIndicator.classList.remove('active'); modoAuto = false; }
-}
 
-document.querySelectorAll(".bet").forEach(b => b.onclick = () => {
-    if(girando) return;
-    aposta = Number(b.dataset.bet);
-    document.querySelectorAll(".bet").forEach(x => x.classList.remove("active"));
-    b.classList.add("active");
-    betDisplay.textContent = Number(aposta).toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
+/* =====================================================
+   EVENTOS
+===================================================== */
+
+document.querySelectorAll(".bet").forEach(botao => {
+    botao.addEventListener("click", () => {
+        if(girando || rodadasRestantes > 0) return;
+        aposta = Number(botao.dataset.bet);
+        aposta = Math.max(CONFIG.apostaMinima, Math.min(CONFIG.apostaMaxima, aposta));
+        document.querySelectorAll(".bet").forEach(b => b.classList.remove("active"));
+        botao.classList.add("active");
+        betDisplay.textContent = formatarDinheiro(aposta);
+    });
 });
 
-spinButton.onclick = () => girar(false);
-auto10Button.onclick = () => {
-    if(girando || obterSaldo() < aposta) return;
-    rodadasRestantes = 10; modoAuto = true;
-    freeSpinsIndicator.classList.add('active');
-    iniciarLoop();
-};
+spinButton.addEventListener("click", () => girar(false));
 
-document.getElementById("sound").onclick = function(){
+respinButton.addEventListener("click", () => girar(true));
+
+// Botão 10x AUTO
+auto10Button.addEventListener("click", () => {
+    if(girando || rodadasRestantes > 0) return;
+    iniciarAutoPlayPago();
+});
+
+turboButton.addEventListener("click", () => {
+    turbo = !turbo;
+    turboButton.classList.toggle("active", turbo);
+    turboButton.textContent = turbo ? "⚡ Turbo ON" : "⚡ Turbo";
+});
+
+soundButton.addEventListener("click", () => {
     som = !som;
-    this.textContent = som ? "🔊 Som" : "🔇 Som";
-    som ? bgMusic.play().catch(()=>{}) : bgMusic.pause();
-};
+    soundButton.classList.toggle("active", som);
+    soundButton.textContent = som ? "🔊 Som" : "🔇 Som";
+    
+    // Controlar música de fundo também
+    if(som) {
+        bgMusic.play().catch(e => {});
+    } else {
+        bgMusic.pause();
+    }
+});
+
+infoButton.addEventListener("click", () => {
+    infoEl.hidden = !infoEl.hidden;
+    infoButton.classList.toggle("active", !infoEl.hidden);
+});
+
+
+/* =====================================================
+   INICIALIZAÇÃO
+===================================================== */
 
 reels.forEach(preencherRolo);
+reels.forEach((elemento, indice) => {
+    prepararResultado(elemento, [escolherSimbolo(), escolherSimbolo(), escolherSimbolo()]);
+});
+
+betDisplay.textContent = formatarDinheiro(aposta);
 atualizarSaldoVisual();
+
+window.addEventListener("saldoAtualizado", atualizarSaldoVisual);
+
 </script>
 </body>
 </html>
