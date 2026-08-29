@@ -832,7 +832,6 @@ const CONFIG = {
     chanceSuperBonus: 0.02, // 2% de chance de Super Bônus
 
     /* TEMPOS DE GIRO - AJUSTADO "PUM" */
-    /* Começa rápido, gira por ~4s, para seco */
     tempos: [
         3800,  // Rolo 1: 3.8s
         4200,  // Rolo 2: 4.2s
@@ -1161,23 +1160,16 @@ function ativarSuperBonus(){
 
 // Função para o botão 10x AUTO
 function iniciarAutoPlayPago(){
-    const custoTotal = aposta * 10;
     const saldo = obterSaldo();
 
-    if(saldo < custoTotal){
-        statusEl.textContent = "Saldo insuficiente para 10 rodadas.";
-        return;
-    }
-
-    // Debita tudo de uma vez
-    const sucesso = debitar(custoTotal);
-    if(!sucesso){
-        statusEl.textContent = "Erro ao iniciar auto play.";
+    // Verifica se tem saldo para pelo menos 1 rodada
+    if(saldo < aposta){
+        statusEl.textContent = "Saldo insuficiente.";
         return;
     }
 
     rodadasRestantes = 10;
-    modoAuto = true; // É auto play pago
+    modoAuto = true; // É auto play pago (desconta a cada giro)
     
     freeSpinsLabel.textContent = "AUTO:";
     freeSpinsCount.textContent = rodadasRestantes;
@@ -1191,7 +1183,17 @@ async function iniciarLoopAuto(){
         await new Promise(resolve => setTimeout(resolve, 1500)); // Pausa entre giros
         
         if(rodadasRestantes > 0){
-            await girar(true); // true = não debita novamente (já foi debitado ou é grátis)
+            // Verifica saldo antes de cada giro no modo AUTO pago
+            if(modoAuto){
+                const saldoAtual = obterSaldo();
+                if(saldoAtual < aposta){
+                    statusEl.textContent = "Saldo acabou! Auto Play parado.";
+                    rodadasRestantes = 0;
+                    break;
+                }
+            }
+            
+            await girar(true); // true = modo especial (auto/grátis)
             rodadasRestantes--;
             freeSpinsCount.textContent = rodadasRestantes;
         }
@@ -1216,8 +1218,13 @@ async function girar(isFreeOrAuto = false){
     respinButton.disabled = true;
     auto10Button.disabled = true;
 
-    // Se NÃO for grátis/auto, debita a aposta normal
+    // Lógica de cobrança:
+    // Se NÃO for Free/Auto -> Cobra normal.
+    // Se FOR Auto Pago (modoAuto=true) -> Cobra aqui dentro do giro.
+    // Se FOR Grátis (modoAuto=false) -> Não cobra.
+    
     if(!isFreeOrAuto){
+        // Giro manual normal
         const saldo = obterSaldo();
         if(saldo < aposta){
             statusEl.textContent = "Saldo insuficiente.";
@@ -1234,7 +1241,20 @@ async function girar(isFreeOrAuto = false){
             auto10Button.disabled = false;
             return;
         }
+    } else if (isFreeOrAuto && modoAuto) {
+        // É Auto Play PAGO: Desconta 1 aposta agora
+        const sucesso = debitar(aposta);
+        if(!sucesso){
+            // Se falhar, para o auto play
+            rodadasRestantes = 0;
+            girando = false;
+            spinButton.disabled = false;
+            auto10Button.disabled = false;
+            freeSpinsIndicator.classList.remove('active');
+            return;
+        }
     }
+    // Se for isFreeOrAuto=true e modoAuto=false, é Super Bônus (Grátis), não cobra nada.
 
     winDisplay.textContent = formatarDinheiro(0);
     
@@ -1263,7 +1283,6 @@ async function girar(isFreeOrAuto = false){
     await Promise.all(reels.map((elemento, indice) => {
         return new Promise(resolve => {
             const altura = 68;
-            // Distância grande para simular giro longo
             const distancia = -(11 + Math.floor(Math.random()*6)) * altura;
             
             elemento.style.transition = `transform ${tempos[indice]}ms cubic-bezier(.12,.72,.16,1)`;
@@ -1291,7 +1310,7 @@ async function girar(isFreeOrAuto = false){
         criarParticulas(28);
         criarMoedas();
         
-        // Se for auto play pago, credita o prêmio. Se for grátis, também credita.
+        // Credita o prêmio (seja auto ou grátis)
         creditar(resultadoFinal.premio);
     } else {
         winDisplay.textContent = formatarDinheiro(0);
@@ -1299,12 +1318,12 @@ async function girar(isFreeOrAuto = false){
         resultLineEl.textContent = "Nenhuma linha premiada";
     }
 
-    // Checar Super Bônus (3 Ratinhos)
+    // Checar Super Bônus (3 Ratinhos) - Só em giro manual ou auto pago, não em grátis
     const quantidadeRatinho = resultado.filter(x => x === "🐭").length;
     if(quantidadeRatinho >= 3 && Math.random() < CONFIG.chanceSuperBonus && !isFreeOrAuto){
         ativarSuperBonus();
         girando = false;
-        return; // Sai da função para começar o bônus
+        return; 
     }
 
     // Checar Respin (3 Wilds)
