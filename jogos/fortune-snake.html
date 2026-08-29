@@ -3,77 +3,74 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Fortune Snake - Sem Moldura</title>
+<title>Fortune Snake - No Frame</title>
 <style>
+    /* RESET */
     * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
-    body, html { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', sans-serif; background: #1a0b2e; }
+    body, html { width: 100%; height: 100%; overflow: hidden; font-family: system-ui, sans-serif; background: #1a0b2e; }
 
     .app-container {
         width: 100%; height: 100%; max-width: 480px; margin: 0 auto;
-        position: relative; display: flex; flex-direction: column;
+        display: flex; flex-direction: column;
         background: linear-gradient(180deg, #2e1065 0%, #4c1d95 40%, #1e1b4b 100%);
-        overflow: hidden;
     }
 
     /* TOPO */
     .top-bar {
-        height: 50px; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;
-        z-index: 20; color: white;
+        height: 50px; padding: 0 15px; display: flex; justify-content: space-between; align-items: center;
+        color: white; z-index: 20;
     }
     .lobby-text { font-size: 12px; opacity: 0.8; }
-    .title-text { font-size: 12px; letter-spacing: 1px; opacity: 0.9; }
+    .title-text { font-size: 12px; letter-spacing: 1px; opacity: 0.9; text-transform: uppercase; }
     .trophy { 
-        width: 32px; height: 32px; 
-        background: radial-gradient(circle, #fbbf24, #b45309); 
-        border-radius: 50%; border: 2px solid #fff; 
-        display: grid; place-items: center; font-size: 16px; 
-        box-shadow: 0 0 10px rgba(251,191,36,0.5); 
+        width: 32px; height: 32px; border-radius: 50%;
+        background: radial-gradient(circle, #fbbf24, #b45309);
+        border: 2px solid #fff; display: grid; place-items: center; font-size: 16px;
+        box-shadow: 0 0 10px rgba(251,191,36,0.5);
     }
 
-    /* ÁREA DOS ROLOS - SEM QUADRADO, INTEGRADA AO FUNDO */
+    /* ÁREA DOS ROLOS - SEM CONTAINER DE CAIXA */
     .game-stage {
         flex: 1; position: relative; display: flex; justify-content: center; align-items: center;
-        padding: 0 8px;
+        padding: 0 5px; overflow: hidden;
     }
 
-    /* ROLAS OCUPANDO TELA INTEIRA, SEM CAIXA EM VOLTA */
-    .reels-wrapper {
-        width: 100%; height: 65%; 
-        display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; 
-        position: relative; z-index: 5;
-        /* REMOVIDO TODA BORDA, BACKGROUND DE CAIXA E SOMBRA EXTERNA */
-    }
-
-    .reel {
-        background: rgba(30, 27, 75, 0.4); /* Fundo sutil integrado */
-        border-radius: 10px; overflow: hidden;
-        display: flex; flex-direction: column;
-        box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
+    /* ROLAS DIRETAS NA TELA (SEM BORDA EXTERNA) */
+    .reel-column {
+        flex: 1; height: 65%; margin: 0 3px;
+        background: rgba(30, 27, 75, 0.3); /* Fundo sutil integrado ao roxo */
+        border-radius: 12px; overflow: hidden;
         position: relative;
-        /* Máscara para suavizar topo e base durante o giro */
+        /* Sombra INTERNA apenas para dar profundidade, sem criar caixa */
+        box-shadow: inset 0 0 30px rgba(0,0,0,0.7);
+        /* Máscara para suavizar as pontas durante o giro */
         mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
         -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
     }
 
-    /* SÍMBOLOS */
-    .sym-cell { 
-        min-height: 33.33%; display: grid; place-items: center; 
-        font-size: 42px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7)); 
-        position: relative;
+    /* TIRA DE SÍMBOLOS QUE VAI GIRAR */
+    .symbol-strip {
+        position: absolute; top: 0; left: 0; width: 100%;
+        will-change: transform;
     }
-    
+
+    .sym-cell {
+        height: 33.33%; display: grid; place-items: center;
+        font-size: 40px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
+    }
+
     /* TEXTO FLUTUANTE */
     .feature-banner {
-        position: absolute; bottom: 15px; width: 100%; text-align: center;
-        color: #bef264; font-style: italic; font-weight: bold; font-size: 14px;
+        position: absolute; bottom: 10px; width: 100%; text-align: center;
+        color: #bef264; font-style: italic; font-weight: bold; font-size: 13px;
         text-shadow: 0 2px 4px rgba(0,0,0,0.9); pointer-events: none; z-index: 6;
     }
 
-    /* PAINEL INFERIOR */
+    /* PAINEL INFERIOR VERMELHO */
     .control-panel {
         background: linear-gradient(180deg, #7f1d1d 0%, #450a0a 60%, #2a0505 100%);
         border-top-left-radius: 30px; border-top-right-radius: 30px;
-        border-top: 1px solid rgba(252, 165, 165, 0.3); 
+        border-top: 1px solid rgba(252, 165, 165, 0.3);
         padding: 15px 10px 25px; z-index: 10;
         box-shadow: 0 -10px 40px rgba(0,0,0,0.7);
         display: flex; flex-direction: column; align-items: center; gap: 12px;
@@ -126,13 +123,12 @@
         <div class="trophy"></div>
     </div>
 
-    <!-- PALCO DO JOGO - SEM QUADRADO -->
+    <!-- PALCO DO JOGO - ROLAS DIRETAS NO STAGE -->
     <div class="game-stage">
-        <div class="reels-wrapper">
-            <div class="reel" id="r1"></div>
-            <div class="reel" id="r2"></div>
-            <div class="reel" id="r3"></div>
-        </div>
+        <div class="reel-column" id="r1"><div class="symbol-strip"></div></div>
+        <div class="reel-column" id="r2"><div class="symbol-strip"></div></div>
+        <div class="reel-column" id="r3"><div class="symbol-strip"></div></div>
+        
         <div class="feature-banner">Novas Rodadas na Funcionalidade Cobra</div>
     </div>
 
@@ -151,7 +147,7 @@
 
         <div class="btn-row">
             <button class="ctrl-btn" onclick="toggleSound()">🔇</button>
-            <button class="ctrl-btn" onclick="changeBet(-1)"></button>
+            <button class="ctrl-btn" onclick="changeBet(-1)">➖</button>
             
             <div class="spin-button" id="spin-btn" onclick="spin()">
                 <div class="spin-inner"></div>
@@ -168,7 +164,7 @@
 <script>
     let currentBet = 1.00;
     let isSpinning = false;
-    const SYMBOLS = ['🥣','🐍','💲','','🏆',''];
+    const SYMBOLS = ['🥣','','💲','','🏆',''];
 
     function getBalance() {
         try { return window.SistemaSaldo?.get ? Number(window.SistemaSaldo.get()) || 0 : 0; } 
@@ -192,14 +188,15 @@
         updateUI();
     }
 
-    // PREENCHE OS ROLOS INICIALMENTE COM 3 SÍMBOLOS VISÍVEIS
+    // INICIALIZA OS ROLOS COM 3 SÍMBOLOS VISÍVEIS
     function initReels() {
-        const reels = [document.getElementById('r1'), document.getElementById('r2'), document.getElementById('r3')];
+        const reels = document.querySelectorAll('.reel-column');
         reels.forEach(r => {
-            r.innerHTML = '';
+            const strip = r.querySelector('.symbol-strip');
+            strip.innerHTML = '';
             for(let i=0; i<3; i++) {
                 const sym = SYMBOLS[Math.floor(Math.random()*SYMBOLS.length)];
-                r.innerHTML += `<div class="sym-cell">${sym}</div>`;
+                strip.innerHTML += `<div class="sym-cell">${sym}</div>`;
             }
         });
     }
@@ -224,58 +221,61 @@
         document.getElementById('spin-btn').classList.add('disabled');
         document.getElementById('status-msg').innerText = "";
 
-        const reels = [document.getElementById('r1'), document.getElementById('r2'), document.getElementById('r3')];
+        const reelColumns = document.querySelectorAll('.reel-column');
         
-        // RESULTADO FINAL DEFINIDO ANTES DA ANIMAÇÃO
-        const finalResults = reels.map(() => [
+        // DEFINE RESULTADO FINAL ANTES DO GIRO
+        const finalResults = Array.from(reelColumns).map(() => [
             SYMBOLS[Math.floor(Math.random()*SYMBOLS.length)],
-            '🐍', // Linha do meio sempre cobra para demonstrar vitória
+            '🐍', // Linha central fixa para demo
             SYMBOLS[Math.floor(Math.random()*SYMBOLS.length)]
         ]);
 
-        // CRIA TIRAS LONGAS PARA GIRO VERTICAL REAL
-        reels.forEach((r, i) => {
-            let stripHTML = '';
-            // Símbolos iniciais (já visíveis)
-            const currentSyms = Array.from(r.querySelectorAll('.sym-cell')).map(el => el.innerText);
-            currentSyms.forEach(s => stripHTML += `<div class="sym-cell">${s}</div>`);
+        // PREPARA AS TIRAS LONGAS PARA GIRO VERTICAL REAL
+        reelColumns.forEach((col, i) => {
+            const strip = col.querySelector('.symbol-strip');
             
-            // Adiciona 20+ símbolos aleatórios para criar o efeito de giro longo
-            for(let j=0; j<25; j++) {
-                stripHTML += `<div class="sym-cell">${SYMBOLS[Math.floor(Math.random()*SYMBOLS.length)]}</div>`;
+            // Mantém os símbolos atuais visíveis no topo
+            const currentVisible = Array.from(strip.querySelectorAll('.sym-cell')).map(el => el.innerText);
+            let newHTML = currentVisible.map(s => `<div class="sym-cell">${s}</div>`).join('');
+            
+            // Adiciona 30 símbolos aleatórios para criar o efeito de giro longo
+            for(let j=0; j<30; j++) {
+                newHTML += `<div class="sym-cell">${SYMBOLS[Math.floor(Math.random()*SYMBOLS.length)]}</div>`;
             }
             
             // Adiciona os 3 símbolos finais do resultado
-            finalResults[i].forEach(s => stripHTML += `<div class="sym-cell">${s}</div>`);
+            finalResults[i].forEach(s => newHTML += `<div class="sym-cell">${s}</div>`);
             
-            r.innerHTML = stripHTML;
+            strip.innerHTML = newHTML;
             
-            // RESETA POSIÇÃO
-            r.style.transition = 'none';
-            r.style.transform = 'translateY(0)';
+            // RESETA A POSIÇÃO DA TIRA
+            strip.style.transition = 'none';
+            strip.style.transform = 'translateY(0)';
         });
 
-        // FORÇA REFLOW PARA GARANTIR QUE O RESET FUNCIONE
-        void reels[0].offsetHeight;
+        // FORÇA REFLOW PARA GARANTIR QUE O RESET FUNCIONE ANTES DA ANIMAÇÃO
+        void reelColumns[0].offsetHeight;
 
-        // ANIMAÇÃO DE GIRO PARA CIMA COM TIMING DIFERENCIADO
-        reels.forEach((r, i) => {
+        // ANIMAÇÃO DE GIRO PARA CIMA COM TIMING ESCALONADO
+        reelColumns.forEach((col, i) => {
+            const strip = col.querySelector('.symbol-strip');
             const duration = 1.8 + (i * 0.4);
-            const totalSymbols = r.querySelectorAll('.sym-cell').length;
+            const totalSymbols = strip.querySelectorAll('.sym-cell').length;
             const targetIndex = totalSymbols - 3; // Para nos últimos 3 símbolos
             const translateY = -(targetIndex * (100 / 3)); // Cada símbolo = 33.33% da altura
             
-            r.style.transition = `transform ${duration}s cubic-bezier(0.15, 0.8, 0.15, 1)`;
-            r.style.transform = `translateY(${translateY}%)`;
+            strip.style.transition = `transform ${duration}s cubic-bezier(0.15, 0.8, 0.15, 1)`;
+            strip.style.transform = `translateY(${translateY}%)`;
         });
 
         // FINALIZA APÓS O ÚLTIMO ROLO PARAR
         setTimeout(() => {
-            reels.forEach((r, i) => {
-                // REMOVE OS SÍMBOLOS EXTRA E MANTÉM SÓ OS 3 FINAIS
-                r.style.transition = 'none';
-                r.style.transform = 'translateY(0)';
-                r.innerHTML = finalResults[i].map(s => `<div class="sym-cell">${s}</div>`).join('');
+            reelColumns.forEach((col, i) => {
+                const strip = col.querySelector('.symbol-strip');
+                // REMOVE TODOS OS SÍMBOLOS E MANTÉM APENAS OS 3 FINAIS
+                strip.style.transition = 'none';
+                strip.style.transform = 'translateY(0)';
+                strip.innerHTML = finalResults[i].map(s => `<div class="sym-cell">${s}</div>`).join('');
             });
 
             isSpinning = false;
