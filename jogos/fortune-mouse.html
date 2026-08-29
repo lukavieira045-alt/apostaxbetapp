@@ -1056,7 +1056,7 @@ function initAudio() {
     }
 }
 
-// AUMENTEI O VOLUME DOS EFEITOS PARA 0.15 (ANTES ERA 0.035)
+// EFEITOS SONOROS COM VOLUME AUMENTADO (0.15)
 function tocarSom(frequencia, duracao, tipo = "sine", volume = 0.15){
     if(!som || !audioContext) return;
     try{
@@ -1232,7 +1232,11 @@ async function girar(isFreeOrAuto = false){
 
     // Inicializa áudio e música na primeira interação
     initAudio();
-    if(bgMusic.paused) bgMusic.play().catch(()=>{});
+    // Força o play da música sempre que tentar girar
+    if(bgMusic.paused) {
+        bgMusic.volume = 0.4; // Volume da música mantido
+        bgMusic.play().catch(e => console.log("Aguardando interação para música"));
+    }
 
     // DESCONTO IMEDIATO (SEGURANÇA TOTAL)
     // O dinheiro sai da conta ANTES de qualquer outra coisa
