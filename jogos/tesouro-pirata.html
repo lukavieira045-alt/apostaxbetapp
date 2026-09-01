@@ -42,6 +42,7 @@ body:before{content:"";position:fixed;inset:0;background:linear-gradient(180deg,
 </style>
 </head>
 <body>
+<audio id="tesouroMusic" src="tesouro-pirata.mp3" loop preload="auto"></audio>
 <div class="casino">
   <div class="top"><div class="title"><span class="sk">☠</span><h1>TESOURO PIRATA</h1><span class="sk">☠</span></div></div>
   <div class="stage">
@@ -56,6 +57,21 @@ body:before{content:"";position:fixed;inset:0;background:linear-gradient(180deg,
   </div>
 </div>
 <script>const syncBet=()=>{const a=document.getElementById('betAmount'),b=document.getElementById('betAmount2');if(a&&b)b.textContent=a.textContent};new MutationObserver(syncBet).observe(document.getElementById('betAmount'),{childList:true,characterData:true,subtree:true});</script>
+<script>
+(function(){
+  const music=document.getElementById('tesouroMusic');
+  if(!music)return;
+  music.volume=0.32;
+  let started=false;
+  function startTesouroMusic(){
+    if(started)return;
+    started=true;
+    const p=music.play();
+    if(p&&p.catch)p.catch(()=>{started=false});
+  }
+  ['pointerdown','touchstart','click','keydown'].forEach(ev=>document.addEventListener(ev,startTesouroMusic,{once:false,passive:true}));
+})();
+</script>
 <script type="module">
 import "../saldo.js";
 const SYMBOLS=['captain','K','Q','J','A'];
