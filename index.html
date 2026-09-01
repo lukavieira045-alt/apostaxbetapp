@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
+<head><meta name="google-site-verification" content="N-AHxQDGvlA4-IIw-8eDSUSwyAFa-e3CbUhbUrceCgU" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>ApostaXBet</title>
@@ -1416,6 +1416,7 @@ body{
 }
 </style>
 
+<style id="fortune-mouse-overlay-css">#fortuneMouseOverlay{position:fixed;inset:0;z-index:100000;display:none;background:rgba(0,0,0,.88);align-items:center;justify-content:center;padding:8px}#fortuneMouseOverlay.ativo{display:flex}#fortuneMouseBox{position:relative;width:min(100%,560px);height:min(100vh,900px);background:#07050b;border:1px solid #d7a83f;border-radius:16px;overflow:hidden;box-shadow:0 0 35px rgba(243,198,91,.25)}#fortuneMouseFrame{width:100%;height:100%;border:0;display:block;background:#07050b}#fortuneMouseClose{position:absolute;top:8px;right:8px;z-index:3;width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,.75);color:#fff;border:1px solid rgba(255,255,255,.25);font-size:24px;line-height:36px;text-align:center;cursor:pointer}@media(max-width:600px){#fortuneMouseOverlay{padding:0}#fortuneMouseBox{width:100%;height:100%;border-radius:0;border:0}} </style>
 </head>
 
 <body>
@@ -1468,6 +1469,9 @@ body{
 
 <label>Telefone</label>
 <input id="telefoneCadastro" type="tel" placeholder="Digite seu telefone" required>
+
+<label>CPF</label>
+<input id="cpfCadastro" type="text" inputmode="numeric" maxlength="14" placeholder="Digite seu CPF" required>
 
 <label>Criar senha</label>
 <div class="campo-senha">
@@ -1950,6 +1954,30 @@ loading="lazy">
 <span class="provider-tag">AX</span>
 </div>
 </div>
+<div class="game-card"
+data-cat="popular slots"
+data-jogo="Fortune Mouse"
+data-capa="jogos/banner-mouse.png"
+data-icon="🐭"
+data-link="jogos/fortune-mouse.html">
+
+<img class="game-img"
+src="jogos/banner-mouse.png"
+alt="Fortune Mouse"
+loading="lazy">
+
+<span class="like-icon">👍</span>
+<span class="fav-icon">⭐</span>
+
+<div class="bonus-badge">NOVO</div>
+
+<div class="game-overlay">
+<span class="game-name">Fortune Mouse</span>
+<span class="provider-tag">AX</span>
+</div>
+</div>
+
+<div class="game-card ilustrativo"
 
 <div class="game-card ilustrativo"
 data-cat="popular slots"
@@ -2260,6 +2288,8 @@ onclick="enviarPerguntaSuporte()">
 
 </div>
 
+<!-- FORTUNE MOUSE -->
+<div id="fortuneMouseOverlay" aria-hidden="true"><div id="fortuneMouseBox"><button id="fortuneMouseClose" type="button" aria-label="Fechar">×</button><iframe id="fortuneMouseFrame" title="Fortune Mouse" src="about:blank"></iframe></div></div>
 <!-- LOADER -->
 <div id="loader">
 
@@ -2475,6 +2505,29 @@ function configurarImagemCapa(img){
         }
     }
 }
+
+function abrirFortuneMouse(){
+    const overlay=document.getElementById("fortuneMouseOverlay"),frame=document.getElementById("fortuneMouseFrame");
+    if(!overlay||!frame)return;
+    overlay.classList.add("ativo"); overlay.setAttribute("aria-hidden","false");
+    frame.onload=function(){
+        try{
+            const w=frame.contentWindow; let cache=0;
+            const atualizar=async()=>{try{cache=Number(await window.SistemaSaldo.get())||0;}catch(e){} try{if(typeof w.atualizarSaldoVisual==="function")w.atualizarSaldoVisual();}catch(e){}};
+            w.SistemaSaldo={
+                get:()=>cache,
+                debitar:(valor)=>{const n=Number(valor)||0;if(cache<n)return false;cache-=n;try{const r=window.SistemaSaldo.debitar(n);if(r&&typeof r.then==="function")r.then(atualizar);}catch(e){}return true;},
+                atualizarTela:atualizar,
+                salvar:async(v)=>window.SistemaSaldo.salvar(v),
+                ganhar:async(v,m)=>window.SistemaSaldo.ganhar(v,m)
+            };
+            atualizar();
+        }catch(e){console.error("Fortune Mouse ponte:",e);}
+    };
+    frame.src="jogos/fortune-mouse.html";
+}
+function fecharFortuneMouse(){const o=document.getElementById("fortuneMouseOverlay"),f=document.getElementById("fortuneMouseFrame");if(!o||!f)return;o.classList.remove("ativo");o.setAttribute("aria-hidden","true");f.src="about:blank";}
+document.addEventListener("DOMContentLoaded",()=>{const c=document.getElementById("fortuneMouseClose");if(c)c.addEventListener("click",fecharFortuneMouse);});
 
 function configurarTodasAsCapas(){
 
@@ -2849,6 +2902,53 @@ function mensagem(id,texto,tipo){
     el.innerText=texto;
 }
 
+/* ========================= MÁSCARA CPF ========================= */
+
+const campoCpfCadastro=
+    document.getElementById("cpfCadastro");
+
+if(campoCpfCadastro){
+
+    campoCpfCadastro.addEventListener(
+        "input",
+        function(){
+
+            let valor=
+                this.value.replace(/\D/g,"");
+
+            valor=
+                valor.substring(0,11);
+
+            if(valor.length>9){
+
+                valor=
+                    valor.replace(
+                        /(\d{3})(\d{3})(\d{3})(\d{1,2})/,
+                        "$1.$2.$3-$4"
+                    );
+
+            }else if(valor.length>6){
+
+                valor=
+                    valor.replace(
+                        /(\d{3})(\d{3})(\d{1,3})/,
+                        "$1.$2.$3"
+                    );
+
+            }else if(valor.length>3){
+
+                valor=
+                    valor.replace(
+                        /(\d{3})(\d{1,3})/,
+                        "$1.$2"
+                    );
+            }
+
+            this.value=valor;
+        }
+    );
+}
+
 /* ========================= RECUPERAÇÃO ========================= */
 
 function mostrarRecuperacao(){
@@ -3043,6 +3143,10 @@ async function cadastrar(event){
             "telefoneCadastro"
         ).value.trim();
 
+    const cpf=
+        document.getElementById(
+            "cpfCadastro"
+        ).value.trim();
 
     const senha=
         document.getElementById(
@@ -3092,6 +3196,20 @@ async function cadastrar(event){
         return;
     }
 
+    const cpfNumeros=
+        cpf.replace(/\D/g,"");
+
+    if(cpfNumeros.length!==11){
+
+        mensagem(
+            "mensagemCadastro",
+            "Digite um CPF válido com 11 números.",
+            "erro"
+        );
+
+        return;
+    }
+
     botao.disabled=true;
     botao.innerText="CRIANDO CONTA...";
 
@@ -3108,7 +3226,8 @@ async function cadastrar(event){
                         nome,
                         full_name:nome,
                         telefone,
-                        phone:telefone
+                        phone:telefone,
+                        cpf:cpfNumeros
                     }
                 }
             });
@@ -3567,6 +3686,12 @@ function ativarEventosJogos(){
                 const destino=
                     this.getAttribute("data-link");
 
+                if(destino==="jogos/fortune-mouse.html"){
+                    carregando=false;
+                    abrirFortuneMouse();
+                    return;
+                }
+
                 const nome=
                     this.getAttribute("data-jogo");
 
@@ -3992,11 +4117,14 @@ async function sair(){
     esconderMenu();
 
     try{
+
         await clienteSupabase()
-            .auth
-            .signOut({ scope: "local" });
+        .auth
+        .signOut();
+
     }catch(error){
-        console.error("Erro ao sair:", error);
+
+        console.error(error);
     }
 
     mostrarSitePublico();
@@ -4151,7 +4279,8 @@ window.ApostaXBet={
         nome,
         email,
         senha,
-        telefone=""
+        telefone="",
+        cpf=""
     )=>{
 
         try{
@@ -4167,7 +4296,8 @@ window.ApostaXBet={
                             nome,
                             full_name:nome,
                             telefone,
-                            phone:telefone
+                            phone:telefone,
+                            cpf:cpf.replace(/\D/g,"")
                         }
                     }
                 });
@@ -4304,7 +4434,7 @@ document.addEventListener(
         );
 
         console.log(
-            "✅ Cadastro com nome, telefone."
+            "✅ Cadastro com nome, telefone e CPF."
         );
 
         console.log(
