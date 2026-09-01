@@ -10,7 +10,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden}
 body{font-family:Arial,sans-serif;color:#fff;background:#063b55 url('../jogos/tesouro-pirata.png') center/cover no-repeat;position:relative}
 body:before{content:"";position:fixed;inset:0;background:linear-gradient(180deg,rgba(0,45,70,.02),rgba(0,0,0,.18) 48%,rgba(0,0,0,.78));z-index:0}
 .casino{position:relative;z-index:1;width:100%;height:100%;max-width:1280px;max-height:800px;margin:auto;display:grid;grid-template-rows:64px minmax(0,1fr) 82px;overflow:hidden}
-.top{display:flex;justify-content:center;align-items:flex-start;position:relative;z-index:4}
+.top{display:flex;justify-content:center;align-items:flex-start;position:relative;z-index:4}.top-balance{position:absolute;right:14px;top:10px;z-index:6;display:flex;align-items:center;gap:6px;padding:7px 11px;border:1px solid #c89b45;border-radius:7px;background:linear-gradient(#171b1c,#07090a);box-shadow:inset 0 1px #fff2,0 3px 10px #000b;color:#f4d36c;font-size:11px;font-weight:900;letter-spacing:.4px}.top-balance span{color:#fff;font-size:14px}.top-balance strong{color:#9dffb5}@media(max-width:760px){.top-balance{right:6px;top:6px;padding:5px 7px;font-size:8px;gap:3px}.top-balance span{font-size:10px}.top-balance strong{font-size:10px}}
 .title{position:relative;margin-top:2px;width:470px;height:58px;display:flex;align-items:center;justify-content:center;background:linear-gradient(#b77a2c,#713b12 48%,#321605);border:3px solid #e6c260;border-radius:8px 8px 22px 22px;box-shadow:0 4px 0 #241006,0 6px 12px #000c,inset 0 2px #fff5}
 .title:before,.title:after{content:"";position:absolute;top:20px;width:115px;height:15px;background:linear-gradient(#8c5822,#3b1b08);border:2px solid #c3913d;z-index:-1}.title:before{right:100%}.title:after{left:100%}
 .title h1{margin:0;color:#ffe16a;font:900 35px/1 Georgia,serif;letter-spacing:1px;text-shadow:0 3px #642b08,0 4px 7px #000,0 0 12px #f6a800}
@@ -81,7 +81,7 @@ body:before{content:"";position:fixed;inset:0;background:linear-gradient(180deg,
   </div>
 </div>
 <div class="casino">
-  <div class="top"><div class="title"><span class="sk">☠</span><h1>TESOURO PIRATA</h1><span class="sk">☠</span></div></div>
+  <div class="top"><div class="top-balance" aria-label="Saldo atual">SALDO: <span>R$ <strong id="pirata-saldo-top">0,00</strong></span></div><div class="title"><span class="sk">☠</span><h1>TESOURO PIRATA</h1><span class="sk">☠</span></div></div>
   <div class="stage">
     <div id="errorMessage" class="erro"></div>
     <div class="machine"><div class="reelWindow"><div id="reelsGrid" class="rolos"></div></div></div>
@@ -280,6 +280,9 @@ async function startLoading(){
   setTimeout(()=>screen.remove(),450);
 }
 async function start(){init();ui();startLoading();let tries=0;while(!window.SistemaSaldo&&tries<50){await new Promise(r=>setTimeout(r,50));tries++}if(!window.SistemaSaldo){error('Erro ao carregar o sistema de saldo.');return}await balance()}start();
+</script>
+<script>
+(function(){const el=document.getElementById('pirata-saldo-top');if(!el)return;function f(v){const n=Number(v);return Number.isFinite(n)?n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'0,00'}async function u(){try{if(window.SistemaSaldo&&typeof window.SistemaSaldo.get==='function'){const r=window.SistemaSaldo.get();const v=r&&typeof r.then==='function'?await r:r;if(typeof v==='number')el.textContent=f(v);else if(v&&typeof v==='object')el.textContent=f(v.valor??v.saldo??v.balance??0)}}catch(e){}}u();setInterval(u,700);window.addEventListener('focus',u);document.addEventListener('visibilitychange',()=>{if(!document.hidden)u()})})();
 </script>
 </body>
 </html>
