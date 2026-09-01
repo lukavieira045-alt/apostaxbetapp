@@ -1,0 +1,32 @@
+name: Activate Tesouro lobby spin v8
+on: push
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Activate lobby spin handler
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('jogos/tesouro-pirata.html')
+          s=p.read_text(encoding='utf-8')
+          old='spinBtn.onclick=lobbySpin;\n\nminusBtn.onclick=()=>adjust(-1);plusBtn.onclick=()=>adjust(1);maxBtn.onclick=max;spinBtn.onclick=spin;'
+          new='spinBtn.onclick=lobbySpin;\n\nminusBtn.onclick=()=>adjust(-1);plusBtn.onclick=()=>adjust(1);maxBtn.onclick=max;spinBtn.onclick=lobbySpin;'
+          if old in s:
+              s=s.replace(old,new,1)
+              p.write_text(s,encoding='utf-8')
+              print('Botão GIRAR agora usa lobbySpin')
+          else:
+              print('Nada para corrigir')
+              raise SystemExit
+          PY
+          git fetch origin main
+          git rebase origin/main
+          git config user.name "ApostaXBet Bot"
+          git config user.email "actions@github.com"
+          git add jogos/tesouro-pirata.html
+          git commit -m "Ativar giro vertical do lobby" || exit 0
+          git push origin HEAD:main
