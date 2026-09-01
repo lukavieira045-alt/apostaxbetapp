@@ -1,0 +1,88 @@
+name: Ajustar loading final do Rato
+on: push
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Aguardar e sincronizar main
+        run: |
+          sleep 30
+          git fetch origin main
+          git reset --hard origin/main
+      - name: Substituir somente o loading do Rato
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          p=Path('jogos/fortune-mouse.html')
+          s=p.read_text(encoding='utf-8')
+
+          css='''
+          /* === LOADING FINAL — RATO DA FORTUNA === */
+          #ax-loading-screen{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:18px;background:#050308;opacity:1;visibility:visible;transition:opacity .55s ease,visibility .55s ease}
+          #ax-loading-screen.ax-loading-hide{opacity:0;visibility:hidden;pointer-events:none}
+          .ax-loader-box{width:min(390px,94vw);text-align:center}
+          .ax-loader-banner{display:block;width:100%;max-height:62vh;object-fit:contain;border-radius:18px;border:2px solid #d6a63d;background:#120b18;box-shadow:0 0 0 1px rgba(255,238,161,.25),0 0 35px rgba(243,198,91,.25),0 18px 50px rgba(0,0,0,.8)}
+          .ax-loader-title{margin-top:16px;color:#ffe9a0;font-size:18px;font-weight:1000;letter-spacing:2px;text-transform:uppercase}
+          .ax-loader-text{margin-top:7px;color:rgba(255,255,255,.72);font-size:11px;letter-spacing:2px;text-transform:uppercase}
+          .ax-loader-track{margin-top:14px;height:9px;overflow:hidden;border-radius:99px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18)}
+          .ax-loader-bar{width:0%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8d5718,#d99f35,#fff0a1,#f3c65b,#9b641b);box-shadow:0 0 16px rgba(255,220,110,.8);transition:width .18s linear}
+          .ax-loader-percent{margin-top:8px;color:rgba(255,255,255,.55);font-size:10px;font-weight:900;letter-spacing:1px}
+          '''
+          s=re.sub(r'(?s)\/\* === LOADING.*?\*\/.*?(?=\n</style>)',css.rstrip(),s,count=1)
+
+          html='''<div id="ax-loading-screen" aria-label="Carregando Rato da Fortuna">
+              <div class="ax-loader-box">
+                  <img class="ax-loader-banner" src="banner-mouse.png" alt="Rato da Fortuna">
+                  <div class="ax-loader-title">RATO DA FORTUNA</div>
+                  <div class="ax-loader-text">CARREGANDO JOGO...</div>
+                  <div class="ax-loader-track"><div class="ax-loader-bar" id="ax-loader-bar"></div></div>
+                  <div class="ax-loader-percent" id="ax-loader-percent">0%</div>
+              </div>
+          </div>
+
+          '''
+          s=re.sub(r'(?s)<div id="ax-loading-screen".*?(?=<div class="game">)',html,s,count=1)
+
+          script='''<script>
+          (function(){
+              const screen=document.getElementById('ax-loading-screen');
+              const bar=document.getElementById('ax-loader-bar');
+              const pct=document.getElementById('ax-loader-percent');
+              if(!screen||!bar||!pct)return;
+              const total=5200;
+              const start=performance.now();
+              function tick(now){
+                  const progress=Math.min((now-start)/total,1);
+                  const value=Math.floor(progress*100);
+                  bar.style.width=value+'%';
+                  pct.textContent=value+'%';
+                  if(progress<1) requestAnimationFrame(tick);
+                  else{
+                      setTimeout(()=>screen.classList.add('ax-loading-hide'),300);
+                      setTimeout(()=>screen.remove(),950);
+                  }
+              }
+              requestAnimationFrame(tick);
+          })();
+          </script>'''
+          s=re.sub(r'(?s)<script>\s*\(function\(\)\{\s*const screen=document\.getElementById\([\"\']ax-loading-screen[\"\']\);.*?</script>',script,s,count=1)
+
+          p.write_text(s,encoding='utf-8')
+          assert 'banner-mouse.png' in s
+          assert 'const total=5200' in s
+          assert 'ax-loading-brand' not in s
+          print('OK: loader do Rato atualizado')
+      - name: Commit target e remover workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add jogos/fortune-mouse.html
+          git diff --cached --quiet || git commit -m "fix: loading final do Rato com banner e 5 segundos"
+          git push origin main
+          git rm -f .github/workflows/ajustar-loading-rato-final.yml
+          git commit -m "chore: remover workflow temporario"
+          git push origin main
