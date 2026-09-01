@@ -663,14 +663,15 @@ button{
     .control-value{ font-size:14px; }
 }
 
-/* === LOADING DE ENTRADA — RATO DA FORTUNA === */
+
+/* === LOADING FINAL — RATO DA FORTUNA === */
 #ax-loading-screen{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:18px;background:#050308;opacity:1;visibility:visible;transition:opacity .55s ease,visibility .55s ease}
 #ax-loading-screen.ax-loading-hide{opacity:0;visibility:hidden;pointer-events:none}
 .ax-loader-box{width:min(390px,94vw);text-align:center}
 .ax-loader-banner{display:block;width:100%;max-height:62vh;object-fit:contain;border-radius:18px;border:2px solid #d6a63d;background:#120b18;box-shadow:0 0 0 1px rgba(255,238,161,.25),0 0 35px rgba(243,198,91,.25),0 18px 50px rgba(0,0,0,.8)}
-.ax-loader-title{margin-top:16px;color:#ffe9a0;font-size:18px;font-weight:1000;letter-spacing:2px;text-transform:uppercase;text-shadow:0 0 15px rgba(255,215,90,.35)}
+.ax-loader-title{margin-top:16px;color:#ffe9a0;font-size:18px;font-weight:1000;letter-spacing:2px;text-transform:uppercase}
 .ax-loader-text{margin-top:7px;color:rgba(255,255,255,.72);font-size:11px;letter-spacing:2px;text-transform:uppercase}
-.ax-loader-track{margin-top:14px;height:9px;overflow:hidden;border-radius:99px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 1px 4px rgba(0,0,0,.8),0 0 18px rgba(255,210,80,.12)}
+.ax-loader-track{margin-top:14px;height:9px;overflow:hidden;border-radius:99px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18)}
 .ax-loader-bar{width:0%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8d5718,#d99f35,#fff0a1,#f3c65b,#9b641b);box-shadow:0 0 16px rgba(255,220,110,.8);transition:width .18s linear}
 .ax-loader-percent{margin-top:8px;color:rgba(255,255,255,.55);font-size:10px;font-weight:900;letter-spacing:1px}
 </style>
@@ -685,9 +686,6 @@ button{
         <div class="ax-loader-text">CARREGANDO JOGO...</div>
         <div class="ax-loader-track"><div class="ax-loader-bar" id="ax-loader-bar"></div></div>
         <div class="ax-loader-percent" id="ax-loader-percent">0%</div>
-    </div>
-</div>
-        <div class="ax-loading-percent" id="ax-loading-percent">0%</div>
     </div>
 </div>
 
@@ -1453,13 +1451,18 @@ window.addEventListener("saldoAtualizado", atualizarSaldoVisual);
     const bar=document.getElementById('ax-loader-bar');
     const pct=document.getElementById('ax-loader-percent');
     if(!screen||!bar||!pct)return;
-    const total=5200,start=performance.now();
+    const total=5200;
+    const start=performance.now();
     function tick(now){
         const progress=Math.min((now-start)/total,1);
         const value=Math.floor(progress*100);
-        bar.style.width=value+'%';pct.textContent=value+'%';
-        if(progress<1)requestAnimationFrame(tick);
-        else{setTimeout(()=>screen.classList.add('ax-loading-hide'),300);setTimeout(()=>screen.remove(),950)}
+        bar.style.width=value+'%';
+        pct.textContent=value+'%';
+        if(progress<1) requestAnimationFrame(tick);
+        else{
+            setTimeout(()=>screen.classList.add('ax-loading-hide'),300);
+            setTimeout(()=>screen.remove(),950);
+        }
     }
     requestAnimationFrame(tick);
 })();
