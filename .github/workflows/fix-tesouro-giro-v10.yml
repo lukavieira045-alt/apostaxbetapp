@@ -1,0 +1,26 @@
+name: Finalize Tesouro lobby spin v10
+on: push
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Finalize spin and line rule
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('jogos/tesouro-pirata.html')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace("statusText.textContent='AUTO: 10 GIROS';spin()", "statusText.textContent='AUTO: 10 GIROS';lobbySpin()", 1)
+          s=s.replace("if(m>=3&&PAYOUTS[fs]){mult+=PAYOUTS[fs]*(m-2);", "if(m>=3){mult+=(PAYOUTS[fs]??0.5)*(m-2);", 1)
+          p.write_text(s,encoding='utf-8')
+          print('AUTO e regra de linha ajustados')
+          PY
+          git config user.name "ApostaXBet Bot"
+          git config user.email "actions@github.com"
+          git add jogos/tesouro-pirata.html
+          git commit -m "Finalizar giro do lobby e regra de linha" || exit 0
+          git pull --rebase origin main
+          git push origin HEAD:main
