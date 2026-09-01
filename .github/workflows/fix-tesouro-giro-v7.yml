@@ -1,0 +1,41 @@
+name: Fix Tesouro Pirata lobby CSS v7
+on: push
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Repair CSS and persist
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('jogos/tesouro-pirata.html')
+          s=p.read_text(encoding='utf-8')
+          bad='''<style id="lobby-spin-css">
+          .lobby-strip{position:absolute;left:0;right:0;top:0;display:block;z-index:8;will-change:transform}
+          .lobby-strip .cel{width:100%;display:flex}
+          .lobby-strip.lobby-spinning .cel img,.lobby-strip.lobby-spinning .letra{filter:blur(2px) brightness(1.15)}
+          .col{overflow:hidden;position:relative}
+          </style></style>'''
+          good='''</style>
+          <style id="lobby-spin-css">
+          .lobby-strip{position:absolute;left:0;right:0;top:0;display:block;z-index:8;will-change:transform}
+          .lobby-strip .cel{width:100%;display:flex}
+          .lobby-strip.lobby-spinning .cel img,.lobby-strip.lobby-spinning .letra{filter:blur(2px) brightness(1.15)}
+          .col{overflow:hidden;position:relative}
+          </style>'''
+          if bad in s:
+              s=s.replace(bad,good,1)
+              p.write_text(s,encoding='utf-8')
+              print('CSS corrigido')
+          else:
+              print('CSS já correto')
+              raise SystemExit
+          PY
+          git config user.name "ApostaXBet Bot"
+          git config user.email "actions@github.com"
+          git add jogos/tesouro-pirata.html
+          git commit -m "Corrigir CSS do giro vertical" || exit 0
+          git push origin HEAD:main
