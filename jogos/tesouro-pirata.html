@@ -33,7 +33,12 @@ body:before{content:"";position:fixed;inset:0;background:linear-gradient(180deg,
 .controls{display:flex;align-items:center;justify-content:flex-end;gap:6px}.bet{display:flex;align-items:center;gap:4px}.betvalue{text-align:center;min-width:58px}.betvalue small{display:block;color:#999;font-size:7px}.betvalue b{color:#ffe27b;font-size:12px}.spin{width:70px;height:70px;border-radius:50%;border:4px solid #dffff0;background:radial-gradient(circle at 32% 18%,#8aff9b,#28c95a 40%,#0d7934 68%,#03431b);color:#fff;font-size:13px;font-weight:1000;box-shadow:0 5px #022f11,0 0 22px #1dd95c88,inset 0 2px 6px #fff8}.spin:disabled{opacity:.45;filter:grayscale(1)}.auto{height:36px;min-width:62px;border-radius:4px;border:2px solid #806b49;background:linear-gradient(#3b4243,#101517);color:#fff;font-size:10px;font-weight:900}.max{width:45px!important}.ativa{background:linear-gradient(#2ee065,#08782d)!important;border-color:#baffc2!important}
 .erro{display:none;position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:50;padding:7px 15px;background:#640c09;border:2px solid #ff9673;border-radius:4px;font-weight:900}.pop{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.6);opacity:0;z-index:60;min-width:290px;padding:25px 35px;text-align:center;background:radial-gradient(circle,#b37b20,#5a340d 46%,#100704 80%);border:4px solid #f5d15f;border-radius:7px;box-shadow:0 0 0 2px #573509,0 0 55px #ffc400aa;transition:.2s}.pop.on{transform:translate(-50%,-50%) scale(1);opacity:1}.pop h2{margin:0;color:#ffdf62;font:900 28px Georgia,serif}.pop p{margin:8px 0 0;font-size:24px;font-weight:1000}
 @media(max-width:760px){.casino{grid-template-rows:52px minmax(0,1fr) 86px}.title{width:84vw;height:47px;border-width:3px}.title:before,.title:after{width:25px;height:10px;top:16px}.title h1{font-size:17px}.title .sk{font-size:15px;margin:0 6px}.stage{padding:0 4px 3px}.machine{padding:4px;border-width:3px}.machine:before,.machine:after{display:none}.reelWindow{border-width:2px}.col{border-right-width:1px}.cel{border-bottom-width:1px}.cel img{width:94%;height:94%}.letra{font-size:30px}.bottom{grid-template-columns:1fr 68px 1fr;gap:2px;padding:3px}.leftPanel{gap:2px}.leftPanel>.round{width:28px;height:28px;font-size:9px}.stats{display:none}.hold{font-size:6px;line-height:9px}.winbar{font-size:14px;line-height:18px}.controls{gap:2px}.bet{gap:2px}.bet .round{width:28px;height:28px}.betvalue{min-width:39px}.betvalue small{font-size:5px}.betvalue b{font-size:8px}.max{width:31px!important;font-size:6px}.spin{width:57px;height:57px;font-size:10px;border-width:3px}.auto{min-width:40px;height:28px;font-size:6px;padding:0 2px}.pop{min-width:235px;padding:20px 24px}.pop h2{font-size:24px}.pop p{font-size:20px}}
-</style>
+<style id="lobby-spin-css">
+.lobby-strip{position:absolute;left:0;right:0;top:0;display:block;z-index:8;will-change:transform}
+.lobby-strip .cel{width:100%;display:flex}
+.lobby-strip.lobby-spinning .cel img,.lobby-strip.lobby-spinning .letra{filter:blur(2px) brightness(1.15)}
+.col{overflow:hidden;position:relative}
+</style></style>
 </head>
 <body>
 <div class="casino">
@@ -74,6 +79,31 @@ function max(){if(!isSpinning&&!autoRunning){currentBet=Math.max(1,Math.min(100,
 async function spin(){if(isSpinning)return;await balance();if(realBalance<currentBet){error('❌ Saldo insuficiente para esta aposta.');autoRunning=false;autoSpins=0;return}const ok=await window.SistemaSaldo.debitar(currentBet);if(!ok){await balance();return}realBalance=Math.max(0,realBalance-currentBet);ui();clear();winPopup.classList.remove('on');isSpinning=true;statusText.textContent=turbo?'GIRO TURBO...':'GIRANDO...';ui();const reels=[];for(let c=0;c<COLS;c++){const cells=document.querySelectorAll('#col-'+c+' .cel');reels.push(cells);cells.forEach(x=>x.style.filter='blur(2px)')}let n=0;const limit=turbo?8:30,delay=turbo?45:60;const timer=setInterval(()=>{for(let c=0;c<COLS;c++)for(let r=0;r<ROWS;r++)setCell(reels[c][r],random());if(++n>=limit){clearInterval(timer);finish(reels)}},delay)}
 async function finish(reels){const grid=[];for(let c=0;c<COLS;c++){const arr=[];for(let r=0;r<ROWS;r++){const s=random();arr.push(s);setCell(reels[c][r],s);reels[c][r].style.filter=''}grid.push(arr)}await wins(grid);isSpinning=false;await balance();ui();if(autoRunning&&autoSpins>0){autoSpins--;$('autoCount').textContent=autoSpins;if(autoSpins>0&&realBalance>=currentBet)setTimeout(spin,turbo?80:350);else{autoRunning=false;autoSpins=0;$('autoCount').textContent='10';statusText.textContent='BOA SORTE!';ui()}}else statusText.textContent='BOA SORTE!'}
 async function wins(grid){let mult=0;const cells=new Set();PAYLINES.forEach(line=>{const first=line[0],fc=Math.floor(first/ROWS),fr=first%ROWS,fs=grid[fc][fr];let m=1;for(let i=1;i<line.length;i++){const idx=line[i],c=Math.floor(idx/ROWS),r=idx%ROWS;if(grid[c][r]===fs)m++;else break}if(m>=3&&PAYOUTS[fs]){mult+=PAYOUTS[fs]*(m-2);for(let i=0;i<m;i++)cells.add(line[i])}});if(mult<=0){prizeValue.textContent='0,00';return}mult=Math.min(mult,MAX_TOTAL_MULTIPLIER);const ganho=await window.SistemaSaldo.processarVitoria(currentBet,mult);if(ganho&&ganho>0){prizeValue.textContent=money(ganho);winValue.textContent=money(ganho);winPopup.classList.add('on');setTimeout(()=>winPopup.classList.remove('on'),2200);cells.forEach(i=>$('col-'+Math.floor(i/ROWS))?.children[i%ROWS]?.classList.add('win'));statusText.textContent='TESOURO ENCONTRADO!'}}
+function buildLobbyStrip(col,finalValues){
+  const strip=document.createElement('div');strip.className='lobby-strip';
+  const noise=18,vals=[];for(let i=0;i<noise;i++)vals.push(random());vals.push(...finalValues);
+  vals.forEach(s=>{const cell=document.createElement('div');cell.className='cel';cell.classList.toggle('scatter',s==='scatter');cell.appendChild(makeCell(s));strip.appendChild(cell)});
+  col.querySelectorAll(':scope > .cel').forEach(c=>c.style.visibility='hidden');col.appendChild(strip);
+  const h=col.clientHeight/3;strip.style.height=(vals.length*h)+'px';[...strip.children].forEach(c=>c.style.height=h+'px');
+  strip.style.transform='translate3d(0,0,0)';strip.classList.add('lobby-spinning');return {strip,h,noise};
+}
+async function lobbySpin(){
+  if(isSpinning)return;await balance();
+  if(realBalance<currentBet){error('❌ Saldo insuficiente para esta aposta.');autoRunning=false;autoSpins=0;return}
+  const ok=await window.SistemaSaldo.debitar(currentBet);if(!ok){await balance();return}
+  realBalance=Math.max(0,realBalance-currentBet);ui();clear();winPopup.classList.remove('on');prizeValue.textContent='0,00';
+  isSpinning=true;statusText.textContent=turbo?'GIRO TURBO...':'GIRANDO...';ui();
+  const finalGrid=[],strips=[];
+  for(let c=0;c<COLS;c++){const vals=[];for(let r=0;r<ROWS;r++)vals.push(random());finalGrid.push(vals);strips.push(buildLobbyStrip($('col-'+c),vals))}
+  const distance=-(strips[0].noise*strips[0].h),duration=turbo?1500:2600;
+  requestAnimationFrame(()=>strips.forEach(x=>{x.strip.style.transition=`transform ${duration}ms cubic-bezier(.12,.68,.16,1)`;x.strip.style.transform=`translate3d(0,${distance}px,0)`}));
+  await new Promise(r=>setTimeout(r,duration+120));
+  strips.forEach((x,c)=>{const col=$('col-'+c);x.strip.remove();const cells=col.querySelectorAll(':scope > .cel');finalGrid[c].forEach((sym,r)=>{cells[r].innerHTML='';cells[r].classList.toggle('scatter',sym==='scatter');cells[r].appendChild(makeCell(sym));cells[r].style.visibility='visible'})});
+  await wins(finalGrid);isSpinning=false;await balance();ui();
+  if(autoRunning&&autoSpins>0){autoSpins--;$('autoCount').textContent=autoSpins;if(autoSpins>0&&realBalance>=currentBet)setTimeout(lobbySpin,turbo?80:350);else{autoRunning=false;autoSpins=0;$('autoCount').textContent='10';statusText.textContent='BOA SORTE!';ui()}}else statusText.textContent='BOA SORTE!';
+}
+spinBtn.onclick=lobbySpin;
+
 minusBtn.onclick=()=>adjust(-1);plusBtn.onclick=()=>adjust(1);maxBtn.onclick=max;spinBtn.onclick=spin;$('turboBtn').onclick=e=>{turbo=!turbo;e.currentTarget.classList.toggle('ativa',turbo)};$('autoBtn').onclick=()=>{if(isSpinning)return;if(autoRunning){autoRunning=false;autoSpins=0;$('autoCount').textContent='10';statusText.textContent='AUTO CANCELADO';return}autoSpins=10;autoRunning=true;$('autoCount').textContent='10';statusText.textContent='AUTO: 10 GIROS';spin()};
 async function start(){init();ui();let tries=0;while(!window.SistemaSaldo&&tries<50){await new Promise(r=>setTimeout(r,50));tries++}if(!window.SistemaSaldo){error('Erro ao carregar o sistema de saldo.');return}await balance()}start();
 </script>
