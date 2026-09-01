@@ -153,7 +153,32 @@ async function spinOneReel(c,finalValues,index,duration,delay,noise){
   const cells=col.querySelectorAll(':scope > .cel');
   finalValues.forEach((sym,r)=>{cells[r].innerHTML='';cells[r].classList.toggle('scatter',sym==='scatter');cells[r].appendChild(makeCell(sym));cells[r].style.visibility='visible'});
 }
+function playTesouroSpinSound(){
+  try{
+    const C=window.AudioContext||window.webkitAudioContext;
+    if(!C)return;
+    const ctx=window.__tesouroAudio||(window.__tesouroAudio=new C());
+    if(ctx.state==='suspended')ctx.resume();
+    const now=ctx.currentTime;
+    const master=ctx.createGain();
+    master.gain.setValueAtTime(0.0001,now);
+    master.gain.exponentialRampToValueAtTime(0.58,now+0.025);
+    master.gain.exponentialRampToValueAtTime(0.0001,now+2.7);
+    const filter=ctx.createBiquadFilter();
+    filter.type='bandpass';filter.frequency.setValueAtTime(950,now);filter.Q.value=0.7;
+    const osc=ctx.createOscillator();
+    osc.type='sawtooth';osc.frequency.setValueAtTime(170,now);
+    osc.frequency.exponentialRampToValueAtTime(620,now+2.4);
+    const lfo=ctx.createOscillator(),lg=ctx.createGain();
+    lfo.frequency.value=12;lg.gain.value=130;
+    lfo.connect(lg);lg.connect(osc.frequency);
+    osc.connect(filter);filter.connect(master);master.connect(ctx.destination);
+    osc.start(now);lfo.start(now);osc.stop(now+2.75);lfo.stop(now+2.75);
+  }catch(e){}
+}
+
 async function lobbySpin(){
+  playTesouroSpinSound();
   if(isSpinning)return;await balance();
   if(realBalance<currentBet){error('❌ Saldo insuficiente para esta aposta.');autoRunning=false;autoSpins=0;return}
   const ok=await window.SistemaSaldo.debitar(currentBet);if(!ok){await balance();return}
