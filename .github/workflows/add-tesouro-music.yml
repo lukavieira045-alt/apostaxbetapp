@@ -1,0 +1,42 @@
+name: Add Tesouro Pirata music
+on:
+  workflow_dispatch:
+jobs:
+  music:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add background music
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('jogos/tesouro-pirata.html')
+          s=p.read_text(encoding='utf-8')
+          if 'id="tesouroMusic"' not in s:
+              marker='<div class="casino">'
+              audio='<audio id="tesouroMusic" src="tesouro-pirata.mp3" loop preload="auto"></audio>\n'
+              s=s.replace(marker,audio+marker,1)
+          if 'function startTesouroMusic' not in s:
+              marker='<script type="module">'
+              code='''<script>\n(function(){\n  const music=document.getElementById('tesouroMusic');\n  if(!music)return;\n  music.volume=0.32;\n  let started=false;\n  function startTesouroMusic(){\n    if(started)return;\n    started=true;\n    const p=music.play();\n    if(p&&p.catch)p.catch(()=>{started=false});\n  }\n  ['pointerdown','touchstart','click','keydown'].forEach(ev=>document.addEventListener(ev,startTesouroMusic,{once:false,passive:true}));\n})();\n</script>\n'''
+              s=s.replace(marker,code+marker,1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add jogos/tesouro-pirata.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Adicionar musica ao Tesouro Pirata"
+          git push
+      - name: Remove temporary workflow
+        if: always()
+        run: |
+          rm -f .github/workflows/add-tesouro-music.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/add-tesouro-music.yml
+          git diff --cached --quiet && exit 0
+          git commit -m "Remover workflow temporario de musica"
+          git push
