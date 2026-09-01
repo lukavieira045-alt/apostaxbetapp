@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Finalize spin and line rule
+      - name: Finalize spin, line rule and sound
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -15,12 +15,18 @@ jobs:
           s=p.read_text(encoding='utf-8')
           s=s.replace("statusText.textContent='AUTO: 10 GIROS';spin()", "statusText.textContent='AUTO: 10 GIROS';lobbySpin()", 1)
           s=s.replace("if(m>=3&&PAYOUTS[fs]){mult+=PAYOUTS[fs]*(m-2);", "if(m>=3){mult+=(PAYOUTS[fs]??0.5)*(m-2);", 1)
+          if 'function playTesouroSpinSound' not in s:
+              marker='async function lobbySpin(){'
+              sound='''function playTesouroSpinSound(){\n  try{\n    const C=window.AudioContext||window.webkitAudioContext;\n    if(!C)return;\n    const ctx=window.__tesouroAudio||(window.__tesouroAudio=new C());\n    if(ctx.state==='suspended')ctx.resume();\n    const now=ctx.currentTime;\n    const master=ctx.createGain();\n    master.gain.setValueAtTime(0.0001,now);\n    master.gain.exponentialRampToValueAtTime(0.58,now+0.025);\n    master.gain.exponentialRampToValueAtTime(0.0001,now+2.7);\n    const filter=ctx.createBiquadFilter();\n    filter.type='bandpass';filter.frequency.setValueAtTime(950,now);filter.Q.value=0.7;\n    const osc=ctx.createOscillator();\n    osc.type='sawtooth';osc.frequency.setValueAtTime(170,now);\n    osc.frequency.exponentialRampToValueAtTime(620,now+2.4);\n    const lfo=ctx.createOscillator(),lg=ctx.createGain();\n    lfo.frequency.value=12;lg.gain.value=130;\n    lfo.connect(lg);lg.connect(osc.frequency);\n    osc.connect(filter);filter.connect(master);master.connect(ctx.destination);\n    osc.start(now);lfo.start(now);osc.stop(now+2.75);lfo.stop(now+2.75);\n  }catch(e){}\n}\n\n'''
+              if marker in s:
+                  s=s.replace(marker,sound+marker,1)
+                  s=s.replace(marker,marker+'\n  playTesouroSpinSound();',1)
           p.write_text(s,encoding='utf-8')
-          print('AUTO e regra de linha ajustados')
+          print('Som de giro mantido/restaurado e mais alto que a musica')
           PY
           git config user.name "ApostaXBet Bot"
           git config user.email "actions@github.com"
           git add jogos/tesouro-pirata.html
-          git commit -m "Finalizar giro do lobby e regra de linha" || exit 0
+          git commit -m "Restaurar som de giro junto com musica" || exit 0
           git pull --rebase origin main
           git push origin HEAD:main
