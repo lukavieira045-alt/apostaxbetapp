@@ -1,0 +1,59 @@
+name: Persist Tesouro Pirata lobby spin
+on: push
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply and commit lobby reel spin
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('jogos/tesouro-pirata.html')
+          s=p.read_text(encoding='utf-8')
+          if 'function lobbySpin()' in s:
+              print('Já aplicado')
+              raise SystemExit
+          css="""<style id="lobby-spin-css">
+          .lobby-strip{position:absolute;left:0;right:0;top:0;display:block;z-index:8;will-change:transform}
+          .lobby-strip .cel{width:100%;display:flex}
+          .lobby-strip.lobby-spinning .cel img,.lobby-strip.lobby-spinning .letra{filter:blur(2px) brightness(1.15)}
+          .col{overflow:hidden;position:relative}
+          </style>"""
+          patch="""function buildLobbyStrip(col,finalValues){
+            const strip=document.createElement('div');strip.className='lobby-strip';
+            const noise=18,vals=[];for(let i=0;i<noise;i++)vals.push(random());vals.push(...finalValues);
+            vals.forEach(s=>{const cell=document.createElement('div');cell.className='cel';cell.classList.toggle('scatter',s==='scatter');cell.appendChild(makeCell(s));strip.appendChild(cell)});
+            col.querySelectorAll(':scope > .cel').forEach(c=>c.style.visibility='hidden');col.appendChild(strip);
+            const h=col.clientHeight/3;strip.style.height=(vals.length*h)+'px';[...strip.children].forEach(c=>c.style.height=h+'px');
+            strip.style.transform='translate3d(0,0,0)';strip.classList.add('lobby-spinning');return {strip,h,noise};
+          }
+          async function lobbySpin(){
+            if(isSpinning)return;await balance();
+            if(realBalance<currentBet){error('❌ Saldo insuficiente para esta aposta.');autoRunning=false;autoSpins=0;return}
+            const ok=await window.SistemaSaldo.debitar(currentBet);if(!ok){await balance();return}
+            realBalance=Math.max(0,realBalance-currentBet);ui();clear();winPopup.classList.remove('on');prizeValue.textContent='0,00';
+            isSpinning=true;statusText.textContent=turbo?'GIRO TURBO...':'GIRANDO...';ui();
+            const finalGrid=[],strips=[];
+            for(let c=0;c<COLS;c++){const vals=[];for(let r=0;r<ROWS;r++)vals.push(random());finalGrid.push(vals);strips.push(buildLobbyStrip($('col-'+c),vals))}
+            const distance=-(strips[0].noise*strips[0].h),duration=turbo?1500:2600;
+            requestAnimationFrame(()=>strips.forEach(x=>{x.strip.style.transition=`transform ${duration}ms cubic-bezier(.12,.68,.16,1)`;x.strip.style.transform=`translate3d(0,${distance}px,0)`}));
+            await new Promise(r=>setTimeout(r,duration+120));
+            strips.forEach((x,c)=>{const col=$('col-'+c);x.strip.remove();const cells=col.querySelectorAll(':scope > .cel');finalGrid[c].forEach((sym,r)=>{cells[r].innerHTML='';cells[r].classList.toggle('scatter',sym==='scatter');cells[r].appendChild(makeCell(sym));cells[r].style.visibility='visible'})});
+            await wins(finalGrid);isSpinning=false;await balance();ui();
+            if(autoRunning&&autoSpins>0){autoSpins--;$('autoCount').textContent=autoSpins;if(autoSpins>0&&realBalance>=currentBet)setTimeout(lobbySpin,turbo?80:350);else{autoRunning=false;autoSpins=0;$('autoCount').textContent='10';statusText.textContent='BOA SORTE!';ui()}}else statusText.textContent='BOA SORTE!';
+          }
+          spinBtn.onclick=lobbySpin;
+          """
+          s=s.replace('</style>\n</head>',css+'</style>\n</head>',1)
+          pos=s.index('minusBtn.onclick=')
+          s=s[:pos]+patch+'\n'+s[pos:]
+          p.write_text(s,encoding='utf-8')
+          PY
+          git config user.name "ApostaXBet Bot"
+          git config user.email "actions@github.com"
+          git add jogos/tesouro-pirata.html
+          git commit -m "Corrigir giro vertical do Tesouro Pirata" || exit 0
+          git push
