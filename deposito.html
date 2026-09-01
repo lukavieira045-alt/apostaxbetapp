@@ -1,203 +1,266 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Depositar - ApostaXBet</title>
+<meta charset="UTF-8">
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<title>Depositar - ApostaXBet</title>
 
-        body {
-            margin: 0;
-            background: #000;
-            color: white;
-            font-family: Arial, sans-serif;
-            padding-bottom: 90px;
-        }
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        .topo {
-            text-align: center;
-            padding: 25px 10px;
-            background: #111;
-            border-bottom: 2px solid #d9b21f;
-        }
+<style>
 
-        .topo h1 {
-            margin: 0;
-            color: #e6c229;
-            font-size: 28px;
-        }
+*{
+    box-sizing:border-box;
+}
 
-        .saldo {
-            margin-top: 8px;
-            color: #00ed91;
-            font-weight: bold;
-            font-size: 18px;
-        }
+body{
+    margin:0;
+    background:#000;
+    color:#fff;
+    font-family:Arial,sans-serif;
+    padding-bottom:90px;
+}
 
-        .status-saldo {
-            margin-top: 5px;
-            color: #888;
-            font-size: 12px;
-        }
+.topo{
+    text-align:center;
+    padding:25px 10px;
+    background:#111;
+    border-bottom:2px solid #d9b21f;
+}
 
-        .container {
-            width: 94%;
-            max-width: 600px;
-            margin: 25px auto;
-        }
+.topo h1{
+    margin:0;
+    color:#e6c229;
+    font-size:28px;
+}
 
-        .valores-rapidos {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
+.saldo{
+    margin-top:8px;
+    color:#00ed91;
+    font-weight:bold;
+    font-size:18px;
+}
 
-        .btn-valor {
-            flex: 1;
-            min-width: 70px;
-            padding: 12px;
-            background: #222;
-            border: 1px solid #444;
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+.status-saldo{
+    margin-top:5px;
+    color:#888;
+    font-size:12px;
+}
 
-        .btn-valor.ativo {
-            background: #e6c229;
-            color: #000;
-            border-color: #e6c229;
-        }
+.container{
+    width:94%;
+    max-width:600px;
+    margin:25px auto;
+}
 
-        .btn-pix {
-            display: block;
-            width: 100%;
-            padding: 18px;
-            font-size: 18px;
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+.valores-rapidos{
+    display:flex;
+    gap:10px;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+}
 
-        .btn-pix:disabled {
-            cursor: not-allowed;
-            opacity: .6;
-        }
+.btn-valor{
+    flex:1;
+    min-width:70px;
+    padding:12px;
+    background:#222;
+    border:1px solid #444;
+    color:#fff;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
 
-        .modal-pix {
-            display: none;
-            position: fixed;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,.88);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-        }
+.btn-valor.ativo{
+    background:#e6c229;
+    color:#000;
+    border-color:#e6c229;
+}
 
-        .modal-conteudo {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            text-align: center;
-            width: 92%;
-            max-width: 380px;
-            color: #333;
-        }
+.btn-pix{
+    display:block;
+    width:100%;
+    padding:18px;
+    font-size:18px;
+    background:#28a745;
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
 
-        .modal-conteudo h3 {
-            margin-top: 0;
-            color: #111;
-        }
+.btn-pix:disabled{
+    cursor:not-allowed;
+    opacity:.6;
+}
 
-        #qrCodePix {
-            width: 250px;
-            height: 250px;
-            max-width: 100%;
-            object-fit: contain;
-            margin: 15px auto;
-            display: block;
-            background: white;
-        }
+/* ==============================
+   MODAL PIX
+============================== */
 
-        .valor-selecionado {
-            display: block;
-            font-size: 20px;
-            color: #28a745;
-            font-weight: bold;
-        }
+.modal-pix{
+    display:none;
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.92);
+    z-index:99999;
+    justify-content:center;
+    align-items:center;
+    padding:15px;
+    overflow-y:auto;
+}
 
-        .area-copia {
-            background: #f0f0f0;
-            padding: 10px;
-            border-radius: 8px;
-            margin: 15px 0;
-            word-break: break-all;
-            font-family: monospace;
-            font-size: 12px;
-            color: #555;
-            max-height: 100px;
-            overflow-y: auto;
-            border: 1px dashed #ccc;
-        }
+.modal-conteudo{
+    position:relative;
+    background:#fff;
+    padding:22px;
+    border-radius:15px;
+    text-align:center;
+    width:100%;
+    max-width:380px;
+    color:#333;
+    max-height:95vh;
+    overflow-y:auto;
+}
 
-        .btn-copiar {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            font-weight: bold;
-        }
+.modal-conteudo h3{
+    margin-top:0;
+    color:#111;
+}
 
-        .btn-fechar {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-        }
+.btn-fechar-topo{
+    position:absolute;
+    top:8px;
+    right:10px;
+    width:38px;
+    height:38px;
+    border:0;
+    border-radius:50%;
+    background:#dc3545;
+    color:#fff;
+    font-size:22px;
+    font-weight:bold;
+    cursor:pointer;
+}
 
-        .carregando {
-            color: #555;
-            margin: 15px 0;
-            font-size: 14px;
-        }
+#qrCodePix{
+    width:250px;
+    height:250px;
+    max-width:100%;
+    object-fit:contain;
+    margin:15px auto;
+    display:none;
+    background:#fff;
+}
 
-        #mensagemDeposito {
-            display: none;
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: bold;
-        }
+.valor-selecionado{
+    display:block;
+    font-size:20px;
+    color:#28a745;
+    font-weight:bold;
+    margin:8px 0;
+}
 
-        .mensagem-erro {
-            display: block !important;
-            background: #3a1111;
-            color: #ff7777;
-            border: 1px solid #8b2222;
-        }
-    </style>
+.carregando{
+    color:#555;
+    margin:15px 0;
+    font-size:14px;
+}
+
+.area-copia{
+    background:#f0f0f0;
+    padding:12px;
+    border-radius:8px;
+    margin:15px 0;
+    word-break:break-all;
+    font-family:monospace;
+    font-size:12px;
+    color:#333;
+    max-height:110px;
+    overflow-y:auto;
+    border:1px dashed #ccc;
+    user-select:text;
+    -webkit-user-select:text;
+}
+
+.btn-copiar{
+    background:#007bff;
+    color:#fff;
+    border:none;
+    padding:14px;
+    border-radius:7px;
+    cursor:pointer;
+    width:100%;
+    font-weight:bold;
+    font-size:15px;
+}
+
+.btn-copiar:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.btn-fechar{
+    background:#dc3545;
+    color:#fff;
+    border:none;
+    padding:12px 25px;
+    border-radius:7px;
+    cursor:pointer;
+    font-size:16px;
+    margin-top:10px;
+    width:100%;
+}
+
+#mensagemDeposito{
+    display:none;
+    margin-top:15px;
+    padding:12px;
+    border-radius:8px;
+    text-align:center;
+    font-weight:bold;
+    word-break:break-word;
+}
+
+.mensagem-erro{
+    display:block!important;
+    background:#3a1111;
+    color:#ff7777;
+    border:1px solid #8b2222;
+}
+
+.mensagem-ok{
+    display:block!important;
+    background:#123a20;
+    color:#66ff99;
+    border:1px solid #238b45;
+}
+
+.erro-servidor{
+    margin-top:12px;
+    padding:10px;
+    background:#fff0f0;
+    border:1px solid #ffb0b0;
+    border-radius:8px;
+    color:#9b0000;
+    font-size:12px;
+    text-align:left;
+    word-break:break-word;
+    display:none;
+}
+
+</style>
+
 </head>
 
 <body>
@@ -206,114 +269,174 @@
 
     <h1>ApostaXBet</h1>
 
-    <div class="saldo" id="displaySaldo">
+    <div
+        class="saldo"
+        id="displaySaldo">
         💰 Saldo: R$ 0,00
     </div>
 
-    <div class="status-saldo" id="statusSaldo">
+    <div
+        class="status-saldo"
+        id="statusSaldo">
         Carregando saldo...
     </div>
 
 </div>
 
+
 <div class="container">
 
     <h2>Recarregar Saldo</h2>
 
-    <p>Escolha um valor para depositar via PIX:</p>
+    <p>
+        Escolha um valor para depositar via PIX:
+    </p>
 
     <div class="valores-rapidos">
 
-        <button class="btn-valor"
-                onclick="selecionarValor(this,10)">
+        <button
+            class="btn-valor"
+            onclick="selecionarValor(this,10)">
             R$ 10
         </button>
 
-        <button class="btn-valor"
-                onclick="selecionarValor(this,20)">
+        <button
+            class="btn-valor"
+            onclick="selecionarValor(this,20)">
             R$ 20
         </button>
 
-        <button class="btn-valor"
-                onclick="selecionarValor(this,50)">
+        <button
+            class="btn-valor"
+            onclick="selecionarValor(this,50)">
             R$ 50
         </button>
 
-        <button class="btn-valor"
-                onclick="selecionarValor(this,100)">
+        <button
+            class="btn-valor"
+            onclick="selecionarValor(this,100)">
             R$ 100
         </button>
 
-        <button class="btn-valor"
-                onclick="selecionarValor(this,200)">
+        <button
+            class="btn-valor"
+            onclick="selecionarValor(this,200)">
             R$ 200
         </button>
 
     </div>
+
 
     <button
         id="btnDepositar"
         class="btn-pix"
         onclick="abrirModal()"
         disabled>
+
         Depositar via PIX
+
     </button>
+
 
     <div id="mensagemDeposito"></div>
 
 </div>
 
+
+<!-- ==============================
+     MODAL
+============================== -->
+
 <div
     id="modalPix"
-    class="modal-pix"
-    onclick="if(event.target === this) fecharModal()">
+    class="modal-pix">
 
     <div class="modal-conteudo">
 
+        <button
+            class="btn-fechar-topo"
+            onclick="fecharModal()">
+            ×
+        </button>
+
+
         <h3>Pague com PIX</h3>
 
-        <span id="valorDisplay"
-              class="valor-selecionado"></span>
 
-        <div id="carregandoPix"
-             class="carregando">
+        <span
+            id="valorDisplay"
+            class="valor-selecionado">
+        </span>
+
+
+        <div
+            id="carregandoPix"
+            class="carregando">
+
             Criando PIX...
+
         </div>
+
 
         <img
             id="qrCodePix"
             src=""
-            alt="QR Code PIX"
-            style="display:none;"
-        >
+            alt="QR Code PIX">
+
 
         <div
             class="area-copia"
             id="textoPix">
+
+            Aguardando código PIX...
+
         </div>
 
+
         <button
+            id="btnCopiar"
             class="btn-copiar"
-            onclick="copiarChave()">
+            onclick="copiarChave()"
+            disabled>
+
             📋 Copiar Código PIX
+
         </button>
 
-        <p style="font-size:12px;color:#888;">
-            Escaneie o QR Code no aplicativo do seu banco
-            ou copie o código PIX.
+
+        <div
+            id="erroServidor"
+            class="erro-servidor">
+        </div>
+
+
+        <p
+            style="font-size:12px;color:#888;">
+
+            Escaneie o QR Code no aplicativo
+            do seu banco ou copie o código PIX.
+
         </p>
+
 
         <button
             class="btn-fechar"
             onclick="fecharModal()">
+
             Fechar
+
         </button>
 
     </div>
 
 </div>
 
+
 <script>
+
+/* =====================================================
+   CONFIGURAÇÃO
+===================================================== */
 
 const SUPABASE_URL =
     "https://jxbzjiwmajjzxgihfjgt.supabase.co";
@@ -324,11 +447,13 @@ const SUPABASE_ANON_KEY =
 const WEBHOOK_DEPOSITO_URL =
     "https://jxbzjiwmajjzxgihfjgt.supabase.co/functions/v1/swift-action";
 
+
 const supabaseClient =
     window.supabase.createClient(
         SUPABASE_URL,
         SUPABASE_ANON_KEY
     );
+
 
 let usuarioAtual = null;
 let valorAtual = 0;
@@ -338,7 +463,7 @@ let valorAtual = 0;
    FORMATAR
 ===================================================== */
 
-function formatarValor(valor) {
+function formatarValor(valor){
 
     return Number(valor || 0)
         .toFixed(2)
@@ -351,16 +476,109 @@ function formatarValor(valor) {
    MENSAGEM
 ===================================================== */
 
-function mostrarErro(mensagem) {
+function mostrarErro(mensagem){
 
     const el =
         document.getElementById(
             "mensagemDeposito"
         );
 
-    el.innerText = mensagem;
-    el.className = "mensagem-erro";
-    el.style.display = "block";
+    el.innerText =
+        mensagem;
+
+    el.className =
+        "mensagem-erro";
+
+    el.style.display =
+        "block";
+
+}
+
+
+function limparMensagem(){
+
+    const el =
+        document.getElementById(
+            "mensagemDeposito"
+        );
+
+    el.innerText =
+        "";
+
+    el.className =
+        "";
+
+    el.style.display =
+        "none";
+
+}
+
+
+/* =====================================================
+   ERRO REAL DO SERVIDOR
+===================================================== */
+
+function mostrarErroServidor(dados){
+
+    const el =
+        document.getElementById(
+            "erroServidor"
+        );
+
+    let texto = "";
+
+    if(
+        typeof dados === "string"
+    ){
+
+        texto =
+            dados;
+
+    }else{
+
+        texto =
+            dados?.error ||
+            dados?.message ||
+            "";
+
+        if(
+            dados?.detalhes
+        ){
+
+            if(
+                typeof dados.detalhes === "string"
+            ){
+
+                texto +=
+                    "\n" +
+                    dados.detalhes;
+
+            }else{
+
+                texto +=
+                    "\n" +
+                    JSON.stringify(
+                        dados.detalhes
+                    );
+
+            }
+
+        }
+
+    }
+
+    if(!texto){
+
+        texto =
+            "O servidor não informou o motivo.";
+
+    }
+
+    el.innerText =
+        "Detalhes: " + texto;
+
+    el.style.display =
+        "block";
 
 }
 
@@ -369,7 +587,7 @@ function mostrarErro(mensagem) {
    USUÁRIO
 ===================================================== */
 
-async function carregarUsuario() {
+async function carregarUsuario(){
 
     const {
         data,
@@ -377,18 +595,26 @@ async function carregarUsuario() {
     } =
         await supabaseClient.auth.getUser();
 
-    if (error || !data || !data.user) {
+
+    if(
+        error ||
+        !data ||
+        !data.user
+    ){
 
         throw new Error(
-            "Usuário não identificado. Faça login novamente."
+            "Sua sessão não está ativa. Faça login novamente."
         );
 
     }
 
-    usuarioAtual = data.user;
+
+    usuarioAtual =
+        data.user;
+
 
     console.log(
-        "ApostaXBet usuário:",
+        "Usuário ApostaXBet:",
         usuarioAtual.id
     );
 
@@ -397,25 +623,28 @@ async function carregarUsuario() {
 
 /* =====================================================
    SALDO
-   SOMENTE LEITURA
-   NÃO ALTERA O SALDO
 ===================================================== */
 
-async function carregarSaldo() {
+async function carregarSaldo(){
 
     const status =
         document.getElementById(
             "statusSaldo"
         );
 
-    try {
+
+    try{
 
         status.innerText =
             "Carregando saldo...";
 
-        if (!usuarioAtual) {
+
+        if(!usuarioAtual){
+
             await carregarUsuario();
+
         }
+
 
         const {
             data,
@@ -430,10 +659,11 @@ async function carregarSaldo() {
                 )
                 .maybeSingle();
 
-        if (error) {
+
+        if(error){
 
             console.error(
-                "Erro saldos:",
+                "Erro saldo:",
                 error
             );
 
@@ -443,23 +673,24 @@ async function carregarSaldo() {
 
         }
 
+
         const saldo =
-            Number(data?.valor ?? 0);
+            Number(
+                data?.valor ?? 0
+            );
+
 
         document.getElementById(
             "displaySaldo"
         ).innerText =
             `💰 Saldo: R$ ${formatarValor(saldo)}`;
 
+
         status.innerText =
             "Saldo atualizado";
 
-        console.log(
-            "Saldo carregado:",
-            saldo
-        );
 
-    } catch (erro) {
+    }catch(erro){
 
         console.error(
             "CARREGAR SALDO:",
@@ -479,47 +710,70 @@ async function carregarSaldo() {
 
 
 /* =====================================================
-   ESCOLHER VALOR
+   SELECIONAR VALOR
 ===================================================== */
 
 function selecionarValor(
     botao,
     valor
-) {
+){
 
     document
-        .querySelectorAll(".btn-valor")
+        .querySelectorAll(
+            ".btn-valor"
+        )
         .forEach(
-            b => b.classList.remove("ativo")
+            b =>
+                b.classList.remove(
+                    "ativo"
+                )
         );
 
-    botao.classList.add("ativo");
+
+    botao.classList.add(
+        "ativo"
+    );
+
 
     valorAtual =
         Number(valor);
+
 
     const btn =
         document.getElementById(
             "btnDepositar"
         );
 
-    btn.disabled = false;
+
+    btn.disabled =
+        false;
+
 
     btn.innerText =
         `💰 Depositar R$ ${formatarValor(valorAtual)} via PIX`;
+
+
+    limparMensagem();
 
 }
 
 
 /* =====================================================
-   CRIAR PIX
+   ABRIR MODAL
 ===================================================== */
 
-async function abrirModal() {
+async function abrirModal(){
 
-    if (!valorAtual) {
+    if(!valorAtual){
+
+        mostrarErro(
+            "Escolha um valor para depositar."
+        );
+
         return;
+
     }
+
 
     const modal =
         document.getElementById(
@@ -541,37 +795,82 @@ async function abrirModal() {
             "carregandoPix"
         );
 
+    const btnCopiar =
+        document.getElementById(
+            "btnCopiar"
+        );
+
+    const erroServidor =
+        document.getElementById(
+            "erroServidor"
+        );
+
+
+    /* ==============================================
+       LIMPAR MODAL
+    ============================================== */
+
     modal.style.display =
         "flex";
+
 
     qr.style.display =
         "none";
 
-    qr.src = "";
 
-    texto.innerText = "";
+    qr.src =
+        "";
+
+
+    texto.innerText =
+        "Aguardando código PIX...";
+
 
     carregando.innerText =
         "Criando PIX...";
 
+
     carregando.style.display =
         "block";
+
+
+    btnCopiar.disabled =
+        true;
+
+
+    btnCopiar.innerText =
+        "⏳ Aguardando código PIX...";
+
+
+    erroServidor.innerText =
+        "";
+
+    erroServidor.style.display =
+        "none";
+
 
     document.getElementById(
         "valorDisplay"
     ).innerText =
         `Valor: R$ ${formatarValor(valorAtual)}`;
 
-    try {
 
-        if (!usuarioAtual) {
+    try{
+
+        /* ==========================================
+           USUÁRIO
+        ========================================== */
+
+        if(!usuarioAtual){
+
             await carregarUsuario();
+
         }
 
-        /*
-         * Pega a sessão atual.
-         * O access_token é enviado para a Edge Function.
-         */
+
+        /* ==========================================
+           SESSÃO
+        ========================================== */
 
         const {
             data: sessionData,
@@ -579,11 +878,12 @@ async function abrirModal() {
         } =
             await supabaseClient.auth.getSession();
 
-        if (
+
+        if(
             sessionError ||
             !sessionData ||
             !sessionData.session
-        ) {
+        ){
 
             throw new Error(
                 "Sua sessão expirou. Faça login novamente."
@@ -591,73 +891,109 @@ async function abrirModal() {
 
         }
 
+
         const session =
             sessionData.session;
 
-        /*
-         * A Edge Function recebe o usuário
-         * pelo JWT e não depende de um userId
-         * inventado no navegador.
-         */
+
+        /* ==========================================
+           CHAMAR EDGE FUNCTION
+        ========================================== */
+
+        console.log(
+            "Enviando criação de PIX:",
+            {
+                valor:valorAtual,
+                userId:usuarioAtual.id
+            }
+        );
+
 
         const resposta =
             await fetch(
                 WEBHOOK_DEPOSITO_URL,
                 {
-                    method: "POST",
+                    method:"POST",
 
-                    headers: {
+                    headers:{
                         "Content-Type":
                             "application/json",
 
                         "Authorization":
-                            `Bearer ${session.access_token}`
+                            `Bearer ${session.access_token}`,
+
+                        "apikey":
+                            SUPABASE_ANON_KEY
                     },
 
-                    body: JSON.stringify({
+                    body:
+                        JSON.stringify({
 
-                        tipo:
-                            "deposito_pix",
+                            tipo:
+                                "deposito_pix",
 
-                        valor:
-                            valorAtual,
+                            valor:
+                                valorAtual,
 
-                        userId:
-                            usuarioAtual.id,
+                            userId:
+                                usuarioAtual.id,
 
-                        email:
-                            usuarioAtual.email || ""
+                            email:
+                                usuarioAtual.email || ""
 
-                    })
+                        })
                 }
             );
+
 
         const respostaTexto =
             await resposta.text();
 
+
         console.log(
-            "Resposta da swift-action:",
+            "Resposta swift-action:",
+            resposta.status,
             respostaTexto
         );
 
+
+        /* ==========================================
+           JSON
+        ========================================== */
+
         let dados;
 
-        try {
+
+        try{
 
             dados =
                 JSON.parse(
                     respostaTexto
                 );
 
-        } catch {
+        }catch{
+
+            mostrarErroServidor(
+                respostaTexto
+            );
 
             throw new Error(
-                "A Edge Function retornou uma resposta inválida."
+                `Servidor retornou resposta inválida (HTTP ${resposta.status}).`
             );
 
         }
 
-        if (!resposta.ok) {
+
+        /* ==========================================
+           ERRO HTTP
+        ========================================== */
+
+        if(!resposta.ok){
+
+            mostrarErroServidor(
+                dados
+            );
+
 
             throw new Error(
                 dados.error ||
@@ -667,61 +1003,89 @@ async function abrirModal() {
 
         }
 
-        if (
-            dados.sucesso === false ||
-            dados.success === false
-        ) {
 
-            throw new Error(
-                dados.error ||
-                dados.message ||
-                "Não foi possível criar o PIX."
-            );
-
-        }
+        /* ==========================================
+           PEGAR CÓDIGO PIX
+        ========================================== */
 
         const codigoPix =
             dados.qr_code ||
-            dados.qr_code_text ||
             dados.qr_code_copy_paste ||
+            dados.qr_code_text ||
             dados.point_of_interaction
                 ?.transaction_data
                 ?.qr_code;
 
-        if (!codigoPix) {
+
+        if(!codigoPix){
 
             console.error(
-                "Resposta sem código PIX:",
+                "Resposta sem PIX:",
                 dados
             );
 
+
+            mostrarErroServidor(
+                dados
+            );
+
+
             throw new Error(
-                "O Mercado Pago não retornou o código PIX."
+                "O servidor respondeu, mas não enviou o código PIX."
             );
 
         }
+
+
+        /* ==========================================
+           MOSTRAR CÓDIGO
+        ========================================== */
 
         texto.innerText =
             codigoPix;
 
-        if (
+
+        btnCopiar.disabled =
+            false;
+
+
+        btnCopiar.innerText =
+            "📋 Copiar Código PIX";
+
+
+        carregando.innerText =
+            "PIX criado com sucesso!";
+
+
+        carregando.style.color =
+            "#198754";
+
+
+        /* ==========================================
+           QR CODE
+        ========================================== */
+
+        if(
             dados.qr_code_base64
-        ) {
+        ){
 
             qr.src =
                 `data:image/png;base64,${dados.qr_code_base64}`;
 
-        } else {
+        }else{
 
             qr.src =
                 "https://api.qrserver.com/v1/create-qr-code/" +
                 "?size=250x250&data=" +
-                encodeURIComponent(codigoPix);
+                encodeURIComponent(
+                    codigoPix
+                );
 
         }
 
+
         qr.onload =
-            function() {
+            function(){
 
                 carregando.style.display =
                     "none";
@@ -731,29 +1095,50 @@ async function abrirModal() {
 
             };
 
+
         qr.onerror =
-            function() {
+            function(){
+
+                qr.style.display =
+                    "none";
 
                 carregando.innerText =
-                    "QR Code não pôde ser exibido. Use o código PIX abaixo.";
+                    "PIX criado. Use o código abaixo para pagar.";
 
             };
 
-    } catch (erro) {
+
+    }catch(erro){
 
         console.error(
-            "ERRO PIX:",
+            "ERRO AO CRIAR PIX:",
             erro
         );
 
+
         carregando.innerText =
-            erro.message ||
+            erro?.message ||
             "Não foi possível criar o PIX.";
 
-        texto.innerText = "";
+
+        carregando.style.color =
+            "#dc3545";
+
+
+        btnCopiar.disabled =
+            true;
+
+
+        btnCopiar.innerText =
+            "📋 Código PIX indisponível";
+
+
+        texto.innerText =
+            "O código PIX não foi recebido.";
+
 
         mostrarErro(
-            erro.message ||
+            erro?.message ||
             "Não foi possível criar o PIX."
         );
 
@@ -766,14 +1151,24 @@ async function abrirModal() {
    COPIAR PIX
 ===================================================== */
 
-async function copiarChave() {
+async function copiarChave(){
 
     const texto =
-        document.getElementById(
-            "textoPix"
-        ).innerText.trim();
+        document
+            .getElementById(
+                "textoPix"
+            )
+            .innerText
+            .trim();
 
-    if (!texto) {
+
+    if(
+        !texto ||
+        texto ===
+        "Aguardando código PIX..." ||
+        texto ===
+        "O código PIX não foi recebido."
+    ){
 
         alert(
             "O código PIX ainda não foi carregado."
@@ -783,78 +1178,215 @@ async function copiarChave() {
 
     }
 
-    try {
 
-        await navigator.clipboard.writeText(
-            texto
-        );
+    /* ==============================================
+       CLIPBOARD
+    ============================================== */
 
-        const btn =
-            document.querySelector(
-                ".btn-copiar"
+    try{
+
+        if(
+            navigator.clipboard &&
+            navigator.clipboard.writeText
+        ){
+
+            await navigator.clipboard.writeText(
+                texto
             );
 
-        const original =
-            btn.innerHTML;
+            mostrarCopiado();
 
-        btn.innerHTML =
-            "✅ Copiado!";
+            return;
 
-        btn.style.background =
-            "#28a745";
+        }
 
-        setTimeout(
-            () => {
+    }catch(erro){
 
-                btn.innerHTML =
-                    original;
-
-                btn.style.background =
-                    "#007bff";
-
-            },
-            2000
-        );
-
-    } catch {
-
-        alert(
-            "Não foi possível copiar automaticamente."
+        console.log(
+            "Clipboard indisponível:",
+            erro
         );
 
     }
 
+
+    /* ==============================================
+       FALLBACK CELULAR
+    ============================================== */
+
+    try{
+
+        const area =
+            document.createElement(
+                "textarea"
+            );
+
+
+        area.value =
+            texto;
+
+
+        area.style.position =
+            "fixed";
+
+        area.style.left =
+            "-9999px";
+
+        area.style.top =
+            "0";
+
+        area.style.width =
+            "1px";
+
+        area.style.height =
+            "1px";
+
+
+        document.body.appendChild(
+            area
+        );
+
+
+        area.focus();
+
+        area.select();
+
+        area.setSelectionRange(
+            0,
+            area.value.length
+        );
+
+
+        const sucesso =
+            document.execCommand(
+                "copy"
+            );
+
+
+        document.body.removeChild(
+            area
+        );
+
+
+        if(sucesso){
+
+            mostrarCopiado();
+
+            return;
+
+        }
+
+    }catch(erro){
+
+        console.log(
+            "Fallback falhou:",
+            erro
+        );
+
+    }
+
+
+    alert(
+        "Não foi possível copiar automaticamente. Pressione e segure o código PIX para copiar."
+    );
+
 }
 
 
 /* =====================================================
-   FECHAR
+   COPIADO
 ===================================================== */
 
-function fecharModal() {
+function mostrarCopiado(){
 
-    document.getElementById(
-        "modalPix"
-    ).style.display =
-        "none";
+    const btn =
+        document.getElementById(
+            "btnCopiar"
+        );
+
+
+    btn.innerText =
+        "✅ Código PIX Copiado!";
+
+
+    btn.style.background =
+        "#28a745";
+
+
+    setTimeout(
+        function(){
+
+            btn.innerText =
+                "📋 Copiar Código PIX";
+
+            btn.style.background =
+                "#007bff";
+
+        },
+        2000
+    );
 
 }
 
 
 /* =====================================================
-   INICIAR
+   FECHAR MODAL
+===================================================== */
+
+function fecharModal(){
+
+    const modal =
+        document.getElementById(
+            "modalPix"
+        );
+
+
+    modal.style.display =
+        "none";
+
+
+    /* Limpa somente a interface.
+       NÃO altera saldo e NÃO encerra sessão. */
+
+}
+
+
+/* =====================================================
+   BOTÃO ESC
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            event.key ===
+            "Escape"
+        ){
+
+            fecharModal();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   INICIALIZAÇÃO
 ===================================================== */
 
 window.addEventListener(
     "load",
-    async function() {
+    async function(){
 
-        try {
+        try{
 
             await carregarUsuario();
+
             await carregarSaldo();
 
-        } catch (erro) {
+        }catch(erro){
 
             console.error(
                 "Inicialização:",
@@ -862,7 +1394,8 @@ window.addEventListener(
             );
 
             mostrarErro(
-                erro.message
+                erro?.message ||
+                "Não foi possível carregar sua conta."
             );
 
         }
