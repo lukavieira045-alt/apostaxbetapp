@@ -51,14 +51,14 @@ body:before{content:"";position:fixed;inset:0;background:linear-gradient(180deg,
   </div>
   <div class="bottom">
     <div class="leftPanel"><button class="round">☰</button><button class="round">i</button><div class="stats"><div class="stat"><small>CREDIT</small><b>R$ <span id="balance">0,00</span></b></div><div class="stat"><small>BET</small><b>R$ <span id="betAmount">1,00</span></b></div></div></div>
-    <div class="center"><div class="hold" id="statusText">ENCONTRE 3 OU MAIS ☠ PARA GANHAR!</div><div class="winbar">WIN <span>R$ <b id="prizeValue">0,00</b></span></div></div>
+    <div class="center"><div class="hold" id="statusText">5 IGUAIS NA MESMA LINHA PARA GANHAR!</div><div class="winbar">WIN <span>R$ <b id="prizeValue">0,00</b></span></div></div>
     <div class="controls"><div class="bet"><button class="round" id="minusBtn">−</button><div class="betvalue"><small>BET</small><b>R$ <span id="betAmount2">1,00</span></b></div><button class="round" id="plusBtn">+</button><button class="round max" id="maxBtn">MAX</button></div><button class="spin" id="spinBtn">GIRAR</button><button class="auto" id="turboBtn">⚡ TURBO</button><button class="auto" id="autoBtn">AUTO <span id="autoCount">10</span></button></div>
   </div>
 </div>
 <script>const syncBet=()=>{const a=document.getElementById('betAmount'),b=document.getElementById('betAmount2');if(a&&b)b.textContent=a.textContent};new MutationObserver(syncBet).observe(document.getElementById('betAmount'),{childList:true,characterData:true,subtree:true});</script>
 <script type="module">
 import "../saldo.js";
-const SYMBOLS=['captain','ship','chest','bottle','compass','map','cannon','parrot','K','Q','J','A','scatter'];
+const SYMBOLS=['captain','K','Q','J','A'];
 const PAYOUTS={captain:1.5,parrot:1.25,chest:1.05,map:.9,compass:.8,bottle:.7,K:.6,Q:.5,J:.4,A:.3};
 const A='https://commons.wikimedia.org/wiki/Special:FilePath/';
 const AS={captain:A+'Captain_pirate.png',ship:A+'Pirate_ship_-_Pirates_(1922).png',chest:A+'Treasure_chest_with_gold_coins.svg',bottle:A+'Glass_bottle.jpg',compass:A+'Negus_liquid_compass.png',map:A+'Treasuremap.jpg',cannon:A+'Cannon_model.png',parrot:A+'Parrot_standard.png',scatter:A+'Skull_and_Crossbones.png'};
@@ -78,8 +78,30 @@ function clear(){document.querySelectorAll('.cel').forEach(c=>c.classList.remove
 function adjust(v){if(!isSpinning&&!autoRunning){currentBet=Math.max(1,Math.min(100,currentBet+v));ui()}}
 function max(){if(!isSpinning&&!autoRunning){currentBet=Math.max(1,Math.min(100,Math.floor(realBalance)));ui()}}
 async function spin(){if(isSpinning)return;await balance();if(realBalance<currentBet){error('❌ Saldo insuficiente para esta aposta.');autoRunning=false;autoSpins=0;return}const ok=await window.SistemaSaldo.debitar(currentBet);if(!ok){await balance();return}realBalance=Math.max(0,realBalance-currentBet);ui();clear();winPopup.classList.remove('on');isSpinning=true;statusText.textContent=turbo?'GIRO TURBO...':'GIRANDO...';ui();const reels=[];for(let c=0;c<COLS;c++){const cells=document.querySelectorAll('#col-'+c+' .cel');reels.push(cells);cells.forEach(x=>x.style.filter='blur(2px)')}let n=0;const limit=turbo?8:30,delay=turbo?45:60;const timer=setInterval(()=>{for(let c=0;c<COLS;c++)for(let r=0;r<ROWS;r++)setCell(reels[c][r],random());if(++n>=limit){clearInterval(timer);finish(reels)}},delay)}
-async function finish(reels){const grid=[];for(let c=0;c<COLS;c++){const arr=[];for(let r=0;r<ROWS;r++){const s=random();arr.push(s);setCell(reels[c][r],s);reels[c][r].style.filter=''}grid.push(arr)}await wins(grid);isSpinning=false;await balance();ui();if(autoRunning&&autoSpins>0){autoSpins--;$('autoCount').textContent=autoSpins;if(autoSpins>0&&realBalance>=currentBet)setTimeout(spin,turbo?80:350);else{autoRunning=false;autoSpins=0;$('autoCount').textContent='10';statusText.textContent='BOA SORTE!';ui()}}else statusText.textContent='BOA SORTE!'}
-async function wins(grid){let mult=0;const cells=new Set();PAYLINES.forEach(line=>{const first=line[0],fc=Math.floor(first/ROWS),fr=first%ROWS,fs=grid[fc][fr];let m=1;for(let i=1;i<line.length;i++){const idx=line[i],c=Math.floor(idx/ROWS),r=idx%ROWS;if(grid[c][r]===fs)m++;else break}if(m>=3){mult+=(PAYOUTS[fs]??0.5)*(m-2);for(let i=0;i<m;i++)cells.add(line[i])}});if(mult<=0){prizeValue.textContent='0,00';return}mult=Math.min(mult,MAX_TOTAL_MULTIPLIER);const ganho=await window.SistemaSaldo.processarVitoria(currentBet,mult);if(ganho&&ganho>0){prizeValue.textContent=money(ganho);winValue.textContent=money(ganho);winPopup.classList.add('on');setTimeout(()=>winPopup.classList.remove('on'),2200);cells.forEach(i=>$('col-'+Math.floor(i/ROWS))?.children[i%ROWS]?.classList.add('win'));statusText.textContent='TESOURO ENCONTRADO!'}}
+async function finish(reels){const grid=[];for(let c=0;c<COLS;c++){const arr=[];for(let r=0;r<ROWS;r++){const s=random();arr.push(s);setCell(reels[c][r],s);reels[c][r].style.filter=''}grid.push(arr)}await wins(grid);isSpinning=false;await balance();ui();if(autoRunning&&autoSpins>0){autoSpins--;$('autoCount').textContent=autoSpins;if(autoSpins>0&&realBalance>=currentBet)setTimeout(spin,turbo?80:350);else{autoRunning=false;autoSpins=0;$('autoCount').textContent='10';statusText.textContent='5 IGUAIS NA MESMA LINHA PARA GANHAR!';ui()}}else statusText.textContent='5 IGUAIS NA MESMA LINHA PARA GANHAR!'}
+async function wins(grid){
+  let totalMultiplier=0;
+  const winningCells=[];
+  for(let r=0;r<ROWS;r++){
+    const first=grid[0][r];
+    if(grid.every(col=>col[r]===first) && PAYOUTS[first]){
+      const mult=Math.min(5*PAYOUTS[first],MAX_TOTAL_MULTIPLIER-totalMultiplier);
+      if(mult>0){
+        totalMultiplier+=mult;
+        for(let c=0;c<COLS;c++) winningCells.push(document.querySelector(`#col-${c} .cel:nth-child(${r+1})`));
+      }
+    }
+  }
+  if(totalMultiplier<=0){prizeValue.textContent='0,00';return;}
+  winningCells.filter(Boolean).forEach(c=>c.classList.add('win'));
+  const prize=currentBet*totalMultiplier;
+  prizeValue.textContent=money(prize);
+  winValue.textContent=money(prize);
+  winPopup.classList.add('on');
+  if(typeof winSound==='function') winSound();
+  await window.SistemaSaldo.processarVitoria(currentBet,totalMultiplier);
+  setTimeout(()=>winPopup.classList.remove('on'),1400);
+}
 function buildLobbyStrip(col,finalValues){
   const strip=document.createElement('div');strip.className='lobby-strip';
   const noise=18,vals=[];for(let i=0;i<noise;i++)vals.push(random());vals.push(...finalValues);
@@ -134,7 +156,7 @@ async function lobbySpin(){
   }
   await Promise.all(tasks);
   await wins(finalGrid);isSpinning=false;await balance();ui();
-  if(autoRunning&&autoSpins>0){autoSpins--;$('autoCount').textContent=autoSpins;if(autoSpins>0&&realBalance>=currentBet)setTimeout(lobbySpin,turbo?80:350);else{autoRunning=false;autoSpins=0;$('autoCount').textContent='10';statusText.textContent='BOA SORTE!';ui()}}else statusText.textContent='BOA SORTE!';
+  if(autoRunning&&autoSpins>0){autoSpins--;$('autoCount').textContent=autoSpins;if(autoSpins>0&&realBalance>=currentBet)setTimeout(lobbySpin,turbo?80:350);else{autoRunning=false;autoSpins=0;$('autoCount').textContent='10';statusText.textContent='5 IGUAIS NA MESMA LINHA PARA GANHAR!';ui()}}else statusText.textContent='5 IGUAIS NA MESMA LINHA PARA GANHAR!';
 }
 spinBtn.onclick=lobbySpin;
 
