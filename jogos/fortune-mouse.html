@@ -663,31 +663,30 @@ button{
     .control-value{ font-size:14px; }
 }
 
-/* === LOADING IGUAL AO TESOURO PIRATA === */
-#ax-loading-screen{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 35%,#174d63 0%,#062737 48%,#02090e 100%);padding:20px;transition:opacity .35s ease,visibility .35s ease}
+/* === LOADING DE ENTRADA — RATO DA FORTUNA === */
+#ax-loading-screen{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:18px;background:#050308;opacity:1;visibility:visible;transition:opacity .55s ease,visibility .55s ease}
 #ax-loading-screen.ax-loading-hide{opacity:0;visibility:hidden;pointer-events:none}
-.ax-loading-card{width:min(390px,92vw);text-align:center;padding:18px 18px 20px;background:linear-gradient(180deg,#111b20,#070b0d);border:2px solid #d6ad52;border-radius:14px;box-shadow:0 0 0 2px #3b2209,0 18px 55px #000c}
-.ax-loading-brand{font:900 16px Arial,sans-serif;letter-spacing:3px;color:#ffe27b;margin-bottom:10px;text-shadow:0 2px 5px #000}
-.ax-loading-img{display:block;width:100%;height:190px;object-fit:cover;border-radius:9px;border:2px solid #9f7833;box-shadow:inset 0 0 20px #000,0 8px 20px #000;object-position:center}
-.ax-loading-title{margin-top:12px;font:900 24px Georgia,serif;color:#ffd85d;text-shadow:0 2px 5px #000}
-.ax-loading-text{margin-top:10px;color:#fff;font-weight:800;font-size:13px}
-.ax-loading-track{height:12px;margin:10px 0 6px;border-radius:20px;background:#1a1a18;border:1px solid #8b6b30;overflow:hidden;box-shadow:inset 0 2px 5px #000}
-#ax-loading-bar{height:100%;width:0;background:linear-gradient(90deg,#0b7d35,#2ee66b,#ffd84e);box-shadow:0 0 12px #37e66d;transition:width .08s linear}
-.ax-loading-percent{font:900 13px Arial;color:#ffe37a}
-@media(max-width:760px){.ax-loading-img{height:165px}.ax-loading-title{font-size:20px}.ax-loading-card{padding:14px}}
-
+.ax-loader-box{width:min(390px,94vw);text-align:center}
+.ax-loader-banner{display:block;width:100%;max-height:62vh;object-fit:contain;border-radius:18px;border:2px solid #d6a63d;background:#120b18;box-shadow:0 0 0 1px rgba(255,238,161,.25),0 0 35px rgba(243,198,91,.25),0 18px 50px rgba(0,0,0,.8)}
+.ax-loader-title{margin-top:16px;color:#ffe9a0;font-size:18px;font-weight:1000;letter-spacing:2px;text-transform:uppercase;text-shadow:0 0 15px rgba(255,215,90,.35)}
+.ax-loader-text{margin-top:7px;color:rgba(255,255,255,.72);font-size:11px;letter-spacing:2px;text-transform:uppercase}
+.ax-loader-track{margin-top:14px;height:9px;overflow:hidden;border-radius:99px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 1px 4px rgba(0,0,0,.8),0 0 18px rgba(255,210,80,.12)}
+.ax-loader-bar{width:0%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8d5718,#d99f35,#fff0a1,#f3c65b,#9b641b);box-shadow:0 0 16px rgba(255,220,110,.8);transition:width .18s linear}
+.ax-loader-percent{margin-top:8px;color:rgba(255,255,255,.55);font-size:10px;font-weight:900;letter-spacing:1px}
 </style>
 </head>
 
 <body>
 
-<div id="ax-loading-screen" aria-label="Carregando jogo">
-    <div class="ax-loading-card">
-        <div class="ax-loading-brand">APOSTAXBET</div>
-        <img class="ax-loading-img" src="banner-mouse.png" alt="Rato da Fortuna">
-        <div class="ax-loading-title">RATO DA FORTUNA</div>
-        <div class="ax-loading-text">Carregando jogo...</div>
-        <div class="ax-loading-track"><div id="ax-loading-bar"></div></div>
+<div id="ax-loading-screen" aria-label="Carregando Rato da Fortuna">
+    <div class="ax-loader-box">
+        <img class="ax-loader-banner" src="banner-mouse.png" alt="Rato da Fortuna">
+        <div class="ax-loader-title">RATO DA FORTUNA</div>
+        <div class="ax-loader-text">CARREGANDO JOGO...</div>
+        <div class="ax-loader-track"><div class="ax-loader-bar" id="ax-loader-bar"></div></div>
+        <div class="ax-loader-percent" id="ax-loader-percent">0%</div>
+    </div>
+</div>
         <div class="ax-loading-percent" id="ax-loading-percent">0%</div>
     </div>
 </div>
@@ -1451,19 +1450,18 @@ window.addEventListener("saldoAtualizado", atualizarSaldoVisual);
 <script>
 (function(){
     const screen=document.getElementById('ax-loading-screen');
-    const bar=document.getElementById('ax-loading-bar');
-    const pct=document.getElementById('ax-loading-percent');
+    const bar=document.getElementById('ax-loader-bar');
+    const pct=document.getElementById('ax-loader-percent');
     if(!screen||!bar||!pct)return;
-    let value=0;
-    const timer=setInterval(()=>{
-        value=Math.min(value+4,100);
-        bar.style.width=value+'%';
-        pct.textContent=value+'%';
-        if(value>=100){
-            clearInterval(timer);
-            setTimeout(()=>{screen.classList.add('ax-loading-hide');setTimeout(()=>screen.remove(),450)},250);
-        }
-    },55);
+    const total=5200,start=performance.now();
+    function tick(now){
+        const progress=Math.min((now-start)/total,1);
+        const value=Math.floor(progress*100);
+        bar.style.width=value+'%';pct.textContent=value+'%';
+        if(progress<1)requestAnimationFrame(tick);
+        else{setTimeout(()=>screen.classList.add('ax-loading-hide'),300);setTimeout(()=>screen.remove(),950)}
+    }
+    requestAnimationFrame(tick);
 })();
 </script>
 
