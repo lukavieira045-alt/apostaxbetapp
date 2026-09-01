@@ -1,0 +1,19 @@
+name: Cleanup Tesouro temporary workflows
+on: push
+permissions:
+  contents: write
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove temporary files and this workflow
+        run: |
+          rm -f .github/workflows/fix-tesouro-giro.yml .github/workflows/fix-tesouro-giro-v3.yml .github/workflows/fix-tesouro-giro-v4.yml .github/workflows/fix-tesouro-giro-v5.yml .github/workflows/fix-tesouro-giro-v6.yml .github/workflows/fix-tesouro-giro-v7.yml
+          rm -f fix-giro-trigger.txt fix-giro-trigger-2.txt fix-giro-trigger-3.txt fix-giro-trigger-4.txt
+          rm -f .github/workflows/cleanup-tesouro-workflows.yml
+          git config user.name "ApostaXBet Bot"
+          git config user.email "actions@github.com"
+          git add -A
+          git commit -m "Limpar workflows temporários do Tesouro Pirata" || exit 0
+          git push origin HEAD:main
