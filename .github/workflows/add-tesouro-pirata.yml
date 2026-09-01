@@ -1,0 +1,58 @@
+name: Adicionar Tesouro Pirata ao catálogo
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  add-game:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Inserir Tesouro Pirata no index
+        shell: python
+        run: |
+          from pathlib import Path
+
+          p = Path('index.html')
+          text = p.read_text(encoding='utf-8')
+
+          if 'data-jogo="Tesouro Pirata"' in text:
+              print('Tesouro Pirata já está no index.html. Nada a fazer.')
+              raise SystemExit(0)
+
+          marker = 'data-jogo="Clash Mania"'
+          pos = text.find(marker)
+          if pos == -1:
+              raise SystemExit('Não encontrei o card Clash Mania no index.html')
+
+          card_start = text.rfind('<div class="game-card', 0, pos)
+          card_end = text.find('</div>\n\n</div>', pos)
+          if card_start == -1 or card_end == -1:
+              raise SystemExit('Não consegui localizar o final do catálogo de jogos')
+
+          insert_at = card_end + len('</div>\n')
+
+          card = '''\n<div class="game-card"\ndata-cat="popular slots"\ndata-jogo="Tesouro Pirata"\ndata-capa="jogos/tesouro-pirata.png"\ndata-icon="🏴‍☠️"\ndata-link="jogos/tesouro-pirata.html">\n\n<img class="game-img"\nsrc="jogos/tesouro-pirata.png"\nalt="Tesouro Pirata"\nloading="lazy">\n\n<span class="like-icon">👍</span>\n<span class="fav-icon">⭐</span>\n\n<div class="bonus-badge">NOVO</div>\n\n<div class="game-overlay">\n<span class="game-name">Tesouro Pirata</span>\n<span class="provider-tag">AX</span>\n</div>\n</div>\n'''
+
+          text = text[:insert_at] + card + text[insert_at:]
+          p.write_text(text, encoding='utf-8')
+          print('Tesouro Pirata inserido no index.html')
+
+      - name: Commit e push
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "Nenhuma alteração para enviar."
+          else
+            git commit -m "Adicionar Tesouro Pirata à página inicial"
+            git push
+          fi
