@@ -1,0 +1,86 @@
+name: Ajustar giro e som do Tesouro Pirata
+on:
+  push:
+    branches: [main]
+jobs:
+  ajustar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ajustar jogo
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('jogos/tesouro-pirata.html')
+          s=p.read_text(encoding='utf-8')
+          start=s.index('async function lobbySpin(){')
+          end=s.index('spinBtn.onclick=lobbySpin;', start)+len('spinBtn.onclick=lobbySpin;')
+          new=r'''function makeSpinAudio(){
+            let ctx=null;
+            const get=()=>{if(!ctx)ctx=new (window.AudioContext||window.webkitAudioContext)();if(ctx.state==='suspended')ctx.resume();return ctx};
+            const tone=(freq,dur=.055,vol=.035,type='square')=>{
+              try{const c=get(),o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(vol,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+dur);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+dur)}catch(e){}
+            };
+            return {start:(i)=>{tone(105+i*22,.07,.025,'square');const id=setInterval(()=>tone(115+i*24,.045,.018,'square'),145+i*13);return id},stop:(i,id)=>{clearInterval(id);tone(170+i*42,.12,.055,'triangle')},win:()=>{[523,659,784,1046].forEach((f,i)=>setTimeout(()=>tone(f,.18,.06,'sine'),i*90))}};
+          }
+          const spinAudio=makeSpinAudio();
+          async function spinOneReel(c,finalValues,index,duration,delay,noise){
+            await new Promise(r=>setTimeout(r,delay));
+            const col=$('col-'+c);
+            const strip=document.createElement('div');strip.className='lobby-strip';
+            const vals=[];for(let i=0;i<noise;i++)vals.push(random());vals.push(...finalValues);
+            vals.forEach(s=>{const cell=document.createElement('div');cell.className='cel';cell.classList.toggle('scatter',s==='scatter');cell.appendChild(makeCell(s));strip.appendChild(cell)});
+            col.querySelectorAll(':scope > .cel').forEach(x=>x.style.visibility='hidden');
+            col.appendChild(strip);
+            const h=col.clientHeight/3;strip.style.height=(vals.length*h)+'px';[...strip.children].forEach(x=>x.style.height=h+'px');
+            strip.style.transform='translate3d(0,0,0)';strip.classList.add('lobby-spinning');
+            const soundId=spinAudio.start(index);
+            await new Promise(r=>requestAnimationFrame(()=>{strip.style.transition=`transform ${duration}ms cubic-bezier(.12,.68,.16,1)`;strip.style.transform=`translate3d(0,${-(noise*h)}px,0)`;r()}));
+            await new Promise(r=>setTimeout(r,duration));
+            spinAudio.stop(index,soundId);
+            strip.remove();
+            const cells=col.querySelectorAll(':scope > .cel');
+            finalValues.forEach((sym,r)=>{cells[r].innerHTML='';cells[r].classList.toggle('scatter',sym==='scatter');cells[r].appendChild(makeCell(sym));cells[r].style.visibility='visible'});
+          }
+          async function lobbySpin(){
+            if(isSpinning)return;await balance();
+            if(realBalance<currentBet){error('❌ Saldo insuficiente para esta aposta.');autoRunning=false;autoSpins=0;return}
+            const ok=await window.SistemaSaldo.debitar(currentBet);if(!ok){await balance();return}
+            realBalance=Math.max(0,realBalance-currentBet);ui();clear();winPopup.classList.remove('on');prizeValue.textContent='0,00';
+            isSpinning=true;statusText.textContent=turbo?'GIRO TURBO...':'GIRANDO...';ui();
+            const finalGrid=[];
+            for(let c=0;c<COLS;c++){const vals=[];for(let r=0;r<ROWS;r++)vals.push(random());finalGrid.push(vals)}
+            const base=turbo?980:2050;
+            const step=turbo?115:170;
+            const tasks=[];
+            for(let c=0;c<COLS;c++){
+              const duration=base+c*step;
+              const delay=c*(turbo?55:90);
+              const noise=16+c*2;
+              tasks.push(spinOneReel(c,finalGrid[c],c,duration,delay,noise));
+            }
+            await Promise.all(tasks);
+            await wins(finalGrid);isSpinning=false;await balance();ui();
+            if(autoRunning&&autoSpins>0){autoSpins--;$('autoCount').textContent=autoSpins;if(autoSpins>0&&realBalance>=currentBet)setTimeout(lobbySpin,turbo?80:350);else{autoRunning=false;autoSpins=0;$('autoCount').textContent='10';statusText.textContent='BOA SORTE!';ui()}}else statusText.textContent='BOA SORTE!';
+          }
+          spinBtn.onclick=lobbySpin;'''
+          s=s[:start]+new+s[end:]
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Publicar alteração
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add jogos/tesouro-pirata.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Corrigir giro independente e adicionar som aos rolos'
+          git push
+      - name: Remover workflow temporario
+        if: always()
+        run: |
+          git rm -f .github/workflows/ajustar-giro-som.yml || true
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Remover workflow temporario' || true
+          git push || true
