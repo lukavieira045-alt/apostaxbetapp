@@ -53,6 +53,14 @@ body:before{content:"";position:fixed;inset:0;background:linear-gradient(180deg,
 @keyframes superFlash{from{filter:brightness(1)}to{filter:brightness(1.16)}}
 @keyframes superPulse{from{transform:scale(1)}to{transform:scale(1.07)}}
 @media(max-width:760px){.ax-loading-img{height:165px}.ax-loading-title{font-size:20px}.ax-loading-card{padding:14px}.super-bonus-card{width:92vw;padding:22px 12px}}
+
+/* PERFORMANCE — TESOURO PIRATA */
+.rolos{contain:layout paint;backface-visibility:hidden;transform:translateZ(0)}
+.col,.cel{backface-visibility:hidden}
+.cel img{backface-visibility:hidden}
+.perf-spin .cel:before,.perf-spin .cel img{filter:none!important;box-shadow:none!important}
+.perf-spin .cel{box-shadow:inset 0 0 8px #000}
+.perf-spin .reelWindow,.perf-spin .machine{box-shadow:none!important}
 </style>
 <style id="lobby-spin-css">
 .lobby-strip{position:absolute;left:0;right:0;top:0;display:block;z-index:8;will-change:transform}
@@ -283,6 +291,20 @@ async function start(){init();ui();startLoading();let tries=0;while(!window.Sist
 </script>
 <script>
 (function(){const el=document.getElementById('pirata-saldo-top');if(!el)return;function f(v){const n=Number(v);return Number.isFinite(n)?n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'0,00'}async function u(){try{if(window.SistemaSaldo&&typeof window.SistemaSaldo.get==='function'){const r=window.SistemaSaldo.get();const v=r&&typeof r.then==='function'?await r:r;if(typeof v==='number')el.textContent=f(v);else if(v&&typeof v==='object')el.textContent=f(v.valor??v.saldo??v.balance??0)}}catch(e){}}u();setInterval(u,700);window.addEventListener('focus',u);document.addEventListener('visibilitychange',()=>{if(!document.hidden)u()})})();
+</script>
+
+<script>
+(function(){
+  const game=document.querySelector('.casino');
+  const spin=document.querySelector('.spin');
+  if(!game||!spin)return;
+  let timer=0;
+  spin.addEventListener('click',function(){
+    game.classList.add('perf-spin');
+    clearTimeout(timer);
+    timer=setTimeout(()=>game.classList.remove('perf-spin'),5200);
+  },{passive:true});
+})();
 </script>
 </body>
 </html>
