@@ -5,18 +5,11 @@
   var connection = nav.connection || nav.mozConnection || nav.webkitConnection || {};
   var mobile = window.matchMedia && window.matchMedia('(max-width: 700px)').matches;
   var android = /Android|iPhone|iPad|iPod|Mobile/i.test(nav.userAgent || '');
-  var memory = typeof nav.deviceMemory === 'number' ? nav.deviceMemory : 0;
-  var cores = typeof nav.hardwareConcurrency === 'number' ? nav.hardwareConcurrency : 0;
   var slowConnection = !!connection.saveData || /^(slow-2g|2g)$/i.test(connection.effectiveType || '');
 
-  // Ativa apenas em celular/tablet ou em conexão claramente lenta.
-  // A lógica dos jogos, saldo, apostas e pagamentos não é alterada.
-  var lowEnd = (mobile || android) && (
-    slowConnection ||
-    (memory > 0 && memory <= 4) ||
-    (cores > 0 && cores <= 6) ||
-    (memory === 0 && cores === 0)
-  );
+  // Em celulares, reduz somente efeitos visuais pesados.
+  // A lógica dos jogos, saldo, apostas, depósitos e pagamentos não é alterada.
+  var lowEnd = mobile || android || slowConnection;
 
   if (!lowEnd) return;
 
@@ -42,11 +35,12 @@
     }
     .ax-low-performance * {
       text-shadow: none !important;
-    }
-    .ax-low-performance [style*="filter"],
-    .ax-low-performance * {
       -webkit-backdrop-filter: none !important;
       backdrop-filter: none !important;
+    }
+    .ax-low-performance [style*="filter"] {
+      filter: none !important;
+      -webkit-filter: none !important;
     }
     .ax-low-performance .box,
     .ax-low-performance .card,
