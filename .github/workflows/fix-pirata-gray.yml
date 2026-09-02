@@ -1,0 +1,34 @@
+name: Fix Tesouro Pirata gray screen
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-pirata-gray.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove GPU/perf spin hacks only from Pirata
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('jogos/tesouro-pirata.html')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace('<script src="performance.js" defer></script>\n','')
+          s=s.replace('.rolos{contain:layout paint;backface-visibility:hidden;transform:translateZ(0)}\n.col,.cel{backface-visibility:hidden}.cel img{backface-visibility:hidden}.perf-spin .cel:before,.perf-spin .cel img{filter:none!important;box-shadow:none!important}.perf-spin .cel{box-shadow:inset 0 0 8px #000}.perf-spin .reelWindow,.perf-spin .machine{box-shadow:none!important}\n','')
+          s=s.replace('<script>(function(){const game=document.querySelector(\'.casino\');const spin=document.querySelector(\'.spin\');if(!game||!spin)return;let timer=0;spin.addEventListener(\'click\',function(){game.classList.add(\'perf-spin\');clearTimeout(timer);timer=setTimeout(()=>game.classList.remove(\'perf-spin\'),5200)},{passive:true})})();</script>\n','')
+          p.write_text(s,encoding='utf-8')
+          PY
+          git config user.name 'ApostaXBet Bot'
+          git config user.email 'actions@github.com'
+          git add jogos/tesouro-pirata.html
+          git commit -m 'Corrige tela cinza do giro do Tesouro Pirata'
+          git push
+      - name: Remove temporary workflow
+        if: always()
+        run: |
+          git rm -f .github/workflows/fix-pirata-gray.yml || true
+          git commit -m 'Remove workflow temporario de correcao' || true
+          git push || true
