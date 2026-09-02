@@ -12,33 +12,43 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Corrigir script quebrado
+      - name: Remover script extra que quebra a abertura
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import re
           p=Path('jogos/roleta-cassino.html')
           s=p.read_text(encoding='utf-8')
-          pattern=r'<script>\s*/\*\s*={3,}\s*FICHAS VISUAIS DA APOSTA.*?</script>'
-          novo,n=re.subn(pattern,'',s,count=1,flags=re.S)
-          if n!=1:
-              raise SystemExit(f'Script duplicado não encontrado: {n}')
-          p.write_text(novo,encoding='utf-8')
+          opens=[i for i in range(len(s)) if s.startswith('<script>',i)]
+          closes=[i for i in range(len(s)) if s.startswith('</script>',i)]
+          if len(opens) <= 1:
+              raise SystemExit(f'Nenhum bloco extra encontrado: {len(opens)} script inline')
+          # O arquivo deve ter um único script inline principal. Se houver mais,
+          # o último bloco é o bloco duplicado que foi acrescentado depois dele.
+          if len(opens) > 1:
+              start=opens[-1]
+              end=s.find('</script>',start)
+              if end < 0:
+                  raise SystemExit('Fechamento do script extra não encontrado')
+              s=s[:start]+s[end+len('</script>'):]
+          p.write_text(s,encoding='utf-8')
           PY
-      - name: Validar
+      - name: Validar e limpar workflow
         run: |
           python3 - <<'PY'
           from pathlib import Path
           s=Path('jogos/roleta-cassino.html').read_text(encoding='utf-8')
+          inline=s.count('<script>')
+          if inline != 1:
+              raise SystemExit(f'Scripts inline restantes: {inline}')
+          if s.count('<script') != s.count('</script>'):
+              raise SystemExit('Tags script desbalanceadas')
           if 'FICHAS VISUAIS DA APOSTA' in s:
               raise SystemExit('Bloco duplicado ainda existe')
-          if s.count('<script>') != s.count('</script>'):
-              raise SystemExit('Tags script desbalanceadas')
           PY
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add jogos/roleta-cassino.html
-          git commit -m 'Fix Roleta Cassino opening script' || true
+          git commit -m 'Fix Roleta Cassino opening' || true
           git rm .github/workflows/fix-roleta-cassino.yml
           git commit -m 'Remove temporary Roleta Cassino workflow'
           git push
