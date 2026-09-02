@@ -15,37 +15,78 @@ jobs:
           from pathlib import Path
           p = Path('jogos/roleta-cassino.html')
           s = p.read_text(encoding='utf-8')
-          old_css = '''.numero{\n    height:39px;\n    border:1px solid white;\n    display:flex;\n    align-items:center;\n    justify-content:center;\n    font-size:12px;\n    font-weight:bold;\n    cursor:pointer;\n    user-select:none\n}'''
-          new_css = '''.numero{\n    position:relative;\n    height:39px;\n    border:1px solid white;\n    display:flex;\n    align-items:center;\n    justify-content:center;\n    font-size:12px;\n    font-weight:bold;\n    cursor:pointer;\n    user-select:none\n}\n\n.ficha-aposta{\n    position:absolute;\n    right:2px;\n    bottom:2px;\n    min-width:19px;\n    height:19px;\n    padding:0 4px;\n    border-radius:50%;\n    border:2px solid #fff;\n    background:radial-gradient(circle at 35% 30%,#fff7c7,#ffd43b 45%,#b8860b 100%);\n    color:#111;\n    display:flex;\n    align-items:center;\n    justify-content:center;\n    font-size:8px;\n    font-weight:900;\n    line-height:1;\n    box-shadow:0 1px 3px #000;\n    z-index:4;\n    pointer-events:none;\n}'''
-          if old_css not in s: raise SystemExit('CSS anchor not found')
-          s = s.replace(old_css,new_css,1)
-          old_mobile='''    .numero{\n        height:37px;\n        font-size:10px\n    }'''
-          new_mobile='''    .numero{\n        height:37px;\n        font-size:10px\n    }\n    .ficha-aposta{\n        right:1px;\n        bottom:1px;\n        min-width:17px;\n        height:17px;\n        font-size:7px;\n        padding:0 3px\n    }'''
-          if old_mobile not in s: raise SystemExit('Mobile CSS anchor not found')
-          s=s.replace(old_mobile,new_mobile,1)
-          old_push='''    apostas.push({\n        tipo:tipo,\n        valor:ficha\n    });\n\n\n    elemento.classList.add(\n        "selecionado"\n    );'''
-          new_push='''    apostas.push({\n        tipo:tipo,\n        valor:ficha\n    });\n\n\n    elemento.classList.add(\n        "selecionado"\n    );\n\n    atualizarFichaVisual(tipo,elemento);'''
-          if old_push not in s: raise SystemExit('Bet anchor not found')
-          s=s.replace(old_push,new_push,1)
-          marker='''/* =====================================================\n   VERIFICAR VITÓRIA\n===================================================== */'''
-          helper='''/* =====================================================\n   FICHA VISUAL DA APOSTA\n===================================================== */\n\nfunction atualizarFichaVisual(tipo,elemento){\n    const total=apostas.filter(function(aposta){\n        return String(aposta.tipo)===String(tipo);\n    }).reduce(function(sum,aposta){\n        return sum+Number(aposta.valor||0);\n    },0);\n    let chip=elemento.querySelector(".ficha-aposta");\n    if(!chip){\n        chip=document.createElement("span");\n        chip.className="ficha-aposta";\n        elemento.appendChild(chip);\n    }\n    chip.textContent=Number.isInteger(total)?total:total.toFixed(2).replace(".",",");\n}\n\nfunction limparFichasVisuais(){\n    document.querySelectorAll(".ficha-aposta").forEach(function(chip){chip.remove();});\n}\n\n\n/* =====================================================\n   VERIFICAR VITÓRIA\n===================================================== */'''
-          if marker not in s: raise SystemExit('Helper marker not found')
-          s=s.replace(marker,helper,1)
-          old_clear='''        apostas = [];\n\n        document\n            .querySelectorAll(".selecionado")'''
-          new_clear='''        apostas = [];\n        limparFichasVisuais();\n\n        document\n            .querySelectorAll(".selecionado")'''
-          if old_clear not in s: raise SystemExit('Clear anchor not found')
-          s=s.replace(old_clear,new_clear,1)
-          old_final='''    apostas = [];\n\n\n    document\n        .querySelectorAll(".selecionado")'''
-          new_final='''    apostas = [];\n    limparFichasVisuais();\n\n\n    document\n        .querySelectorAll(".selecionado")'''
-          if old_final not in s: raise SystemExit('Final cleanup anchor not found')
-          s=s.replace(old_final,new_final,1)
-          p.write_text(s,encoding='utf-8')
+          start = s.find('.ficha-aposta{')
+          end = s.find('.ficha-aposta.mini', start)
+          if start < 0 or end < 0:
+              raise SystemExit('Bloco .ficha-aposta não encontrado')
+          css = '''.ficha-aposta{
+              position:absolute;
+              right:2px;
+              bottom:2px;
+              width:25px;
+              height:25px;
+              padding:0;
+              border-radius:50%;
+              border:2px solid #fff;
+              background:repeating-conic-gradient(from 0deg,#b51e25 0deg 12deg,#fff 12deg 24deg);
+              color:#111;
+              display:flex;
+              align-items:center;
+              justify-content:center;
+              font-size:8px;
+              font-weight:900;
+              line-height:1;
+              box-shadow:0 1px 4px #000,inset 0 0 0 2px #b51e25;
+              z-index:4;
+              pointer-events:none;
+          }
+          .ficha-aposta::before{
+              content:"";
+              position:absolute;
+              inset:4px;
+              border-radius:50%;
+              background:radial-gradient(circle at 35% 30%,#fff,#e9e9e9 55%,#aaa 100%);
+              border:1px solid #555;
+              z-index:-1;
+          }
+          .ficha-aposta::after{
+              content:"";
+              position:absolute;
+              inset:7px;
+              border-radius:50%;
+              border:1px dashed #b51e25;
+              pointer-events:none;
+          }
+
+          '''
+          s = s[:start] + css + s[end:]
+          old = '''        botao.onclick =
+            function(){
+
+                fazerAposta(
+                    botao.dataset.bet,
+                    this
+                );
+            };'''
+          new = '''        botao.onclick =
+            function(event){
+                if(event){ event.preventDefault(); event.stopPropagation(); }
+                fazerAposta(botao.dataset.bet,this);
+            };
+        botao.onpointerdown = function(event){
+            if(event){ event.preventDefault(); event.stopPropagation(); }
+        };'''
+          if old in s:
+              s = s.replace(old, new, 1)
+          elif 'botao.onpointerdown' not in s:
+              raise SystemExit('Handler das faixas não encontrado')
+          p.write_text(s, encoding='utf-8')
           PY
-          rm -f .github/workflows/roleta-chip-fix.yml
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add jogos/roleta-cassino.html .github/workflows/roleta-chip-fix.yml
-          git commit -m "Ajusta fichas das apostas na roleta cassino"
+          git add jogos/roleta-cassino.html
+          git rm -f .github/workflows/roleta-chip-fix.yml
+          git commit -m "Corrigir ficha e botão vermelho da roleta"
           git push
