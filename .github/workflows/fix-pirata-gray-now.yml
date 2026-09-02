@@ -1,0 +1,42 @@
+name: Fix Pirata gray screen
+on:
+  push:
+    paths:
+      - 'jogos/tesouro-pirata.html'
+      - '.github/workflows/fix-pirata-gray-now.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore lobby spin CSS
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('jogos/tesouro-pirata.html')
+          s = p.read_text(encoding='utf-8')
+          old = '<style id="lobby-spin-css"><lobby-placeholder></style>'
+          new = '''<style id="lobby-spin-css">
+          .lobby-strip{position:absolute;left:0;right:0;top:0;display:block;z-index:8;will-change:transform}
+          .lobby-strip .cel{width:100%;display:flex}
+          .lobby-strip.lobby-spinning .cel img,.lobby-strip.lobby-spinning .letra{filter:blur(2px) brightness(1.15)}
+          .col{overflow:hidden;position:relative}
+          </style>'''
+          if old not in s:
+              raise SystemExit('placeholder not found; refusing unrelated edit')
+          p.write_text(s.replace(old, new, 1), encoding='utf-8')
+          PY
+      - name: Commit fix and remove workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add jogos/tesouro-pirata.html
+          git commit -m 'Restore Tesouro Pirata spin CSS' || exit 0
+          git push
+          rm -f .github/workflows/fix-pirata-gray-now.yml
+          git add -u .github/workflows/fix-pirata-gray-now.yml
+          git commit -m 'Remove temporary Pirata fix workflow' || true
+          git push || true
