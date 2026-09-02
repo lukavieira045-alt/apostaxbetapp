@@ -1,0 +1,33 @@
+name: Optimize only Tesouro Pirata 3
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  optimize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cache Pirata image templates
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('jogos/tesouro-pirata.html')
+          s = p.read_text(encoding='utf-8')
+          old = "function makeCell(s){if('KQJA'.includes(s)){const d=document.createElement('div');d.className='letra '+s;d.textContent=s;return d}const img=document.createElement('img');img.decoding='async';img.loading='eager';img.src=AS[s];img.alt=s==='treasure'?'Tesouro':'Pirata';img.onerror=()=>{img.remove();const d=document.createElement('div');d.className='letra';d.textContent=s==='treasure'?'💰':'☠';img.parentNode?.appendChild(d)};return img}"
+          new = "const imageTemplates={};function makeCell(s){if('KQJA'.includes(s)){const d=document.createElement('div');d.className='letra '+s;d.textContent=s;return d}if(imageTemplates[s])return imageTemplates[s].cloneNode(true);const img=document.createElement('img');img.decoding='async';img.loading='eager';img.src=AS[s];img.alt=s==='treasure'?'Tesouro':'Pirata';img.onerror=()=>{img.remove();const d=document.createElement('div');d.className='letra';d.textContent=s==='treasure'?'💰':'☠';img.parentNode?.appendChild(d)};imageTemplates[s]=img;return img.cloneNode(true)}"
+          if old not in s:
+              raise SystemExit('makeCell target not found; aborting without changes')
+          s = s.replace(old, new, 1)
+          p.write_text(s, encoding='utf-8')
+      - name: Commit Pirata-only change and remove workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          rm -f .github/workflows/temp-pirata-performance-3.yml
+          git add jogos/tesouro-pirata.html .github/workflows/temp-pirata-performance-3.yml
+          git diff --cached --quiet && exit 0
+          git commit -m 'Reduz criacao de imagens no Tesouro Pirata'
+          git push origin main
