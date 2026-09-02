@@ -1,0 +1,134 @@
+name: Corrigir Roleta Cassino
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'jogos/roleta-cassino.html'
+      - '.github/workflows/corrigir-roleta-cassino.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  corrigir:
+    if: ${{ !contains(github.event.head_commit.message, 'PATCH_ROLETA_CASSINO') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Aplicar correção direta
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('jogos/roleta-cassino.html')
+          s = p.read_text(encoding='utf-8')
+
+          old_css = '''.ficha-aposta{
+              position:absolute;
+              right:2px;
+              bottom:2px;
+              min-width:19px;
+              height:19px;
+              padding:0 4px;
+              border-radius:50%;
+              border:2px solid #fff;
+              background:radial-gradient(circle at 35% 30%,#fff7c7,#ffd43b 45%,#b8860b 100%);
+              color:#111;
+              display:flex;
+              align-items:center;
+              justify-content:center;
+              font-size:8px;
+              font-weight:900;
+              line-height:1;
+              box-shadow:0 1px 3px #000;
+              z-index:4;
+              pointer-events:none;
+          }'''
+
+          new_css = '''.ficha-aposta{
+              position:absolute;
+              right:2px;
+              bottom:2px;
+              width:27px;
+              min-width:27px;
+              height:27px;
+              padding:0;
+              border-radius:50%;
+              border:2px solid #fff;
+              background:repeating-conic-gradient(from 0deg,#c51f2a 0deg 10deg,#fff 10deg 20deg);
+              color:#111;
+              display:flex;
+              align-items:center;
+              justify-content:center;
+              font-size:8px;
+              font-weight:900;
+              line-height:1;
+              box-shadow:0 2px 4px #000, inset 0 0 0 2px #c51f2a;
+              z-index:20;
+              pointer-events:none;
+              overflow:visible;
+          }
+          .ficha-aposta::before{
+              content:"";
+              position:absolute;
+              inset:4px;
+              border-radius:50%;
+              background:radial-gradient(circle at 35% 30%,#fff,#ddd 55%,#999 100%);
+              border:1px solid #555;
+              z-index:-1;
+          }
+          .ficha-aposta::after{
+              content:"";
+              position:absolute;
+              inset:7px;
+              border-radius:50%;
+              border:1px dashed #b51e24;
+              z-index:0;
+          }
+          .ficha-aposta{isolation:isolate}
+          .faixa{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+          .numero,.zero{touch-action:manipulation;-webkit-tap-highlight-color:transparent}'''
+
+          if old_css not in s:
+              raise SystemExit('CSS antigo da ficha não encontrado; nenhuma alteração feita.')
+          s = s.replace(old_css, new_css, 1)
+
+          old_js = '''document.querySelectorAll(".faixa")
+          .forEach(
+              function(botao){
+
+                  botao.onclick =
+                      function(){
+
+                          fazerAposta(
+                              botao.dataset.bet,
+                              this
+                          );
+                      };
+              }
+          );'''
+
+          new_js = '''document.querySelectorAll(".faixa")
+          .forEach(function(botao){
+              botao.addEventListener("click", function(event){
+                  event.preventDefault();
+                  event.stopPropagation();
+                  fazerAposta(botao.dataset.bet, botao);
+              }, true);
+          });'''
+
+          if old_js not in s:
+              raise SystemExit('Bloco de clique da faixa não encontrado; nenhuma alteração feita.')
+          s = s.replace(old_js, new_js, 1)
+
+          p.write_text(s, encoding='utf-8')
+          print('Roleta Cassino corrigida diretamente.')
+          PY
+      - name: Publicar alteração
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add jogos/roleta-cassino.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'PATCH_ROLETA_CASSINO: corrigir ficha e clique das faixas'
+          git push
