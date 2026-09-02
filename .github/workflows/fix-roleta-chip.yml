@@ -1,0 +1,84 @@
+name: Fix Roleta Chip
+on:
+  push:
+    branches: [main]
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Aplicar correção
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('jogos/roleta-cassino.html')
+          s=p.read_text(encoding='utf-8')
+          start=s.index('.ficha-aposta{')
+          end=s.index('\n\n.ficha-aposta.mini', start)
+          css='''.ficha-aposta{
+    position:absolute;
+    right:2px;
+    bottom:2px;
+    width:25px;
+    height:25px;
+    padding:0;
+    border-radius:50%;
+    border:2px solid #fff;
+    background:repeating-conic-gradient(from 0deg,#b51e25 0deg 12deg,#fff 12deg 24deg);
+    color:#111;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:8px;
+    font-weight:900;
+    line-height:1;
+    box-shadow:0 1px 4px #000,inset 0 0 0 2px #b51e25;
+    z-index:4;
+    pointer-events:none;
+}
+.ficha-aposta::before{
+    content:"";
+    position:absolute;
+    inset:4px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#fff,#e9e9e9 55%,#aaa 100%);
+    border:1px solid #555;
+    z-index:-1;
+}
+.ficha-aposta::after{
+    content:"";
+    position:absolute;
+    inset:7px;
+    border-radius:50%;
+    border:1px dashed #b51e25;
+    pointer-events:none;
+}'''
+          s=s[:start]+css+s[end:]
+          old='''        botao.onclick =
+            function(){
+
+                fazerAposta(
+                    botao.dataset.bet,
+                    this
+                );
+            };'''
+          new='''        botao.onclick =
+            function(event){
+                if(event){ event.preventDefault(); event.stopPropagation(); }
+                fazerAposta(botao.dataset.bet,this);
+            };
+        botao.onpointerdown = function(event){
+            if(event){ event.preventDefault(); event.stopPropagation(); }
+        };'''
+          if old in s:
+              s=s.replace(old,new,1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit alteração
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add jogos/roleta-cassino.html
+          git diff --cached --quiet || git commit -m "Corrigir ficha da roleta"
+          git push
