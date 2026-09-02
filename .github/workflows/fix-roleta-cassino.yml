@@ -4,32 +4,41 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: write
+
 jobs:
   fix:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: Remove duplicate broken chip script
+      - name: Corrigir script quebrado
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
           p = Path('jogos/roleta-cassino.html')
           s = p.read_text(encoding='utf-8')
-          marker = '\\n<script>\\\n/* =====================================================\\\n   FICHAS VISUAIS DA APOSTA'
-          if marker in s:
-              s = s.split(marker, 1)[0].rstrip() + '\n</body>\n</html>\n'
-          else:
-              raise SystemExit('marker not found')
-          p.write_text(s, encoding='utf-8')
+          pattern = r'\n<script>\s*/\*\s*={5,}\s*FICHAS VISUAIS DA APOSTA.*?</script>\s*\n?'
+          novo, n = re.subn(pattern, '\n', s, count=1, flags=re.S)
+          if n != 1:
+              raise SystemExit(f'Bloco de script duplicado não encontrado: {n}')
+          p.write_text(novo, encoding='utf-8')
           PY
-      - name: Commit fix and remove workflow
+      - name: Validar e remover workflow
         run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('jogos/roleta-cassino.html').read_text(encoding='utf-8')
+          if '<script>\n/* =====================================================\n   FICHAS VISUAIS DA APOSTA' in s:
+              raise SystemExit('Script duplicado ainda presente')
+          if s.count('<script>') != s.count('</script>'):
+              raise SystemExit('Tags script desbalanceadas')
+          PY
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add jogos/roleta-cassino.html
-          git commit -m 'Fix Roleta Cassino betting chips' || true
+          git commit -m 'Fix Roleta Cassino script' || true
           git rm .github/workflows/fix-roleta-cassino.yml
-          git commit -m 'Remove temporary Roleta Cassino fix workflow'
+          git commit -m 'Remove temporary Roleta Cassino workflow'
           git push
