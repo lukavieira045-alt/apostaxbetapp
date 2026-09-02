@@ -266,8 +266,8 @@ body{
 .faixa.vermelho{background:#a91d25}
 
 .selecionado{
-    box-shadow:inset 0 0 0 3px #ffd43b;
-    filter:brightness(1.4)
+    box-shadow:none!important;
+    filter:none!important;
 }
 
 .aviso{
@@ -1964,7 +1964,7 @@ if(
        Aqui não criamos outro sistema de saldo.
     */
 }
-
+\n\n<script>\n/* =====================================================\n   FICHAS VISUAIS DA APOSTA\n   Cada toque coloca uma fichinha real sobre o número.\n   Não altera saldo, pagamento ou lógica de resultado.\n===================================================== */\n(function(){\n  const valores=[1,5,10,25,50];\n  let fichaVisual=1;\n  const totais=new Map();\n\n  function chipStyle(v){\n    const styles={\n      1:['#f7f7f7','#bdbdbd','#111'],\n      5:['#e53935','#8b1010','#fff'],\n      10:['#1976d2','#083b78','#fff'],\n      25:['#43a047','#176323','#fff'],\n      50:['#8e44ad','#4a1761','#fff']\n    };\n    return styles[v]||styles[1];\n  }\n\n  function renderChip(cell){\n    if(!cell)return;\n    const key=cell.dataset.numero||cell.textContent.trim();\n    const total=totais.get(key)||0;\n    let chip=cell.querySelector(':scope > .ficha-aposta');\n    if(!total){ if(chip)chip.remove(); cell.classList.remove('selecionado'); return; }\n    if(!chip){\n      chip=document.createElement('span');\n      chip.className='ficha-aposta';\n      chip.setAttribute('aria-hidden','true');\n      cell.appendChild(chip);\n    }\n    const st=chipStyle(total);\n    chip.style.background=`radial-gradient(circle at 35% 28%,#fff 0 8%,${st[0]} 30%,${st[1]} 100%)`;\n    chip.style.color=st[2];\n    chip.textContent='R$'+total;\n  }\n\n  function limparVisual(){\n    totais.clear();\n    document.querySelectorAll('.numero .ficha-aposta,.zero .ficha-aposta,.faixa .ficha-aposta').forEach(x=>x.remove());\n    document.querySelectorAll('.selecionado').forEach(x=>x.classList.remove('selecionado'));\n  }\n\n  document.addEventListener('click',function(e){\n    const f=e.target.closest('.ficha[data-valor]');\n    if(f){\n      fichaVisual=Number(f.dataset.valor)||1;\n      return;\n    }\n    const cell=e.target.closest('.numero[data-numero], .numero');\n    if(cell && !cell.closest('.fichas')){\n      const key=cell.dataset.numero||cell.textContent.trim();\n      if(/^\\d+$/.test(key)){\n        totais.set(key,(totais.get(key)||0)+fichaVisual);\n        renderChip(cell);\n      }\n      return;\n    }\n    if(e.target.closest('#zero')){\n      const cell=document.getElementById('zero');\n      totais.set('0',(totais.get('0')||0)+fichaVisual);\n      renderChip(cell);\n      return;\n    }\n    if(e.target.closest('#limpar')) limparVisual();\n  },false);\n\n  const style=document.createElement('style');\n  style.textContent=`\n    .numero .ficha-aposta,.zero .ficha-aposta{\n      right:50%;bottom:50%;transform:translate(50%,50%);\n      min-width:24px;height:24px;padding:0 3px;\n      border:2px solid #fff; border-radius:50%;\n      box-shadow:0 2px 4px rgba(0,0,0,.75),inset 0 0 0 2px rgba(255,255,255,.25);\n      font-size:7px;font-weight:900;z-index:20;\n    }\n    .numero .ficha-aposta::before,.zero .ficha-aposta::before{\n      content:'';position:absolute;inset:2px;border-radius:50%;\n      border:1px dashed rgba(255,255,255,.8);\n    }\n    .numero{overflow:visible}\n    .numero.selecionado{box-shadow:none!important;filter:none!important}\n    .ficha.ativa{outline:0!important;box-shadow:0 0 0 3px #fff,0 0 0 6px #d4af37!important}\n  `;\n  document.head.appendChild(style);\n})();\n</script>\n
 </script>
 
 </body>
