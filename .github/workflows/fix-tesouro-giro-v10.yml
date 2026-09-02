@@ -21,12 +21,23 @@ jobs:
               if marker in s:
                   s=s.replace(marker,sound+marker,1)
                   s=s.replace(marker,marker+'\n  playTesouroSpinSound();',1)
+          # Reduz o custo do WebAudio somente em telas pequenas.
+          old="""function playTesouroSpinSound(){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const ctx=window.__tesouroAudio||(window.__tesouroAudio=new C());if(ctx.state==='suspended')ctx.resume();const now=ctx.currentTime;const master=ctx.createGain();master.gain.setValueAtTime(.0001,now);master.gain.exponentialRampToValueAtTime(.58,now+.025);master.gain.exponentialRampToValueAtTime(.0001,now+2.7);const filter=ctx.createBiquadFilter();filter.type='bandpass';filter.frequency.setValueAtTime(950,now);filter.Q.value=.7;const osc=ctx.createOscillator();osc.type='sawtooth';osc.frequency.setValueAtTime(170,now);osc.frequency.exponentialRampToValueAtTime(620,now+2.4);const lfo=ctx.createOscillator(),lg=ctx.createGain();lfo.frequency.value=12;lg.gain.value=130;lfo.connect(lg);lg.connect(osc.frequency);osc.connect(filter);filter.connect(master);master.connect(ctx.destination);osc.start(now);lfo.start(now);osc.stop(now+2.75);lfo.stop(now+2.75)}catch(e){}}"""
+          new="""function playTesouroSpinSound(){try{if(window.matchMedia&&window.matchMedia('(max-width:760px)').matches)return;const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const ctx=window.__tesouroAudio||(window.__tesouroAudio=new C());if(ctx.state==='suspended')ctx.resume();const now=ctx.currentTime;const master=ctx.createGain();master.gain.setValueAtTime(.0001,now);master.gain.exponentialRampToValueAtTime(.58,now+.025);master.gain.exponentialRampToValueAtTime(.0001,now+2.7);const osc=ctx.createOscillator();osc.type='sawtooth';osc.frequency.setValueAtTime(170,now);osc.frequency.exponentialRampToValueAtTime(620,now+2.4);osc.connect(master);master.connect(ctx.destination);osc.start(now);osc.stop(now+2.75)}catch(e){}}"""
+          if old in s:
+              s=s.replace(old,new,1)
+          old_start="start:(i)=>{stop();tone(105+i*22,.07,.025,'square');timer=setInterval(()=>tone(115+i*24,.045,.018,'square'),220);return timer}"
+          new_start="start:(i)=>{if(window.matchMedia&&window.matchMedia('(max-width:760px)').matches)return null;stop();tone(105+i*22,.07,.025,'square');timer=setInterval(()=>tone(115+i*24,.045,.018,'square'),220);return timer}"
+          s=s.replace(old_start,new_start,1)
+          old_stop="stop:(i,id)=>{if(timer===id){clearInterval(timer);timer=null}tone(170+i*42,.12,.055,'triangle')}"
+          new_stop="stop:(i,id)=>{if(window.matchMedia&&window.matchMedia('(max-width:760px)').matches)return;if(timer===id){clearInterval(timer);timer=null}tone(170+i*42,.12,.055,'triangle')}"
+          s=s.replace(old_stop,new_stop,1)
           p.write_text(s,encoding='utf-8')
-          print('Som de giro mantido/restaurado e mais alto que a musica')
+          print('Otimização aplicada somente ao Tesouro Pirata')
           PY
           git config user.name "ApostaXBet Bot"
           git config user.email "actions@github.com"
           git add jogos/tesouro-pirata.html
-          git commit -m "Restaurar som de giro junto com musica" || exit 0
+          git commit -m "Otimiza audio somente do Tesouro Pirata" || exit 0
           git pull --rebase origin main
           git push origin HEAD:main
