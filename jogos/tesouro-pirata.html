@@ -131,7 +131,7 @@ let currentBet=1,isSpinning=false,realBalance=0,turbo=false,autoSpins=0,autoRunn
 const $=id=>document.getElementById(id),balanceEl=$('balance'),betEl=$('betAmount'),spinBtn=$('spinBtn'),minusBtn=$('minusBtn'),plusBtn=$('plusBtn'),maxBtn=$('maxBtn'),reelsGrid=$('reelsGrid'),errorMessage=$('errorMessage'),winPopup=$('winPopup'),winValue=$('winValue'),prizeValue=$('prizeValue'),statusText=$('statusText');
 function money(v){return Number(v||0).toFixed(2).replace('.',',')}
 function error(m){errorMessage.textContent=m;errorMessage.style.display='block';setTimeout(()=>errorMessage.style.display='none',4000)}
-async function balance(){try{realBalance=await window.SistemaSaldo.get();balanceEl.textContent=money(realBalance);ui()}catch(e){error('Não foi possível carregar seu saldo.')}}
+async function balance(){try{realBalance=await window.SistemaSaldo.get();balanceEl.textContent=money(realBalance);const top=document.getElementById('pirata-saldo-top');if(top)top.textContent=money(realBalance);ui()}catch(e){error('Não foi possível carregar seu saldo.')}}
 function ui(){betEl.textContent=money(currentBet);spinBtn.disabled=isSpinning||realBalance<currentBet;minusBtn.disabled=plusBtn.disabled=maxBtn.disabled=isSpinning}
 function random(){return SYMBOLS[Math.floor(Math.random()*SYMBOLS.length)]}
 function makeCell(s){if('KQJA'.includes(s)){const d=document.createElement('div');d.className='letra '+s;d.textContent=s;return d}const img=document.createElement('img');img.src=AS[s];img.alt=s==='treasure'?'Tesouro':'Pirata';img.onerror=()=>{img.remove();const d=document.createElement('div');d.className='letra';d.textContent=s==='treasure'?'💰':'☠';img.parentNode?.appendChild(d)};return img}
@@ -242,8 +242,9 @@ function playTesouroSpinSound(){
 }
 
 async function lobbySpin(){
+  if(isSpinning)return;
   playTesouroSpinSound();
-  if(isSpinning)return;await balance();
+  await balance();
   const usingFreeSpin=freeSpins>0;
   if(!usingFreeSpin && realBalance<currentBet){error('❌ Saldo insuficiente para esta aposta.');autoRunning=false;autoSpins=0;return}
   if(!usingFreeSpin){const ok=await window.SistemaSaldo.debitar(currentBet);if(!ok){await balance();return}realBalance=Math.max(0,realBalance-currentBet);}
@@ -291,7 +292,7 @@ async function startLoading(){
 async function start(){init();ui();startLoading();let tries=0;while(!window.SistemaSaldo&&tries<50){await new Promise(r=>setTimeout(r,50));tries++}if(!window.SistemaSaldo){error('Erro ao carregar o sistema de saldo.');return}await balance()}start();
 </script>
 <script>
-(function(){const el=document.getElementById('pirata-saldo-top');if(!el)return;function f(v){const n=Number(v);return Number.isFinite(n)?n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'0,00'}async function u(){try{if(window.SistemaSaldo&&typeof window.SistemaSaldo.get==='function'){const r=window.SistemaSaldo.get();const v=r&&typeof r.then==='function'?await r:r;if(typeof v==='number')el.textContent=f(v);else if(v&&typeof v==='object')el.textContent=f(v.valor??v.saldo??v.balance??0)}}catch(e){}}u();setInterval(u,700);window.addEventListener('focus',u);document.addEventListener('visibilitychange',()=>{if(!document.hidden)u()})})();
+(function(){const el=document.getElementById('pirata-saldo-top');if(!el)return;function f(v){const n=Number(v);return Number.isFinite(n)?n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'0,00'}function u(v){if(v!==undefined)el.textContent=f(v)}window.addEventListener('focus',()=>{if(window.SistemaSaldo&&typeof window.SistemaSaldo.get==='function'){Promise.resolve(window.SistemaSaldo.get()).then(u).catch(()=>{})}});document.addEventListener('visibilitychange',()=>{if(!document.hidden&&window.SistemaSaldo&&typeof window.SistemaSaldo.get==='function'){Promise.resolve(window.SistemaSaldo.get()).then(u).catch(()=>{})}})})();
 </script>
 
 <script>
