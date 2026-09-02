@@ -26,6 +26,7 @@
     .ax-low-performance img{content-visibility:auto}
     .ax-low-performance .raio,.ax-low-performance .superbonus-raio,.ax-low-performance .energia,
     .ax-low-performance #energia,.ax-low-performance #rastro{animation:none!important;filter:none!important;-webkit-filter:none!important;box-shadow:none!important}
+    .ax-low-performance .faixa{position:relative!important;user-select:none!important;-webkit-user-select:none!important;-webkit-touch-callout:none!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important}
   `;
   (document.head || document.documentElement).appendChild(css);
 
