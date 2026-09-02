@@ -1662,10 +1662,9 @@ async function finalizarRodada(
 
     if(premioFinal > 0){
 
-        const creditado =
-            await window.SistemaSaldo.creditar(
-                premioFinal
-            );
+        const totalApostado = apostas.reduce((total, aposta) => total + Number(aposta.valor || 0), 0);
+        const multiplicadorPremio = totalApostado > 0 ? premioFinal / (totalApostado * 0.95) : 0;
+        const creditado = totalApostado > 0 ? await window.SistemaSaldo.processarVitoria(totalApostado, multiplicadorPremio) : 0;
 
 
         if(!creditado){
