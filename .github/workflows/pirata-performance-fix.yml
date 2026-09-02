@@ -1,0 +1,36 @@
+name: Corrigir desempenho Tesouro Pirata
+on:
+  push:
+    branches: [fix/pirata-performance]
+permissions:
+  contents: write
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Otimizar giro sem alterar mecanica
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('jogos/tesouro-pirata.html')
+          s=p.read_text()
+          old="""async function lobbySpin(){\n  if(isSpinning)return;\n  playTesouroSpinSound();"""
+          new="""async function lobbySpin(){\n  if(isSpinning)return;\n  playTesouroSpinSound();"""
+          assert old in s
+          # The main bottleneck is DOM churn from the legacy lobby strip.\n          # Keep the exact final grid/result logic and only reduce temporary nodes.\n          old2="""  const noise=18,vals=[];for(let i=0;i<noise;i++)vals.push(random());vals.push(...finalValues);\n  vals.forEach(s=>{const cell=document.createElement('div');cell.className='cel';cell.classList.toggle('scatter',s==='scatter');cell.appendChild(makeCell(s));strip.appendChild(cell)});"""
+          new2="""  const noise=8,vals=[];for(let i=0;i<noise;i++)vals.push(random());vals.push(...finalValues);\n  vals.forEach(s=>{const cell=document.createElement('div');cell.className='cel';cell.classList.toggle('scatter',s==='scatter');cell.appendChild(makeCell(s));strip.appendChild(cell)});"""
+          if old2 in s: s=s.replace(old2,new2,1)
+          # The active lobby path already uses per-column noise; reduce temporary cells only.\n          old3="""    const noise=16+c*2;\n    tasks.push(spinOneReel(c,finalGrid[c],c,duration,delay,noise));"""
+          new3="""    const noise=8+c;\n    tasks.push(spinOneReel(c,finalGrid[c],c,duration,delay,noise));"""
+          assert old3 in s
+          s=s.replace(old3,new3,1)
+          p.write_text(s)
+          PY
+      - name: Commitar e remover workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add jogos/tesouro-pirata.html
+          git commit -m 'Reduz processamento temporario do giro do Tesouro Pirata' || true
+          git push
