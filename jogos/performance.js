@@ -46,6 +46,19 @@
   `;
   (document.head || document.documentElement).appendChild(css);
 
+  /* O Tesouro Pirata tem um modo antigo chamado perf-spin que desliga
+     filtros/sombras durante o giro. Em celulares isso deixa a tela cinza.
+     Não permitimos esse modo, preservando o giro original do jogo. */
+  if (/tesouro-pirata\.html$/i.test(location.pathname)) {
+    var removeBadSpinMode = function () {
+      var game = document.querySelector('.casino');
+      if (game && game.classList.contains('perf-spin')) game.classList.remove('perf-spin');
+    };
+    removeBadSpinMode();
+    var observer = new MutationObserver(removeBadSpinMode);
+    observer.observe(document.documentElement, {subtree:true, attributes:true, attributeFilter:['class']});
+  }
+
   document.addEventListener('visibilitychange', function () {
     document.querySelectorAll('audio').forEach(function (audio) {
       if (document.hidden) {
