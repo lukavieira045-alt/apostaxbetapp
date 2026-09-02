@@ -1,0 +1,50 @@
+name: Otimizar Tesouro Pirata
+on:
+  push:
+    paths:
+      - '.github/workflows/otimizar-tesouro-pirata.yml'
+permissions:
+  contents: write
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ajustar somente gargalos do Tesouro Pirata
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('jogos/tesouro-pirata.html')
+          s=p.read_text()
+
+          old="""async function balance(){try{realBalance=await window.SistemaSaldo.get();balanceEl.textContent=money(realBalance);ui()}catch(e){error('Não foi possível carregar seu saldo.')}}"""
+          new="""async function balance(){try{realBalance=await window.SistemaSaldo.get();balanceEl.textContent=money(realBalance);const top=document.getElementById('pirata-saldo-top');if(top)top.textContent=money(realBalance);ui()}catch(e){error('Não foi possível carregar seu saldo.')}}"""
+          if old not in s: raise SystemExit('balance() alvo não encontrado')
+          s=s.replace(old,new,1)
+
+          old="""async function lobbySpin(){\n  playTesouroSpinSound();\n  if(isSpinning)return;await balance();"""
+          new="""async function lobbySpin(){\n  if(isSpinning)return;\n  playTesouroSpinSound();\n  await balance();"""
+          if old not in s: raise SystemExit('lobbySpin alvo não encontrado')
+          s=s.replace(old,new,1)
+
+          old="""(function(){const el=document.getElementById('pirata-saldo-top');if(!el)return;function f(v){const n=Number(v);return Number.isFinite(n)?n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'0,00'}async function u(){try{if(window.SistemaSaldo&&typeof window.SistemaSaldo.get==='function'){const r=window.SistemaSaldo.get();const v=r&&typeof r.then==='function'?await r:r;if(typeof v==='number')el.textContent=f(v);else if(v&&typeof v==='object')el.textContent=f(v.valor??v.saldo??v.balance??0)}}catch(e){}}u();setInterval(u,700);window.addEventListener('focus',u);document.addEventListener('visibilitychange',()=>{if(!document.hidden)u()})})();"""
+          new="""(function(){const el=document.getElementById('pirata-saldo-top');if(!el)return;function f(v){const n=Number(v);return Number.isFinite(n)?n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'0,00'}function u(v){if(v!==undefined)el.textContent=f(v)}window.addEventListener('focus',()=>{if(window.SistemaSaldo&&typeof window.SistemaSaldo.get==='function'){Promise.resolve(window.SistemaSaldo.get()).then(u).catch(()=>{})}});document.addEventListener('visibilitychange',()=>{if(!document.hidden&&window.SistemaSaldo&&typeof window.SistemaSaldo.get==='function'){Promise.resolve(window.SistemaSaldo.get()).then(u).catch(()=>{})}})})();"""
+          if old not in s: raise SystemExit('script de saldo superior alvo não encontrado')
+          s=s.replace(old,new,1)
+
+          p.write_text(s)
+          PY
+      - name: Commit alteração
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add jogos/tesouro-pirata.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Otimiza desempenho do Tesouro Pirata no celular'
+          git push
+      - name: Remover workflow temporário
+        if: always()
+        run: |
+          git rm -f .github/workflows/otimizar-tesouro-pirata.yml || true
+          git commit -m 'Remove workflow temporário de otimização' || true
+          git push || true
