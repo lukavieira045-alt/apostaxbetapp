@@ -44,8 +44,8 @@
       var style = document.createElement('style');
       style.id = 'ax-roleta-cassino-fix';
       style.textContent = `
-        .faixa{position:relative!important;touch-action:manipulation!important;-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important;-webkit-tap-highlight-color:transparent!important}
-        .faixa.vermelho{position:relative!important;touch-action:manipulation!important;-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
+        .faixa{touch-action:manipulation!important;-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important;-webkit-tap-highlight-color:transparent!important}
+        .faixa.vermelho{touch-action:manipulation!important;-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
         .ficha-aposta{width:25px!important;min-width:25px!important;height:25px!important;padding:0!important;border-radius:50%!important;border:2px solid #fff!important;background:repeating-conic-gradient(from 0deg,#b51e25 0deg 12deg,#fff 12deg 24deg)!important;color:#111!important;box-shadow:0 1px 4px #000,inset 0 0 0 2px #b51e25!important}
         .ficha-aposta::before{content:""!important;position:absolute!important;inset:4px!important;border-radius:50%!important;background:radial-gradient(circle at 35% 30%,#fff,#e9e9e9 55%,#aaa 100%)!important;border:1px solid #555!important;z-index:-1!important}
         .ficha-aposta::after{content:""!important;position:absolute!important;inset:7px!important;border-radius:50%!important;border:1px dashed #b51e25!important}
