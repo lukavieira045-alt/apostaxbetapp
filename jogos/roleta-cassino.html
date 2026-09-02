@@ -1698,7 +1698,22 @@ async function finalizarRodada(
     somResultado();
 
 
-    let premioBruto = 0;
+    /*
+       CADA FICHA REPRESENTA UMA APOSTA INDEPENDENTE.
+       Em números, o retorno total é 2x o valor
+       colocado naquele número.
+
+       Exemplo:
+       R$5 no 1 -> R$10 de retorno se sair 1.
+       R$1 no 3 -> R$2 de retorno se sair 3.
+
+       As fichas de números diferentes são somadas
+       apenas quando os respectivos números vencem.
+       O desconto da aposta continua sendo feito
+       pelo SistemaSaldo no início da rodada.
+    */
+
+    let premioFinal = 0;
 
 
     apostas.forEach(
@@ -1715,30 +1730,19 @@ async function finalizarRodada(
                     typeof aposta.tipo === "number"
                 ){
 
-                    premioBruto +=
-                        aposta.valor * 36;
+                    // Aposta em número: retorno total de 2x.
+                    premioFinal +=
+                        Number(aposta.valor || 0) * 2;
 
                 }else{
 
-                    premioBruto +=
-                        aposta.valor * 2;
+                    // Mantém a regra já existente para apostas externas.
+                    premioFinal +=
+                        Number(aposta.valor || 0) * 2 * TAXA_CASA;
                 }
             }
         }
     );
-
-
-    /*
-       MANTIDO O MESMO CÁLCULO
-       DA ROLETA ORIGINAL.
-
-       Apenas a forma de colocar
-       o prêmio no saldo mudou:
-       agora usa SistemaSaldo.
-    */
-
-    const premioFinal =
-        premioBruto * TAXA_CASA;
 
 
     /*
