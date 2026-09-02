@@ -1,0 +1,56 @@
+name: Ajuste temporario roleta cassino
+on:
+  push:
+    paths:
+      - '.github/workflows/ajuste-roleta-cassino.yml'
+permissions:
+  contents: write
+jobs:
+  ajustar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ajustar fichas da roleta
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('jogos/roleta-cassino.html')
+          s = p.read_text(encoding='utf-8')
+
+          old_css = '''.ficha-aposta{\n    position:absolute;\n    right:2px;\n    bottom:2px;\n    min-width:19px;\n    height:19px;\n    padding:0 4px;\n    border-radius:50%;\n    border:2px solid #fff;\n    background:radial-gradient(circle at 35% 30%,#fff7c7,#ffd43b 45%,#b8860b 100%);\n    color:#111;\n    display:flex;\n    align-items:center;\n    justify-content:center;\n    font-size:8px;\n    font-weight:900;\n    line-height:1;\n    box-shadow:0 1px 3px #000;\n    z-index:4;\n    pointer-events:none\n}'''
+          new_css = '''.ficha-aposta{\n    position:absolute;\n    right:2px;\n    bottom:2px;\n    min-width:20px;\n    height:20px;\n    padding:0 4px;\n    border-radius:50%;\n    border:2px solid #fff;\n    background:radial-gradient(circle at 35% 28%,#fff,#ffe36b 35%,#ffc400 62%,#9b6500 100%);\n    color:#111;\n    display:flex;\n    align-items:center;\n    justify-content:center;\n    font-size:8px;\n    font-weight:900;\n    line-height:1;\n    box-shadow:0 2px 4px rgba(0,0,0,.75), inset 0 0 0 1px rgba(255,255,255,.55);\n    z-index:4;\n    pointer-events:none;\n    transform:translateZ(0)\n}\n\n.ficha-aposta::after{\n    content:\"\";\n    position:absolute;\n    inset:2px;\n    border-radius:50%;\n    border:1px dashed rgba(120,70,0,.65);\n    pointer-events:none\n}'''
+          if old_css not in s:
+              raise SystemExit('CSS alvo nao encontrado')
+          s = s.replace(old_css, new_css, 1)
+
+          old_fn = '''function atualizarFichaVisual(tipo, elemento){\n\n    const total = apostas\n        .filter(function(aposta){\n            return chaveAposta(aposta.tipo) === chaveAposta(tipo);\n        })\n        .reduce(function(sum, aposta){\n            return sum + Number(aposta.valor || 0);\n        }, 0);\n\n    let chip = elemento.querySelector(\".ficha-aposta\");\n\n    if(!chip){\n        chip = document.createElement(\"span\");\n        chip.className = \"ficha-aposta\";\n        elemento.appendChild(chip);\n    }\n\n    chip.textContent =\n        total >= 100\n            ? Math.round(total)\n            : (Number.isInteger(total) ? total : total.toFixed(2).replace(\".\",\",\"));\n}'''
+          new_fn = '''function calcularTotalApostas(){\n    return apostas.reduce(function(total, aposta){\n        return total + Number(aposta.valor || 0);\n    }, 0);\n}\n\nfunction atualizarFichaVisual(tipo, elemento){\n\n    const total = apostas\n        .filter(function(aposta){\n            return chaveAposta(aposta.tipo) === chaveAposta(tipo);\n        })\n        .reduce(function(sum, aposta){\n            return sum + Number(aposta.valor || 0);\n        }, 0);\n\n    let chip = elemento.querySelector(\".ficha-aposta\");\n\n    if(!chip){\n        chip = document.createElement(\"span\");\n        chip.className = \"ficha-aposta\";\n        elemento.appendChild(chip);\n    }\n\n    const texto = Number.isInteger(total)\n        ? String(total)\n        : total.toFixed(2).replace(\".\",\",\");\n\n    chip.textContent = texto;\n    chip.title = \"Aposta neste número: R$ \" + texto;\n    chip.setAttribute(\"aria-label\", \"Aposta de R$ \" + texto);\n}\n'''
+          if old_fn not in s:
+              raise SystemExit('funcao visual alvo nao encontrada')
+          s = s.replace(old_fn, new_fn, 1)
+
+          old_msg = '''    mensagem.textContent =\n        \"Aposta adicionada.\";'''
+          new_msg = '''    const totalApostas = calcularTotalApostas();\n\n    mensagem.textContent =\n        \"Aposta de R$ \" + formatar(ficha) +\n        \" adicionada. Total: R$ \" +\n        formatar(totalApostas) + \".\";'''
+          if old_msg not in s:
+              raise SystemExit('mensagem alvo nao encontrada')
+          s = s.replace(old_msg, new_msg, 1)
+
+          old_total = '''    const totalAposta =\n        apostas.reduce(\n            function(sum,a){\n\n                return sum + a.valor;\n\n            },\n            0\n        );'''
+          new_total = '''    const totalAposta = calcularTotalApostas();'''
+          if old_total not in s:
+              raise SystemExit('total de aposta alvo nao encontrado')
+          s = s.replace(old_total, new_total, 1)
+
+          p.write_text(s, encoding='utf-8')
+
+      - name: Commit alteracoes e remover workflow temporario
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add jogos/roleta-cassino.html
+          git commit -m "Ajusta fichas e total de apostas da Roleta Cassino"
+          git push
+          git rm .github/workflows/ajuste-roleta-cassino.yml
+          git commit -m "Remove workflow temporario da roleta"
+          git push
