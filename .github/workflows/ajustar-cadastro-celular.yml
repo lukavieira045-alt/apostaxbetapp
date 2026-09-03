@@ -1,0 +1,646 @@
+name: Ajustar cadastro e login para celular
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  ajustar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar repositorio
+        uses: actions/checkout@v4
+
+      - name: Alterar autenticacao
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+
+          old_form = '''<form id="formCadastro" class="form active" onsubmit="cadastrar(event)">
+
+<label>Seu nome</label>
+<input id="nomeCadastro" type="text" placeholder="Digite seu nome" required>
+
+<label>E-mail</label>
+<input id="emailCadastro" type="email" placeholder="Digite seu e-mail" required>
+
+<label>Telefone</label>
+<input id="telefoneCadastro" type="tel" placeholder="Digite seu telefone" required>
+<label>CPF</label>
+<input id="cpfCadastro" type="text" inputmode="numeric" maxlength="14" placeholder="Digite seu CPF" required>
+
+<label>Criar senha</label>
+<div class="campo-senha">
+<input id="senhaCadastro" type="password" minlength="6" required>
+<span class="olho" onclick="mostrarSenha('senhaCadastro')">👁️</span>
+</div>
+<label>Confirmar senha</label>
+<div class="campo-senha">
+<input id="confirmarSenha" type="password" minlength="6" required>
+<span class="olho" onclick="mostrarSenha('confirmarSenha')">👁️</span>
+</div>
+
+<button class="btn-principal" id="btnCadastro">CRIAR CONTA</button>
+<div id="mensagemCadastro" class="mensagem"></div>
+</form>'''
+
+          new_form = '''<form id="formCadastro" class="form active" onsubmit="cadastrar(event)">
+
+<label>Seu nome</label>
+<input id="nomeCadastro" type="text" placeholder="Digite seu nome" required>
+
+<label>Celular</label>
+<input id="telefoneCadastro" type="tel" inputmode="tel" autocomplete="tel" placeholder="Digite seu número de celular" required>
+
+<label>Criar senha</label>
+<div class="campo-senha">
+<input id="senhaCadastro" type="password" minlength="6" autocomplete="new-password" required>
+<span class="olho" onclick="mostrarSenha('senhaCadastro')">👁️</span>
+</div>
+<label>Confirmar senha</label>
+<div class="campo-senha">
+<input id="confirmarSenha" type="password" minlength="6" autocomplete="new-password" required>
+<span class="olho" onclick="mostrarSenha('confirmarSenha')">👁️</span>
+</div>
+
+<button class="btn-principal" id="btnCadastro">CRIAR CONTA</button>
+<div id="mensagemCadastro" class="mensagem"></div>
+</form>'''
+
+          old_login = '''<form id="formLogin" class="form" onsubmit="entrar(event)">
+
+<label>E-mail</label>
+<input id="emailLogin" type="email" placeholder="Digite seu e-mail" required>
+<label>Senha</label>'''
+          new_login = '''<form id="formLogin" class="form" onsubmit="entrar(event)">
+
+<label>Celular</label>
+<input id="telefoneLogin" type="tel" inputmode="tel" autocomplete="tel" placeholder="Digite seu número de celular" required>
+<label>Senha</label>'''
+
+          old_forgot = '''
+<button type="button" class="esqueci" onclick="mostrarRecuperacao()">
+Esqueci minha senha?
+</button>
+'''
+
+          old_cadastro_fn = '''async function cadastrar(event){
+    event.preventDefault();
+
+    const nome=
+        document.getElementById(
+            "nomeCadastro"
+        ).value.trim();
+    const email=
+        document.getElementById(
+            "emailCadastro"
+        ).value.trim();
+
+    const telefone=
+        document.getElementById(
+            "telefoneCadastro"
+        ).value.trim();
+
+    const cpf=
+        document.getElementById(
+            "cpfCadastro"
+        ).value.trim();
+
+    const senha=
+        document.getElementById(
+            "senhaCadastro"
+        ).value;
+
+    const confirmar=
+        document.getElementById(
+            "confirmarSenha"
+        ).value;
+    const botao=
+        document.getElementById(
+            "btnCadastro"
+        );
+
+    if(senha!==confirmar){
+
+        mensagem(
+            "mensagemCadastro",
+            "As senhas não são iguais.",
+            "erro"
+        );
+
+        return;
+    }
+
+    if(senha.length<6){
+
+        mensagem(
+            "mensagemCadastro",
+            "A senha precisa ter pelo menos 6 caracteres.",
+            "erro"
+        );
+
+        return;
+    }
+
+    if(!telefone){
+        mensagem(
+            "mensagemCadastro",
+            "Digite seu telefone.",
+            "erro"
+        );
+
+        return;
+    }
+
+    const cpfNumeros=
+        cpf.replace(/\D/g,"");
+
+    if(cpfNumeros.length!==11){
+
+        mensagem(
+            "mensagemCadastro",
+            "Digite um CPF válido com 11 números.",
+            "erro"
+        );
+
+        return;
+    }
+
+    botao.disabled=true;
+    botao.innerText="CRIANDO CONTA...";
+
+    try{
+        const {data,error}=
+            await clienteSupabase()
+            .auth
+            .signUp({
+                email,
+                password:senha,
+                options:{
+                    data:{
+                        nome,
+                        full_name:nome,
+                        telefone,
+                        phone:telefone,
+                        cpf:cpfNumeros
+                    }
+                }
+            });
+
+        if(error)throw error;
+
+        if(data.session){
+            sessionStorage.removeItem(
+                "apostaxbet_logout"
+            );
+
+            mensagem(
+                "mensagemCadastro",
+                "Conta criada com sucesso!",
+                "sucesso"
+            );
+
+            setTimeout(
+                ()=>mostrarSite(data.session.user),
+                800
+            );
+
+        }else{
+            mensagem(
+                "mensagemCadastro",
+                "Conta criada! Verifique seu e-mail para confirmar a conta.",
+                "sucesso"
+            );
+        }
+
+    }catch(error){
+
+        mensagem(
+            "mensagemCadastro",
+            traduzirErro(error.message),
+            "erro"
+        );
+    }
+
+    botao.disabled=false;
+    botao.innerText="CRIAR CONTA";
+}'''
+
+          new_cadastro_fn = '''async function cadastrar(event){
+    event.preventDefault();
+
+    const nome=document.getElementById("nomeCadastro").value.trim();
+    const telefoneDigitado=document.getElementById("telefoneCadastro").value.trim();
+    const senha=document.getElementById("senhaCadastro").value;
+    const confirmar=document.getElementById("confirmarSenha").value;
+    const botao=document.getElementById("btnCadastro");
+
+    if(senha!==confirmar){
+        mensagem("mensagemCadastro","As senhas não são iguais.","erro");
+        return;
+    }
+
+    if(senha.length<6){
+        mensagem("mensagemCadastro","A senha precisa ter pelo menos 6 caracteres.","erro");
+        return;
+    }
+
+    if(!telefoneDigitado){
+        mensagem("mensagemCadastro","Digite seu número de celular.","erro");
+        return;
+    }
+
+    const telefoneNumeros=telefoneDigitado.replace(/\D/g,"");
+    let telefone=telefoneDigitado.replace(/\s+/g,"");
+
+    if(telefone.startsWith("+")){
+        telefone="+"+telefone.replace(/\D/g,"");
+    }else if(telefoneNumeros.length===10 || telefoneNumeros.length===11){
+        telefone="+55"+telefoneNumeros;
+    }else{
+        mensagem("mensagemCadastro","Digite um celular válido com DDD.","erro");
+        return;
+    }
+
+    botao.disabled=true;
+    botao.innerText="CRIANDO CONTA...";
+
+    try{
+        const {data,error}=await clienteSupabase().auth.signUp({
+            phone:telefone,
+            password:senha,
+            options:{
+                data:{
+                    nome,
+                    full_name:nome,
+                    telefone,
+                    phone:telefone
+                }
+            }
+        });
+
+        if(error)throw error;
+
+        if(data?.session){
+            sessionStorage.removeItem("apostaxbet_logout");
+            mensagem("mensagemCadastro","Conta criada com sucesso! Entrando...","sucesso");
+            setTimeout(()=>mostrarSite(data.session.user),500);
+        }else{
+            mensagem("mensagemCadastro","Conta criada, mas o Supabase não liberou a sessão automática. Verifique se a confirmação de telefone está desativada.","erro");
+        }
+
+    }catch(error){
+        mensagem("mensagemCadastro",traduzirErro(error?.message||error),"erro");
+    }
+
+    botao.disabled=false;
+    botao.innerText="CRIAR CONTA";
+}'''
+
+          old_login_fn = '''async function entrar(event){
+    event.preventDefault();
+
+    const email=
+        document.getElementById(
+            "emailLogin"
+        ).value.trim();
+
+    const senha=
+        document.getElementById(
+            "senhaLogin"
+        ).value;
+
+    const botao=
+        document.getElementById(
+            "btnLogin"
+        );
+
+    botao.disabled=true;
+    botao.innerText="ENTRANDO...";
+
+    try{
+        const {data,error}=
+            await clienteSupabase()
+            .auth
+            .signInWithPassword({
+                email,
+                password:senha
+            });
+
+        if(error)throw error;
+
+        sessionStorage.removeItem(
+            "apostaxbet_logout"
+        );
+
+        mensagem(
+            "mensagemLogin",
+            "Login realizado! Entrando...",
+            "sucesso"
+        );
+
+        setTimeout(
+            ()=>mostrarSite(data.user),
+            700
+        );
+    }catch(error){
+        mensagem(
+            "mensagemLogin",
+            traduzirErro(error.message),
+            "erro"
+        );
+    }
+
+    botao.disabled=false;
+    botao.innerText="ENTRAR";
+}'''
+
+          new_login_fn = '''async function entrar(event){
+    event.preventDefault();
+
+    const telefoneDigitado=document.getElementById("telefoneLogin").value.trim();
+    const senha=document.getElementById("senhaLogin").value;
+    const botao=document.getElementById("btnLogin");
+
+    if(!telefoneDigitado){
+        mensagem("mensagemLogin","Digite seu número de celular.","erro");
+        return;
+    }
+
+    const telefoneNumeros=telefoneDigitado.replace(/\D/g,"");
+    let telefone=telefoneDigitado.replace(/\s+/g,"");
+
+    if(telefone.startsWith("+")){
+        telefone="+"+telefone.replace(/\D/g,"");
+    }else if(telefoneNumeros.length===10 || telefoneNumeros.length===11){
+        telefone="+55"+telefoneNumeros;
+    }else{
+        mensagem("mensagemLogin","Digite um celular válido com DDD.","erro");
+        return;
+    }
+
+    botao.disabled=true;
+    botao.innerText="ENTRANDO...";
+
+    try{
+        const {data,error}=await clienteSupabase().auth.signInWithPassword({
+            phone:telefone,
+            password:senha
+        });
+
+        if(error)throw error;
+
+        sessionStorage.removeItem("apostaxbet_logout");
+        mensagem("mensagemLogin","Login realizado! Entrando...","sucesso");
+        setTimeout(()=>mostrarSite(data.user),500);
+    }catch(error){
+        mensagem("mensagemLogin",traduzirErro(error?.message||error),"erro");
+    }
+
+    botao.disabled=false;
+    botao.innerText="ENTRAR";
+}'''
+
+          old_global = '''window.ApostaXBet={
+
+    supabase:
+        window.supabaseClient,
+    getUsuarioLogado,
+    buscarSaldo,
+    salvarSaldo,
+    descontarSaldo,
+    processarVitoria,
+    processarSaque,
+
+    cadastrar:async(
+        nome,
+        email,
+        senha,
+        telefone="",
+        cpf=""
+    )=>{
+
+        try{
+            const {data,error}=
+                await clienteSupabase()
+                .auth
+                .signUp({
+                    email,
+                    password:senha,
+                    options:{
+                        data:{
+                            nome,
+                            full_name:nome,
+                            telefone,
+                            phone:telefone,
+                            cpf:cpf.replace(/\D/g,"")
+                        }
+                    }
+                });
+            if(error)throw error;
+
+            return{
+                sucesso:true,
+                data
+            };
+
+        }catch(error){
+
+            return{
+                sucesso:false,
+                erro:error
+            };
+        }
+    },
+
+    login:async(
+        email,
+        senha
+    )=>{
+
+        try{
+            const {data,error}=
+                await clienteSupabase()
+                .auth
+                .signInWithPassword({
+                    email,
+                    password:senha
+                });
+
+            if(error)throw error;
+
+            return{
+                sucesso:true,
+                data
+            };
+
+        }catch(error){
+
+            return{
+                sucesso:false,
+                erro:error
+            };
+        }
+    }
+};'''
+
+          new_global = '''window.ApostaXBet={
+    supabase:window.supabaseClient,
+    getUsuarioLogado,
+    buscarSaldo,
+    salvarSaldo,
+    descontarSaldo,
+    processarVitoria,
+    processarSaque,
+    cadastrar:async(nome,telefoneDigitado,senha)=>{
+        try{
+            const numeros=String(telefoneDigitado||"").replace(/\D/g,"");
+            const telefone=String(telefoneDigitado||"").startsWith("+")
+                ?"+"+numeros
+                :(numeros.length===10||numeros.length===11?"+55"+numeros:String(telefoneDigitado||""));
+            const {data,error}=await clienteSupabase().auth.signUp({
+                phone:telefone,
+                password:senha,
+                options:{data:{nome,full_name:nome,telefone,phone:telefone}}
+            });
+            if(error)throw error;
+            return{sucesso:true,data};
+        }catch(error){
+            return{sucesso:false,erro:error};
+        }
+    },
+    login:async(telefoneDigitado,senha)=>{
+        try{
+            const numeros=String(telefoneDigitado||"").replace(/\D/g,"");
+            const telefone=String(telefoneDigitado||"").startsWith("+")
+                ?"+"+numeros
+                :(numeros.length===10||numeros.length===11?"+55"+numeros:String(telefoneDigitado||""));
+            const {data,error}=await clienteSupabase().auth.signInWithPassword({phone:telefone,password:senha});
+            if(error)throw error;
+            return{sucesso:true,data};
+        }catch(error){
+            return{sucesso:false,erro:error};
+        }
+    }
+};'''
+
+          old_console = 'console.log(\n            "✅ Cadastro com nome, telefone e CPF."\n        );'
+          new_console = 'console.log(\n            "✅ Cadastro com nome, celular e senha — sem e-mail, sem CPF e sem SMS."\n        );'
+
+          replacements = [
+              (old_form, new_form, 'formulario de cadastro'),
+              (old_login, new_login, 'formulario de login'),
+              (old_forgot, '', 'link de recuperacao por e-mail'),
+              (old_cadastro_fn, new_cadastro_fn, 'funcao cadastrar'),
+              (old_login_fn, new_login_fn, 'funcao entrar'),
+              (old_global, new_global, 'API global de autenticacao'),
+              (old_console, new_console, 'mensagem de console')
+          ]
+
+          for old, new, name in replacements:
+              if old not in s:
+                  raise SystemExit(f'ERRO: bloco esperado nao encontrado: {name}')
+              s = s.replace(old, new, 1)
+
+          # Remove somente a mascara de CPF; nao toca no restante do JavaScript.
+          cpf_mask_start = '/* ========================= MÁSCARA CPF ========================= */'
+          recovery_start = '/* ========================= RECUPERAÇÃO ========================= */'
+          if cpf_mask_start in s and recovery_start in s:
+              a = s.index(cpf_mask_start)
+              b = s.index(recovery_start, a)
+              s = s[:a] + recovery_start + s[b+len(recovery_start):]
+
+          # Remove os dados de e-mail e CPF da tela Minha Conta, deixando nome, celular, ID e saldo.
+          account_email = '''<div class="conta-email" id="contaEmail"></div>
+<div class="conta-item">
+<strong>📧 E-mail</strong>
+<div class="conta-dado" id="contaEmailDetalhe">
+Não informado
+</div>
+</div>
+
+'''
+          if account_email in s:
+              s = s.replace(account_email, '', 1)
+
+          account_cpf = '''<div class="conta-item">
+<strong>🪪 CPF</strong>
+<div class="conta-dado" id="contaCpf">
+Não informado
+</div>
+</div>
+'''
+          if account_cpf in s:
+              s = s.replace(account_cpf, '', 1)
+
+          # Atualiza a funcao de dados da conta para usar apenas nome e celular.
+          old_account_fn_start = 'function atualizarDadosConta(user){'
+          old_account_fn_end = '/* ========================= ID DO USUÁRIO ========================= */'
+          a = s.find(old_account_fn_start)
+          b = s.find(old_account_fn_end, a)
+          if a == -1 or b == -1:
+              raise SystemExit('ERRO: funcao atualizarDadosConta nao encontrada')
+          new_account_fn = '''function atualizarDadosConta(user){
+    if(!user)return;
+
+    const meta=user.user_metadata||{};
+    const nome=meta.nome||meta.full_name||meta.name||"Não informado";
+    const telefone=meta.telefone||meta.phone||meta.celular||meta.telefone_celular||user.phone||"Não informado";
+
+    const contaNome=document.getElementById("contaNome");
+    const contaNomeCompleto=document.getElementById("contaNomeCompleto");
+    const contaTelefone=document.getElementById("contaTelefone");
+    const contaId=document.getElementById("contaId");
+
+    if(contaNome)contaNome.innerText=textoSeguro(nome);
+    if(contaNomeCompleto)contaNomeCompleto.innerText=textoSeguro(nome);
+    if(contaTelefone)contaTelefone.innerText=textoSeguro(telefone);
+    if(contaId)contaId.innerText=textoSeguro(user.id);
+}
+
+'''
+          s = s[:a] + new_account_fn + s[b:]
+
+          # Corrige mensagens de erro que ainda falavam em e-mail.
+          s = s.replace('return "E-mail ou senha incorretos.";', 'return "Celular ou senha incorretos.";')
+          s = s.replace('return "Esse e-mail já está cadastrado.";', 'return "Esse celular já está cadastrado.";')
+          s = s.replace('return "Muitas tentativas. Aguarde alguns minutos.";', 'return "Muitas tentativas. Aguarde alguns minutos.";')
+          s = s.replace('return "Digite um e-mail válido.";', 'return "Digite um celular válido com DDD.";')
+          s = s.replace('return "Confirme seu e-mail antes de entrar.";', 'return "Confirme seu celular antes de entrar.";')
+
+          p.write_text(s, encoding='utf-8')
+          print('index.html ajustado com sucesso')
+          PY
+
+      - name: Validar HTML e JavaScript
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('index.html').read_text(encoding='utf-8')
+          required=['id="nomeCadastro"','id="telefoneCadastro"','id="senhaCadastro"','id="confirmarSenha"','id="telefoneLogin"','id="senhaLogin"','auth.signUp({','phone:telefone','auth.signInWithPassword({']
+          forbidden=['id="emailCadastro"','id="cpfCadastro"','id="emailLogin"']
+          for x in required:
+              assert x in s, f'Faltando: {x}'
+          for x in forbidden:
+              assert x not in s, f'Ainda presente: {x}'
+          print('Validacao OK')
+          PY
+
+      - name: Publicar alteracao
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            echo "Nenhuma alteracao necessaria"
+            exit 0
+          fi
+          git commit -m "Mudar cadastro e login para celular"
+          git push
