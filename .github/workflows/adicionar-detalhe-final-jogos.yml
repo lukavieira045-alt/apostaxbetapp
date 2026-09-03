@@ -1,0 +1,141 @@
+name: Adicionar detalhe final na página de jogos
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  adicionar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Adicionar efeito somente no final dos jogos
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          marker = '<!-- APOSTAXBET DETALHE FINAL JOGOS V1 -->'
+          if marker in s:
+              print('Detalhe já presente; nada a fazer.')
+              raise SystemExit(0)
+
+          block = r'''<!-- APOSTAXBET DETALHE FINAL JOGOS V1 -->
+          <style>
+          .ax-final-jogos{
+              margin:24px 15px 18px;
+              padding:18px 14px 15px;
+              border:1px solid rgba(250,204,21,.28);
+              border-radius:16px;
+              background:linear-gradient(180deg,rgba(20,90,56,.72),rgba(7,42,26,.9));
+              box-shadow:0 0 22px rgba(250,204,21,.07),inset 0 1px 0 rgba(255,255,255,.06);
+              text-align:center;
+              overflow:hidden;
+              position:relative;
+          }
+          .ax-final-jogos:before{
+              content:"";
+              position:absolute;
+              top:0;
+              left:-35%;
+              width:35%;
+              height:1px;
+              background:linear-gradient(90deg,transparent,#facc15,transparent);
+              animation:axLuzFinal 4s ease-in-out infinite;
+          }
+          .ax-final-jogos h2{
+              color:#facc15;
+              font-size:16px;
+              font-weight:900;
+              letter-spacing:.4px;
+              margin-bottom:5px;
+              text-shadow:0 0 8px rgba(250,204,21,.25);
+          }
+          .ax-final-jogos p{
+              color:#bbf7d0;
+              font-size:11px;
+              margin-bottom:13px;
+          }
+          .ax-final-itens{
+              display:flex;
+              justify-content:center;
+              gap:8px;
+          }
+          .ax-final-item{
+              flex:1;
+              min-width:0;
+              padding:9px 5px;
+              border-radius:11px;
+              background:rgba(0,0,0,.18);
+              border:1px solid rgba(255,255,255,.08);
+          }
+          .ax-final-item b{
+              display:block;
+              color:#fff;
+              font-size:10px;
+              margin-top:3px;
+          }
+          .ax-final-item span{
+              color:#86efac;
+              font-size:9px;
+          }
+          .ax-final-resp{
+              margin-top:12px;
+              color:rgba(255,255,255,.48);
+              font-size:9px;
+          }
+          @keyframes axLuzFinal{
+              0%{left:-35%;opacity:0}
+              20%{opacity:1}
+              65%{opacity:1}
+              100%{left:125%;opacity:0}
+          }
+          @media(max-width:360px){
+              .ax-final-jogos{margin-left:10px;margin-right:10px;padding-left:9px;padding-right:9px}
+              .ax-final-jogos h2{font-size:14px}
+              .ax-final-item{padding:8px 3px}
+          }
+          </style>
+          <div class="ax-final-jogos" aria-label="Experiência ApostaXBet">
+              <h2>✨ SUA EXPERIÊNCIA APOSTAXBET</h2>
+              <p>Explore os jogos e encontre seu próximo favorito</p>
+              <div class="ax-final-itens">
+                  <div class="ax-final-item"><div>🎰</div><b>JOGOS</b><span>Vários estilos</span></div>
+                  <div class="ax-final-item"><div>⚡</div><b>RÁPIDOS</b><span>Entre e jogue</span></div>
+                  <div class="ax-final-item"><div>💎</div><b>DESTAQUES</b><span>Confira as novidades</span></div>
+              </div>
+              <div class="ax-final-resp">🔞 Jogue com responsabilidade • Divirta-se</div>
+          </div>'''
+
+          js = r'''<script>
+          (function(){
+              function colocar(){
+                  const area=document.getElementById('areaJogos');
+                  if(!area || document.getElementById('ax-final-jogos-injected')) return;
+                  const wrap=document.createElement('div');
+                  wrap.id='ax-final-jogos-injected';
+                  wrap.innerHTML=`''' + block.replace('`','\\`') + r'''`;
+                  area.appendChild(wrap);
+              }
+              if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',colocar);
+              else colocar();
+          })();
+          </script>'''
+
+          # Remove qualquer versão anterior do experimento, se existir, sem tocar nos jogos.
+          import re
+          s = re.sub(r'<!-- APOSTAXBET DETALHES AREA JOGOS V1 -->.*?(?=</body>)', '', s, flags=re.S)
+          s = re.sub(r'<!-- APOSTAXBET DETALHE FINAL JOGOS V1 -->.*?(?=</body>)', '', s, flags=re.S)
+          s = s.replace('</body>', js + '\n</body>', 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Salvar alteração
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet || git commit -m "Adicionar efeito final somente abaixo dos jogos"
+          git push
