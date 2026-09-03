@@ -1,173 +1,55 @@
 name: Fix authentication flow
-
 on:
-  issue_comment:
-    types: [created]
-
+  push:
+    branches: [main]
 permissions:
   contents: write
-  issues: write
-
 jobs:
   fix:
-    if: github.event.comment.body == '/apply-auth-fix'
+    if: github.actor != 'github-actions[bot]' && !contains(github.event.head_commit.message, 'Use phone signup and email or phone login')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch authentication without changing site structure
+      - name: Patch authentication
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          p = Path('index.html')
-          s = p.read_text(encoding='utf-8')
+          p=Path('index.html'); s=p.read_text(encoding='utf-8')
+          s=s.replace('''    const telefoneDigitado=document.getElementById("telefoneLogin").value.trim();
+    const senha=document.getElementById("senhaLogin").value;
+    const botao=document.getElementById("btnLogin");
 
-          old_html = '''<label>Seu nome</label>
-          <input id="nomeCadastro" type="text" placeholder="Digite seu nome" required>
+    const numeros=telefoneDigitado.replace(/\\D/g,"");
+    const telefone=telefoneDigitado.startsWith("+")
+        ?"+"+numeros
+        :(numeros.length===10||numeros.length===11?"+55"+numeros:"");
 
-          <label>E-mail</label>
-          <input id="emailCadastro" type="email" placeholder="Digite seu e-mail" required>
-
-          <label>Telefone</label>
-          <input id="telefoneCadastro" type="tel" placeholder="Digite seu telefone" required>
-          <label>CPF</label>
-          <input id="cpfCadastro" type="text" inputmode="numeric" maxlength="14" placeholder="Digite seu CPF" required>
-'''
-          new_html = '''<label>Seu nome</label>
-          <input id="nomeCadastro" type="text" placeholder="Digite seu nome" required>
-
-          <label>Celular</label>
-          <input id="telefoneCadastro" type="tel" placeholder="Digite seu celular" inputmode="tel" autocomplete="tel" required>
-'''
-          if old_html in s:
-              s = s.replace(old_html, new_html, 1)
-
-          old_login_html = '''<label>E-mail</label>
-          <input id="emailLogin" type="email" placeholder="Digite seu e-mail" required>
-'''
-          new_login_html = '''<label>E-mail ou celular</label>
-          <input id="emailLogin" type="text" placeholder="Digite seu e-mail ou celular" autocomplete="username" required>
-'''
-          if old_login_html in s:
-              s = s.replace(old_login_html, new_login_html, 1)
-
-          old_cadastro_js = '''    const email=
-        document.getElementById(
-            "emailCadastro"
-        ).value.trim();
-
-    const telefone=
-        document.getElementById(
-            "telefoneCadastro"
-        ).value.trim();
-
-    const cpf=
-        document.getElementById(
-            "cpfCadastro"
-        ).value.trim();
-'''
-          new_cadastro_js = '''    const telefone=
-        document.getElementById(
-            "telefoneCadastro"
-        ).value.trim();
-'''
-          if old_cadastro_js in s:
-              s = s.replace(old_cadastro_js, new_cadastro_js, 1)
-
-          old_cpf_block = '''    const cpfNumeros=
-        cpf.replace(/\\D/g,"");
-
-    if(cpfNumeros.length!==11){
-
-        mensagem(
-            "mensagemCadastro",
-            "Digite um CPF válido com 11 números.",
-            "erro"
-        );
-
+    if(!telefone){
+        mensagem("mensagemLogin","Digite um celular válido com DDD.","erro");
         return;
-    }
-'''
-          if old_cpf_block in s:
-              s = s.replace(old_cpf_block, '', 1)
-
-          old_signup = '''            await clienteSupabase()
-            .auth
-            .signUp({
-                email,
-                password:senha,
-                options:{
-                    data:{
-                        nome,
-                        full_name:nome,
-                        telefone,
-                        phone:telefone,
-                        cpf:cpfNumeros
-                    }
-                }
-            });'''
-          new_signup = '''            await clienteSupabase()
-            .auth
-            .signUp({
-                phone:normalizarTelefone(telefone),
-                password:senha,
-                options:{
-                    data:{
-                        nome,
-                        full_name:nome,
-                        telefone,
-                        phone:normalizarTelefone(telefone)
-                    }
-                }
-            });'''
-          if old_signup in s:
-              s = s.replace(old_signup, new_signup, 1)
-
-          marker = '/* ========================= CADASTRO ========================= */'
-          normalizer = '''function normalizarTelefone(valor){
-    let n=String(valor||"").replace(/\\D/g,"");
-    if(n.startsWith("00"))n=n.slice(2);
-    if(n.startsWith("55"))return "+"+n;
-    if(n.length===10 || n.length===11)return "+55"+n;
-    return "";
-}
-
-'''
-          if 'function normalizarTelefone(valor)' not in s and marker in s:
-              s = s.replace(marker, normalizer+marker, 1)
-
-          old_login_js = '''    const email=
-        document.getElementById(
-            "emailLogin"
-        ).value.trim();
-'''
-          new_login_js = '''    const loginDigitado=
-        document.getElementById(
-            "emailLogin"
-        ).value.trim();
-'''
-          if old_login_js in s:
-              s = s.replace(old_login_js, new_login_js, 1)
-
-          old_credentials = '''            .auth
-            .signInWithPassword({
-                email,
-                password:senha
-            });'''
-          new_credentials = '''            .auth
-            .signInWithPassword(
-                loginDigitado.includes("@")
-                ? {email:loginDigitado,password:senha}
-                : {phone:normalizarTelefone(loginDigitado),password:senha}
-            );'''
-          if old_credentials in s:
-              s = s.replace(old_credentials, new_credentials, 1)
-
-          p.write_text(s, encoding='utf-8')
+    }''','''    const identificador=document.getElementById("telefoneLogin").value.trim();
+    const senha=document.getElementById("senhaLogin").value;
+    const botao=document.getElementById("btnLogin");
+    let credenciais;
+    if(identificador.includes("@")){
+        credenciais={email:identificador,password:senha};
+    }else{
+        const numeros=identificador.replace(/\\D/g,"");
+        const telefone=identificador.startsWith("+")?"+"+numeros:(numeros.length===10||numeros.length===11?"+55"+numeros:"");
+        if(!telefone){ mensagem("mensagemLogin","Digite um e-mail ou celular válido com DDD.","erro"); return; }
+        credenciais={phone:telefone,password:senha};
+    }''',1)
+          s=s.replace('''const {data,error}=await clienteSupabase().auth.signInWithPassword({
+            phone:telefone,
+            password:senha
+        });''','''const {data,error}=await clienteSupabase().auth.signInWithPassword(credenciais);''',1)
+          s=s.replace('<label>Celular</label>\n<input id="telefoneLogin" type="tel" inputmode="tel" autocomplete="tel" placeholder="Digite seu número de celular" required>','<label>E-mail ou celular</label>\n<input id="telefoneLogin" type="text" inputmode="email" autocomplete="username" placeholder="Digite seu e-mail ou celular" required>',1)
+          p.write_text(s,encoding='utf-8')
           PY
-      - name: Commit change
+      - name: Commit fix
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add index.html
           git diff --cached --quiet && exit 0
           git commit -m "Use phone signup and email or phone login"
