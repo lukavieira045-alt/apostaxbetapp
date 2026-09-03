@@ -1,0 +1,62 @@
+name: Fix login email or phone
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch login only
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          old = '''const telefoneDigitado=document.getElementById("telefoneLogin").value.trim();
+        if(!telefoneDigitado){
+            mostrarMensagemLogin("Digite seu celular.","erro");
+            return;
+        }
+        const telefone=normalizarTelefone(telefoneDigitado);
+        if(!telefone){
+            mostrarMensagemLogin("Digite um celular válido.","erro");
+            return;
+        }
+        const {data,error}=await auth.signInWithPassword({phone:telefone,password:senha});'''
+          new = '''const loginDigitado=document.getElementById("telefoneLogin").value.trim();
+        if(!loginDigitado){
+            mostrarMensagemLogin("Digite seu e-mail ou celular.","erro");
+            return;
+        }
+        let credenciais;
+        if(loginDigitado.includes("@")){
+            credenciais={email:loginDigitado,password:senha};
+        }else{
+            const telefone=normalizarTelefone(loginDigitado);
+            if(!telefone){
+                mostrarMensagemLogin("Digite um e-mail ou celular válido.","erro");
+                return;
+            }
+            credenciais={phone:telefone,password:senha};
+        }
+        const {data,error}=await auth.signInWithPassword(credenciais);'''
+          if old not in s:
+              raise SystemExit('LOGIN_BLOCK_NOT_FOUND')
+          s = s.replace(old, new, 1)
+          s = s.replace('id="telefoneLogin"', 'id="telefoneLogin" type="text" autocomplete="username"', 1)
+          s = s.replace('placeholder="Seu celular"', 'placeholder="E-mail ou celular"', 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Fix login to accept email or phone"
+          git push
