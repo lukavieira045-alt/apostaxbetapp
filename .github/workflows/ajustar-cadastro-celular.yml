@@ -1,0 +1,179 @@
+name: Ajustar cadastro por celular
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ajustar autenticação por celular
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+
+          cadastrar = r'''async function cadastrar(event){
+              event.preventDefault();
+
+              const nome=document.getElementById("nomeCadastro").value.trim();
+              const telefoneDigitado=document.getElementById("telefoneCadastro").value.trim();
+              const senha=document.getElementById("senhaCadastro").value;
+              const confirmar=document.getElementById("confirmarSenha").value;
+              const botao=document.getElementById("btnCadastro");
+
+              if(senha!==confirmar){
+                  mensagem("mensagemCadastro","As senhas não são iguais.","erro");
+                  return;
+              }
+
+              if(senha.length<6){
+                  mensagem("mensagemCadastro","A senha precisa ter pelo menos 6 caracteres.","erro");
+                  return;
+              }
+
+              const numeros=telefoneDigitado.replace(/\D/g,"");
+              const telefone=telefoneDigitado.startsWith("+")
+                  ?"+"+numeros
+                  :(numeros.length===10||numeros.length===11?"+55"+numeros:"");
+
+              if(!telefone){
+                  mensagem("mensagemCadastro","Digite um celular válido com DDD.","erro");
+                  return;
+              }
+
+              botao.disabled=true;
+              botao.innerText="CRIANDO CONTA...";
+
+              try{
+                  /*
+                   * Phone Auth do Supabase exige provedor SMS.
+                   * Para manter o cadastro somente com celular, usamos um
+                   * e-mail técnico interno, invisível para o usuário.
+                   * O telefone real fica salvo nos metadados da conta.
+                   */
+                  const emailTecnico=`u${telefone.replace(/\D/g,"")}@phone.apostaxbet.local`;
+
+                  const {data,error}=await clienteSupabase().auth.signUp({
+                      email:emailTecnico,
+                      password:senha,
+                      options:{data:{nome,full_name:nome,telefone,phone:telefone,cadastro_por:"celular"}}
+                  });
+
+                  if(error)throw error;
+
+                  if(data?.session){
+                      sessionStorage.removeItem("apostaxbet_logout");
+                      mensagem("mensagemCadastro","Conta criada com sucesso! Entrando...","sucesso");
+                      setTimeout(()=>mostrarSite(data.session.user),500);
+                  }else{
+                      /* Tenta entrar imediatamente caso o projeto não exija confirmação de e-mail. */
+                      const tentativa=await clienteSupabase().auth.signInWithPassword({email:emailTecnico,password:senha});
+                      if(tentativa.error)throw tentativa.error;
+                      sessionStorage.removeItem("apostaxbet_logout");
+                      mensagem("mensagemCadastro","Conta criada com sucesso! Entrando...","sucesso");
+                      setTimeout(()=>mostrarSite(tentativa.data.user),500);
+                  }
+              }catch(error){
+                  mensagem("mensagemCadastro",traduzirErro(error?.message||error),"erro");
+              }
+
+              botao.disabled=false;
+              botao.innerText="CRIAR CONTA";
+          }'''
+
+          entrar = r'''async function entrar(event){
+              event.preventDefault();
+
+              const identificador=document.getElementById("telefoneLogin").value.trim();
+              const senha=document.getElementById("senhaLogin").value;
+              const botao=document.getElementById("btnLogin");
+              let credenciais;
+
+              if(identificador.includes("@")){
+                  credenciais={email:identificador,password:senha};
+              }else{
+                  const numeros=identificador.replace(/\D/g,"");
+                  const telefone=identificador.startsWith("+")
+                      ?"+"+numeros
+                      :(numeros.length===10||numeros.length===11?"+55"+numeros:"");
+
+                  if(!telefone){
+                      mensagem("mensagemLogin","Digite um e-mail ou celular válido com DDD.","erro");
+                      return;
+                  }
+
+                  /* Mesmo cadastro: celular -> e-mail técnico interno. */
+                  const emailTecnico=`u${telefone.replace(/\D/g,"")}@phone.apostaxbet.local`;
+                  credenciais={email:emailTecnico,password:senha};
+              }
+
+              botao.disabled=true;
+              botao.innerText="ENTRANDO...";
+
+              try{
+                  const {data,error}=await clienteSupabase().auth.signInWithPassword(credenciais);
+
+                  if(error)throw error;
+                  sessionStorage.removeItem("apostaxbet_logout");
+                  mensagem("mensagemLogin","Login realizado! Entrando...","sucesso");
+                  setTimeout(()=>mostrarSite(data.user),500);
+              }catch(error){
+                  mensagem("mensagemLogin",traduzirErro(error?.message||error),"erro");
+              }
+
+              botao.disabled=false;
+              botao.innerText="ENTRAR";
+          }'''
+
+          def replace_func(text, name, replacement):
+              start=text.find(f'async function {name}(event){{')
+              if start < 0:
+                  raise SystemExit(f'{name} não encontrada')
+              brace=text.find('{', start)
+              depth=0
+              end=None
+              for i in range(brace, len(text)):
+                  if text[i]=='{': depth+=1
+                  elif text[i]=='}':
+                      depth-=1
+                      if depth==0:
+                          end=i+1
+                          break
+              if end is None: raise SystemExit(f'fim de {name} não encontrado')
+              return text[:start]+replacement+text[end:]
+
+          s=replace_func(s,'cadastrar',cadastrar)
+          s=replace_func(s,'entrar',entrar)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Verificar
+        run: |
+          grep -q 'phone.apostaxbet.local' index.html
+          grep -q 'cadastro_por:"celular"' index.html
+          echo 'Cadastro por celular configurado.'
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          if git diff --cached --quiet; then
+            echo 'Nenhuma alteração.'
+          else
+            git commit -m 'corrige cadastro e login por celular'
+            git push
+          fi
+      - name: Remover workflow temporário
+        if: success()
+        run: |
+          git rm .github/workflows/ajustar-cadastro-celular.yml || true
+          git commit -m 'remove workflow temporário' || true
+          git push || true
