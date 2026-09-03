@@ -1,13 +1,16 @@
 name: Fix authentication flow
 
 on:
-  push:
+  issue_comment:
+    types: [created]
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
   fix:
+    if: github.event.comment.body == '/apply-auth-fix'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,7 +21,6 @@ jobs:
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
 
-          # Cadastro: nome + telefone + senha + confirmar senha. Sem e-mail e sem CPF.
           old_html = '''<label>Seu nome</label>
           <input id="nomeCadastro" type="text" placeholder="Digite seu nome" required>
 
@@ -39,7 +41,6 @@ jobs:
           if old_html in s:
               s = s.replace(old_html, new_html, 1)
 
-          # Login: aceita e-mail OU celular.
           old_login_html = '''<label>E-mail</label>
           <input id="emailLogin" type="email" placeholder="Digite seu e-mail" required>
 '''
@@ -121,17 +122,12 @@ jobs:
           if old_signup in s:
               s = s.replace(old_signup, new_signup, 1)
 
-          # Normalizador de celular brasileiro para o Auth do Supabase.
           marker = '/* ========================= CADASTRO ========================= */'
           normalizer = '''function normalizarTelefone(valor){
     let n=String(valor||"").replace(/\\D/g,"");
     if(n.startsWith("00"))n=n.slice(2);
-    if(n.startsWith("55")){
-        return "+"+n;
-    }
-    if(n.length===10 || n.length===11){
-        return "+55"+n;
-    }
+    if(n.startsWith("55"))return "+"+n;
+    if(n.length===10 || n.length===11)return "+55"+n;
     return "";
 }
 
@@ -139,7 +135,6 @@ jobs:
           if 'function normalizarTelefone(valor)' not in s and marker in s:
               s = s.replace(marker, normalizer+marker, 1)
 
-          # Login dual: e-mail ou celular.
           old_login_js = '''    const email=
         document.getElementById(
             "emailLogin"
@@ -166,9 +161,6 @@ jobs:
             );'''
           if old_credentials in s:
               s = s.replace(old_credentials, new_credentials, 1)
-
-          # Recuperação continua usando e-mail da conta antiga.
-          s = s.replace('''    const email=\n        document.getElementById("emailLogin")\n        .value.trim();''', '''    const email=\n        document.getElementById("emailLogin")\n        .value.trim();''', 1)
 
           p.write_text(s, encoding='utf-8')
           PY
