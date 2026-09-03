@@ -1485,8 +1485,8 @@ body{
 
 <form id="formLogin" class="form" onsubmit="entrar(event)">
 
-<label>Celular</label>
-<input id="telefoneLogin" type="tel" inputmode="tel" autocomplete="tel" placeholder="Digite seu número de celular" required>
+<label>E-mail ou celular</label>
+<input id="telefoneLogin" type="text" inputmode="email" autocomplete="username" placeholder="Digite seu e-mail ou celular" required>
 
 <label>Senha</label>
 <div class="campo-senha">
@@ -3153,28 +3153,32 @@ async function cadastrar(event){
 async function entrar(event){
     event.preventDefault();
 
-    const telefoneDigitado=document.getElementById("telefoneLogin").value.trim();
+    const identificador=document.getElementById("telefoneLogin").value.trim();
     const senha=document.getElementById("senhaLogin").value;
     const botao=document.getElementById("btnLogin");
+    let credenciais;
 
-    const numeros=telefoneDigitado.replace(/\D/g,"");
-    const telefone=telefoneDigitado.startsWith("+")
-        ?"+"+numeros
-        :(numeros.length===10||numeros.length===11?"+55"+numeros:"");
+    if(identificador.includes("@")){
+        credenciais={email:identificador,password:senha};
+    }else{
+        const numeros=identificador.replace(/\D/g,"");
+        const telefone=identificador.startsWith("+")
+            ?"+"+numeros
+            :(numeros.length===10||numeros.length===11?"+55"+numeros:"");
 
-    if(!telefone){
-        mensagem("mensagemLogin","Digite um celular válido com DDD.","erro");
-        return;
+        if(!telefone){
+            mensagem("mensagemLogin","Digite um e-mail ou celular válido com DDD.","erro");
+            return;
+        }
+
+        credenciais={phone:telefone,password:senha};
     }
 
     botao.disabled=true;
     botao.innerText="ENTRANDO...";
 
     try{
-        const {data,error}=await clienteSupabase().auth.signInWithPassword({
-            phone:telefone,
-            password:senha
-        });
+        const {data,error}=await clienteSupabase().auth.signInWithPassword(credenciais);
 
         if(error)throw error;
         sessionStorage.removeItem("apostaxbet_logout");
