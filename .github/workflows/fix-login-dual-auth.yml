@@ -14,43 +14,57 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          p=Path('index.html'); s=p.read_text(encoding='utf-8')
-          s=s.replace('''    const telefoneDigitado=document.getElementById("telefoneLogin").value.trim();
-    const senha=document.getElementById("senhaLogin").value;
-    const botao=document.getElementById("btnLogin");
+          import re
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
 
-    const numeros=telefoneDigitado.replace(/\\D/g,"");
-    const telefone=telefoneDigitado.startsWith("+")
-        ?"+"+numeros
-        :(numeros.length===10||numeros.length===11?"+55"+numeros:"");
-
-    if(!telefone){
-        mensagem("mensagemLogin","Digite um celular válido com DDD.","erro");
-        return;
-    }''','''    const identificador=document.getElementById("telefoneLogin").value.trim();
+          # Login: accept either email/Gmail or Brazilian phone.
+          old = re.compile(r'''const telefoneDigitado=document\.getElementById\("telefoneLogin"\)\.value\.trim\(\);\s*const senha=document\.getElementById\("senhaLogin"\)\.value;\s*const botao=document\.getElementById\("btnLogin"\);\s*const numeros=telefoneDigitado\.replace\(/\\\\D/g,""\);\s*const telefone=telefoneDigitado\.startsWith\("\\+"\)\s*\?"\\+"\+numeros\s*:\(numeros\.length===10\|\|numeros\.length===11\?"\\+55"\+numeros:""\);\s*if\(!telefone\)\{\s*mensagem\("mensagemLogin","Digite um celular válido com DDD\."\,"erro"\);\s*return;\s*\}''')
+          new = '''const identificador=document.getElementById("telefoneLogin").value.trim();
     const senha=document.getElementById("senhaLogin").value;
     const botao=document.getElementById("btnLogin");
     let credenciais;
+
     if(identificador.includes("@")){
         credenciais={email:identificador,password:senha};
     }else{
         const numeros=identificador.replace(/\\D/g,"");
-        const telefone=identificador.startsWith("+")?"+"+numeros:(numeros.length===10||numeros.length===11?"+55"+numeros:"");
-        if(!telefone){ mensagem("mensagemLogin","Digite um e-mail ou celular válido com DDD.","erro"); return; }
+        const telefone=identificador.startsWith("+")
+            ?"+"+numeros
+            :(numeros.length===10||numeros.length===11?"+55"+numeros:"");
+        if(!telefone){
+            mensagem("mensagemLogin","Digite um e-mail ou celular válido com DDD.","erro");
+            return;
+        }
         credenciais={phone:telefone,password:senha};
-    }''',1)
-          s=s.replace('''const {data,error}=await clienteSupabase().auth.signInWithPassword({
-            phone:telefone,
-            password:senha
-        });''','''const {data,error}=await clienteSupabase().auth.signInWithPassword(credenciais);''',1)
-          s=s.replace('<label>Celular</label>\n<input id="telefoneLogin" type="tel" inputmode="tel" autocomplete="tel" placeholder="Digite seu número de celular" required>','<label>E-mail ou celular</label>\n<input id="telefoneLogin" type="text" inputmode="email" autocomplete="username" placeholder="Digite seu e-mail ou celular" required>',1)
+    }'''
+          s,n=old.subn(new,s,count=1)
+          if n != 1:
+              raise SystemExit('LOGIN BLOCK NOT FOUND')
+
+          s,n=re.subn(r'''const \{data,error\}=await clienteSupabase\(\)\.auth\.signInWithPassword\(\{\s*phone:telefone,\s*password:senha\s*\}\);''', 'const {data,error}=await clienteSupabase().auth.signInWithPassword(credenciais);', s, count=1)
+          if n != 1:
+              raise SystemExit('AUTH CALL NOT FOUND')
+
+          s,n=re.subn(r'''<label>Celular</label>\s*<input id="telefoneLogin"[^>]*placeholder="Digite seu número de celular"[^>]*required>''', '<label>E-mail ou celular</label>\n<input id="telefoneLogin" type="text" inputmode="email" autocomplete="username" placeholder="Digite seu e-mail ou celular" required>', s, count=1)
+          if n != 1:
+              raise SystemExit('LOGIN HTML NOT FOUND')
+
           p.write_text(s,encoding='utf-8')
           PY
+      - name: Verify authentication patch
+        run: |
+          grep -q 'E-mail ou celular' index.html
+          grep -q 'identificador.includes("@")' index.html
+          grep -q 'auth.signInWithPassword(credenciais)' index.html
+          grep -q 'auth.signUp({' index.html
+          grep -q 'phone:telefone' index.html
+          echo 'AUTH PATCH VERIFIED'
       - name: Commit fix
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add index.html
-          git diff --cached --quiet && exit 0
+          git diff --cached --quiet && echo 'NO CHANGES' && exit 0
           git commit -m "Use phone signup and email or phone login"
           git push
