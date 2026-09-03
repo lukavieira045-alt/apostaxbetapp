@@ -3125,10 +3125,18 @@ async function cadastrar(event){
     botao.innerText="CRIANDO CONTA...";
 
     try{
+        /*
+         * Phone Auth do Supabase exige provedor SMS.
+         * Para manter o cadastro somente com celular, usamos um
+         * e-mail técnico interno, invisível para o usuário.
+         * O telefone real fica salvo nos metadados da conta.
+         */
+        const emailTecnico=`u${telefone.replace(/\D/g,"")}@phone.apostaxbet.local`;
+
         const {data,error}=await clienteSupabase().auth.signUp({
-            phone:telefone,
+            email:emailTecnico,
             password:senha,
-            options:{data:{nome,full_name:nome,telefone,phone:telefone}}
+            options:{data:{nome,full_name:nome,telefone,phone:telefone,cadastro_por:"celular"}}
         });
 
         if(error)throw error;
@@ -3138,7 +3146,12 @@ async function cadastrar(event){
             mensagem("mensagemCadastro","Conta criada com sucesso! Entrando...","sucesso");
             setTimeout(()=>mostrarSite(data.session.user),500);
         }else{
-            mensagem("mensagemCadastro","Conta criada, mas a sessão automática não foi liberada. Desative a confirmação de telefone no Supabase para entrar imediatamente.","erro");
+            /* Tenta entrar imediatamente caso o projeto não exija confirmação de e-mail. */
+            const tentativa=await clienteSupabase().auth.signInWithPassword({email:emailTecnico,password:senha});
+            if(tentativa.error)throw tentativa.error;
+            sessionStorage.removeItem("apostaxbet_logout");
+            mensagem("mensagemCadastro","Conta criada com sucesso! Entrando...","sucesso");
+            setTimeout(()=>mostrarSite(tentativa.data.user),500);
         }
     }catch(error){
         mensagem("mensagemCadastro",traduzirErro(error?.message||error),"erro");
@@ -3171,7 +3184,9 @@ async function entrar(event){
             return;
         }
 
-        credenciais={phone:telefone,password:senha};
+        /* Mesmo cadastro: celular -> e-mail técnico interno. */
+        const emailTecnico=`u${telefone.replace(/\D/g,"")}@phone.apostaxbet.local`;
+        credenciais={email:emailTecnico,password:senha};
     }
 
     botao.disabled=true;
