@@ -2,8 +2,6 @@ name: Fix login email or phone
 
 on:
   push:
-    paths:
-      - '.github/workflows/fix-login-dual-auth.yml'
 
 permissions:
   contents: write
@@ -48,11 +46,12 @@ jobs:
         }
         const {data,error}=await auth.signInWithPassword(credenciais);'''
           if old not in s:
-              raise SystemExit('LOGIN_BLOCK_NOT_FOUND')
-          s = s.replace(old, new, 1)
-          s = s.replace('id="telefoneLogin"', 'id="telefoneLogin" type="text" autocomplete="username"', 1)
-          s = s.replace('placeholder="Seu celular"', 'placeholder="E-mail ou celular"', 1)
-          p.write_text(s, encoding='utf-8')
+              print('LOGIN_ALREADY_FIXED_OR_BLOCK_NOT_FOUND')
+          else:
+              s = s.replace(old, new, 1)
+              s = s.replace('id="telefoneLogin"', 'id="telefoneLogin" type="text" autocomplete="username"', 1)
+              s = s.replace('placeholder="Seu celular"', 'placeholder="E-mail ou celular"', 1)
+              p.write_text(s, encoding='utf-8')
           PY
       - name: Commit change
         run: |
