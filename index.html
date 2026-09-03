@@ -1464,14 +1464,8 @@ body{
 <label>Seu nome</label>
 <input id="nomeCadastro" type="text" placeholder="Digite seu nome" required>
 
-<label>E-mail</label>
-<input id="emailCadastro" type="email" placeholder="Digite seu e-mail" required>
-
 <label>Telefone</label>
 <input id="telefoneCadastro" type="tel" placeholder="Digite seu telefone" required>
-
-<label>CPF</label>
-<input id="cpfCadastro" type="text" inputmode="numeric" maxlength="14" placeholder="Digite seu CPF" required>
 
 <label>Criar senha</label>
 <div class="campo-senha">
@@ -1491,8 +1485,8 @@ body{
 
 <form id="formLogin" class="form" onsubmit="entrar(event)">
 
-<label>E-mail</label>
-<input id="emailLogin" type="email" placeholder="Digite seu e-mail" required>
+<label>Celular</label>
+<input id="telefoneLogin" type="tel" inputmode="tel" autocomplete="tel" placeholder="Digite seu número de celular" required>
 
 <label>Senha</label>
 <div class="campo-senha">
@@ -1502,9 +1496,7 @@ body{
 
 <button class="btn-principal" id="btnLogin">ENTRAR</button>
 
-<button type="button" class="esqueci" onclick="mostrarRecuperacao()">
-Esqueci minha senha?
-</button>
+
 
 <div id="mensagemLogin" class="mensagem"></div>
 </form>
@@ -2925,53 +2917,6 @@ function mensagem(id,texto,tipo){
     el.innerText=texto;
 }
 
-/* ========================= MÁSCARA CPF ========================= */
-
-const campoCpfCadastro=
-    document.getElementById("cpfCadastro");
-
-if(campoCpfCadastro){
-
-    campoCpfCadastro.addEventListener(
-        "input",
-        function(){
-
-            let valor=
-                this.value.replace(/\D/g,"");
-
-            valor=
-                valor.substring(0,11);
-
-            if(valor.length>9){
-
-                valor=
-                    valor.replace(
-                        /(\d{3})(\d{3})(\d{3})(\d{1,2})/,
-                        "$1.$2.$3-$4"
-                    );
-
-            }else if(valor.length>6){
-
-                valor=
-                    valor.replace(
-                        /(\d{3})(\d{3})(\d{1,3})/,
-                        "$1.$2.$3"
-                    );
-
-            }else if(valor.length>3){
-
-                valor=
-                    valor.replace(
-                        /(\d{3})(\d{1,3})/,
-                        "$1.$2"
-                    );
-            }
-
-            this.value=valor;
-        }
-    );
-}
-
 /* ========================= RECUPERAÇÃO ========================= */
 
 function mostrarRecuperacao(){
@@ -3148,88 +3093,31 @@ async function salvarNovaSenha(event){
 /* ========================= CADASTRO ========================= */
 
 async function cadastrar(event){
-
     event.preventDefault();
 
-    const nome=
-        document.getElementById(
-            "nomeCadastro"
-        ).value.trim();
-
-    const email=
-        document.getElementById(
-            "emailCadastro"
-        ).value.trim();
-
-    const telefone=
-        document.getElementById(
-            "telefoneCadastro"
-        ).value.trim();
-
-    const cpf=
-        document.getElementById(
-            "cpfCadastro"
-        ).value.trim();
-
-    const senha=
-        document.getElementById(
-            "senhaCadastro"
-        ).value;
-
-    const confirmar=
-        document.getElementById(
-            "confirmarSenha"
-        ).value;
-
-    const botao=
-        document.getElementById(
-            "btnCadastro"
-        );
+    const nome=document.getElementById("nomeCadastro").value.trim();
+    const telefoneDigitado=document.getElementById("telefoneCadastro").value.trim();
+    const senha=document.getElementById("senhaCadastro").value;
+    const confirmar=document.getElementById("confirmarSenha").value;
+    const botao=document.getElementById("btnCadastro");
 
     if(senha!==confirmar){
-
-        mensagem(
-            "mensagemCadastro",
-            "As senhas não são iguais.",
-            "erro"
-        );
-
+        mensagem("mensagemCadastro","As senhas não são iguais.","erro");
         return;
     }
 
     if(senha.length<6){
-
-        mensagem(
-            "mensagemCadastro",
-            "A senha precisa ter pelo menos 6 caracteres.",
-            "erro"
-        );
-
+        mensagem("mensagemCadastro","A senha precisa ter pelo menos 6 caracteres.","erro");
         return;
     }
+
+    const numeros=telefoneDigitado.replace(/\D/g,"");
+    const telefone=telefoneDigitado.startsWith("+")
+        ?"+"+numeros
+        :(numeros.length===10||numeros.length===11?"+55"+numeros:"");
 
     if(!telefone){
-
-        mensagem(
-            "mensagemCadastro",
-            "Digite seu telefone.",
-            "erro"
-        );
-
-        return;
-    }
-
-    const cpfNumeros=
-        cpf.replace(/\D/g,"");
-
-    if(cpfNumeros.length!==11){
-
-        mensagem(
-            "mensagemCadastro",
-            "Digite um CPF válido com 11 números.",
-            "erro"
-        );
-
+        mensagem("mensagemCadastro","Digite um celular válido com DDD.","erro");
         return;
     }
 
@@ -3237,59 +3125,23 @@ async function cadastrar(event){
     botao.innerText="CRIANDO CONTA...";
 
     try{
-
-        const {data,error}=
-            await clienteSupabase()
-            .auth
-            .signUp({
-                email,
-                password:senha,
-                options:{
-                    data:{
-                        nome,
-                        full_name:nome,
-                        telefone,
-                        phone:telefone,
-                        cpf:cpfNumeros
-                    }
-                }
-            });
+        const {data,error}=await clienteSupabase().auth.signUp({
+            phone:telefone,
+            password:senha,
+            options:{data:{nome,full_name:nome,telefone,phone:telefone}}
+        });
 
         if(error)throw error;
 
-        if(data.session){
-
-            sessionStorage.removeItem(
-                "apostaxbet_logout"
-            );
-
-            mensagem(
-                "mensagemCadastro",
-                "Conta criada com sucesso!",
-                "sucesso"
-            );
-
-            setTimeout(
-                ()=>mostrarSite(data.session.user),
-                800
-            );
-
+        if(data?.session){
+            sessionStorage.removeItem("apostaxbet_logout");
+            mensagem("mensagemCadastro","Conta criada com sucesso! Entrando...","sucesso");
+            setTimeout(()=>mostrarSite(data.session.user),500);
         }else{
-
-            mensagem(
-                "mensagemCadastro",
-                "Conta criada! Verifique seu e-mail para confirmar a conta.",
-                "sucesso"
-            );
+            mensagem("mensagemCadastro","Conta criada, mas a sessão automática não foi liberada. Desative a confirmação de telefone no Supabase para entrar imediatamente.","erro");
         }
-
     }catch(error){
-
-        mensagem(
-            "mensagemCadastro",
-            traduzirErro(error.message),
-            "erro"
-        );
+        mensagem("mensagemCadastro",traduzirErro(error?.message||error),"erro");
     }
 
     botao.disabled=false;
@@ -3299,61 +3151,37 @@ async function cadastrar(event){
 /* ========================= LOGIN ========================= */
 
 async function entrar(event){
-
     event.preventDefault();
 
-    const email=
-        document.getElementById(
-            "emailLogin"
-        ).value.trim();
+    const telefoneDigitado=document.getElementById("telefoneLogin").value.trim();
+    const senha=document.getElementById("senhaLogin").value;
+    const botao=document.getElementById("btnLogin");
 
-    const senha=
-        document.getElementById(
-            "senhaLogin"
-        ).value;
+    const numeros=telefoneDigitado.replace(/\D/g,"");
+    const telefone=telefoneDigitado.startsWith("+")
+        ?"+"+numeros
+        :(numeros.length===10||numeros.length===11?"+55"+numeros:"");
 
-    const botao=
-        document.getElementById(
-            "btnLogin"
-        );
+    if(!telefone){
+        mensagem("mensagemLogin","Digite um celular válido com DDD.","erro");
+        return;
+    }
 
     botao.disabled=true;
     botao.innerText="ENTRANDO...";
 
     try{
-
-        const {data,error}=
-            await clienteSupabase()
-            .auth
-            .signInWithPassword({
-                email,
-                password:senha
-            });
+        const {data,error}=await clienteSupabase().auth.signInWithPassword({
+            phone:telefone,
+            password:senha
+        });
 
         if(error)throw error;
-
-        sessionStorage.removeItem(
-            "apostaxbet_logout"
-        );
-
-        mensagem(
-            "mensagemLogin",
-            "Login realizado! Entrando...",
-            "sucesso"
-        );
-
-        setTimeout(
-            ()=>mostrarSite(data.user),
-            700
-        );
-
+        sessionStorage.removeItem("apostaxbet_logout");
+        mensagem("mensagemLogin","Login realizado! Entrando...","sucesso");
+        setTimeout(()=>mostrarSite(data.user),500);
     }catch(error){
-
-        mensagem(
-            "mensagemLogin",
-            traduzirErro(error.message),
-            "erro"
-        );
+        mensagem("mensagemLogin",traduzirErro(error?.message||error),"erro");
     }
 
     botao.disabled=false;
@@ -3377,95 +3205,18 @@ function textoSeguro(valor){
 }
 
 function atualizarDadosConta(user){
-
     if(!user)return;
-
-    const meta=
-        user.user_metadata||{};
-
-    const nome=
-        meta.nome||
-        meta.full_name||
-        meta.name||
-        "Não informado";
-
-    const email=
-        user.email||
-        "Não informado";
-
-    const telefone=
-        meta.telefone||
-        meta.phone||
-        meta.celular||
-        meta.telefone_celular||
-        "Não informado";
-
-    const cpf=
-        meta.cpf||
-        meta.CPF||
-        "Não informado";
-
-    const contaNome=
-        document.getElementById("contaNome");
-
-    const contaEmail=
-        document.getElementById("contaEmail");
-
-    const contaNomeCompleto=
-        document.getElementById("contaNomeCompleto");
-
-    const contaEmailDetalhe=
-        document.getElementById("contaEmailDetalhe");
-
-    const contaTelefone=
-        document.getElementById("contaTelefone");
-
-    const contaCpf=
-        document.getElementById("contaCpf");
-
-    const contaId=
-        document.getElementById("contaId");
-
-    if(contaNome)
-        contaNome.innerText=textoSeguro(nome);
-
-    if(contaEmail)
-        contaEmail.innerText=textoSeguro(email);
-
-    if(contaNomeCompleto)
-        contaNomeCompleto.innerText=textoSeguro(nome);
-
-    if(contaEmailDetalhe)
-        contaEmailDetalhe.innerText=textoSeguro(email);
-
-    if(contaTelefone)
-        contaTelefone.innerText=textoSeguro(telefone);
-
-    if(contaCpf){
-
-        const cpfTexto=
-            textoSeguro(cpf);
-
-        if(
-            cpfTexto!=="Não informado" &&
-            cpfTexto.length===11
-        ){
-
-            contaCpf.innerText=
-                cpfTexto.replace(
-                    /(\d{3})(\d{3})(\d{3})(\d{2})/,
-                    "$1.$2.$3-$4"
-                );
-
-        }else{
-
-            contaCpf.innerText=cpfTexto;
-        }
-    }
-
-    if(contaId)
-        contaId.innerText=
-            textoSeguro(user.id);
+    const meta=user.user_metadata||{};
+    const nome=meta.nome||meta.full_name||meta.name||"Não informado";
+    const telefone=meta.telefone||meta.phone||meta.celular||user.phone||"Não informado";
+    const contaNome=document.getElementById("contaNome");
+    const contaNomeCompleto=document.getElementById("contaNomeCompleto");
+    const contaTelefone=document.getElementById("contaTelefone");
+    const contaId=document.getElementById("contaId");
+    if(contaNome)contaNome.innerText=textoSeguro(nome);
+    if(contaNomeCompleto)contaNomeCompleto.innerText=textoSeguro(nome);
+    if(contaTelefone)contaTelefone.innerText=textoSeguro(telefone);
+    if(contaId)contaId.innerText=textoSeguro(user.id);
 }
 
 /* ========================= ID DO USUÁRIO ========================= */
@@ -4183,7 +3934,7 @@ function traduzirErro(erro){
             "invalid login credentials"
         )
     ){
-        return "E-mail ou senha incorretos.";
+        return "Celular ou senha incorretos.";
     }
 
     if(
@@ -4191,7 +3942,7 @@ function traduzirErro(erro){
             "user already registered"
         )
     ){
-        return "Esse e-mail já está cadastrado.";
+        return "Esse celular já está cadastrado.";
     }
 
     if(
@@ -4215,7 +3966,7 @@ function traduzirErro(erro){
             "unable to validate email"
         )
     ){
-        return "Digite um e-mail válido.";
+        return "Digite um celular válido com DDD.";
     }
 
     if(
@@ -4223,7 +3974,7 @@ function traduzirErro(erro){
             "email not confirmed"
         )
     ){
-        return "Confirme seu e-mail antes de entrar.";
+        return "Confirme seu celular antes de entrar.";
     }
 
     if(
@@ -4457,7 +4208,7 @@ document.addEventListener(
         );
 
         console.log(
-            "✅ Cadastro com nome, telefone e CPF."
+            "✅ Cadastro com nome, celular e senha — sem e-mail, sem CPF e sem SMS."
         );
 
         console.log(
