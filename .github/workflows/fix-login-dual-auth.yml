@@ -1,4 +1,4 @@
-name: Fix login email or phone
+name: Fix authentication flow
 
 on:
   push:
@@ -11,47 +11,166 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch login only
+      - name: Patch authentication without changing site structure
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
-          old = '''const telefoneDigitado=document.getElementById("telefoneLogin").value.trim();
-        if(!telefoneDigitado){
-            mostrarMensagemLogin("Digite seu celular.","erro");
-            return;
-        }
-        const telefone=normalizarTelefone(telefoneDigitado);
-        if(!telefone){
-            mostrarMensagemLogin("Digite um celular válido.","erro");
-            return;
-        }
-        const {data,error}=await auth.signInWithPassword({phone:telefone,password:senha});'''
-          new = '''const loginDigitado=document.getElementById("telefoneLogin").value.trim();
-        if(!loginDigitado){
-            mostrarMensagemLogin("Digite seu e-mail ou celular.","erro");
-            return;
-        }
-        let credenciais;
-        if(loginDigitado.includes("@")){
-            credenciais={email:loginDigitado,password:senha};
-        }else{
-            const telefone=normalizarTelefone(loginDigitado);
-            if(!telefone){
-                mostrarMensagemLogin("Digite um e-mail ou celular válido.","erro");
-                return;
-            }
-            credenciais={phone:telefone,password:senha};
-        }
-        const {data,error}=await auth.signInWithPassword(credenciais);'''
-          if old not in s:
-              print('LOGIN_ALREADY_FIXED_OR_BLOCK_NOT_FOUND')
-          else:
-              s = s.replace(old, new, 1)
-              s = s.replace('id="telefoneLogin"', 'id="telefoneLogin" type="text" autocomplete="username"', 1)
-              s = s.replace('placeholder="Seu celular"', 'placeholder="E-mail ou celular"', 1)
-              p.write_text(s, encoding='utf-8')
+
+          # Cadastro: nome + telefone + senha + confirmar senha. Sem e-mail e sem CPF.
+          old_html = '''<label>Seu nome</label>
+          <input id="nomeCadastro" type="text" placeholder="Digite seu nome" required>
+
+          <label>E-mail</label>
+          <input id="emailCadastro" type="email" placeholder="Digite seu e-mail" required>
+
+          <label>Telefone</label>
+          <input id="telefoneCadastro" type="tel" placeholder="Digite seu telefone" required>
+          <label>CPF</label>
+          <input id="cpfCadastro" type="text" inputmode="numeric" maxlength="14" placeholder="Digite seu CPF" required>
+'''
+          new_html = '''<label>Seu nome</label>
+          <input id="nomeCadastro" type="text" placeholder="Digite seu nome" required>
+
+          <label>Celular</label>
+          <input id="telefoneCadastro" type="tel" placeholder="Digite seu celular" inputmode="tel" autocomplete="tel" required>
+'''
+          if old_html in s:
+              s = s.replace(old_html, new_html, 1)
+
+          # Login: aceita e-mail OU celular.
+          old_login_html = '''<label>E-mail</label>
+          <input id="emailLogin" type="email" placeholder="Digite seu e-mail" required>
+'''
+          new_login_html = '''<label>E-mail ou celular</label>
+          <input id="emailLogin" type="text" placeholder="Digite seu e-mail ou celular" autocomplete="username" required>
+'''
+          if old_login_html in s:
+              s = s.replace(old_login_html, new_login_html, 1)
+
+          old_cadastro_js = '''    const email=
+        document.getElementById(
+            "emailCadastro"
+        ).value.trim();
+
+    const telefone=
+        document.getElementById(
+            "telefoneCadastro"
+        ).value.trim();
+
+    const cpf=
+        document.getElementById(
+            "cpfCadastro"
+        ).value.trim();
+'''
+          new_cadastro_js = '''    const telefone=
+        document.getElementById(
+            "telefoneCadastro"
+        ).value.trim();
+'''
+          if old_cadastro_js in s:
+              s = s.replace(old_cadastro_js, new_cadastro_js, 1)
+
+          old_cpf_block = '''    const cpfNumeros=
+        cpf.replace(/\\D/g,"");
+
+    if(cpfNumeros.length!==11){
+
+        mensagem(
+            "mensagemCadastro",
+            "Digite um CPF válido com 11 números.",
+            "erro"
+        );
+
+        return;
+    }
+'''
+          if old_cpf_block in s:
+              s = s.replace(old_cpf_block, '', 1)
+
+          old_signup = '''            await clienteSupabase()
+            .auth
+            .signUp({
+                email,
+                password:senha,
+                options:{
+                    data:{
+                        nome,
+                        full_name:nome,
+                        telefone,
+                        phone:telefone,
+                        cpf:cpfNumeros
+                    }
+                }
+            });'''
+          new_signup = '''            await clienteSupabase()
+            .auth
+            .signUp({
+                phone:normalizarTelefone(telefone),
+                password:senha,
+                options:{
+                    data:{
+                        nome,
+                        full_name:nome,
+                        telefone,
+                        phone:normalizarTelefone(telefone)
+                    }
+                }
+            });'''
+          if old_signup in s:
+              s = s.replace(old_signup, new_signup, 1)
+
+          # Normalizador de celular brasileiro para o Auth do Supabase.
+          marker = '/* ========================= CADASTRO ========================= */'
+          normalizer = '''function normalizarTelefone(valor){
+    let n=String(valor||"").replace(/\\D/g,"");
+    if(n.startsWith("00"))n=n.slice(2);
+    if(n.startsWith("55")){
+        return "+"+n;
+    }
+    if(n.length===10 || n.length===11){
+        return "+55"+n;
+    }
+    return "";
+}
+
+'''
+          if 'function normalizarTelefone(valor)' not in s and marker in s:
+              s = s.replace(marker, normalizer+marker, 1)
+
+          # Login dual: e-mail ou celular.
+          old_login_js = '''    const email=
+        document.getElementById(
+            "emailLogin"
+        ).value.trim();
+'''
+          new_login_js = '''    const loginDigitado=
+        document.getElementById(
+            "emailLogin"
+        ).value.trim();
+'''
+          if old_login_js in s:
+              s = s.replace(old_login_js, new_login_js, 1)
+
+          old_credentials = '''            .auth
+            .signInWithPassword({
+                email,
+                password:senha
+            });'''
+          new_credentials = '''            .auth
+            .signInWithPassword(
+                loginDigitado.includes("@")
+                ? {email:loginDigitado,password:senha}
+                : {phone:normalizarTelefone(loginDigitado),password:senha}
+            );'''
+          if old_credentials in s:
+              s = s.replace(old_credentials, new_credentials, 1)
+
+          # Recuperação continua usando e-mail da conta antiga.
+          s = s.replace('''    const email=\n        document.getElementById("emailLogin")\n        .value.trim();''', '''    const email=\n        document.getElementById("emailLogin")\n        .value.trim();''', 1)
+
+          p.write_text(s, encoding='utf-8')
           PY
       - name: Commit change
         run: |
@@ -59,5 +178,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
           git diff --cached --quiet && exit 0
-          git commit -m "Fix login to accept email or phone"
+          git commit -m "Use phone signup and email or phone login"
           git push
