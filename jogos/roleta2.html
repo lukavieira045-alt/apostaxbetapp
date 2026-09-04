@@ -126,6 +126,9 @@ body::before{background:radial-gradient(circle at 50% 30%,rgba(255,214,92,.08),t
 .roleta.spin-fisico,.bola.spin-fisico{animation:none!important}
 .roleta.spin-real,.bola.spin-real{animation:none!important}
 </style>
+
+<style id="ax-r2-final-spin">@keyframes axR2Wheel{from{transform:rotate(0deg)}to{transform:rotate(2520deg)}}@keyframes axR2Ball{from{transform:translate(-50%,-50%) rotate(0deg) translateY(-188px)}to{transform:translate(-50%,-50%) rotate(-2880deg) translateY(-188px)}}.roleta.ax-r2-spin{animation:axR2Wheel 7.6s cubic-bezier(.15,.65,.20,1) both}.bola.ax-r2-spin{animation:axR2Ball 7.6s cubic-bezier(.08,.02,.12,1) both}</style>
+<script id="ax-r2-final-spin">window.iniciarGiroVisual=function(){const r=document.querySelector('.roleta'),b=document.querySelector('.bola');if(!r)return;r.classList.remove('ax-r2-spin');if(b)b.classList.remove('ax-r2-spin');void r.offsetWidth;r.classList.add('ax-r2-spin');if(b)b.classList.add('ax-r2-spin');try{iniciarSomRoleta()}catch(e){}setTimeout(()=>{try{pararSomRoleta()}catch(e){}r.classList.remove('ax-r2-spin');if(b)b.classList.remove('ax-r2-spin')},7600)};</script>
 </head>
 <body>
 <header class="topo">
@@ -227,8 +230,8 @@ let intervaloSomRoleta=null;
 function iniciarAudio(){try{if(!audioContext){audioContext=new(window.AudioContext||window.webkitAudioContext)()}if(audioContext.state==="suspended")audioContext.resume()}catch(e){}}
 function somFicha(){iniciarAudio();if(!audioContext)return;try{const agora=audioContext.currentTime;const osc=audioContext.createOscillator();const ganho=audioContext.createGain();osc.type="triangle";osc.frequency.setValueAtTime(850,agora);osc.frequency.exponentialRampToValueAtTime(1250,agora+.045);ganho.gain.setValueAtTime(.0001,agora);ganho.gain.exponentialRampToValueAtTime(.20,agora+.005);ganho.gain.exponentialRampToValueAtTime(.0001,agora+.10);osc.connect(ganho);ganho.connect(audioContext.destination);osc.start(agora);osc.stop(agora+.11)}catch(e){}}
 function somPalheta(){iniciarAudio();if(!audioContext)return;try{const agora=audioContext.currentTime;const osc=audioContext.createOscillator();const ganho=audioContext.createGain();osc.type="square";osc.frequency.setValueAtTime(900+Math.random()*250,agora);osc.frequency.exponentialRampToValueAtTime(480,agora+.045);ganho.gain.setValueAtTime(.0001,agora);ganho.gain.exponentialRampToValueAtTime(.055,agora+.003);ganho.gain.exponentialRampToValueAtTime(.0001,agora+.065);osc.connect(ganho);ganho.connect(audioContext.destination);osc.start(agora);osc.stop(agora+.07)}catch(e){}}
-function iniciarSomRoleta(){iniciarAudio();if(somRoletaAtivo)return;somRoletaAtivo=false}
-function pararSomRoleta(){somRoletaAtivo=false;if(intervaloSomRoleta){clearInterval(intervaloSomRoleta);intervaloSomRoleta=null}}try{if(somGiroGain&&audioContext)somGiroGain.gain.exponentialRampToValueAtTime(.0001,audioContext.currentTime+.22);if(somGiroOsc){setTimeout(()=>{try{somGiroOsc.stop()}catch(e){}somGiroOsc=null},260)}}catch(e){}}
+function iniciarSomRoleta(){iniciarAudio();if(somRoletaAtivo)return;somRoletaAtivo=true;somPalheta();intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},240)}
+function pararSomRoleta(){somRoletaAtivo=false;if(intervaloSomRoleta){clearInterval(intervaloSomRoleta);intervaloSomRoleta=null}}
 
 const roleta=document.getElementById("roleta");
 const bola=document.getElementById("bola");
@@ -297,6 +300,7 @@ async function girarRoleta(){
         const numeroFinal=SEQUENCIA[indice];
         const anguloPorNumero=360/SEQUENCIA.length;
         const anguloFinal=indice*anguloPorNumero;
+        iniciarGiroVisual();
         
         bola.getAnimations().forEach(animacao=>{animacao.cancel()});
         const raioBola=window.innerWidth<=650?125:188;
