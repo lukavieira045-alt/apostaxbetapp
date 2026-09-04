@@ -6,35 +6,35 @@ permissions:
   contents: write
 jobs:
   cleanup:
-    if: ${{ !contains(github.event.head_commit.message, 'Roleta 2: cleanup final') }}
+    if: ${{ !contains(github.event.head_commit.message, 'Roleta 2 cleanup aplicado') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Remove only duplicate spin layer and extra spin sound
+      - name: Remove duplicate spin layer and extra spin sound
         shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
-          p=Path('jogos/roleta2.html')
-          s=p.read_text(encoding='utf-8')
-          s=re.sub(r'<style>\s*/\* ApostaXBet — Roleta 2 FINAL REAL CASINO WHEEL \*/.*?</style>\s*', '', s, flags=re.S)
-          s=re.sub(r'<style>\s*/\* ApostaXBet — Roleta 2 Physical Opposite Spin v1 \*/.*?</style>\s*', '', s, flags=re.S)
-          s=re.sub(r'<script>\s*\(function\(\)\{function arm\(\).*?btn-girar.*?spin-fisico.*?</script>\s*', '', s, flags=re.S)
-          s=re.sub(r'<script>\s*\(function\(\)\{function arm\(\).*?btn-girar.*?spin-real.*?</script>\s*', '', s, flags=re.S)
+          p=Path('jogos/roleta2.html');s=p.read_text(encoding='utf-8')
+          s=re.sub(r'<style>\s*/\* ApostaXBet — Roleta 2 FINAL REAL CASINO WHEEL \*/.*?</style>\s*','',s,flags=re.S)
+          s=re.sub(r'<style>\s*/\* ApostaXBet — Roleta 2 Physical Opposite Spin v1 \*/.*?</style>\s*','',s,flags=re.S)
+          s=re.sub(r'<script>\s*\(function\(\)\{function\s+\w+\(\).*?btn-girar.*?spin-fisico.*?</script>\s*','',s,flags=re.S)
+          s=re.sub(r'<script>\s*\(function\(\)\{function\s+\w+\(\).*?btn-girar.*?spin-real.*?</script>\s*','',s,flags=re.S)
           marker='/* ApostaXBet — Roleta 2 Real Spin Sound v2 */'
           if marker in s:
-              start=s.find(marker)
-              end=s.find('function pararSomRoleta()', start)
+              start=s.find(marker);end=s.find('function pararSomRoleta()',start)
               if end!=-1:
-                  close=s.find('}', end)
+                  close=s.find('}',end)
                   if close!=-1:
                       close+=1
-                      s=s[:start]+'function iniciarSomRoleta(){iniciarAudio();if(somRoletaAtivo)return;somRoletaAtivo=true;somPalheta();intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},145)}\nfunction pararSomRoleta(){somRoletaAtivo=false;if(intervaloSomRoleta){clearInterval(intervaloSomRoleta);intervaloSomRoleta=null}}'+s[close:]
+                      original='function iniciarSomRoleta(){iniciarAudio();if(somRoletaAtivo)return;somRoletaAtivo=true;somPalheta();intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},145)}\nfunction pararSomRoleta(){somRoletaAtivo=false;if(intervaloSomRoleta){clearInterval(intervaloSomRoleta);intervaloSomRoleta=null}}'
+                      s=s[:start]+original+s[close:]
           p.write_text(s,encoding='utf-8')
           PY
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add jogos/roleta2.html
-          git commit -m 'Roleta 2: cleanup final' || exit 0
+          git diff --cached --quiet && exit 0
+          git commit -m 'Roleta 2 cleanup aplicado'
           git push
