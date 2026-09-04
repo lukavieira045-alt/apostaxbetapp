@@ -3092,65 +3092,11 @@ async function salvarNovaSenha(event){
 
 /* ========================= CADASTRO ========================= */
 
-async function cadastrar(event){
-    event.preventDefault();
-    const nome=document.getElementById("nomeCadastro").value.trim();
-    const telefoneDigitado=document.getElementById("telefoneCadastro").value.trim();
-    const senha=document.getElementById("senhaCadastro").value;
-    const confirmar=document.getElementById("confirmarSenha").value;
-    const botao=document.getElementById("btnCadastro");
-    if(senha!==confirmar){mensagem("mensagemCadastro","As senhas não são iguais.","erro");return;}
-    if(senha.length<6){mensagem("mensagemCadastro","A senha precisa ter pelo menos 6 caracteres.","erro");return;}
-    const numeros=telefoneDigitado.replace(/\D/g,"");
-    const telefone=telefoneDigitado.startsWith("+")?"+"+numeros:((numeros.length===10||numeros.length===11)?"+55"+numeros:"");
-    if(!telefone){mensagem("mensagemCadastro","Digite um celular válido com DDD.","erro");return;}
-    botao.disabled=true;botao.innerText="CRIANDO CONTA...";
-    try{
-      /* Phone Auth do Supabase exige SMS. O cadastro continua somente com celular usando um identificador técnico interno. */
-      const emailTecnico=`u${telefone.replace(/\D/g,"")}@phone.apostaxbet.local`;
-      const {data,error}=await clienteSupabase().auth.signUp({email:emailTecnico,password:senha,options:{data:{nome,full_name:nome,telefone,phone:telefone,cadastro_por:"celular"}}});
-      if(error)throw error;
-      if(data?.session){
-        sessionStorage.removeItem("apostaxbet_logout");
-        mensagem("mensagemCadastro","Conta criada com sucesso! Entrando...","sucesso");
-        setTimeout(()=>mostrarSite(data.session.user),500);
-      }else{
-        const tentativa=await clienteSupabase().auth.signInWithPassword({email:emailTecnico,password:senha});
-        if(tentativa.error)throw tentativa.error;
-        sessionStorage.removeItem("apostaxbet_logout");
-        mensagem("mensagemCadastro","Conta criada com sucesso! Entrando...","sucesso");
-        setTimeout(()=>mostrarSite(tentativa.data.user),500);
-      }
-    }catch(error){mensagem("mensagemCadastro",traduzirErro(error?.message||error),"erro");}
-    botao.disabled=false;botao.innerText="CRIAR CONTA";
-}
+async function cadastrar(event){event.preventDefault();const nome=document.getElementById("nomeCadastro").value.trim();const telefoneDigitado=document.getElementById("telefoneCadastro").value.trim();const senha=document.getElementById("senhaCadastro").value;const confirmar=document.getElementById("confirmarSenha").value;const botao=document.getElementById("btnCadastro");if(senha!==confirmar){mensagem("mensagemCadastro","As senhas não são iguais.","erro");return;}if(senha.length<6){mensagem("mensagemCadastro","A senha precisa ter pelo menos 6 caracteres.","erro");return;}const numeros=telefoneDigitado.replace(/\D/g,"");const telefone=telefoneDigitado.startsWith("+")?"+"+numeros:((numeros.length===10||numeros.length===11)?"+55"+numeros:"");if(!telefone){mensagem("mensagemCadastro","Digite um celular válido com DDD.","erro");return;}botao.disabled=true;botao.innerText="CRIANDO CONTA...";try{const emailTecnico=`u${telefone.replace(/\D/g,"")}@phone.apostaxbet.local`;const {data,error}=await clienteSupabase().auth.signUp({email:emailTecnico,password:senha,options:{data:{nome,full_name:nome,telefone,phone:telefone,cadastro_por:"celular"}}});if(error)throw error;if(data?.session){sessionStorage.removeItem("apostaxbet_logout");mensagem("mensagemCadastro","Conta criada com sucesso! Entrando...","sucesso");setTimeout(()=>mostrarSite(data.session.user),500);}else{const tentativa=await clienteSupabase().auth.signInWithPassword({email:emailTecnico,password:senha});if(tentativa.error)throw tentativa.error;sessionStorage.removeItem("apostaxbet_logout");mensagem("mensagemCadastro","Conta criada com sucesso! Entrando...","sucesso");setTimeout(()=>mostrarSite(tentativa.data.user),500);}}catch(error){mensagem("mensagemCadastro",traduzirErro(error?.message||error),"erro");}botao.disabled=false;botao.innerText="CRIAR CONTA";}
 
 /* ========================= LOGIN ========================= */
 
-async function entrar(event){
-    event.preventDefault();
-    const identificador=document.getElementById("telefoneLogin").value.trim();
-    const senha=document.getElementById("senhaLogin").value;
-    const botao=document.getElementById("btnLogin");
-    let credenciais;
-    if(identificador.includes("@")){
-        credenciais={email:identificador,password:senha};
-    }else{
-        const numeros=identificador.replace(/\D/g,"");
-        const telefone=identificador.startsWith("+")?"+"+numeros:((numeros.length===10||numeros.length===11)?"+55"+numeros:"");
-        if(!telefone){mensagem("mensagemLogin","Digite um e-mail ou celular válido com DDD.","erro");return;}
-        credenciais={email:`u${telefone.replace(/\D/g,"")}@phone.apostaxbet.local`,password:senha};
-    }
-    botao.disabled=true;botao.innerText="ENTRANDO...";
-    try{
-      const {data,error}=await clienteSupabase().auth.signInWithPassword(credenciais);
-      if(error)throw error;
-      sessionStorage.removeItem("apostaxbet_logout");
-      mensagem("mensagemLogin","Login realizado! Entrando...","sucesso");
-      setTimeout(()=>mostrarSite(data.user),500);
-    }catch(error){mensagem("mensagemLogin",traduzirErro(error?.message||error),"erro");}
-    botao.disabled=false;botao.innerText="ENTRAR";
-}
+async function entrar(event){event.preventDefault();const identificador=document.getElementById("telefoneLogin").value.trim();const senha=document.getElementById("senhaLogin").value;const botao=document.getElementById("btnLogin");let credenciais;if(identificador.includes("@")){credenciais={email:identificador,password:senha};}else{const numeros=identificador.replace(/\D/g,"");const telefone=identificador.startsWith("+")?"+"+numeros:((numeros.length===10||numeros.length===11)?"+55"+numeros:"");if(!telefone){mensagem("mensagemLogin","Digite um e-mail ou celular válido com DDD.","erro");return;}credenciais={email:`u${telefone.replace(/\D/g,"")}@phone.apostaxbet.local`,password:senha};}botao.disabled=true;botao.innerText="ENTRANDO...";try{const {data,error}=await clienteSupabase().auth.signInWithPassword(credenciais);if(error)throw error;sessionStorage.removeItem("apostaxbet_logout");mensagem("mensagemLogin","Login realizado! Entrando...","sucesso");setTimeout(()=>mostrarSite(data.user),500);}catch(error){mensagem("mensagemLogin",traduzirErro(error?.message||error),"erro");}botao.disabled=false;botao.innerText="ENTRAR";}
 
 /* ========================= DADOS DA CONTA ========================= */
 
