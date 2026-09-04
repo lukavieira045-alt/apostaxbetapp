@@ -5,13 +5,13 @@
   var mobile = window.matchMedia && window.matchMedia('(max-width: 700px)').matches;
   var android = /Android|iPhone|iPad|iPod|Mobile/i.test(nav.userAgent || '');
   var slowConnection = !!connection.saveData || /^(slow-2g|2g)$/i.test(connection.effectiveType || '');
+  var isRoleta = /\/roleta\.html$/i.test(location.pathname);
 
-  document.documentElement.classList.add('ax-premium-layer');
+  if (isRoleta) document.documentElement.classList.add('ax-premium-layer');
 
   var css = document.createElement('style');
   css.id = 'ax-performance-style';
   css.textContent = `
-    /* Desempenho original */
     .ax-low-performance body{animation:none!important;background-attachment:scroll!important}
     .ax-low-performance .luz,.ax-low-performance .particulas,.ax-low-performance .particulas span,
     .ax-low-performance [class*="particle"],.ax-low-performance [class*="partic"],.ax-low-performance [class*="spark"],
@@ -29,173 +29,288 @@
     .ax-low-performance #energia,.ax-low-performance #rastro{animation:none!important;filter:none!important;-webkit-filter:none!important;box-shadow:none!important}
     .ax-low-performance .faixa{position:relative!important;user-select:none!important;-webkit-user-select:none!important;-webkit-touch-callout:none!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important}
 
-    /* =====================================================
-       APOSTAXBET — CAMADA PREMIUM DA ROLETA
-       Somente visual. Nenhuma função/resultado/aposta é alterado.
-    ===================================================== */
-    body.ax-premium-layer .mesa{
+    /* APOSTAXBET — ROLETA PROFISSIONAL / VISUAL ONLY */
+    html.ax-premium-layer body{
       background:
-        radial-gradient(circle at 50% 35%,rgba(36,151,91,.20),transparent 35%),
-        linear-gradient(145deg,#03150f 0%,#06291d 45%,#020b08 100%) !important;
-      border-top:1px solid rgba(216,176,83,.45);
-      box-shadow:inset 0 0 80px rgba(0,0,0,.5);
+        radial-gradient(ellipse at 50% 8%,rgba(35,116,77,.24),transparent 28%),
+        radial-gradient(ellipse at 50% 55%,rgba(8,55,37,.5),transparent 58%),
+        linear-gradient(180deg,#030807 0%,#07110e 48%,#020403 100%) !important;
+      color:#f7f5ef;
+      font-family:Arial,sans-serif;
     }
 
-    body.ax-premium-layer .top{
-      height:58px !important;
-      background:linear-gradient(180deg,#171717,#080808) !important;
-      border-bottom:1px solid rgba(218,177,78,.75) !important;
-      box-shadow:0 4px 20px rgba(0,0,0,.65);
-      letter-spacing:.3px;
+    html.ax-premium-layer .topo{
+      height:62px!important;
+      padding:0 16px!important;
+      background:linear-gradient(180deg,#151613,#070807)!important;
+      border-bottom:1px solid rgba(212,174,82,.72)!important;
+      box-shadow:0 4px 22px rgba(0,0,0,.7),inset 0 -1px rgba(255,255,255,.04)!important;
+    }
+    html.ax-premium-layer .logo{
+      color:#e9c969!important;
+      font-size:14px!important;
+      letter-spacing:2px!important;
+      text-shadow:0 1px 12px rgba(233,201,105,.18)!important;
+    }
+    html.ax-premium-layer #displaySaldo{
+      color:#f3d879!important;
+      font-size:17px!important;
+      text-shadow:0 0 12px rgba(243,216,121,.18)!important;
+    }
+    html.ax-premium-layer .saldo-label{color:#8c908b!important;letter-spacing:1.5px}
+
+    html.ax-premium-layer .container{
+      max-width:680px!important;
+      padding:16px 10px 42px!important;
     }
 
-    body.ax-premium-layer .top span:first-child{
-      font-weight:900;
-      color:#f1d78b;
-      text-shadow:0 1px 10px rgba(218,177,78,.25);
+    html.ax-premium-layer .lobby{
+      top:75px!important;
+      left:10px!important;
+      width:64px!important;
+      height:58px!important;
+      border:1px solid rgba(219,184,99,.55)!important;
+      border-radius:12px!important;
+      background:linear-gradient(145deg,#171a18,#070907)!important;
+      box-shadow:0 8px 18px rgba(0,0,0,.55),inset 0 1px rgba(255,255,255,.06)!important;
+      color:#ddd!important;
+    }
+    html.ax-premium-layer .lobby-icon{font-size:25px!important}
+
+    html.ax-premium-layer .titulo{
+      margin-top:2px!important;
+      color:#efd27a!important;
+      font-size:16px!important;
+      letter-spacing:4px!important;
+      text-shadow:0 2px 16px rgba(239,210,122,.16)!important;
+    }
+    html.ax-premium-layer .subtitulo{
+      color:#92968f!important;
+      font-size:9px!important;
+      letter-spacing:2.5px!important;
+      margin:7px 0 14px!important;
     }
 
-    body.ax-premium-layer .online{
-      color:#69f0a0 !important;
+    /* Felted table surround: gives the wheel a real casino-table stage. */
+    html.ax-premium-layer .roleta-area{
+      position:relative!important;
+      margin:0 auto 14px!important;
+      padding:18px 12px!important;
+      min-height:calc(min(92vw,390px) + 36px)!important;
+      border:1px solid rgba(215,181,91,.68)!important;
+      border-radius:22px!important;
+      background:
+        radial-gradient(ellipse at center,rgba(28,129,79,.25),transparent 52%),
+        linear-gradient(145deg,#0a3826,#06291d 45%,#03150e)!important;
+      box-shadow:
+        0 18px 35px rgba(0,0,0,.68),
+        inset 0 0 0 2px rgba(0,0,0,.35),
+        inset 0 0 45px rgba(0,0,0,.45)!important;
+      overflow:visible!important;
+    }
+    html.ax-premium-layer .roleta-area::before{
+      content:"";
+      position:absolute;
+      inset:8px;
+      border:1px solid rgba(238,207,122,.22);
+      border-radius:17px;
+      pointer-events:none;
+    }
+    html.ax-premium-layer .roleta-area::after{
+      content:"APOSTAXBET  •  ROULETTE";
+      position:absolute;
+      bottom:5px;
+      left:0;
+      right:0;
+      text-align:center;
+      color:rgba(235,211,139,.28);
+      font-size:7px;
       font-weight:800;
-      text-shadow:0 0 10px rgba(105,240,160,.35);
+      letter-spacing:3px;
+      pointer-events:none;
     }
 
-    body.ax-premium-layer .roleta-area{
-      filter:drop-shadow(0 16px 24px rgba(0,0,0,.75));
-    }
-
-    body.ax-premium-layer .ponteiro{
-      border-top-color:#f5d477 !important;
-      filter:drop-shadow(0 2px 5px rgba(0,0,0,.9)) drop-shadow(0 0 7px rgba(245,212,119,.35));
-    }
-
-    body.ax-premium-layer .roleta{
-      border-width:7px !important;
-      border-color:#d7a84e !important;
-      box-shadow:
-        0 0 0 2px #6e4b1d,
-        0 0 0 5px rgba(244,207,111,.18),
-        0 14px 30px rgba(0,0,0,.8) !important;
-    }
-
-    body.ax-premium-layer .centro-roleta{
-      box-shadow:0 0 16px rgba(235,193,93,.35),inset 0 0 10px rgba(0,0,0,.7);
-    }
-
-    body.ax-premium-layer .numero-roleta{
-      color:#fff !important;
-      font-weight:900 !important;
-      text-shadow:0 2px 4px #000,0 0 3px rgba(0,0,0,.8) !important;
-    }
-
-    body.ax-premium-layer .mesa-jogo{
+    html.ax-premium-layer .roleta{
+      width:min(88vw,390px)!important;
+      height:min(88vw,390px)!important;
+      border:8px solid #d3aa4c!important;
       background:
-        linear-gradient(180deg,rgba(11,104,62,.98),rgba(4,59,36,.98)) !important;
-      border:3px solid #e2c16b !important;
+        radial-gradient(circle at 50% 50%,#101c18 0 13%,#030706 14% 22%,transparent 23%),
+        radial-gradient(circle,#16241f 0 68%,#060a08 69% 100%)!important;
       box-shadow:
-        0 0 0 2px #6b4819,
-        0 18px 35px rgba(0,0,0,.72),
-        inset 0 0 35px rgba(0,0,0,.24) !important;
-      border-radius:10px;
+        0 0 0 2px #6b481b,
+        0 0 0 5px rgba(240,202,111,.15),
+        0 20px 36px rgba(0,0,0,.8),
+        inset 0 0 30px #000!important;
+    }
+    html.ax-premium-layer .roleta::before{
+      inset:8px!important;
+      border:14px solid #111613!important;
+      box-shadow:inset 0 0 12px #000,0 1px 0 rgba(255,255,255,.08)!important;
+    }
+    html.ax-premium-layer .roleta::after{
+      inset:30px!important;
+      background:repeating-conic-gradient(from 0deg,rgba(240,202,111,.75) 0deg 1deg,transparent 1deg 18deg)!important;
+      opacity:.8;
+    }
+    html.ax-premium-layer .roleta-inner{
+      inset:32px!important;
+      background:
+        repeating-conic-gradient(#b72b31 0deg 9deg,#101212 9deg 18deg)!important;
+      box-shadow:inset 0 0 38px rgba(0,0,0,.95),inset 0 0 8px rgba(239,200,99,.6)!important;
     }
 
-    body.ax-premium-layer .numero,
-    body.ax-premium-layer .zero,
-    body.ax-premium-layer .faixa{
-      transition:transform .16s ease,filter .16s ease,box-shadow .16s ease,border-color .16s ease !important;
+    html.ax-premium-layer .numero{
+      color:#fff!important;
+      font-weight:900!important;
+    }
+    html.ax-premium-layer .numero-conteudo{
+      color:#fff7db!important;
+      text-shadow:0 2px 4px #000,0 0 5px rgba(255,255,255,.22)!important;
+    }
+    html.ax-premium-layer .numero.perdeu .numero-conteudo{
+      color:#ff8a8e!important;
+    }
+    html.ax-premium-layer .numero.super-bonus .numero-conteudo{
+      color:#ffe58a!important;
+      text-shadow:0 0 7px #fff,0 0 18px #ffbf38!important;
     }
 
-    body.ax-premium-layer .numero:hover,
-    body.ax-premium-layer .zero:hover,
-    body.ax-premium-layer .faixa:hover{
-      filter:brightness(1.12) !important;
-      box-shadow:inset 0 0 12px rgba(255,255,255,.10),0 0 9px rgba(226,193,107,.22) !important;
-      transform:translateY(-1px);
+    html.ax-premium-layer .centro{
+      width:88px!important;
+      height:88px!important;
+      background:radial-gradient(circle at 35% 28%,#30453c,#0a1511 55%,#020403 100%)!important;
+      border:4px solid #d7af50!important;
+      box-shadow:0 0 0 2px #68481d,0 0 22px rgba(224,187,81,.28),inset 0 0 18px #000!important;
+    }
+    html.ax-premium-layer .centro strong{color:#f0d071!important;font-size:20px!important}
+    html.ax-premium-layer .centro span{color:#a2a39b!important;letter-spacing:2.5px!important}
+
+    html.ax-premium-layer .ponteiro{
+      border-top-color:#fff8df!important;
+      filter:drop-shadow(0 2px 4px #000) drop-shadow(0 0 9px rgba(255,221,116,.7))!important;
+    }
+    html.ax-premium-layer .raio{
+      background:#ffe9a6!important;
+      box-shadow:0 0 5px #fff,0 0 18px #f4c95c!important;
     }
 
-    body.ax-premium-layer .zero{
-      background:linear-gradient(145deg,#0b8d4c,#04552d) !important;
-      border-color:#e2c16b !important;
-      color:#fff !important;
-      text-shadow:0 2px 4px #000 !important;
+    /* Result + countdown become a compact casino information board. */
+    html.ax-premium-layer .resultado{
+      min-height:58px!important;
+      padding:9px 10px!important;
+      display:flex!important;
+      align-items:center!important;
+      justify-content:center!important;
+      border:1px solid rgba(214,179,88,.25)!important;
+      border-radius:12px!important;
+      background:linear-gradient(180deg,rgba(17,21,18,.92),rgba(5,8,6,.92))!important;
+      color:#f0eee5!important;
+      font-size:17px!important;
+      letter-spacing:.3px!important;
+      box-shadow:inset 0 1px rgba(255,255,255,.04),0 7px 18px rgba(0,0,0,.38)!important;
+    }
+    html.ax-premium-layer .contagem{
+      margin:8px 0 10px!important;
+      padding:9px!important;
+      border-radius:9px!important;
+      background:rgba(6,11,8,.86)!important;
+      border:1px solid rgba(216,178,80,.22)!important;
+      color:#e6c86f!important;
+      text-shadow:none!important;
+    }
+    html.ax-premium-layer .contagem strong{
+      color:#fff!important;
+      font-size:22px!important;
+      margin-left:4px;
     }
 
-    body.ax-premium-layer .vermelho{
-      background:linear-gradient(145deg,#c52b31,#86171c) !important;
+    html.ax-premium-layer .painel{
+      padding:17px 14px 15px!important;
+      border:1px solid rgba(216,178,80,.55)!important;
+      border-radius:15px!important;
+      background:linear-gradient(145deg,#151814,#080a09 62%,#050605)!important;
+      box-shadow:0 15px 30px rgba(0,0,0,.7),inset 0 1px rgba(255,255,255,.04),inset 0 0 25px rgba(214,178,82,.035)!important;
+    }
+    html.ax-premium-layer .ficha-area{
+      height:55px!important;
+      margin-bottom:7px!important;
+    }
+    html.ax-premium-layer .ficha{
+      width:46px!important;
+      height:46px!important;
+      border:2px solid #f2dfad!important;
+      background:radial-gradient(circle at 32% 28%,#fff,#d8d8d8 31%,#8e8e8e 43%,#a6252c 46%,#d9474c 72%,#641317 100%)!important;
+      box-shadow:0 5px 14px rgba(0,0,0,.7),inset 0 0 0 2px rgba(255,255,255,.5),inset 0 -5px 8px rgba(0,0,0,.28)!important;
+    }
+    html.ax-premium-layer .ficha.selecionada{
+      transform:scale(1.1)!important;
+      outline:2px solid #f0cf70!important;
+      outline-offset:3px!important;
+      box-shadow:0 0 22px rgba(240,207,112,.38),0 5px 14px rgba(0,0,0,.7)!important;
     }
 
-    body.ax-premium-layer .preto{
-      background:linear-gradient(145deg,#252525,#080808) !important;
+    html.ax-premium-layer .valores{gap:7px!important;margin-bottom:10px!important}
+    html.ax-premium-layer .btn-valor{
+      height:43px!important;
+      border:1px solid #62532e!important;
+      border-radius:8px!important;
+      background:linear-gradient(180deg,#171916,#090a09)!important;
+      color:#c1c1b9!important;
+      font-weight:800!important;
+      transition:all .15s ease!important;
+    }
+    html.ax-premium-layer .btn-valor.ativo{
+      color:#ffe28a!important;
+      border-color:#d7b452!important;
+      background:linear-gradient(180deg,#2c2410,#121007)!important;
+      box-shadow:0 0 14px rgba(215,180,82,.2),inset 0 0 12px rgba(215,180,82,.08)!important;
     }
 
-    body.ax-premium-layer .faixa{
-      background:linear-gradient(145deg,#0b7650,#06452f) !important;
-      border-color:rgba(255,255,255,.7) !important;
-      color:#fff !important;
-      text-shadow:0 1px 3px #000;
+    html.ax-premium-layer .btn-apostar{
+      height:57px!important;
+      margin-top:9px!important;
+      border:1px solid #e0bf63!important;
+      border-radius:10px!important;
+      background:linear-gradient(180deg,#cda94c,#8b681e)!important;
+      color:#171208!important;
+      font-size:15px!important;
+      font-weight:1000!important;
+      letter-spacing:2px!important;
+      box-shadow:0 8px 18px rgba(0,0,0,.5),inset 0 1px rgba(255,255,255,.45),0 0 15px rgba(222,187,83,.12)!important;
+      text-shadow:0 1px rgba(255,255,255,.22)!important;
     }
+    html.ax-premium-layer .btn-apostar:not(:disabled):active{transform:translateY(1px)!important}
+    html.ax-premium-layer .btn-apostar:disabled{filter:saturate(.45)!important;opacity:.55!important}
 
-    body.ax-premium-layer .faixa.vermelho{
-      background:linear-gradient(145deg,#bd2930,#78151b) !important;
+    html.ax-premium-layer .info{
+      margin-top:11px!important;
+      padding-top:10px!important;
+      border-top:1px solid rgba(255,255,255,.07)!important;
+      color:#a7aaa3!important;
     }
+    html.ax-premium-layer .info strong{color:#e9cb70!important}
+    html.ax-premium-layer .mensagem{color:#6f756e!important;letter-spacing:.5px}
 
-    body.ax-premium-layer .controles{
-      background:linear-gradient(180deg,#111,#070707) !important;
-      border-top:1px solid rgba(218,177,78,.45) !important;
-      box-shadow:0 -10px 30px rgba(0,0,0,.35);
-    }
-
-    body.ax-premium-layer .linha{
-      color:#b9b9b9 !important;
-    }
-
-    body.ax-premium-layer .linha b{
-      color:#71e9a0 !important;
-      text-shadow:0 0 8px rgba(113,233,160,.2);
-    }
-
-    body.ax-premium-layer .ficha{
-      background:radial-gradient(circle at 35% 30%,#fff,#ddd 38%,#a4a4a4 42%,#7b2026 44%,#c7353b 72%,#681116 100%) !important;
-      border-color:#f4dfaa !important;
-      box-shadow:0 5px 12px rgba(0,0,0,.65),inset 0 0 0 2px rgba(255,255,255,.55) !important;
-      text-shadow:0 1px 2px #000;
-    }
-
-    body.ax-premium-layer .ficha.ativa{
-      outline:3px solid #f4d66f !important;
-      outline-offset:2px;
-      box-shadow:0 0 18px rgba(244,214,111,.45),0 5px 12px rgba(0,0,0,.65) !important;
-    }
-
-    body.ax-premium-layer #btnGirar{
-      background:linear-gradient(180deg,#19a964,#087241) !important;
-      border:1px solid #63e9a1 !important;
-      box-shadow:0 0 18px rgba(25,169,100,.22),inset 0 1px 0 rgba(255,255,255,.18);
-      text-shadow:0 1px 3px #000;
-    }
-
-    body.ax-premium-layer #limpar{
-      background:linear-gradient(180deg,#242424,#111) !important;
-      border-color:#555 !important;
-    }
-
-    body.ax-premium-layer #mensagem{
-      color:#f0d47b;
-      font-weight:700;
+    html.ax-premium-layer .repeat-btn,
+    html.ax-premium-layer .menu-btn{
+      width:50px!important;
+      height:50px!important;
+      border:1px solid rgba(220,185,98,.55)!important;
+      background:linear-gradient(145deg,#191b18,#070807)!important;
+      box-shadow:0 7px 18px rgba(0,0,0,.6),inset 0 1px rgba(255,255,255,.05)!important;
     }
 
     @media(max-width:600px){
-      body.ax-premium-layer .mesa-jogo{
-        border-radius:8px;
-      }
-      body.ax-premium-layer .controles{
-        padding:13px 10px;
-      }
-      body.ax-premium-layer .ficha{
-        min-width:46px;
-        height:46px;
-      }
+      html.ax-premium-layer .container{padding-top:12px!important}
+      html.ax-premium-layer .roleta-area{padding:13px 6px!important;border-radius:18px!important}
+      html.ax-premium-layer .roleta-area::after{letter-spacing:2px}
+      html.ax-premium-layer .resultado{font-size:15px!important}
+      html.ax-premium-layer .painel{border-radius:13px!important}
+    }
+    @media(max-width:360px){
+      html.ax-premium-layer .roleta-area{padding:10px 3px!important}
+      html.ax-premium-layer .roleta{width:310px!important;height:310px!important}
     }
   `;
   (document.head || document.documentElement).appendChild(css);
