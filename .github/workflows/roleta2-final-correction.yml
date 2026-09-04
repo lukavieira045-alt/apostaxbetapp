@@ -14,7 +14,7 @@ jobs:
           fetch-depth: 0
       - name: Restaurar exatamente a base visual aprovada
         run: git checkout 1b4a507638556010561d5792739d96ab7964f443 -- jogos/roleta2.html
-      - name: Corrigir somente o segundo giro
+      - name: Corrigir somente o giro duplicado
         shell: python
         run: |
           from pathlib import Path
@@ -26,8 +26,8 @@ jobs:
           s,n=re.subn(pattern,replacement,s,count=1,flags=re.S)
           if n != 1: raise SystemExit(f'Segundo giro nao encontrado: {n}')
           s=s.replace('intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},145)','intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},240)',1)
-          # Remove somente o listener visual que iniciava um giro adicional no clique.
-          s=re.sub(r'<script>\(function\(\)\{function a\(\)\{document\.addEventListener\(\x27click\x27,.*?</script>\s*$', '', s, count=1, flags=re.S)
+          # Remove o script extra que iniciava outro giro no clique.
+          s=re.sub(r"\n<script>\(function\(\)\{function a\(\)\{document\.addEventListener\('click',function\(e\)\{if\(!e\.target\.closest\('\.btn-girar'\)\)return;.*?</script>\s*\n</body>", '\n</body>', s, count=1, flags=re.S)
           p.write_text(s,encoding='utf-8')
       - name: Validar
         shell: bash
@@ -40,6 +40,7 @@ jobs:
           grep -q 'function creditar' jogos/roleta2.html
           ! grep -q 'const voltas=10' jogos/roleta2.html
           ! grep -q 'animacaoBola' jogos/roleta2.html
+          ! grep -q "document.addEventListener('click'" jogos/roleta2.html
           ! grep -q 'r2-one-spin' jogos/roleta2.html
       - name: Publicar
         shell: bash
@@ -48,5 +49,5 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add jogos/roleta2.html
           git diff --cached --quiet && exit 0
-          git commit -m 'Roleta 2: giro unico aprovado e som suave'
+          git commit -m 'Roleta 2: remover segundo giro duplicado'
           git push
