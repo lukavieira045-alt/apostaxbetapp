@@ -1,6 +1,5 @@
-name: Roleta 2 profissional
+name: Roleta 2 profissional final
 on:
-  workflow_dispatch:
   push:
     branches: [main]
 permissions:
@@ -10,97 +9,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Ajustar somente roda e audio da Roleta 2
+      - name: Aplicar roda realista, giro oposto e som
         shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
-          p = Path('jogos/roleta2.html')
-          s = p.read_text(encoding='utf-8')
-          marker = '/* ApostaXBet — Roleta 2 Professional Wheel v2 */'
-          if marker not in s:
-              css = r'''<style>
-          /* ApostaXBet — Roleta 2 Professional Wheel v2 */
-          .roleta{
-            width:min(540px,78vw)!important;
-            border:18px solid #3a2410!important;
-            border-radius:50%!important;
-            background:
-              radial-gradient(circle at 50% 50%,#8b5a1f 0 7%,#c99a3d 7.5% 10%,#5a3513 10.5% 11.5%,transparent 12%),
-              radial-gradient(circle at 50% 50%,#b87820 0 28%,#5c3410 28.5% 30%,#d5a94a 30.5% 31.5%,#2b1808 32% 34%,#9b651d 34.5% 100%)!important;
-            box-shadow:0 0 0 3px #f0c65b,0 0 0 7px #5b3611,0 12px 32px rgba(0,0,0,.95),inset 0 0 25px rgba(0,0,0,.8)!important;
-            overflow:visible!important;
-          }
-          .roleta::before{
-            inset:34px!important;
-            border-radius:50%!important;
-            background:
-              repeating-conic-gradient(from -4.86deg,#087a3d 0deg 9.72deg,#b51f25 9.72deg 19.44deg,#111 19.44deg 29.16deg),
-              radial-gradient(circle,#15100a 0 54%,#c69232 54.5% 57%,#3b220c 57.5% 100%)!important;
-            box-shadow:inset 0 0 0 3px #d7ad55,inset 0 0 0 8px #1b1007,inset 0 0 35px #000,0 0 8px rgba(0,0,0,.9)!important;
-          }
-          .roleta::after{
-            content:"";
-            position:absolute;
-            inset:48px;
-            border-radius:50%;
-            z-index:2;
-            pointer-events:none;
-            background:repeating-conic-gradient(from -4.86deg,rgba(255,255,255,.16) 0deg .7deg,transparent .7deg 9.72deg);
-            opacity:.55;
-          }
-          .numero-roleta{z-index:4!important}
-          .numero-roleta span{
-            width:31px!important;height:31px!important;margin-left:-15.5px!important;margin-top:-15.5px!important;
-            border-radius:50%;
-            font-size:13px!important;
-            font-family:Georgia,serif;
-            font-weight:900!important;
-            background:rgba(0,0,0,.18);
-            border:1px solid rgba(255,255,255,.16);
-            box-shadow:0 1px 3px #000;
-          }
-          .roleta-centro{
-            width:118px!important;height:118px!important;
-            background:radial-gradient(circle at 35% 25%,#fff0a8 0,#d5a23e 28%,#9a6218 50%,#4d2a0a 72%,#171006 100%)!important;
-            border:7px solid #e1b64d!important;
-            box-shadow:inset 0 0 0 3px #633b0d,inset 0 0 22px #241200,0 4px 14px #000,0 0 20px rgba(255,210,80,.25)!important;
-            z-index:7!important;
-          }
-          .roleta-centro::before{
-            content:"";position:absolute;inset:18px;border-radius:50%;border:2px solid rgba(255,235,160,.6);box-shadow:inset 0 0 8px #5a3107;
-          }
-          .roleta-centro::after{content:"A"!important;color:#fff1b0!important;font-family:Georgia,serif!important;text-shadow:0 2px 4px #2b1500!important}
-          .bola{width:20px!important;height:20px!important;box-shadow:0 0 5px #fff,0 0 12px rgba(255,255,255,.8),inset -2px -2px 3px rgba(0,0,0,.3)!important;z-index:12!important}
-          .roleta-area::before{
-            top:calc(50% - 304px)!important;
-            border-left:15px solid transparent!important;border-right:15px solid transparent!important;border-top:34px solid #e9b83f!important;
-            filter:drop-shadow(0 3px 3px #000)!important;
-          }
-          @media(max-width:650px){
-            .roleta{width:88vw!important;border-width:13px!important}
-            .roleta::before{inset:25px!important}.roleta::after{inset:36px!important}
-            .roleta-centro{width:88px!important;height:88px!important}.roleta-centro::before{inset:13px}
-            .numero-roleta span{width:27px!important;height:27px!important;margin-left:-13.5px!important;margin-top:-13.5px!important;font-size:11px!important}
-            .roleta-area::before{top:calc(50% - 238px)!important;border-left-width:12px!important;border-right-width:12px!important;border-top-width:28px!important}
-          }
+          p=Path('jogos/roleta2.html'); s=p.read_text(encoding='utf-8')
+          mark='/* ApostaXBet — Roleta 2 FINAL REAL CASINO WHEEL */'
+          if mark in s: raise SystemExit(0)
+          css=r'''<style>
+          /* ApostaXBet — Roleta 2 FINAL REAL CASINO WHEEL */
+          .roleta{width:min(550px,78vw)!important;border:18px solid #291305!important;border-radius:50%!important;background:radial-gradient(circle at 50% 50%,#c18a32 0 5%,#6d3a0e 5.5% 11%,#2b1204 11.5% 13%,#9b5b18 13.5% 29%,#4b2409 29.5% 34%,#9b5d19 34.5% 100%)!important;box-shadow:0 0 0 3px #d5a24b,0 0 0 7px #5a330f,0 0 0 10px rgba(244,205,116,.22),0 20px 45px #000,inset 0 0 35px #120601!important;overflow:visible!important}
+          .roleta::before{inset:10%!important;border-radius:50%!important;background:repeating-conic-gradient(from -4.86deg,rgba(238,210,146,.75) 0deg .8deg,transparent .8deg 9.73deg),conic-gradient(from -4.86deg,#0b7139 0 9.73deg,#b72024 9.73deg 19.46deg,#111 19.46deg 29.19deg,#b72024 29.19deg 38.92deg,#111 38.92deg 48.65deg,#b72024 48.65deg 58.38deg,#111 58.38deg 68.11deg,#b72024 68.11deg 77.84deg,#111 77.84deg 87.57deg,#b72024 87.57deg 97.30deg,#111 97.30deg 107.03deg,#b72024 107.03deg 116.76deg,#111 116.76deg 126.49deg,#b72024 126.49deg 136.22deg,#111 136.22deg 145.95deg,#b72024 145.95deg 155.68deg,#111 155.68deg 165.41deg,#b72024 165.41deg 175.14deg,#111 175.14deg 184.87deg,#b72024 184.87deg 194.60deg,#111 194.60deg 204.33deg,#b72024 204.33deg 214.06deg,#111 214.06deg 223.79deg,#b72024 223.79deg 233.52deg,#111 233.52deg 243.25deg,#b72024 243.25deg 252.98deg,#111 252.98deg 262.71deg,#b72024 262.71deg 272.44deg,#111 272.44deg 282.17deg,#b72024 282.17deg 291.90deg,#111 291.90deg 301.63deg,#b72024 301.63deg 311.36deg,#111 311.36deg 321.09deg,#b72024 321.09deg 330.82deg,#111 330.82deg 340.55deg,#b72024 340.55deg 350.28deg,#111 350.28deg 360deg);box-shadow:inset 0 0 0 3px #d9ad55,inset 0 0 30px #000!important}
+          .roleta::after{content:"";position:absolute;inset:31%;border-radius:50%;border:7px solid #b77b22;background:repeating-conic-gradient(rgba(255,211,126,.10) 0 2deg,transparent 2deg 18deg),radial-gradient(circle at 35% 25%,#a8611e,#60300a 55%,#241004);box-shadow:inset 0 0 20px #100500,0 0 0 3px #3c1d08;z-index:2;pointer-events:none}
+          .numero-roleta{z-index:5!important}.numero-roleta span{width:34px!important;height:42px!important;margin-left:-17px!important;margin-top:-21px!important;border-radius:3px!important;border:1px solid rgba(255,224,150,.38)!important;font:900 15px Georgia,serif!important;text-shadow:0 2px 3px #000!important;box-shadow:inset 0 0 5px #000,0 1px 3px #000!important}.numero-roleta span:nth-child(1){background:linear-gradient(#168e49,#064d29)!important}.numero-roleta span:nth-child(even){background:linear-gradient(#d33129,#70100c)!important}.numero-roleta span:nth-child(odd):not(:first-child){background:linear-gradient(#242424,#050505)!important}
+          .roleta-centro{width:112px!important;height:112px!important;border:8px solid #d6a13c!important;background:radial-gradient(circle at 35% 25%,#fff2b0,#d49d3b 25%,#8d560f 50%,#422105 75%,#170902)!important;box-shadow:inset 0 0 0 3px #6a3c0a,inset 0 0 18px #160800,0 5px 12px #000!important;z-index:8!important}.roleta-centro::after{content:""!important}.roleta-centro::before{content:"";position:absolute;left:50%;top:50%;width:30px;height:30px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 30% 25%,#fff5c7,#d9a743 40%,#75430b 72%,#1d0b02);border:4px solid #efc45c;box-shadow:0 2px 6px #000,inset 0 0 7px #5a3006}
+          .bola{width:19px!important;height:19px!important;z-index:15!important;box-shadow:0 0 6px #fff,0 0 13px #fff,0 2px 4px #000!important}
+          .roleta.spin-real{animation:r2wheel 10s cubic-bezier(.12,.74,.12,1) 1!important}.bola.spin-real{animation:r2ball 10s cubic-bezier(.08,.68,.14,1) 1!important}@keyframes r2wheel{from{rotate:0deg}to{rotate:-3600deg}}@keyframes r2ball{from{rotate:0deg}to{rotate:3600deg}}
+          @media(max-width:650px){.roleta{width:84vw!important;border-width:12px!important}.roleta::before{inset:9%!important}.roleta::after{inset:29%!important;border-width:5px}.roleta-centro{width:86px!important;height:86px!important}.numero-roleta span{width:27px!important;height:34px!important;margin-left:-13.5px!important;margin-top:-17px!important;font-size:11px!important}.bola{width:16px!important;height:16px!important}}
           </style>'''
-              s = s.replace('</head>', css + '\n</head>', 1)
-          # Replace only the roulette spinning sound routines; game/balance logic stays untouched.
-          old = '''function somPalheta(){iniciarAudio();if(!audioContext)return;try{const agora=audioContext.currentTime;const osc=audioContext.createOscillator();const ganho=audioContext.createGain();osc.type="square";osc.frequency.setValueAtTime(900+Math.random()*250,agora);osc.frequency.exponentialRampToValueAtTime(480,agora+.045);ganho.gain.setValueAtTime(.0001,agora);ganho.gain.exponentialRampToValueAtTime(.055,agora+.003);ganho.gain.exponentialRampToValueAtTime(.0001,agora+.065);osc.connect(ganho);ganho.connect(audioContext.destination);osc.start(agora);osc.stop(agora+.07)}catch(e){}}
-function iniciarSomRoleta(){iniciarAudio();if(somRoletaAtivo)return;somRoletaAtivo=true;somPalheta();intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},145)}
-function pararSomRoleta(){somRoletaAtivo=false;if(intervaloSomRoleta){clearInterval(intervaloSomRoleta);intervaloSomRoleta=null}}'''
-          new = '''let somGiroOsc=null,somGiroGain=null,somGiroFilter=null;
-function somPalheta(){iniciarAudio();if(!audioContext)return;try{const agora=audioContext.currentTime;const osc=audioContext.createOscillator();const ganho=audioContext.createGain();osc.type="triangle";osc.frequency.setValueAtTime(1050+Math.random()*120,agora);osc.frequency.exponentialRampToValueAtTime(620,agora+.035);ganho.gain.setValueAtTime(.0001,agora);ganho.gain.exponentialRampToValueAtTime(.045,agora+.004);ganho.gain.exponentialRampToValueAtTime(.0001,agora+.055);osc.connect(ganho);ganho.connect(audioContext.destination);osc.start(agora);osc.stop(agora+.06)}catch(e){}}
-function iniciarSomRoleta(){iniciarAudio();if(!audioContext||somRoletaAtivo)return;somRoletaAtivo=true;try{somGiroOsc=audioContext.createOscillator();somGiroGain=audioContext.createGain();somGiroFilter=audioContext.createBiquadFilter();somGiroOsc.type="sine";somGiroOsc.frequency.setValueAtTime(82,audioContext.currentTime);somGiroFilter.type="lowpass";somGiroFilter.frequency.setValueAtTime(420,audioContext.currentTime);somGiroGain.gain.setValueAtTime(.0001,audioContext.currentTime);somGiroGain.gain.exponentialRampToValueAtTime(.018,audioContext.currentTime+.25);somGiroOsc.connect(somGiroFilter);somGiroFilter.connect(somGiroGain);somGiroGain.connect(audioContext.destination);somGiroOsc.start();somPalheta();intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},190)}catch(e){}}
-function pararSomRoleta(){somRoletaAtivo=false;if(intervaloSomRoleta){clearInterval(intervaloSomRoleta);intervaloSomRoleta=null}try{if(somGiroGain&&audioContext){somGiroGain.gain.exponentialRampToValueAtTime(.0001,audioContext.currentTime+.18)}if(somGiroOsc){setTimeout(()=>{try{somGiroOsc.stop()}catch(e){}somGiroOsc=null},220)}}catch(e){}}
-'''
-          if old in s:
-              s=s.replace(old,new,1)
+          s=s.replace('</head>',css+'\n</head>',1)
+          hook=r'''<script>(function(){function a(){document.addEventListener('click',function(e){if(!e.target.closest('.btn-girar'))return;var r=document.querySelector('.roleta'),b=document.querySelector('.bola');if(!r)return;r.classList.remove('spin-real');b&&b.classList.remove('spin-real');void r.offsetWidth;r.classList.add('spin-real');b&&b.classList.add('spin-real');setTimeout(function(){r.classList.remove('spin-real');b&&b.classList.remove('spin-real')},10100)},true)}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',a);else a()})();</script>'''
+          s=s.replace('</body>',hook+'\n</body>',1)
           p.write_text(s,encoding='utf-8')
           PY
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add jogos/roleta2.html
-          git commit -m 'Melhora roda e som da Roleta 2' || exit 0
+          git commit -m 'Roleta 2: roda profissional e giro oposto' || exit 0
           git push
