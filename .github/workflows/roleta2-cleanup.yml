@@ -20,15 +20,14 @@ jobs:
           p=Path('jogos/roleta2.html')
           s=p.read_text(encoding='utf-8')
           # Mantém exatamente o visual/giro físico aprovado, inclusive spin-real.
-          # Remove somente a segunda animação da bolinha iniciada após a contagem.
-          pattern=r'\s*const animacaoBola\s*=\s*bola\.animate\(\s*\[.*?\]\s*,\s*\{\s*duration\s*:\s*10000\s*,.*?\}\s*\);\s*\n?\s*await animacaoBola\.finished\s*;'
+          # Remove somente a segunda animação da bolinha iniciada após a contagem,
+          # independentemente de ela estar configurada para 7.5s, 10s etc.
+          pattern=r'\s*const animacaoBola\s*=\s*bola\.animate\(\s*\[.*?\]\s*,\s*\{.*?\}\s*\);\s*\n?\s*await animacaoBola\.finished\s*;'
           s,n=re.subn(pattern,'',s,count=1,flags=re.S)
           if n != 1:
               raise SystemExit(f'Segunda animacao nao encontrada: {n}')
-          # Garante que nao restou nenhuma animacao de 10s dessa rodada.
-          if re.search(r'animacaoBola|duration\s*:\s*10000',s):
-              raise SystemExit('Ainda existe animacao de 10 segundos')
-          # Aprovado deve continuar com o hook spin-real de roda/bola em sentidos opostos.
+          if 'animacaoBola' in s:
+              raise SystemExit('Ainda existe animacaoBola')
           if 'spin-real' not in s:
               raise SystemExit('Hook spin-real aprovado ausente')
           p.write_text(s,encoding='utf-8')
