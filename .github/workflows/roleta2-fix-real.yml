@@ -14,29 +14,35 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Restaurar roda profissional aprovada e remover segunda rodada
+      - name: Aplicar correcao diretamente no arquivo atual
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          set -e
-          git show 1b4a507638556010561d5792739d96ab7964f443:jogos/roleta2.html > jogos/roleta2.html
+          set -euo pipefail
           python3 - <<'PY'
-          from pathlib import Path
-          import re
-          p = Path('jogos/roleta2.html')
-          s = p.read_text(encoding='utf-8')
-          pattern = r'\s*const animacaoBola\s*=\s*bola\.animate\(\s*\[.*?\]\s*,\s*\{.*?\}\s*\);\s*\n?\s*await animacaoBola\.finished\s*;'
-          s, n = re.subn(pattern, '', s, count=1, flags=re.S)
-          if n != 1:
-              raise SystemExit(f'ERRO: segunda animacao nao encontrada ({n})')
-          if 'animacaoBola' in s:
-              raise SystemExit('ERRO: animacaoBola ainda existe')
-          if 'spin-real' not in s:
-              raise SystemExit('ERRO: giro profissional aprovado ausente')
-          if 'somGiroOsc' in s:
-              raise SystemExit('ERRO: som pesado customizado ainda presente')
-          p.write_text(s, encoding='utf-8')
-          print('OK: segunda animacao removida; spin-real preservado; som pesado removido')
+          import json, os, base64, urllib.request, re
+          repo=os.environ['GITHUB_REPOSITORY']
+          sha='195055aa4db70714abbcca5e6bc00b8f2a429cc7'
+          req=urllib.request.Request(
+              f'https://api.github.com/repos/{repo}/git/blobs/{sha}',
+              headers={'Authorization':f'Bearer {os.environ["GH_TOKEN"]}','Accept':'application/vnd.github+json','User-Agent':'github-actions'}
+          )
+          with urllib.request.urlopen(req) as r:
+              data=json.load(r)
+          s=base64.b64decode(data['content']).decode('utf-8')
+          pattern=r'\s*const animacaoBola\s*=\s*bola\.animate\(\s*\[.*?\]\s*,\s*\{.*?\}\s*\);\s*\n?\s*await animacaoBola\.finished\s*;'
+          s,n=re.subn(pattern,'',s,count=1,flags=re.S)
+          if n != 1: raise SystemExit(f'Segunda animacao nao encontrada: {n}')
+          if 'animacaoBola' in s: raise SystemExit('animacaoBola ainda existe')
+          if 'spin-real' not in s: raise SystemExit('spin-real aprovado ausente')
+          # A baseline aprovada nao contem o som pesado customizado.
+          open('jogos/roleta2.html','w',encoding='utf-8').write(s)
+          print('CORRECAO OK')
           PY
+          grep -q 'spin-real' jogos/roleta2.html
+          ! grep -q 'animacaoBola' jogos/roleta2.html
+          ! grep -q 'somGiroOsc' jogos/roleta2.html
 
       - name: Publicar Roleta 2
         shell: bash
