@@ -129,7 +129,22 @@ body::before{background:radial-gradient(circle at 50% 30%,rgba(255,214,92,.08),t
 
 <style id="ax-r2-final-spin">@keyframes axR2Wheel{from{transform:rotate(0deg)}to{transform:rotate(2520deg)}}@keyframes axR2Ball{from{transform:translate(-50%,-50%) rotate(0deg) translateY(-188px)}to{transform:translate(-50%,-50%) rotate(-2880deg) translateY(-188px)}}.roleta.ax-r2-spin{animation:axR2Wheel 7.6s cubic-bezier(.15,.65,.20,1) both}.bola.ax-r2-spin{animation:axR2Ball 7.6s cubic-bezier(.08,.02,.12,1) both}</style>
 <script id="ax-r2-final-spin">window.iniciarGiroVisual=function(){const r=document.querySelector('.roleta'),b=document.querySelector('.bola');if(!r)return;r.classList.remove('ax-r2-spin');if(b)b.classList.remove('ax-r2-spin');void r.offsetWidth;r.classList.add('ax-r2-spin');if(b)b.classList.add('ax-r2-spin');try{iniciarSomRoleta()}catch(e){}setTimeout(()=>{try{pararSomRoleta()}catch(e){}r.classList.remove('ax-r2-spin');if(b)b.classList.remove('ax-r2-spin')},7600)};</script>
-</head>
+<style id="ax-r2-single-spin">
+@keyframes axR2WheelSpin{from{transform:rotate(0deg)}to{transform:rotate(2520deg)}}
+@keyframes axR2BallSpin{from{transform:translate(-50%,-50%) translateY(-190px) rotate(0deg)}to{transform:translate(-50%,-50%) translateY(-190px) rotate(-2880deg)}}
+.roleta.ax-r2-spin{animation:axR2WheelSpin 7.6s cubic-bezier(.15,.65,.20,1) both}
+.bola.ax-r2-spin{animation:axR2BallSpin 7.6s cubic-bezier(.08,.02,.12,1) both}
+@media(max-width:650px){@keyframes axR2BallSpinMobile{from{transform:translate(-50%,-50%) translateY(-125px) rotate(0deg)}to{transform:translate(-50%,-50%) translateY(-125px) rotate(-2880deg)}}.bola.ax-r2-spin{animation-name:axR2BallSpinMobile}}
+</style><script id="ax-r2-single-spin-hook">
+window.axR2SingleSpin=function(){
+  const r=document.getElementById('roleta'),b=document.getElementById('bola');
+  if(!r)return;
+  r.classList.remove('ax-r2-spin'); if(b)b.classList.remove('ax-r2-spin');
+  void r.offsetWidth; r.classList.add('ax-r2-spin'); if(b)b.classList.add('ax-r2-spin');
+  try{iniciarSomRoleta()}catch(e){}
+  setTimeout(()=>{try{pararSomRoleta()}catch(e){}},7600);
+};
+</script></head>
 <body>
 <header class="topo">
 <div style="display:flex;align-items:center;gap:10px;">
@@ -230,8 +245,8 @@ let intervaloSomRoleta=null;
 function iniciarAudio(){try{if(!audioContext){audioContext=new(window.AudioContext||window.webkitAudioContext)()}if(audioContext.state==="suspended")audioContext.resume()}catch(e){}}
 function somFicha(){iniciarAudio();if(!audioContext)return;try{const agora=audioContext.currentTime;const osc=audioContext.createOscillator();const ganho=audioContext.createGain();osc.type="triangle";osc.frequency.setValueAtTime(850,agora);osc.frequency.exponentialRampToValueAtTime(1250,agora+.045);ganho.gain.setValueAtTime(.0001,agora);ganho.gain.exponentialRampToValueAtTime(.20,agora+.005);ganho.gain.exponentialRampToValueAtTime(.0001,agora+.10);osc.connect(ganho);ganho.connect(audioContext.destination);osc.start(agora);osc.stop(agora+.11)}catch(e){}}
 function somPalheta(){iniciarAudio();if(!audioContext)return;try{const agora=audioContext.currentTime;const osc=audioContext.createOscillator();const ganho=audioContext.createGain();osc.type="square";osc.frequency.setValueAtTime(900+Math.random()*250,agora);osc.frequency.exponentialRampToValueAtTime(480,agora+.045);ganho.gain.setValueAtTime(.0001,agora);ganho.gain.exponentialRampToValueAtTime(.055,agora+.003);ganho.gain.exponentialRampToValueAtTime(.0001,agora+.065);osc.connect(ganho);ganho.connect(audioContext.destination);osc.start(agora);osc.stop(agora+.07)}catch(e){}}
-function iniciarSomRoleta(){iniciarAudio();if(somRoletaAtivo)return;somRoletaAtivo=true;somPalheta();intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},240)}
-function pararSomRoleta(){somRoletaAtivo=false;if(intervaloSomRoleta){clearInterval(intervaloSomRoleta);intervaloSomRoleta=null}}
+function iniciarSomRoleta(){try{iniciarAudio();clearInterval(tickTimer);tickTimer=setInterval(()=>{if(!girando)return;let now=audioCtx.currentTime,o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='triangle';o.frequency.value=620+Math.random()*100;g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.018,now+.004);g.gain.exponentialRampToValueAtTime(.0001,now+.07);o.connect(g);g.connect(audioCtx.destination);o.start(now);o.stop(now+.075)},240)}catch(e){}}
+function pararSomRoleta(){clearInterval(tickTimer);tickTimer=null}}
 
 const roleta=document.getElementById("roleta");
 const bola=document.getElementById("bola");
