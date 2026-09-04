@@ -15,18 +15,25 @@ jobs:
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
-          import re
           p=Path('jogos/roleta2.html')
           s=p.read_text(encoding='utf-8')
-          pattern=r'\s*const animacaoBola\s*=\s*bola\.animate\(\s*\[.*?\]\s*,\s*\{.*?\}\s*\);\s*\n?\s*mensagemEl\.textContent\s*=\s*" A bolinha está girando\.\.\.";\s*\n?\s*mensagemEl\.className\s*=\s*"mensagem";\s*\n?\s*await animacaoBola\.finished\s*;'
-          s,n=re.subn(pattern,'',s,count=1,flags=re.S)
-          if n != 1: raise SystemExit(f'Segunda animação não encontrada: {n}')
+          start=s.find('        iniciarSomRoleta();\n        const voltas=10;')
+          end=s.find('        await finalizarRodada(numeroFinal);', start)
+          if start < 0 or end < 0:
+              raise SystemExit('Bloco do segundo giro não encontrado')
+          replacement='        pararSomRoleta();\n        await new Promise(resolve=>setTimeout(resolve,500));\n        \n'
+          s=s[:start]+replacement+s[end:]
+          hook="""\n<script>(function(){function a(){document.addEventListener('click',function(e){if(!e.target.closest('.btn-girar'))return;var r=document.querySelector('.roleta'),b=document.querySelector('.bola');if(!r)return;r.classList.remove('spin-real');b&&b.classList.remove('spin-real');void r.offsetWidth;r.classList.add('spin-real');b&&b.classList.add('spin-real');try{if(window.audioContext&&window.audioContext.state==='suspended')window.audioContext.resume()}catch(_){};var t=setInterval(function(){try{if(typeof somPalheta==='function')somPalheta()}catch(_){}},240);setTimeout(function(){clearInterval(t);r.classList.remove('spin-real');b&&b.classList.remove('spin-real')},7600)},true)}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',a);else a()})();</script>\n"""
+          import re
+          s=re.sub(r'<script>\(function\(\)\{function a\(\)\{document\.addEventListener\(\'click\',function\(e\)\{if\(!e\.target\.closest\(\'.btn-girar\'\)\).*?</script>\s*</body>',hook+'</body>',s,count=1,flags=re.S)
           if 'animacaoBola' in s: raise SystemExit('animacaoBola ainda existe')
+          if 'const voltas=10' in s: raise SystemExit('segundo giro ainda existe')
           if 'spin-real' not in s: raise SystemExit('spin-real ausente')
           p.write_text(s,encoding='utf-8')
           PY
           grep -q 'spin-real' jogos/roleta2.html
           ! grep -q 'animacaoBola' jogos/roleta2.html
+          ! grep -q 'const voltas=10' jogos/roleta2.html
       - name: Adicionar efeito somente no final dos jogos
         run: |
           python3 - <<'PY'
