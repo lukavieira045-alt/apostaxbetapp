@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Restaurar exatamente a base visual aprovada
         run: git checkout 1b4a507638556010561d5792739d96ab7964f443 -- jogos/roleta2.html
       - name: Corrigir somente o segundo giro
@@ -24,7 +26,7 @@ jobs:
           s,n=re.subn(pattern,replacement,s,count=1,flags=re.S)
           if n != 1: raise SystemExit(f'Segundo giro nao encontrado: {n}')
           s=s.replace('intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},145)','intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},240)',1)
-          # O hook antigo iniciava um giro separado no clique; remover somente esse listener.
+          # Remove somente o listener visual que iniciava um giro adicional no clique.
           s=re.sub(r'<script>\(function\(\)\{function a\(\)\{document\.addEventListener\(\x27click\x27,.*?</script>\s*$', '', s, count=1, flags=re.S)
           p.write_text(s,encoding='utf-8')
       - name: Validar
