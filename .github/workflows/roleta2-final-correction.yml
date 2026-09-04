@@ -1,0 +1,43 @@
+name: Corrigir Roleta 2 sem voltar versao
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  fix:
+    if: ${{ contains(github.event.head_commit.message, 'APLICAR ROLETA2 FINAL') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restaurar visual aprovado e remover segundo giro
+        run: |
+          git checkout 1b4a507638556010561d5792739d96ab7964f443 -- jogos/roleta2.html
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('jogos/roleta2.html'); s=p.read_text(encoding='utf-8')
+          pattern=r'\s*const animacaoBola\s*=\s*bola\.animate\(\s*\[.*?\]\s*,\s*\{.*?\}\s*\);\s*\n?\s*await animacaoBola\.finished\s*;'
+          s,n=re.subn(pattern,'\n',s,count=1,flags=re.S)
+          if n != 1: raise SystemExit(f'Segundo giro nao encontrado: {n}')
+          s=s.replace('intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},145)','intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},240)',1)
+          s=s.replace("setTimeout(function(){r.classList.remove('spin-real');b&&b.classList.remove('spin-real')},10100)","setTimeout(function(){r.classList.remove('spin-real');b&&b.classList.remove('spin-real')},10000)",1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Validar
+        run: |
+          grep -q 'spin-real' jogos/roleta2.html
+          grep -q 'function girarRoleta' jogos/roleta2.html
+          grep -q 'function finalizarRodada' jogos/roleta2.html
+          grep -q 'function debitar' jogos/roleta2.html
+          grep -q 'function creditar' jogos/roleta2.html
+          ! grep -q 'animacaoBola' jogos/roleta2.html
+          ! grep -q 'const voltas=10' jogos/roleta2.html
+          ! grep -q 'r2-one-spin' jogos/roleta2.html
+      - name: Publicar
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add jogos/roleta2.html
+          git commit -m 'Roleta 2 final: um giro e som suave' || exit 0
+          git push
