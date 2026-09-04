@@ -13,8 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Aplicar correcao diretamente no arquivo atual
+      - name: Aplicar correcao no visual aprovado
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -23,28 +22,26 @@ jobs:
           python3 - <<'PY'
           import json, os, base64, urllib.request, re
           repo=os.environ['GITHUB_REPOSITORY']
-          sha='195055aa4db70714abbcca5e6bc00b8f2a429cc7'
-          req=urllib.request.Request(
-              f'https://api.github.com/repos/{repo}/git/blobs/{sha}',
-              headers={'Authorization':f'Bearer {os.environ["GH_TOKEN"]}','Accept':'application/vnd.github+json','User-Agent':'github-actions'}
-          )
-          with urllib.request.urlopen(req) as r:
-              data=json.load(r)
+          sha='c78ca07beed46855298cc424056c95fd815acf49'
+          req=urllib.request.Request(f'https://api.github.com/repos/{repo}/git/blobs/{sha}',headers={'Authorization':f'Bearer {os.environ["GH_TOKEN"]}','Accept':'application/vnd.github+json','User-Agent':'github-actions'})
+          with urllib.request.urlopen(req) as r: data=json.load(r)
           s=base64.b64decode(data['content']).decode('utf-8')
-          pattern=r'\s*const animacaoBola\s*=\s*bola\.animate\(\s*\[.*?\]\s*,\s*\{.*?\}\s*\);\s*\n?\s*await animacaoBola\.finished\s*;'
+          # Remove somente a animacao da bolinha executada depois da contagem.
+          pattern=r'\s*const animacaoBola\s*=\s*bola\.animate\(\s*\[.*?\]\s*,\s*\{\s*duration\s*:\s*10000\s*,.*?\}\s*\);\s*\n?\s*await animacaoBola\.finished\s*;'
           s,n=re.subn(pattern,'',s,count=1,flags=re.S)
           if n != 1: raise SystemExit(f'Segunda animacao nao encontrada: {n}')
           if 'animacaoBola' in s: raise SystemExit('animacaoBola ainda existe')
           if 'spin-real' not in s: raise SystemExit('spin-real aprovado ausente')
-          # A baseline aprovada nao contem o som pesado customizado.
+          # Suaviza o som da palheta, sem alterar a logica do jogo.
+          s=s.replace('ganho.gain.exponentialRampToValueAtTime(.055,agora+.003)','ganho.gain.exponentialRampToValueAtTime(.025,agora+.003)')
+          s=s.replace('intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},145)','intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},190)')
           open('jogos/roleta2.html','w',encoding='utf-8').write(s)
-          print('CORRECAO OK')
+          print('OK: roda profissional preservada; segunda animacao removida; som suavizado')
           PY
           grep -q 'spin-real' jogos/roleta2.html
           ! grep -q 'animacaoBola' jogos/roleta2.html
-          ! grep -q 'somGiroOsc' jogos/roleta2.html
-
-      - name: Publicar Roleta 2
+          ! grep -q 'duration:10000' jogos/roleta2.html
+      - name: Publicar
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
