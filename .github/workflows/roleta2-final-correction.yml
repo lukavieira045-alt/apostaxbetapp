@@ -10,22 +10,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Restaurar a base visual aprovada
+      - name: Restaurar exatamente a base visual aprovada
         run: git checkout 1b4a507638556010561d5792739d96ab7964f443 -- jogos/roleta2.html
-      - name: Aplicar somente giro unico e som suave
+      - name: Corrigir somente o segundo giro
         shell: python
         run: |
           from pathlib import Path
           import re
           p=Path('jogos/roleta2.html')
           s=p.read_text(encoding='utf-8')
-          pattern=r'\s*iniciarSomRoleta\(\);\s*const voltas=10;.*?await animacaoBola\.finished;\s*\n?\s*bola\.style\.opacity="1";bola\.style\.visibility="visible";bola\.style\.display="block";\s*\n?\s*bola\.style\.transform=`translate\(-50%,-50%\) rotate\(\$\{grausFinais\}deg\) translateY\(-\$\{raioBola\}px\)`;\s*\n?\s*pararSomRoleta\(\);\s*\n?\s*await new Promise\(resolve=>setTimeout\(resolve,500\)\);'
-          replacement='''\n        // Um unico giro visual: roda e bola em sentidos opostos.\n        iniciarAudio();\n        iniciarSomRoleta();\n        roleta.classList.remove("spin-real");\n        bola.classList.remove("spin-real");\n        void roleta.offsetWidth;\n        roleta.classList.add("spin-real");\n        bola.classList.add("spin-real");\n        mensagemEl.textContent=" A roleta está girando...";\n        mensagemEl.className="mensagem";\n        await new Promise(resolve=>setTimeout(resolve,10000));\n        roleta.classList.remove("spin-real");\n        bola.classList.remove("spin-real");\n        pararSomRoleta();\n        await new Promise(resolve=>setTimeout(resolve,500));'''
+          pattern=r'\s*iniciarSomRoleta\(\);\s*const voltas=10;.*?await animacaoBola\.finished;'
+          replacement='''\n        iniciarAudio();\n        iniciarSomRoleta();\n        roleta.classList.remove("spin-real");\n        bola.classList.remove("spin-real");\n        void roleta.offsetWidth;\n        roleta.classList.add("spin-real");\n        bola.classList.add("spin-real");\n        mensagemEl.textContent=" A roleta está girando...";\n        mensagemEl.className="mensagem";\n        await new Promise(resolve=>setTimeout(resolve,7600));\n        roleta.classList.remove("spin-real");\n        bola.classList.remove("spin-real");\n        pararSomRoleta();'''
           s,n=re.subn(pattern,replacement,s,count=1,flags=re.S)
-          if n != 1: raise SystemExit(f'Bloco antigo nao encontrado: {n}')
+          if n != 1: raise SystemExit(f'Segundo giro nao encontrado: {n}')
           s=s.replace('intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},145)','intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},240)',1)
+          # O hook antigo iniciava um giro separado no clique; remover somente esse listener.
+          s=re.sub(r'<script>\(function\(\)\{function a\(\)\{document\.addEventListener\(\x27click\x27,.*?</script>\s*$', '', s, count=1, flags=re.S)
           p.write_text(s,encoding='utf-8')
-      - name: Validar somente a roleta
+      - name: Validar
         shell: bash
         run: |
           set -e
