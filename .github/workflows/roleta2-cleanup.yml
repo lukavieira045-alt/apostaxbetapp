@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Restaurar visual aprovado e corrigir somente giro e som
+      - name: Restaurar visual aprovado e remover somente segunda rodada
         shell: bash
         run: |
           git show 1b4a507638556010561d5792739d96ab7964f443:jogos/roleta2.html > jogos/roleta2.html
@@ -19,31 +19,20 @@ jobs:
           import re
           p=Path('jogos/roleta2.html')
           s=p.read_text(encoding='utf-8')
-          # Mantém o hook spin-real aprovado: ele faz roda e bola em sentidos opostos.
-          # Remove apenas a segunda animação da bolinha dentro de girarRoleta().
-          pattern=r'const animacaoBola=bola\.animate\(\[.*?\],\{duration:10000,easing:"cubic-bezier\(\.08,\.02,\.12,1\)",fill:"forwards"\}\);'
+          # Mantém exatamente o visual/giro físico aprovado, inclusive spin-real.
+          # Remove somente a segunda animação da bolinha iniciada após a contagem.
+          pattern=r'\s*const animacaoBola\s*=\s*bola\.animate\(\s*\[.*?\]\s*,\s*\{\s*duration\s*:\s*10000\s*,.*?\}\s*\);\s*\n?\s*await animacaoBola\.finished\s*;'
           s,n=re.subn(pattern,'',s,count=1,flags=re.S)
           if n != 1:
-              raise SystemExit(f'Nao encontrei a segunda animacao da bolinha: {n}')
-          # Troca somente o som contínuo pesado pelo som original mais suave.
-          marker='/* ApostaXBet — Roleta 2 Real Spin Sound v2 */'
-          if marker in s:
-              start=s.index(marker)
-              end=s.find('function pararSomRoleta()',start)
-              if end == -1:
-                  raise SystemExit('Bloco de som v2 incompleto')
-              close=s.find('}',end)
-              if close == -1:
-                  raise SystemExit('Funcao pararSomRoleta nao encontrada')
-              close += 1
-              original=('function iniciarSomRoleta(){iniciarAudio();if(somRoletaAtivo)return;somRoletaAtivo=true;somPalheta();intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},145)}\n'
-                        'function pararSomRoleta(){somRoletaAtivo=false;if(intervaloSomRoleta){clearInterval(intervaloSomRoleta);intervaloSomRoleta=null}}')
-              s=s[:start]+original+s[close:]
+              raise SystemExit(f'Segunda animacao nao encontrada: {n}')
+          # Garante que nao restou nenhuma animacao de 10s dessa rodada.
+          if re.search(r'animacaoBola|duration\s*:\s*10000',s):
+              raise SystemExit('Ainda existe animacao de 10 segundos')
+          # Aprovado deve continuar com o hook spin-real de roda/bola em sentidos opostos.
+          if 'spin-real' not in s:
+              raise SystemExit('Hook spin-real aprovado ausente')
           p.write_text(s,encoding='utf-8')
           PY
-          grep -q 'spin-real' jogos/roleta2.html || { echo 'spin-real aprovado nao encontrado'; exit 1; }
-          ! grep -q 'duration:10000' jogos/roleta2.html || { echo 'animacao de 10s ainda presente'; exit 1; }
-          ! grep -q 'somGiroOsc' jogos/roleta2.html || { echo 'som pesado ainda presente'; exit 1; }
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add jogos/roleta2.html
