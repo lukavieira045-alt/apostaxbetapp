@@ -1,0 +1,38 @@
+name: Roleta 2 final fix
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fixar giro unico e som suave
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('jogos/roleta2.html')
+          s=p.read_text(encoding='utf-8')
+          s=re.sub(r'iniciarSomRoleta\(\);\s*const voltas=10;.*?await animacaoBola\.finished;\s*', '', s, count=1, flags=re.S)
+          s=re.sub(r'function iniciarSomRoleta\(\).*?(?=\n\nconst roleta=)', 'function iniciarSomRoleta(){iniciarAudio();if(somRoletaAtivo)return;somRoletaAtivo=true;somPalheta();intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},240)}\nfunction pararSomRoleta(){somRoletaAtivo=false;if(intervaloSomRoleta){clearInterval(intervaloSomRoleta);intervaloSomRoleta=null}}', s, count=1, flags=re.S)
+          if 'id="ax-r2-final-spin"' not in s:
+              addon='''\n<style id="ax-r2-final-spin">@keyframes axR2Wheel{from{transform:rotate(0deg)}to{transform:rotate(2520deg)}}@keyframes axR2Ball{from{transform:translate(-50%,-50%) rotate(0deg) translateY(-188px)}to{transform:translate(-50%,-50%) rotate(-2880deg) translateY(-188px)}}.roleta.ax-r2-spin{animation:axR2Wheel 7.6s cubic-bezier(.15,.65,.20,1) both}.bola.ax-r2-spin{animation:axR2Ball 7.6s cubic-bezier(.08,.02,.12,1) both}</style>\n<script id="ax-r2-final-spin">window.iniciarGiroVisual=function(){const r=document.querySelector('.roleta'),b=document.querySelector('.bola');if(!r)return;r.classList.remove('ax-r2-spin');if(b)b.classList.remove('ax-r2-spin');void r.offsetWidth;r.classList.add('ax-r2-spin');if(b)b.classList.add('ax-r2-spin');try{iniciarSomRoleta()}catch(e){}setTimeout(()=>{try{pararSomRoleta()}catch(e){}r.classList.remove('ax-r2-spin');if(b)b.classList.remove('ax-r2-spin')},7600)};</script>\n'''
+              s=s.replace('</head>',addon+'</head>',1)
+          if 'iniciarGiroVisual();' not in s:
+              marker='const anguloFinal=indice*anguloPorNumero;'
+              if marker not in s: raise SystemExit('ponto do giro nao encontrado')
+              s=s.replace(marker,marker+'\n        iniciarGiroVisual();',1)
+          if 'animacaoBola' in s: raise SystemExit('animacaoBola ainda existe')
+          if 'const voltas=10' in s: raise SystemExit('segundo giro ainda existe')
+          p.write_text(s,encoding='utf-8')
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add jogos/roleta2.html
+          git diff --cached --quiet || git commit -m 'Corrigir Roleta 2 definitivamente'
+          git push
