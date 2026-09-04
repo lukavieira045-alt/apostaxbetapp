@@ -1,38 +1,52 @@
-name: Roleta 2 cleanup final
+name: Roleta 2 ajuste final
 on:
   push:
     branches: [main]
 permissions:
   contents: write
 jobs:
-  cleanup:
-    if: ${{ !contains(github.event.head_commit.message, 'Roleta 2 ajuste giro final') }}
+  ajuste:
+    if: ${{ !contains(github.event.head_commit.message, 'Roleta 2 giro e som final') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Ajustar somente giro e som da Roleta 2
+      - name: Restaurar visual aprovado e corrigir somente giro e som
+        shell: bash
         run: |
+          git show 1b4a507638556010561d5792739d96ab7964f443:jogos/roleta2.html > jogos/roleta2.html
           python - <<'PY'
           from pathlib import Path
           import re
-          p=Path('jogos/roleta2.html'); s=p.read_text(encoding='utf-8')
-          s=re.sub(r'<script>\s*\(function\(\)\{.*?closest\(\'\.btn-girar\'\).*?spin-real.*?</script>\s*','',s,flags=re.S)
-          s=re.sub(r'<script>\s*\(function\(\)\{.*?closest\(\'\.btn-girar\'\).*?spin-fisico.*?</script>\s*','',s,flags=re.S)
+          p=Path('jogos/roleta2.html')
+          s=p.read_text(encoding='utf-8')
+          # Mantém o hook spin-real aprovado: ele faz roda e bola em sentidos opostos.
+          # Remove apenas a segunda animação da bolinha dentro de girarRoleta().
+          pattern=r'const animacaoBola=bola\.animate\(\[.*?\],\{duration:10000,easing:"cubic-bezier\(\.08,\.02,\.12,1\)",fill:"forwards"\}\);'
+          s,n=re.subn(pattern,'',s,count=1,flags=re.S)
+          if n != 1:
+              raise SystemExit(f'Nao encontrei a segunda animacao da bolinha: {n}')
+          # Troca somente o som contínuo pesado pelo som original mais suave.
           marker='/* ApostaXBet — Roleta 2 Real Spin Sound v2 */'
           if marker in s:
-              start=s.find(marker); end=s.find('function pararSomRoleta()',start)
-              if end!=-1:
-                  close=s.find('}',end)
-                  if close!=-1:
-                      close+=1
-                      original='function iniciarSomRoleta(){iniciarAudio();if(somRoletaAtivo)return;somRoletaAtivo=true;somPalheta();intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},145)}\nfunction pararSomRoleta(){somRoletaAtivo=false;if(intervaloSomRoleta){clearInterval(intervaloSomRoleta);intervaloSomRoleta=null}}'
-                      s=s[:start]+original+s[close:]
-          s=s.replace('{duration:10000,easing:"cubic-bezier(.08,.02,.12,1)",fill:"forwards"}','{duration:7500,easing:"cubic-bezier(.08,.02,.12,1)",fill:"forwards"}')
+              start=s.index(marker)
+              end=s.find('function pararSomRoleta()',start)
+              if end == -1:
+                  raise SystemExit('Bloco de som v2 incompleto')
+              close=s.find('}',end)
+              if close == -1:
+                  raise SystemExit('Funcao pararSomRoleta nao encontrada')
+              close += 1
+              original=('function iniciarSomRoleta(){iniciarAudio();if(somRoletaAtivo)return;somRoletaAtivo=true;somPalheta();intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},145)}\n'
+                        'function pararSomRoleta(){somRoletaAtivo=false;if(intervaloSomRoleta){clearInterval(intervaloSomRoleta);intervaloSomRoleta=null}}')
+              s=s[:start]+original+s[close:]
           p.write_text(s,encoding='utf-8')
           PY
+          grep -q 'spin-real' jogos/roleta2.html || { echo 'spin-real aprovado nao encontrado'; exit 1; }
+          ! grep -q 'duration:10000' jogos/roleta2.html || { echo 'animacao de 10s ainda presente'; exit 1; }
+          ! grep -q 'somGiroOsc' jogos/roleta2.html || { echo 'som pesado ainda presente'; exit 1; }
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add jogos/roleta2.html
           git diff --cached --quiet && exit 0
-          git commit -m 'Roleta 2 ajuste giro final'
+          git commit -m 'Roleta 2 giro e som final'
           git push
