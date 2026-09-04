@@ -9,92 +9,47 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Corrigir Roleta 2 sem alterar estrutura
+      - name: Corrigir Roleta 2
         shell: bash
         run: |
           set -euo pipefail
+          git show 1b4a507638556010561d5792739d96ab7964f443:jogos/roleta2.html > jogos/roleta2.html
           python3 - <<'PY'
           from pathlib import Path
           import re
           p=Path('jogos/roleta2.html')
           s=p.read_text(encoding='utf-8')
-
-          # 1) Remove qualquer segunda animação antiga, sem tocar no sorteio/resultado.
-          s,n=re.subn(r'iniciarSomRoleta\(\);\s*const voltas=10;.*?await animacaoBola\.finished;\s*', '', s, count=1, flags=re.S)
-          if n != 1:
-              # O bloco pode já ter sido removido; nesse caso seguimos.
-              if 'animacaoBola' in s or 'const voltas=10' in s:
-                  raise SystemExit('Bloco antigo do segundo giro ainda existe')
-
-          # 2) Corrige a função de som quebrada que ficou com chaves sobrando.
-          s=re.sub(r'function iniciarSomRoleta\(\).*?function pararSomRoleta\(\).*?\n\nconst roleta=', '''function iniciarSomRoleta(){iniciarAudio();if(somRoletaAtivo)return;somRoletaAtivo=true;somPalheta();intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},240)}
-function pararSomRoleta(){somRoletaAtivo=false;if(intervaloSomRoleta){clearInterval(intervaloSomRoleta);intervaloSomRoleta=null}}
-
-const roleta=''', s, count=1, flags=re.S)
-
-          # 3) Mantém a roda profissional aprovada e dá animação física somente ao giro principal.
-          css='''
-<style id="ax-roleta2-spin">
-@keyframes axWheelSpin{from{transform:rotate(0deg)}to{transform:rotate(2520deg)}}
-@keyframes axBallSpin{from{transform:translate(-50%,-50%) rotate(0deg) translateY(var(--ax-raio-bola, -188px))}to{transform:translate(-50%,-50%) rotate(-2880deg) translateY(var(--ax-raio-bola, -188px))}}
-.roleta.ax-spin{animation:axWheelSpin 7.6s cubic-bezier(.15,.65,.20,1) both}
-.bola.ax-spin{animation:axBallSpin 7.6s cubic-bezier(.08,.02,.12,1) both}
-@media(max-width:650px){.bola.ax-spin{--ax-raio-bola:-125px}}
-</style>
-<script id="ax-roleta2-spin-js">
-(function(){
-  window.iniciarGiroVisual=function(){
-    var r=document.querySelector('.roleta'),b=document.querySelector('.bola');
-    if(!r)return;
-    r.classList.remove('ax-spin'); if(b)b.classList.remove('ax-spin');
-    if(b)b.style.setProperty('--ax-raio-bola',window.innerWidth<=650?'-125px':'-188px');
-    void r.offsetWidth;
-    r.classList.add('ax-spin'); if(b)b.classList.add('ax-spin');
-    try{iniciarSomRoleta()}catch(e){}
-    setTimeout(function(){try{pararSomRoleta()}catch(e){};r.classList.remove('ax-spin');if(b)b.classList.remove('ax-spin')},7600);
-  };
-})();
-</script>
-'''
-          if 'id="ax-roleta2-spin"' not in s:
+          # Remove somente a segunda animação da bola. Sorteio, aposta e resultado ficam intactos.
+          s=re.sub(r'\s*iniciarSomRoleta\(\);\s*const voltas=10;.*?await animacaoBola\.finished;\s*', '\n', s, count=1, flags=re.S)
+          if 'animacaoBola' in s or 'const voltas=10' in s:
+              raise SystemExit('Ainda existe bloco do segundo giro')
+          # Som de giro mais leve, usando o mesmo som já existente.
+          s=re.sub(r'function iniciarSomRoleta\(\)\s*\{.*?\}\s*function pararSomRoleta\(\)\s*\{.*?\}', '''function iniciarSomRoleta(){iniciarAudio();if(somRoletaAtivo)return;somRoletaAtivo=true;somPalheta();intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},240)}
+          function pararSomRoleta(){somRoletaAtivo=false;if(intervaloSomRoleta){clearInterval(intervaloSomRoleta);intervaloSomRoleta=null}}''', s, count=1, flags=re.S)
+          css='''\n<style id="ax-r2-single-spin">\n@keyframes axR2Wheel{from{transform:rotate(0deg)}to{transform:rotate(2520deg)}}\n@keyframes axR2Ball{from{transform:translate(-50%,-50%) rotate(0deg) translateY(-188px)}to{transform:translate(-50%,-50%) rotate(-2880deg) translateY(-188px)}}\n@keyframes axR2BallMobile{from{transform:translate(-50%,-50%) rotate(0deg) translateY(-125px)}to{transform:translate(-50%,-50%) rotate(-2880deg) translateY(-125px)}}\n.roleta.ax-r2-spin{animation:axR2Wheel 7.6s cubic-bezier(.15,.65,.20,1) both}\n.bola.ax-r2-spin{animation:axR2Ball 7.6s cubic-bezier(.08,.02,.12,1) both}\n@media(max-width:650px){.bola.ax-r2-spin{animation-name:axR2BallMobile}}\n</style>\n'''
+          if 'id="ax-r2-single-spin"' not in s:
               s=s.replace('</head>',css+'</head>',1)
-
-          # 4) Inicia o único giro visual depois da contagem e do sorteio, não durante os 10s.
-          call='        iniciarGiroVisual();\n'
+          js='''\n<script id="ax-r2-single-spin-js">\n(function(){\n  window.iniciarGiroVisual=function(){\n    var r=document.querySelector('.roleta'),b=document.querySelector('.bola');\n    if(!r)return;\n    r.classList.remove('ax-r2-spin');\n    if(b)b.classList.remove('ax-r2-spin');\n    void r.offsetWidth;\n    r.classList.add('ax-r2-spin');\n    if(b)b.classList.add('ax-r2-spin');\n    try{iniciarSomRoleta()}catch(e){}\n    setTimeout(function(){\n      try{pararSomRoleta()}catch(e){}\n      r.classList.remove('ax-r2-spin');\n      if(b)b.classList.remove('ax-r2-spin');\n    },7600);\n  };\n})();\n</script>\n'''
+          if 'id="ax-r2-single-spin-js"' not in s:
+              s=s.replace('</body>',js+'</body>',1)
+          marker='        const anguloFinal=indice*anguloPorNumero;\n'
           if 'iniciarGiroVisual();' not in s:
-              marker='        const anguloFinal=indice*anguloPorNumero;\n'
-              if marker not in s: raise SystemExit('Ponto do giro principal não encontrado')
-              s=s.replace(marker,marker+call,1)
-
-          # 5) Garante que não sobrou o código da segunda rodada e preserva o hook visual.
-          if 'animacaoBola' in s: raise SystemExit('animacaoBola ainda existe')
-          if 'const voltas=10' in s: raise SystemExit('segundo giro ainda existe')
-          if 'iniciarGiroVisual();' not in s: raise SystemExit('giro visual principal ausente')
-          if '.roleta.ax-spin' not in s: raise SystemExit('CSS do giro ausente')
+              if marker not in s: raise SystemExit('Ponto do giro não encontrado')
+              s=s.replace(marker,marker+'        iniciarGiroVisual();\n',1)
+          if s.count('iniciarGiroVisual();') != 1: raise SystemExit('Quantidade incorreta de giros visuais')
+          if 'animacaoBola' in s or 'const voltas=10' in s: raise SystemExit('Segundo giro presente')
           p.write_text(s,encoding='utf-8')
           PY
-          grep -q 'iniciarGiroVisual' jogos/roleta2.html
+          grep -q 'id="ax-r2-single-spin"' jogos/roleta2.html
+          grep -q 'iniciarGiroVisual();' jogos/roleta2.html
           ! grep -q 'animacaoBola' jogos/roleta2.html
           ! grep -q 'const voltas=10' jogos/roleta2.html
-      - name: Adicionar efeito somente no final dos jogos
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-          p=Path('index.html'); s=p.read_text(encoding='utf-8')
-          marker='<!-- APOSTAXBET DETALHE FINAL JOGOS V1 -->'
-          if marker in s: raise SystemExit(0)
-          block='''<!-- APOSTAXBET DETALHE FINAL JOGOS V1 --><style>.ax-final-jogos{margin:24px 15px 18px;padding:18px 14px 15px;border:1px solid rgba(250,204,21,.28);border-radius:16px;background:linear-gradient(180deg,rgba(20,90,56,.72),rgba(7,42,26,.9));text-align:center}.ax-final-jogos h2{color:#facc15;font-size:16px;font-weight:900;margin-bottom:5px}.ax-final-jogos p{color:#bbf7d0;font-size:11px;margin-bottom:13px}.ax-final-itens{display:flex;justify-content:center;gap:8px}.ax-final-item{flex:1;padding:9px 5px;border-radius:11px;background:rgba(0,0,0,.18)}.ax-final-item b{display:block;color:#fff;font-size:10px}.ax-final-item span{color:#86efac;font-size:9px}</style><div class="ax-final-jogos"><h2>✨ SUA EXPERIÊNCIA APOSTAXBET</h2><p>Explore os jogos e encontre seu próximo favorito</p><div class="ax-final-itens"><div class="ax-final-item">🎰<b>JOGOS</b><span>Vários estilos</span></div><div class="ax-final-item">⚡<b>RÁPIDOS</b><span>Entre e jogue</span></div><div class="ax-final-item">💎<b>DESTAQUES</b><span>Confira as novidades</span></div></div></div>'''
-          js='<script>document.addEventListener("DOMContentLoaded",()=>{const a=document.getElementById("areaJogos");if(!a)return;const w=document.createElement("div");w.id="ax-final-jogos-injected";w.innerHTML=`'+block+'`;a.appendChild(w)});</script>'
-          s=re.sub(r'<!-- APOSTAXBET DETALHES AREA JOGOS V1 -->.*?(?=</body>)','',s,flags=re.S)
-          s=s.replace('</body>',js+'\n</body>',1)
-          p.write_text(s,encoding='utf-8')
-          PY
-      - name: Publicar
+      - name: Publicar Roleta 2
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html jogos/roleta2.html
-          git diff --cached --quiet || git commit -m 'Corrigir Roleta 2 giro unico e som suave'
+          git add jogos/roleta2.html
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Roleta 2: giro unico e som suave'
           git push
