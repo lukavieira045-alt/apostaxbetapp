@@ -1,0 +1,44 @@
+name: Limpar segunda rodada Roleta 2
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remover segunda animacao e audio continuo
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('jogos/roleta2.html')
+          s=p.read_text(encoding='utf-8')
+          marker='ApostaXBet — Roleta 2 SINGLE SPIN CLEANUP'
+          if marker in s:
+              raise SystemExit(0)
+          # Disable any later duplicate physical-spin animation blocks.
+          css='''<style>\n/* ApostaXBet — Roleta 2 SINGLE SPIN CLEANUP */\n/* Keep the existing first roulette/ball spin only. Prevent duplicate animation hooks. */\n.roleta.spin-fisico,.bola.spin-fisico{animation:none!important}\n.roleta.spin-real,.bola.spin-real{animation:none!important}\n</style>'''
+          s=s.replace('</head>',css+'\n</head>',1)
+          # Remove the extra click listeners that add the second spin classes.
+          import re
+          s=re.sub(r'<script>\s*\(function\(\)\{function arm\(\)\{document\.addEventListener\([\s\S]*?\}\)\(\);\s*</script>', '', s, count=20)
+          # Stop continuous roulette sound without changing stake/result logic.
+          s=s.replace('somRoletaAtivo=true;somPalheta();intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},145)', 'somRoletaAtivo=false')
+          s=s.replace('somRoletaAtivo=true;try{somGiroOsc=', 'somRoletaAtivo=false;try{somGiroOsc=')
+          p.write_text(s,encoding='utf-8')
+          PY
+          grep -q 'SINGLE SPIN CLEANUP' jogos/roleta2.html
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add jogos/roleta2.html
+          git commit -m 'Roleta 2: manter apenas uma rodada' || true
+          git push || true
+      - name: Remover workflow temporario
+        shell: bash
+        run: |
+          git rm .github/workflows/limpar-roleta2-rodada.yml || true
+          git commit -m 'Remove ajuste temporario da Roleta 2' || true
+          git push || true
