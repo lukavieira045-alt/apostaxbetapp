@@ -120,6 +120,12 @@ body::before{background:radial-gradient(circle at 50% 30%,rgba(255,214,92,.08),t
 
 </style>
 <script src="performance.js" defer></script>
+<style>
+/* ApostaXBet — Roleta 2 SINGLE SPIN CLEANUP */
+/* Keep the existing first roulette/ball spin only. Prevent duplicate animation hooks. */
+.roleta.spin-fisico,.bola.spin-fisico{animation:none!important}
+.roleta.spin-real,.bola.spin-real{animation:none!important}
+</style>
 </head>
 <body>
 <header class="topo">
@@ -221,7 +227,7 @@ let intervaloSomRoleta=null;
 function iniciarAudio(){try{if(!audioContext){audioContext=new(window.AudioContext||window.webkitAudioContext)()}if(audioContext.state==="suspended")audioContext.resume()}catch(e){}}
 function somFicha(){iniciarAudio();if(!audioContext)return;try{const agora=audioContext.currentTime;const osc=audioContext.createOscillator();const ganho=audioContext.createGain();osc.type="triangle";osc.frequency.setValueAtTime(850,agora);osc.frequency.exponentialRampToValueAtTime(1250,agora+.045);ganho.gain.setValueAtTime(.0001,agora);ganho.gain.exponentialRampToValueAtTime(.20,agora+.005);ganho.gain.exponentialRampToValueAtTime(.0001,agora+.10);osc.connect(ganho);ganho.connect(audioContext.destination);osc.start(agora);osc.stop(agora+.11)}catch(e){}}
 function somPalheta(){iniciarAudio();if(!audioContext)return;try{const agora=audioContext.currentTime;const osc=audioContext.createOscillator();const ganho=audioContext.createGain();osc.type="square";osc.frequency.setValueAtTime(900+Math.random()*250,agora);osc.frequency.exponentialRampToValueAtTime(480,agora+.045);ganho.gain.setValueAtTime(.0001,agora);ganho.gain.exponentialRampToValueAtTime(.055,agora+.003);ganho.gain.exponentialRampToValueAtTime(.0001,agora+.065);osc.connect(ganho);ganho.connect(audioContext.destination);osc.start(agora);osc.stop(agora+.07)}catch(e){}}
-function iniciarSomRoleta(){iniciarAudio();if(somRoletaAtivo)return;somRoletaAtivo=true;somPalheta();intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},145)}
+function iniciarSomRoleta(){iniciarAudio();if(somRoletaAtivo)return;somRoletaAtivo=false}
 function pararSomRoleta(){somRoletaAtivo=false;if(intervaloSomRoleta){clearInterval(intervaloSomRoleta);intervaloSomRoleta=null}}try{if(somGiroGain&&audioContext)somGiroGain.gain.exponentialRampToValueAtTime(.0001,audioContext.currentTime+.22);if(somGiroOsc){setTimeout(()=>{try{somGiroOsc.stop()}catch(e){}somGiroOsc=null},260)}}catch(e){}}
 
 const roleta=document.getElementById("roleta");
