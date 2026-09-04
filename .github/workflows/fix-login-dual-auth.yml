@@ -16,84 +16,45 @@ jobs:
           from pathlib import Path
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
-
           def replace_func(text,name,new):
               start=text.find(f'async function {name}(event){{')
               if start<0: raise SystemExit(f'{name} não encontrada')
-              brace=text.find('{',start)
-              depth=0
+              brace=text.find('{',start); depth=0
               for i in range(brace,len(text)):
                   if text[i]=='{': depth+=1
                   elif text[i]=='}':
                       depth-=1
-                      if depth==0: return text[:start]+new+text[i+1:]
+                      if depth==0:return text[:start]+new+text[i+1:]
               raise SystemExit(f'{name} incompleta')
-
-          cadastrar='''async function cadastrar(event){
-              event.preventDefault();
-              const nome=document.getElementById("nomeCadastro").value.trim();
-              const telefoneDigitado=document.getElementById("telefoneCadastro").value.trim();
-              const senha=document.getElementById("senhaCadastro").value;
-              const confirmar=document.getElementById("confirmarSenha").value;
-              const botao=document.getElementById("btnCadastro");
-              if(senha!==confirmar){mensagem("mensagemCadastro","As senhas não são iguais.","erro");return;}
-              if(senha.length<6){mensagem("mensagemCadastro","A senha precisa ter pelo menos 6 caracteres.","erro");return;}
-              const numeros=telefoneDigitado.replace(/\\D/g,"");
-              const telefone=telefoneDigitado.startsWith("+")?"+"+numeros:((numeros.length===10||numeros.length===11)?"+55"+numeros:"");
-              if(!telefone){mensagem("mensagemCadastro","Digite um celular válido com DDD.","erro");return;}
-              botao.disabled=true;botao.innerText="CRIANDO CONTA...";
-              try{
-                /* Phone Auth do Supabase exige SMS. O cadastro continua somente com celular usando um identificador técnico interno. */
-                const emailTecnico=`u${telefone.replace(/\\D/g,"")}@phone.apostaxbet.local`;
-                const {data,error}=await clienteSupabase().auth.signUp({email:emailTecnico,password:senha,options:{data:{nome,full_name:nome,telefone,phone:telefone,cadastro_por:"celular"}}});
-                if(error)throw error;
-                if(data?.session){
-                  sessionStorage.removeItem("apostaxbet_logout");
-                  mensagem("mensagemCadastro","Conta criada com sucesso! Entrando...","sucesso");
-                  setTimeout(()=>mostrarSite(data.session.user),500);
-                }else{
-                  const tentativa=await clienteSupabase().auth.signInWithPassword({email:emailTecnico,password:senha});
-                  if(tentativa.error)throw tentativa.error;
-                  sessionStorage.removeItem("apostaxbet_logout");
-                  mensagem("mensagemCadastro","Conta criada com sucesso! Entrando...","sucesso");
-                  setTimeout(()=>mostrarSite(tentativa.data.user),500);
-                }
-              }catch(error){mensagem("mensagemCadastro",traduzirErro(error?.message||error),"erro");}
-              botao.disabled=false;botao.innerText="CRIAR CONTA";
-          }'''
-
-          entrar='''async function entrar(event){
-              event.preventDefault();
-              const identificador=document.getElementById("telefoneLogin").value.trim();
-              const senha=document.getElementById("senhaLogin").value;
-              const botao=document.getElementById("btnLogin");
-              let credenciais;
-              if(identificador.includes("@")){
-                  credenciais={email:identificador,password:senha};
-              }else{
-                  const numeros=identificador.replace(/\\D/g,"");
-                  const telefone=identificador.startsWith("+")?"+"+numeros:((numeros.length===10||numeros.length===11)?"+55"+numeros:"");
-                  if(!telefone){mensagem("mensagemLogin","Digite um e-mail ou celular válido com DDD.","erro");return;}
-                  credenciais={email:`u${telefone.replace(/\\D/g,"")}@phone.apostaxbet.local`,password:senha};
-              }
-              botao.disabled=true;botao.innerText="ENTRANDO...";
-              try{
-                const {data,error}=await clienteSupabase().auth.signInWithPassword(credenciais);
-                if(error)throw error;
-                sessionStorage.removeItem("apostaxbet_logout");
-                mensagem("mensagemLogin","Login realizado! Entrando...","sucesso");
-                setTimeout(()=>mostrarSite(data.user),500);
-              }catch(error){mensagem("mensagemLogin",traduzirErro(error?.message||error),"erro");}
-              botao.disabled=false;botao.innerText="ENTRAR";
-          }'''
-
-          s=replace_func(s,'cadastrar',cadastrar)
-          s=replace_func(s,'entrar',entrar)
+          cadastrar='''async function cadastrar(event){event.preventDefault();const nome=document.getElementById("nomeCadastro").value.trim();const telefoneDigitado=document.getElementById("telefoneCadastro").value.trim();const senha=document.getElementById("senhaCadastro").value;const confirmar=document.getElementById("confirmarSenha").value;const botao=document.getElementById("btnCadastro");if(senha!==confirmar){mensagem("mensagemCadastro","As senhas não são iguais.","erro");return;}if(senha.length<6){mensagem("mensagemCadastro","A senha precisa ter pelo menos 6 caracteres.","erro");return;}const numeros=telefoneDigitado.replace(/\\D/g,"");const telefone=telefoneDigitado.startsWith("+")?"+"+numeros:((numeros.length===10||numeros.length===11)?"+55"+numeros:"");if(!telefone){mensagem("mensagemCadastro","Digite um celular válido com DDD.","erro");return;}botao.disabled=true;botao.innerText="CRIANDO CONTA...";try{const emailTecnico=`u${telefone.replace(/\\D/g,"")}@phone.apostaxbet.local`;const {data,error}=await clienteSupabase().auth.signUp({email:emailTecnico,password:senha,options:{data:{nome,full_name:nome,telefone,phone:telefone,cadastro_por:"celular"}}});if(error)throw error;if(data?.session){sessionStorage.removeItem("apostaxbet_logout");mensagem("mensagemCadastro","Conta criada com sucesso! Entrando...","sucesso");setTimeout(()=>mostrarSite(data.session.user),500);}else{const tentativa=await clienteSupabase().auth.signInWithPassword({email:emailTecnico,password:senha});if(tentativa.error)throw tentativa.error;sessionStorage.removeItem("apostaxbet_logout");mensagem("mensagemCadastro","Conta criada com sucesso! Entrando...","sucesso");setTimeout(()=>mostrarSite(tentativa.data.user),500);}}catch(error){mensagem("mensagemCadastro",traduzirErro(error?.message||error),"erro");}botao.disabled=false;botao.innerText="CRIAR CONTA";}'''
+          entrar='''async function entrar(event){event.preventDefault();const identificador=document.getElementById("telefoneLogin").value.trim();const senha=document.getElementById("senhaLogin").value;const botao=document.getElementById("btnLogin");let credenciais;if(identificador.includes("@")){credenciais={email:identificador,password:senha};}else{const numeros=identificador.replace(/\\D/g,"");const telefone=identificador.startsWith("+")?"+"+numeros:((numeros.length===10||numeros.length===11)?"+55"+numeros:"");if(!telefone){mensagem("mensagemLogin","Digite um e-mail ou celular válido com DDD.","erro");return;}credenciais={email:`u${telefone.replace(/\\D/g,"")}@phone.apostaxbet.local`,password:senha};}botao.disabled=true;botao.innerText="ENTRANDO...";try{const {data,error}=await clienteSupabase().auth.signInWithPassword(credenciais);if(error)throw error;sessionStorage.removeItem("apostaxbet_logout");mensagem("mensagemLogin","Login realizado! Entrando...","sucesso");setTimeout(()=>mostrarSite(data.user),500);}catch(error){mensagem("mensagemLogin",traduzirErro(error?.message||error),"erro");}botao.disabled=false;botao.innerText="ENTRAR";}'''
+          s=replace_func(s,'cadastrar',cadastrar);s=replace_func(s,'entrar',entrar)
           marker='<label>E-mail ou celular</label>\n<input id="telefoneLogin" type="text" inputmode="email" autocomplete="username" placeholder="Digite seu e-mail ou celular" required>'
           if marker not in s:
               import re
               s,n=re.subn(r'<label>Celular</label>\s*<input id="telefoneLogin"[^>]*>',marker,s,count=1)
-              if not n: raise SystemExit('campo de login não encontrado')
+              if not n:raise SystemExit('campo de login não encontrado')
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Remove extra Roleta 2 round and extra spin music
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('jogos/roleta2.html');s=p.read_text(encoding='utf-8')
+          s=re.sub(r'<style>\s*/\* ApostaXBet — Roleta 2 FINAL REAL CASINO WHEEL \*/.*?</style>\s*','',s,flags=re.S)
+          s=re.sub(r'<style>\s*/\* ApostaXBet — Roleta 2 Physical Opposite Spin v1 \*/.*?</style>\s*','',s,flags=re.S)
+          s=re.sub(r'<script>\s*\(function\(\)\{function arm\(\).*?btn-girar.*?spin-fisico.*?</script>\s*','',s,flags=re.S)
+          s=re.sub(r'<script>\s*\(function\(\)\{function arm\(\).*?btn-girar.*?spin-real.*?</script>\s*','',s,flags=re.S)
+          marker='/* ApostaXBet — Roleta 2 Real Spin Sound v2 */'
+          if marker in s:
+              start=s.find(marker);end=s.find('function pararSomRoleta()',start)
+              if end!=-1:
+                  close=s.find('}',end)
+                  if close!=-1:
+                      close+=1
+                      original='function iniciarSomRoleta(){iniciarAudio();if(somRoletaAtivo)return;somRoletaAtivo=true;somPalheta();intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},145)}\nfunction pararSomRoleta(){somRoletaAtivo=false;if(intervaloSomRoleta){clearInterval(intervaloSomRoleta);intervaloSomRoleta=null}}'
+                      s=s[:start]+original+s[close:]
           p.write_text(s,encoding='utf-8')
           PY
       - name: Verify authentication patch
@@ -102,12 +63,11 @@ jobs:
           grep -q 'phone.apostaxbet.local' index.html
           grep -q 'cadastro_por:"celular"' index.html
           grep -q 'auth.signInWithPassword(credenciais)' index.html
-          echo 'PHONE LOGIN PATCH VERIFIED'
       - name: Commit fix
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add index.html
+          git add index.html jogos/roleta2.html
           git diff --cached --quiet && echo 'NO CHANGES' && exit 0
           git commit -m "PHONE_AUTH_DONE: cadastro e login por celular"
           for i in 1 2 3 4 5; do
