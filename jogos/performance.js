@@ -5,13 +5,15 @@
   var mobile = window.matchMedia && window.matchMedia('(max-width: 700px)').matches;
   var android = /Android|iPhone|iPad|iPod|Mobile/i.test(nav.userAgent || '');
   var slowConnection = !!connection.saveData || /^(slow-2g|2g)$/i.test(connection.effectiveType || '');
-  var isRoleta = /\/roleta\.html$/i.test(location.pathname);
+  var path = location.pathname || '';
+  var isRoleta = /\/roleta\.html$/i.test(path);
+  var isRoletaCassino = /\/roleta-cassino\.html$/i.test(path);
 
-  if (isRoleta) {
+  if (isRoleta || isRoletaCassino) {
     document.documentElement.classList.add('ax-premium-layer');
     var premiumLink = document.createElement('link');
     premiumLink.rel = 'stylesheet';
-    premiumLink.href = 'roleta-premium.css?v=1';
+    premiumLink.href = isRoletaCassino ? 'roleta-cassino-premium.css?v=1' : 'roleta-premium.css?v=1';
     document.head.appendChild(premiumLink);
   }
 
@@ -37,12 +39,12 @@
   `;
   (document.head || document.documentElement).appendChild(css);
 
-  /* A roleta mantém seus efeitos visuais completos mesmo em celular/2G. */
-  if (!isRoleta && (mobile || android || slowConnection)) {
+  /* As duas roletas mantêm seus efeitos visuais completos mesmo em celular/2G. */
+  if (!isRoleta && !isRoletaCassino && (mobile || android || slowConnection)) {
     document.documentElement.classList.add('ax-low-performance');
   }
 
-  if (/tesouro-pirata\.html$/i.test(location.pathname)) {
+  if (/tesouro-pirata\.html$/i.test(path)) {
     var removeBadSpinMode = function () {
       var game = document.querySelector('.casino');
       if (game && game.classList.contains('perf-spin')) game.classList.remove('perf-spin');
