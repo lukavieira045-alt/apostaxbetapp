@@ -15,23 +15,65 @@ jobs:
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
+          import re
           p=Path('jogos/roleta2.html')
           s=p.read_text(encoding='utf-8')
-          start=s.find('        iniciarSomRoleta();\n        const voltas=10;')
-          end=s.find('        await finalizarRodada(numeroFinal);', start)
-          if start < 0 or end < 0:
-              raise SystemExit('Bloco do segundo giro não encontrado')
-          replacement='        pararSomRoleta();\n        await new Promise(resolve=>setTimeout(resolve,500));\n        \n'
-          s=s[:start]+replacement+s[end:]
-          hook="""\n<script>(function(){function a(){document.addEventListener('click',function(e){if(!e.target.closest('.btn-girar'))return;var r=document.querySelector('.roleta'),b=document.querySelector('.bola');if(!r)return;r.classList.remove('spin-real');b&&b.classList.remove('spin-real');void r.offsetWidth;r.classList.add('spin-real');b&&b.classList.add('spin-real');try{if(window.audioContext&&window.audioContext.state==='suspended')window.audioContext.resume()}catch(_){};var t=setInterval(function(){try{if(typeof somPalheta==='function')somPalheta()}catch(_){}},240);setTimeout(function(){clearInterval(t);r.classList.remove('spin-real');b&&b.classList.remove('spin-real')},7600)},true)}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',a);else a()})();</script>\n"""
-          import re
-          s=re.sub(r'<script>\(function\(\)\{function a\(\)\{document\.addEventListener\(\'click\',function\(e\)\{if\(!e\.target\.closest\(\'.btn-girar\'\)\).*?</script>\s*</body>',hook+'</body>',s,count=1,flags=re.S)
+
+          # 1) Remove qualquer segunda animação antiga, sem tocar no sorteio/resultado.
+          s,n=re.subn(r'iniciarSomRoleta\(\);\s*const voltas=10;.*?await animacaoBola\.finished;\s*', '', s, count=1, flags=re.S)
+          if n != 1:
+              # O bloco pode já ter sido removido; nesse caso seguimos.
+              if 'animacaoBola' in s or 'const voltas=10' in s:
+                  raise SystemExit('Bloco antigo do segundo giro ainda existe')
+
+          # 2) Corrige a função de som quebrada que ficou com chaves sobrando.
+          s=re.sub(r'function iniciarSomRoleta\(\).*?function pararSomRoleta\(\).*?\n\nconst roleta=', '''function iniciarSomRoleta(){iniciarAudio();if(somRoletaAtivo)return;somRoletaAtivo=true;somPalheta();intervaloSomRoleta=setInterval(()=>{if(somRoletaAtivo)somPalheta()},240)}
+function pararSomRoleta(){somRoletaAtivo=false;if(intervaloSomRoleta){clearInterval(intervaloSomRoleta);intervaloSomRoleta=null}}
+
+const roleta=''', s, count=1, flags=re.S)
+
+          # 3) Mantém a roda profissional aprovada e dá animação física somente ao giro principal.
+          css='''
+<style id="ax-roleta2-spin">
+@keyframes axWheelSpin{from{transform:rotate(0deg)}to{transform:rotate(2520deg)}}
+@keyframes axBallSpin{from{transform:translate(-50%,-50%) rotate(0deg) translateY(var(--ax-raio-bola, -188px))}to{transform:translate(-50%,-50%) rotate(-2880deg) translateY(var(--ax-raio-bola, -188px))}}
+.roleta.ax-spin{animation:axWheelSpin 7.6s cubic-bezier(.15,.65,.20,1) both}
+.bola.ax-spin{animation:axBallSpin 7.6s cubic-bezier(.08,.02,.12,1) both}
+@media(max-width:650px){.bola.ax-spin{--ax-raio-bola:-125px}}
+</style>
+<script id="ax-roleta2-spin-js">
+(function(){
+  window.iniciarGiroVisual=function(){
+    var r=document.querySelector('.roleta'),b=document.querySelector('.bola');
+    if(!r)return;
+    r.classList.remove('ax-spin'); if(b)b.classList.remove('ax-spin');
+    if(b)b.style.setProperty('--ax-raio-bola',window.innerWidth<=650?'-125px':'-188px');
+    void r.offsetWidth;
+    r.classList.add('ax-spin'); if(b)b.classList.add('ax-spin');
+    try{iniciarSomRoleta()}catch(e){}
+    setTimeout(function(){try{pararSomRoleta()}catch(e){};r.classList.remove('ax-spin');if(b)b.classList.remove('ax-spin')},7600);
+  };
+})();
+</script>
+'''
+          if 'id="ax-roleta2-spin"' not in s:
+              s=s.replace('</head>',css+'</head>',1)
+
+          # 4) Inicia o único giro visual depois da contagem e do sorteio, não durante os 10s.
+          call='        iniciarGiroVisual();\n'
+          if 'iniciarGiroVisual();' not in s:
+              marker='        const anguloFinal=indice*anguloPorNumero;\n'
+              if marker not in s: raise SystemExit('Ponto do giro principal não encontrado')
+              s=s.replace(marker,marker+call,1)
+
+          # 5) Garante que não sobrou o código da segunda rodada e preserva o hook visual.
           if 'animacaoBola' in s: raise SystemExit('animacaoBola ainda existe')
           if 'const voltas=10' in s: raise SystemExit('segundo giro ainda existe')
-          if 'spin-real' not in s: raise SystemExit('spin-real ausente')
+          if 'iniciarGiroVisual();' not in s: raise SystemExit('giro visual principal ausente')
+          if '.roleta.ax-spin' not in s: raise SystemExit('CSS do giro ausente')
           p.write_text(s,encoding='utf-8')
           PY
-          grep -q 'spin-real' jogos/roleta2.html
+          grep -q 'iniciarGiroVisual' jogos/roleta2.html
           ! grep -q 'animacaoBola' jogos/roleta2.html
           ! grep -q 'const voltas=10' jogos/roleta2.html
       - name: Adicionar efeito somente no final dos jogos
@@ -54,5 +96,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html jogos/roleta2.html
-          git diff --cached --quiet || git commit -m 'Corrigir Roleta 2 segunda rodada'
+          git diff --cached --quiet || git commit -m 'Corrigir Roleta 2 giro unico e som suave'
           git push
