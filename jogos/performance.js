@@ -21,15 +21,15 @@
           getComputedStyle(bola).getPropertyValue('--raio-bola')
         ) || 220);
 
-        /*
-         * A roleta é o elemento pai da bola.
-         * Portanto, quando a roda termina girada para o resultado,
-         * a bola precisa ficar no ângulo oposto/local correspondente.
-         * Nunca força 0°: usa o resultado sorteado pela própria roleta.
-         */
+        /* A roleta é o elemento pai da bola. */
         bola.style.transform =
           `translate(-50%,-50%) rotate(${anguloFinal}deg) translateY(-${raio}px)`;
       }, 60);
     });
+
+    /* Remove somente o ponteiro amarelo da Roleta 2. */
+    const estilo = document.createElement('style');
+    estilo.textContent = '.roleta-area::before{display:none!important}';
+    document.head.appendChild(estilo);
   });
 })();
