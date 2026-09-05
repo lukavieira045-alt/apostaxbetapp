@@ -1,0 +1,174 @@
+name: Trocar visual da Roleta 2
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  trocar:
+    if: github.event.head_commit.message != 'Remover workflow temporario da Roleta 2 visual'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Substituir somente a roleta visual
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('jogos/roleta2.html')
+          s=p.read_text(encoding='utf-8')
+
+          # Troca o desenho plano/prototipo por uma roda com acabamento 3D:
+          # aro de madeira, anel metalico, trilha de bolsos, divisores e prato interno.
+          s=re.sub(r'\.roleta\{.*?\n\}\n\n\.roleta::before\{', '''.roleta{
+          width:min(560px,78vw);
+          aspect-ratio:1;
+          border-radius:50%;
+          position:relative;
+          background:
+            radial-gradient(circle at 50% 48%,#1b0d03 0 23%,transparent 23.5%),
+            radial-gradient(circle at 50% 50%,#8a561f 0 28%,#d6a348 28.8%,#70400e 31%,#2c1706 33%,#c48a2d 34%,#4b2708 36%,#170a02 37% 100%);
+          border:18px solid #3b1d09;
+          box-shadow:
+            0 0 0 3px #d8aa51,
+            0 0 0 8px #6e3c10,
+            0 0 0 11px rgba(244,193,83,.55),
+            0 18px 38px rgba(0,0,0,.9),
+            inset 0 8px 14px rgba(255,230,160,.25),
+            inset 0 -18px 28px rgba(0,0,0,.85);
+          overflow:visible;
+          transition:none;
+          transform:none;
+          will-change:transform;
+          isolation:isolate
+          }
+
+          .roleta::before{''', s, count=1, flags=re.S)
+
+          s=re.sub(r'\.roleta::before\{.*?\n\}\n\n\.roleta::after\{', '''.roleta::before{
+          content:"";
+          position:absolute;
+          inset:20px;
+          border-radius:50%;
+          background:
+            radial-gradient(circle at 50% 50%,transparent 0 34%,rgba(0,0,0,.72) 34.2% 35%,transparent 35.5%),
+            conic-gradient(from -4.865deg,
+              #087a38 0deg 9.73deg,#a91418 9.73deg 19.46deg,#080808 19.46deg 29.19deg,
+              #b41a1d 29.19deg 38.92deg,#090909 38.92deg 48.65deg,#b91b1e 48.65deg 58.38deg,
+              #090909 58.38deg 68.11deg,#b71b1e 68.11deg 77.84deg,#090909 77.84deg 87.57deg,
+              #b61a1d 87.57deg 97.30deg,#090909 97.30deg 107.03deg,#b71b1e 107.03deg 116.76deg,
+              #090909 116.76deg 126.49deg,#b81b1f 126.49deg 136.22deg,#090909 136.22deg 145.95deg,
+              #b61a1d 145.95deg 155.68deg,#090909 155.68deg 165.41deg,#b71b1e 165.41deg 175.14deg,
+              #090909 175.14deg 184.87deg,#b61b1e 184.87deg 194.60deg,#090909 194.60deg 204.33deg,
+              #b91b1e 204.33deg 214.06deg,#090909 214.06deg 223.79deg,#b71b1e 223.79deg 233.52deg,
+              #090909 233.52deg 243.25deg,#b61b1e 243.25deg 252.98deg,#090909 252.98deg 262.71deg,
+              #b71b1e 262.71deg 272.44deg,#090909 272.44deg 282.17deg,#b71b1e 282.17deg 291.90deg,
+              #090909 291.90deg 301.63deg,#b81b1e 301.63deg 311.36deg,#090909 311.36deg 321.09deg,
+              #b71b1e 321.09deg 330.82deg,#090909 330.82deg 340.55deg,#b71b1e 340.55deg 350.28deg,
+              #090909 350.28deg 360deg);
+          box-shadow:
+            inset 0 0 0 5px rgba(255,226,145,.18),
+            inset 0 0 18px rgba(0,0,0,.9),
+            0 0 0 4px #b77a25,
+            0 0 0 7px #2b1404;
+          z-index:1
+          }
+
+          .roleta::after{''', s, count=1, flags=re.S)
+
+          s=re.sub(r'\.roleta::after\{.*?\n\}\n\n\.numero-roleta\{', '''.roleta::after{
+          content:"";
+          position:absolute;
+          inset:74px;
+          border-radius:50%;
+          background:
+            repeating-conic-gradient(from 0deg,rgba(255,226,150,.24) 0deg 1deg,transparent 1deg 9.73deg),
+            radial-gradient(circle at 35% 28%,#b87827,#6e3b0d 48%,#3a1b05 72%,#170903 100%);
+          border:7px solid #d29a3c;
+          box-shadow:
+            inset 0 0 22px rgba(0,0,0,.9),
+            inset 0 2px 5px rgba(255,231,164,.28),
+            0 0 0 2px #5a300a,
+            0 10px 20px rgba(0,0,0,.65);
+          z-index:4;
+          pointer-events:none
+          }
+
+          .numero-roleta{''', s, count=1, flags=re.S)
+
+          s=re.sub(r'\.numero-roleta span\{.*?\n\}\n\n\.roleta-centro\{', '''.numero-roleta span{
+          position:absolute;
+          left:50%;
+          top:50%;
+          width:36px;
+          height:36px;
+          margin-left:-18px;
+          margin-top:-18px;
+          display:flex;
+          justify-content:center;
+          align-items:center;
+          font-family:Georgia,"Times New Roman",serif;
+          font-weight:900;
+          font-size:15px;
+          color:#fff;
+          text-shadow:0 2px 3px #000,0 0 5px rgba(255,255,255,.18);
+          z-index:3;
+          transform-origin:center center;
+          backface-visibility:hidden
+          }
+
+          .roleta-centro{''', s, count=1, flags=re.S)
+
+          s=re.sub(r'\.roleta-centro\{.*?\n\}\n\n\.roleta-centro::after\{', '''.roleta-centro{
+          position:absolute;
+          width:126px;
+          height:126px;
+          border-radius:50%;
+          left:50%;
+          top:50%;
+          transform:translate(-50%,-50%);
+          background:
+            radial-gradient(circle at 35% 25%,#fff0ad 0%,#d39a36 23%,#8b5215 48%,#4b2507 70%,#1b0902 100%);
+          border:9px solid #c68d2e;
+          box-shadow:
+            inset 0 0 18px #351600,
+            inset 0 3px 4px rgba(255,242,185,.5),
+            0 0 0 3px #5d3209,
+            0 5px 14px rgba(0,0,0,.9);
+          z-index:5
+          }
+
+          .roleta-centro::after{''', s, count=1, flags=re.S)
+
+          # Bola: trilho externo profissional, sem alterar a logica de resultado.
+          s=re.sub(r'\.bola\{.*?\n\}\n\n\.roleta-area::before\{', '''.bola{
+          position:absolute;
+          width:20px;
+          height:20px;
+          border-radius:50%;
+          background:radial-gradient(circle at 30% 24%,#fff 0%,#fff 34%,#e9e9e9 60%,#9e9e9e 100%);
+          box-shadow:0 0 5px #fff,0 0 13px rgba(255,255,255,.95),0 0 25px rgba(255,255,255,.55),inset -2px -2px 3px rgba(0,0,0,.38);
+          left:50%;
+          top:50%;
+          transform:translate(-50%,-50%) rotate(0deg) translateY(-220px);
+          transform-origin:center center;
+          z-index:8;
+          opacity:1;
+          visibility:visible;
+          display:block;
+          pointer-events:none;
+          will-change:transform
+          }
+
+          .roleta-area::before{''', s, count=1, flags=re.S)
+
+          # Remove the old hard-coded 188px/220px mismatch from the wheel animation path by using the variable only.
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Publicar
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add jogos/roleta2.html
+          git commit -m "Trocar roleta 2 por visual profissional 3D" || exit 0
+          git push
