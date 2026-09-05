@@ -1,0 +1,60 @@
+name: Roleta 2 - giro natural
+on:
+  push:
+    paths:
+      - .roleta2-giro-trigger
+permissions:
+  contents: write
+jobs:
+  ajustar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ajustar somente o giro da Roleta 2
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('jogos/roleta2.html')
+          s=p.read_text()
+
+          def block(text, marker):
+              start=text.index(marker)
+              brace=text.index('{', start)
+              depth=0
+              end=None
+              for i in range(brace, len(text)):
+                  if text[i]=='{': depth+=1
+                  elif text[i]=='}':
+                      depth-=1
+                      if depth==0:
+                          end=i+1
+                          break
+              if end is None: raise RuntimeError('Bloco não encontrado: '+marker)
+              return start,end
+
+          start,end=block(s,'.roleta.girando-premium')
+          s=s[:start]+''' .roleta.girando-premium{\nanimation:giroRoletaPremium var(--duracao-giro,7.5s) cubic-bezier(.08,.55,.15,1) forwards;\n}'''+s[end:]
+
+          start,end=block(s,'.bola.girando-premium')
+          s=s[:start]+''' .bola.girando-premium{\nanimation:giroBolaPremium var(--duracao-giro,7.5s) cubic-bezier(.08,.55,.15,1) forwards;\n}'''+s[end:]
+
+          start,end=block(s,'@keyframes giroRoletaPremium')
+          s=s[:start]+'''@keyframes giroRoletaPremium{\n0%{transform:rotate(var(--inicio-roleta,0deg));}\n100%{transform:rotate(calc(var(--inicio-roleta,0deg) + var(--giro-roleta,0deg)));}\n}'''+s[end:]
+
+          start,end=block(s,'@keyframes giroBolaPremium')
+          s=s[:start]+'''@keyframes giroBolaPremium{\n0%{transform:translate(-50%,-50%) rotate(var(--inicio-bola,0deg)) translateY(calc(var(--raio-bola,-188px) - 18px));}\n82%{transform:translate(-50%,-50%) rotate(calc(var(--inicio-bola,0deg) - var(--giro-bola,0deg)*.82)) translateY(calc(var(--raio-bola,-188px) - 18px));}\n92%{transform:translate(-50%,-50%) rotate(calc(var(--inicio-bola,0deg) - var(--giro-bola,0deg)*.92)) translateY(calc(var(--raio-bola,-188px) - 8px));}\n97%{transform:translate(-50%,-50%) rotate(calc(var(--inicio-bola,0deg) - var(--giro-bola,0deg)*.97)) translateY(calc(var(--raio-bola,-188px) + 8px));}\n100%{transform:translate(-50%,-50%) rotate(calc(var(--inicio-bola,0deg) - var(--giro-bola,0deg))) translateY(calc(var(--raio-bola,-188px) + 18px));}\n}'''+s[end:]
+
+          s=s.replace('"9.6s"','"7.5s"')
+          s=s.replace('animation-duration:9.6s','animation-duration:7.5s')
+          s=s.replace('resolve,\n9600','resolve,\n7500')
+          s=s.replace('resolve,\n9600\n','resolve,\n7500\n')
+          p.write_text(s)
+          PY
+      - name: Commitar e limpar
+        run: |
+          rm -f .roleta2-giro-trigger .github/workflows/roleta2-giro-natural.yml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add jogos/roleta2.html .roleta2-giro-trigger .github/workflows/roleta2-giro-natural.yml
+          git commit -m "Roleta 2: giro suave igual ao padrão das outras roletas" || exit 0
+          git push
