@@ -1,0 +1,37 @@
+name: Corrigir Roleta 2
+on:
+  push:
+permissions:
+  contents: write
+jobs:
+  fix:
+    if: ${{ !contains(github.event.head_commit.message, 'FIX-ROULETA2-AUTO') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Corrigir arquivo
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('jogos/roleta2.html')
+          s=p.read_text()
+          import re
+          s=re.sub(r'@keyframes giroRoletaPremium\{.*?\}\s*@keyframes giroBolaPremium\{.*?\}', '''@keyframes giroRoletaPremium{
+from{transform:rotate(var(--inicio-roleta,0deg));}
+to{transform:rotate(calc(var(--inicio-roleta,0deg) + var(--giro-roleta,0deg)));}
+}
+
+@keyframes giroBolaPremium{
+from{transform:translate(-50%,-50%) rotate(var(--inicio-bola,0deg)) translateY(var(--raio-bola,-188px));}
+to{transform:translate(-50%,-50%) rotate(calc(var(--inicio-bola,0deg) - var(--giro-bola,0deg))) translateY(var(--raio-bola,-188px));}
+}''', s, count=1, flags=re.S)
+          s=s.replace('await contagemRegressiva();','')
+          p.write_text(s)
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add jogos/roleta2.html
+          git commit -m 'FIX-ROULETA2-AUTO: corrigir giro premium' || exit 0
+          git push
