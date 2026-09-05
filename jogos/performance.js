@@ -1,4 +1,4 @@
-/* Roleta 2 — controla somente a física visual da única bola original. */
+/* Roleta 2 — corrige somente a parada da única bola original. */
 (function () {
   'use strict';
 
@@ -8,96 +8,75 @@
     if (!roleta || !bola) return;
 
     const VOLTAS_BOLA = 12;
-    let bolaJaGirou = false;
-    let corrigindo = false;
+    let bolaGirou = false;
+    let regraParada = null;
 
-    function anguloDoResultado() {
+    function anguloResultado() {
       const giroRoleta = parseFloat(
         getComputedStyle(roleta).getPropertyValue('--giro-roleta')
       ) || 0;
-
       const ajuste = ((giroRoleta % 360) + 360) % 360;
       return (360 - ajuste) % 360;
     }
 
-    function corrigirGiroDaBola() {
-      const original = parseFloat(
+    function corrigirGiroInicialDaBola() {
+      const giroAtual = parseFloat(
         getComputedStyle(bola).getPropertyValue('--giro-bola')
       );
-      if (!Number.isFinite(original)) return;
+      if (!Number.isFinite(giroAtual)) return;
 
-      const anguloFinal = anguloDoResultado();
-      const giroCorreto = VOLTAS_BOLA * 360 - anguloFinal;
+      const angulo = anguloResultado();
+      const giroCorreto = VOLTAS_BOLA * 360 - angulo;
+      if (Math.abs(giroAtual - giroCorreto) < 0.001) return;
 
-      if (Math.abs(original - giroCorreto) < 0.001) return;
-
-      corrigindo = true;
-      bola.style.setProperty('--giro-bola', `${giroCorreto}deg`);
-      corrigindo = false;
+      bola.style.setProperty('--giro-bola', giroCorreto + 'deg');
     }
 
-    function manterBolaNaCasaFinal() {
-      if (!bolaJaGirou) return;
+    function travarPosicaoFinal() {
+      if (!bolaGirou) return;
 
-      const anguloFinal = anguloDoResultado();
+      const angulo = anguloResultado();
       const raio = Math.abs(parseFloat(
         getComputedStyle(bola).getPropertyValue('--raio-bola')
       ) || 220);
 
-      const transformFinal =
-        `translate(-50%,-50%) rotate(${anguloFinal}deg) translateY(-${raio}px)`;
-
-      if (bola.style.transform === transformFinal) return;
-
-      corrigindo = true;
-      bola.style.transform = transformFinal;
-      corrigindo = false;
+      if (regraParada) regraParada.remove();
+      regraParada = document.createElement('style');
+      regraParada.textContent =
+        `.bola:not(.girando-premium){transform:translate(-50%,-50%) rotate(${angulo}deg) translateY(-${raio}px)!important}`;
+      document.head.appendChild(regraParada);
     }
 
     const observador = new MutationObserver(function (mutacoes) {
-      if (corrigindo) return;
+      let comecou = false;
+      let parou = false;
 
-      let corrigirGiro = false;
-      let verificarParada = false;
-
-      mutacoes.forEach(function (mutacao) {
-        if (mutacao.type !== 'attributes') return;
-
-        if (mutacao.attributeName === 'style') {
-          const style = bola.getAttribute('style') || '';
-          if (style.includes('--giro-bola')) corrigirGiro = true;
-          if (bolaJaGirou && style.includes('rotate(0deg)')) {
-            verificarParada = true;
-          }
-        }
+      for (const mutacao of mutacoes) {
+        if (mutacao.type !== 'attributes') continue;
+        if (mutacao.target !== bola) continue;
 
         if (mutacao.attributeName === 'class') {
           if (bola.classList.contains('girando-premium')) {
-            bolaJaGirou = true;
-            corrigirGiro = true;
-          } else if (bolaJaGirou) {
-            verificarParada = true;
+            bolaGirou = true;
+            comecou = true;
+          } else if (bolaGirou) {
+            parou = true;
           }
         }
-      });
+      }
 
-      if (corrigirGiro) corrigirGiroDaBola();
-      if (verificarParada) manterBolaNaCasaFinal();
+      if (comecou) corrigirGiroInicialDaBola();
+      if (parou) travarPosicaoFinal();
     });
 
     observador.observe(bola, {
       attributes: true,
-      attributeFilter: ['style', 'class']
-    });
-
-    observador.observe(roleta, {
-      attributes: true,
-      attributeFilter: ['style']
+      attributeFilter: ['class']
     });
 
     // Remove somente o ponteiro amarelo da Roleta 2.
-    const estilo = document.createElement('style');
-    estilo.textContent = '.roleta-area::before{display:none!important}';
-    document.head.appendChild(estilo);
+    const estiloPonteiro = document.createElement('style');
+    estiloPonteiro.textContent = '.roleta-area::before{display:none!important}';
+    document.head.appendChild(estiloPonteiro);
   });
 })();
