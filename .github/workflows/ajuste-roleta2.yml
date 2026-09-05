@@ -1,0 +1,38 @@
+name: Ajuste Roleta 2
+on:
+  push:
+    paths:
+      - .roleta2-ajuste
+permissions:
+  contents: write
+jobs:
+  ajustar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ajustar animação
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('jogos/roleta2.html')
+          s=p.read_text()
+          css='''\n/* Roleta 2 — giro premium: roda e bola em sentidos opostos */\n@keyframes giroRoletaPremium {\n  0% { transform: rotate(0deg); }\n  72% { transform: rotate(1510deg); }\n  88% { transform: rotate(1665deg); }\n  96% { transform: rotate(1700deg); }\n  100% { transform: rotate(1710deg); }\n}\n@keyframes giroBolaPremium {\n  0% { transform: translate(-50%,-50%) rotate(0deg) translateY(var(--raio-bola)); }\n  58% { transform: translate(-50%,-50%) rotate(-1320deg) translateY(var(--raio-bola)); }\n  82% { transform: translate(-50%,-50%) rotate(-1580deg) translateY(var(--raio-bola)); }\n  94% { transform: translate(-50%,-50%) rotate(-1690deg) translateY(var(--raio-bola)); }\n  100% { transform: translate(-50%,-50%) rotate(-1730deg) translateY(var(--raio-bola)); }\n}\n.roleta.spin-real { animation: giroRoletaPremium 6.8s cubic-bezier(.12,.72,.16,1) forwards; }\n.bola.spin-real { animation: giroBolaPremium 6.8s cubic-bezier(.18,.72,.12,1) forwards; }\n#contagemRoleta { display:none !important; }\n@media(max-width:650px){\n  .bola.spin-real { animation-name:giroBolaPremium; }\n}\n'''
+          if 'giroRoletaPremium' not in s:
+              s=s.replace('</style>',css+'\n</style>',1)
+          start=s.index('async function girarRoleta(){')
+          end=s.index('async function finalizarRodada(numero){',start)
+          novo='''async function girarRoleta(){\n    if(girando)return;\n    if(apostas.length===0){mensagemEl.textContent="Faça pelo menos uma aposta antes de girar.";mensagemEl.className="mensagem resultado-derrota";return}\n    const total=totalApostas();\n    if(total<=0){mensagemEl.textContent="Valor de aposta inválido.";mensagemEl.className="mensagem resultado-derrota";return}\n    try{\n        iniciarAudio();\n        girando=true;\n        btnGirar.disabled=true;\n        mensagemEl.textContent="🎰 A roleta vai girar...";\n        mensagemEl.className="mensagem";\n        ultimaAposta=apostas.map(a=>({...a}));\n        await debitar(total);\n        const indice=numeroAleatorioSeguro(SEQUENCIA.length);\n        const numeroFinal=SEQUENCIA[indice];\n        const anguloPorNumero=360/SEQUENCIA.length;\n        const anguloFinal=indice*anguloPorNumero;\n        const raioBola=window.innerWidth<=650?125:188;\n        bola.getAnimations().forEach(a=>a.cancel());\n        roleta.getAnimations().forEach(a=>a.cancel());\n        roleta.style.transform='rotate(0deg)';\n        bola.style.setProperty('--raio-bola',`-${raioBola}px`);\n        bola.style.transform=`translate(-50%,-50%) rotate(0deg) translateY(-${raioBola}px)`;\n        bola.style.opacity='1';bola.style.visibility='visible';bola.style.display='block';\n        roleta.classList.remove('spin-real');\n        bola.classList.remove('spin-real');\n        void roleta.offsetWidth;\n        iniciarSomRoleta();\n        roleta.classList.add('spin-real');\n        bola.classList.add('spin-real');\n        mensagemEl.textContent="🎰 Roleta girando...";\n        await new Promise(resolve=>setTimeout(resolve,6800));\n        roleta.classList.remove('spin-real');\n        bola.classList.remove('spin-real');\n        pararSomRoleta();\n        roleta.style.transform=`rotate(${1710-anguloFinal}deg)`;\n        bola.style.transform=`translate(-50%,-50%) rotate(${-1730-anguloFinal}deg) translateY(-${raioBola}px)`;\n        await new Promise(resolve=>setTimeout(resolve,250));\n        await finalizarRodada(numeroFinal);\n        girando=false;\n        btnGirar.disabled=false;\n        await obterSaldo();\n        if(auto&&apostas.length>0)setTimeout(girarRoleta,1200);\n    }catch(erro){\n        pararSomRoleta();\n        console.error('Erro ao girar:',erro);\n        contagemEl.style.display='none';\n        girando=false;\n        btnGirar.disabled=false;\n        mensagemEl.textContent=erro.message||'Não foi possível realizar a aposta.';\n        mensagemEl.className='mensagem resultado-derrota';\n        await obterSaldo();\n    }\n}\n\n'''
+          s=s[:start]+novo+s[end:]
+          s=s.replace('function contagemRegressiva(){return new Promise(resolve=>{let numero=10;contagemEl.textContent=numero;contagemEl.style.display="flex";const intervalo=setInterval(()=>{numero--;if(numero>0){contagemEl.textContent=numero}else{clearInterval(intervalo);contagemEl.textContent="GO!";setTimeout(()=>{contagemEl.style.display="none";resolve()},500)}},1000)})}','function contagemRegressiva(){return Promise.resolve()}')
+          p.write_text(s)
+          PY
+      - name: Commitar alteração
+        run: |
+          rm -f .roleta2-ajuste
+          rm -f .github/workflows/ajuste-roleta2.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add jogos/roleta2.html .github/workflows/ajuste-roleta2.yml .roleta2-ajuste
+          git commit -m "Roleta 2: giro profissional sem contagem de 10 segundos" || exit 0
+          git push
