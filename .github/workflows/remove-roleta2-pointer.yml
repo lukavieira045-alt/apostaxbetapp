@@ -1,0 +1,34 @@
+name: Remove Roleta 2 yellow pointer
+
+on:
+  push:
+    paths:
+      - '.github/workflows/remove-roleta2-pointer.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove only the yellow pointer
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('jogos/roleta2.html')
+          s = p.read_text(encoding='utf-8')
+          old = '''.roleta-area::before{\ncontent:"";\ntop:calc(50% - 285px);'''
+          if old not in s:
+              raise SystemExit('Roleta 2 pointer block not found')
+          s = s.replace(old, '''.roleta-area::before{\ndisplay:none!important;\ncontent:"";\ntop:calc(50% - 285px);''', 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add jogos/roleta2.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Remove yellow pointer from Roleta 2'
+          git push
