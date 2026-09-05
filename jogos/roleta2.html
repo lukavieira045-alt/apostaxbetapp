@@ -2439,9 +2439,7 @@ rotacaoRoletaAtual;
 
 const voltasBola=12;
 
-const giroBola=
-voltasBola*360+
-anguloFinal;
+const giroBola=voltasBola*360-anguloFinal;
 
 const inicioBola=
 rotacaoBolaAtual;
@@ -2524,6 +2522,8 @@ resolve,
 )
 );
 
+const transformFinalBola=getComputedStyle(bola).transform;
+
 // ---------------------------------------------------------
 // REMOVE ANIMAÇÃO
 // ---------------------------------------------------------
@@ -2565,12 +2565,9 @@ roleta.style.transform=
 `rotate(${rotacaoRoletaAtual}deg)`;
 
 // A bola termina no topo, junto ao ponteiro.
-bola.style.transform=
-`translate(-50%,-50%)
- rotate(0deg)
- translateY(-${raioBola}px)`;
+bola.style.transform=transformFinalBola;
 
-rotacaoBolaAtual=0;
+rotacaoBolaAtual=anguloFinal;
 
 await new Promise(
 resolve=>
