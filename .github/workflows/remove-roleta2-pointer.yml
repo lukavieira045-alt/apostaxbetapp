@@ -1,9 +1,8 @@
-name: Remove Roleta 2 yellow pointer
+name: Fix Roleta 2 ball stop
 
 on:
-  push:
-    paths:
-      - '.github/workflows/remove-roleta2-pointer.yml'
+  issues:
+    types: [opened]
 
 permissions:
   contents: write
@@ -13,22 +12,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Remove only the yellow pointer
+      - name: Fix roulette final ball position
         shell: bash
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p = Path('jogos/roleta2.html')
           s = p.read_text(encoding='utf-8')
-          old = '''.roleta-area::before{\ncontent:"";\ntop:calc(50% - 285px);'''
+          old = '''// A bola termina no topo, junto ao ponteiro.
+bola.style.transform=
+`translate(-50%,-50%)
+ rotate(0deg)
+ translateY(-${raioBola}px)`;
+
+rotacaoBolaAtual=0;'''
+          new = '''// A bola termina no topo, alinhada ao número sorteado.
+// Como a roda é o elemento pai da bola, a rotação local da bola
+// precisa ser igual ao ângulo do número sorteado para compensar
+// a rotação da roda e deixar a bola exatamente sobre esse número.
+bola.style.transform=
+`translate(-50%,-50%)
+ rotate(${anguloFinal}deg)
+ translateY(-${raioBola}px)`;
+
+rotacaoBolaAtual=anguloFinal;'''
           if old not in s:
-              raise SystemExit('Roleta 2 pointer block not found')
-          s = s.replace(old, '''.roleta-area::before{\ndisplay:none!important;\ncontent:"";\ntop:calc(50% - 285px);''', 1)
+              raise SystemExit('Final ball block not found')
+          s = s.replace(old, new, 1)
           p.write_text(s, encoding='utf-8')
           PY
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add jogos/roleta2.html
-          git diff --cached --quiet && exit 0
-          git commit -m 'Remove yellow pointer from Roleta 2'
+          git commit -m 'Fix Roleta 2 ball stopping on selected number'
           git push
