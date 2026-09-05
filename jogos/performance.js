@@ -190,7 +190,8 @@
         bola.style.transform =
           `translate(-50%,-50%) rotate(${rotacaoBolaAtual}deg) translateY(-${raioBola}px)`;
 
-        await finalizarRodada(numeroFinal);
+        /* IMPORTANTE: chama o finalizador corrigido acima, não o finalizador lexical original. */
+        await window.finalizarRodada(numeroFinal);
 
         girando = false;
         btnGirar.disabled = false;
