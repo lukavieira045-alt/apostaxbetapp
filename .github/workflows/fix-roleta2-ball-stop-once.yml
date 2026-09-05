@@ -1,8 +1,8 @@
 name: Fix Roleta 2 - ball stops once
 
 on:
-  issues:
-    types: [opened]
+  push:
+    branches: [main]
 
 permissions:
   contents: write
@@ -17,12 +17,9 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import re
           p = Path('jogos/roleta2.html')
           s = p.read_text(encoding='utf-8')
 
-          # A bola gira no sentido oposto. Como o CSS usa -giro-bola,
-          # o valor precisa ser 12 voltas MENOS o angulo do resultado.
           old = 'const giroBola=voltasBola*360+anguloFinal;'
           new = 'const giroBola=voltasBola*360-anguloFinal;'
           if old in s:
@@ -30,35 +27,21 @@ jobs:
           elif new not in s:
               raise SystemExit('giroBola source not found')
 
-          # Antes de remover a animacao, capture exatamente o transform final
-          # que a bola ja alcançou. Depois, preserve exatamente esse mesmo
-          # transform. Assim nao existe segundo giro nem salto para outro numero.
           marker = 'await new Promise(resolve=>setTimeout(resolve,7500));'
           if marker not in s:
-              marker = 'await new Promise(resolve=>setTimeout(resolve,6800));'
-          if marker not in s:
               raise SystemExit('spin wait marker not found')
-
-          capture = marker + '\n' + 'const transformFinalBola=getComputedStyle(bola).transform;'
-          s = s.replace(marker, capture, 1)
+          capture = marker + '\nconst transformFinalBola=getComputedStyle(bola).transform;'
+          if 'const transformFinalBola=getComputedStyle(bola).transform;' not in s:
+              s = s.replace(marker, capture, 1)
 
           old_reset = '''bola.style.transform=\n`translate(-50%,-50%)\n rotate(0deg)\n translateY(-${raioBola}px)`;\n\nrotacaoBolaAtual=0;'''
           new_reset = '''bola.style.transform=transformFinalBola;\n\nrotacaoBolaAtual=anguloFinal;'''
           if old_reset in s:
               s = s.replace(old_reset, new_reset, 1)
-          else:
-              # Fallback: replace the first post-stop reset of the ball.
-              pat = re.compile(r'bola\\.style\\.transform=\\s*`translate\\(-50%,-50%\\)\\s*rotate\\(0deg\\)\\s*translateY\\(-\\$\\{raioBola\\}px\\)`;\\s*\\n\\s*rotacaoBolaAtual=0;')
-              s2, n = pat.subn('bola.style.transform=transformFinalBola;\\n\\nrotacaoBolaAtual=anguloFinal;', s, count=1)
-              if n:
-                  s = s2
-              else:
-                  raise SystemExit('ball post-stop reset not found')
 
           p.write_text(s, encoding='utf-8')
           PY
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add jogos/roleta2.html
-          git commit -m 'Fix Roleta 2 ball stopping without second movement'
-          git push
+          git diff --cached --quiet || (git commit -m 'Fix Roleta 2 ball stopping without second movement' && git push)
