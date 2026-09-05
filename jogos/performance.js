@@ -8,15 +8,103 @@
     estilo.textContent = '.roleta-area::before{display:none!important}';
     document.head.appendChild(estilo);
 
+    const original = window.girarRoleta;
+    if (typeof original !== 'function') return;
+
     /*
-     * A Roleta 2 não usa mais uma animação independente da bola.
+     * CORREÇÃO SOMENTE DA LÓGICA DO PRÊMIO:
+     * a cor da aposta é comparada diretamente com a cor real do número sorteado.
+     * Vermelho só ganha em vermelho; preto só ganha em preto; verde só ganha no 0.
+     */
+    window.finalizarRodada = async function (numero) {
+      resultados.unshift(numero);
+      resultados = resultados.slice(0, 8);
+
+      atualizarResultados();
+      document.getElementById('ultimoResultado').textContent = numero;
+
+      let premioBruto = 0;
+
+      apostas.forEach(aposta => {
+        if (aposta.tipo === 'numero') {
+          if (Number(aposta.valor) === Number(numero)) {
+            premioBruto += aposta.quantia * (Number(numero) === 0 ? 30 : 36);
+          }
+          return;
+        }
+
+        if (aposta.tipo === 'cor') {
+          const corResultado = corNumero(numero);
+          const corApostada = String(aposta.valor).trim().toLowerCase();
+
+          /* REGRA EXATA: cores diferentes = zero de prêmio. */
+          if (corResultado === corApostada) {
+            premioBruto += aposta.quantia * 2;
+          }
+          return;
+        }
+
+        if (aposta.tipo === 'par') {
+          if (numero !== 0) {
+            const parResultado = numero % 2 === 0 ? 'par' : 'impar';
+            if (parResultado === aposta.valor) premioBruto += aposta.quantia * 2;
+          }
+          return;
+        }
+
+        if (aposta.tipo === 'baixo') {
+          if (numero >= 1 && numero <= 18) premioBruto += aposta.quantia * 2;
+          return;
+        }
+
+        if (aposta.tipo === 'alto') {
+          if (numero >= 19 && numero <= 36) premioBruto += aposta.quantia * 2;
+          return;
+        }
+
+        if (aposta.tipo === 'dozen') {
+          if (aposta.valor === 1 && numero >= 1 && numero <= 12) {
+            premioBruto += aposta.quantia * 3;
+          }
+          return;
+        }
+
+        if (aposta.tipo === 'doze') {
+          const grupo = numero >= 1 && numero <= 12 ? 1
+            : numero >= 13 && numero <= 24 ? 2
+            : numero >= 25 && numero <= 36 ? 3
+            : 0;
+          if (grupo === aposta.valor) premioBruto += aposta.quantia * 3;
+        }
+      });
+
+      const premioFinal = premioBruto * TAXA_CASA;
+      const cor = corNumero(numero);
+
+      if (premioFinal > 0) {
+        await creditar(premioFinal);
+        mensagemEl.textContent = `🎉 Saiu ${numero} (${cor.toUpperCase()}) — prêmio ${moeda(premioFinal)}!`;
+        mensagemEl.className = 'mensagem resultado-vitoria';
+      } else {
+        mensagemEl.textContent = `Saiu ${numero} (${cor.toUpperCase()}). Você perdeu esta rodada.`;
+        mensagemEl.className = 'mensagem resultado-derrota';
+      }
+
+      atualizarEstatisticas();
+      apostas = [];
+      atualizarAposta();
+      fichasDisponiveis = 0;
+      atualizarContadorFichas();
+      limparFichasVisuais();
+      await obterSaldo();
+    };
+
+    /*
+     * A Roleta 2 não usa uma animação independente da bola.
      * Roda e bola partem do estado atual e recebem diretamente o
      * transform final da mesma rodada. Assim, quando termina,
      * o último frame já é o estado parado — não existe reset posterior.
      */
-    const original = window.girarRoleta;
-    if (typeof original !== 'function') return;
-
     window.girarRoleta = async function () {
       if (girando) return;
 
@@ -66,7 +154,6 @@
         const voltasBola = 12;
         const giroBola = voltasBola * 360 - anguloFinal;
 
-        /* Estado inicial, sem animação. */
         roleta.style.transition = 'none';
         bola.style.transition = 'none';
         roleta.style.transform = `rotate(${inicioRoleta}deg)`;
@@ -84,7 +171,6 @@
 
         iniciarSomRoleta();
 
-        /* Um único alvo final para cada elemento. */
         requestAnimationFrame(() => {
           roleta.style.transform = `rotate(${inicioRoleta + giroRoleta}deg)`;
           bola.style.transform =
@@ -95,7 +181,6 @@
 
         pararSomRoleta();
 
-        /* Mantém exatamente o estado final. Não remove transform nem reseta a bola. */
         rotacaoRoletaAtual = ((inicioRoleta + giroRoleta) % 360 + 360) % 360;
         rotacaoBolaAtual = ((inicioBola - giroBola) % 360 + 360) % 360;
 
