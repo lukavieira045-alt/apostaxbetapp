@@ -1,46 +1,59 @@
 /*
- * Roleta 2 — correção do giro da roda.
- * Não cria som e não mexe em saldo/apostas.
- * O resultado continua sendo sorteado pelo próprio roleta2.html.
+ * Roleta 2 — controlador único do giro da roda.
+ * Não cria som.
+ * Não altera resultado, saldo ou apostas.
+ * Usa exatamente o --inicio-roleta e --giro-roleta calculados
+ * pelo roleta2.html, então a roda termina no número sorteado.
  */
 (function(){
   'use strict';
 
-  function corrigirRoleta(){
-    const roleta=document.getElementById('roleta');
-    if(!roleta)return;
+  function iniciar(){
+    const roleta = document.getElementById('roleta');
+    if(!roleta) return;
 
-    const obs=new MutationObserver(function(){
-      if(!roleta.classList.contains('giro-premium'))return;
+    let ultimoGiro = null;
 
-      const destino=roleta.style.getPropertyValue('--roleta-final').trim();
-      if(!destino)return;
+    const observer = new MutationObserver(function(){
+      if(!roleta.classList.contains('girando-premium')) return;
 
-      /* Cancela a keyframe que começa em zero e força a roda
-         a sair da posição atual e desacelerar até o número sorteado. */
-      roleta.style.animation='none';
-      roleta.style.transition='none';
-      const atual=roleta.style.transform||'rotate(0deg)';
-      roleta.style.transform=atual;
+      const inicio = roleta.style.getPropertyValue('--inicio-roleta').trim();
+      const giro = roleta.style.getPropertyValue('--giro-roleta').trim();
+      if(!inicio || !giro) return;
+
+      const chave = inicio + '|' + giro;
+      if(chave === ultimoGiro) return;
+      ultimoGiro = chave;
+
+      /* A keyframe antiga começava sempre de zero.
+         Aqui usamos o estado real e o destino real da rodada. */
+      roleta.style.animation = 'none';
+      roleta.style.transition = 'none';
+      roleta.style.transform = 'rotate(' + inicio + ')';
 
       void roleta.offsetWidth;
 
-      roleta.style.transition='transform 7.5s cubic-bezier(.15,.65,.20,1)';
-      roleta.style.transform='rotate('+destino+')';
+      roleta.style.transition = 'transform 7.5s cubic-bezier(.15,.65,.20,1)';
+      roleta.style.transform = 'rotate(calc(' + inicio + ' + ' + giro + '))';
 
       setTimeout(function(){
-        if(roleta.classList.contains('giro-premium'))return;
-        roleta.style.transition='none';
-        roleta.style.transform='rotate('+destino+')';
-      },7600);
+        if(!roleta.classList.contains('girando-premium')){
+          roleta.style.transition = 'none';
+          roleta.style.transform = 'rotate(calc(' + inicio + ' + ' + giro + '))';
+          ultimoGiro = null;
+        }
+      }, 7600);
     });
 
-    obs.observe(roleta,{attributes:true,attributeFilter:['class']});
+    observer.observe(roleta, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
   }
 
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',corrigirRoleta,{once:true});
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', iniciar, {once:true});
   }else{
-    corrigirRoleta();
+    iniciar();
   }
 })();
