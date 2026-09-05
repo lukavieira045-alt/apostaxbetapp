@@ -12,11 +12,35 @@
     if (!bola || !roleta) return;
 
     let transformFinal = '';
-    let travarReset = false;
-    let liberacaoTimer = null;
+    let travarFinal = false;
+    let frameId = 0;
 
-    // O HTML antigo calcula a bola com +anguloFinal, mas o CSS já aplica
-    // -giro-bola. Corrigimos o valor no instante em que a animação começa.
+    function pararResetDaBola() {
+      if (!transformFinal) return;
+
+      travarFinal = true;
+      let frames = 0;
+
+      function manter() {
+        if (!travarFinal || !transformFinal || frames++ > 90) {
+          travarFinal = false;
+          frameId = 0;
+          return;
+        }
+
+        // O código original tenta resetar a bola alguns milissegundos
+        // depois do fim da animação. Mantemos exatamente o último frame
+        // para impedir a segunda rotação/salto para outro número.
+        bola.style.transform = transformFinal;
+        frameId = requestAnimationFrame(manter);
+      }
+
+      if (frameId) cancelAnimationFrame(frameId);
+      frameId = requestAnimationFrame(manter);
+    }
+
+    // Corrige o sentido final da bola: a roda e a bola giram em sentidos
+    // opostos, mas terminam sincronizadas no mesmo bolso selecionado.
     const addOriginal = DOMTokenList.prototype.add;
     DOMTokenList.prototype.add = function (...tokens) {
       if (this === bola.classList && tokens.includes('girando-premium')) {
@@ -29,46 +53,27 @@
         bola.style.setProperty('--duracao-giro', '7.48s');
         roleta.style.setProperty('--duracao-giro', '7.48s');
 
-        travarReset = false;
         transformFinal = '';
-        if (liberacaoTimer) clearTimeout(liberacaoTimer);
+        travarFinal = false;
+        if (frameId) {
+          cancelAnimationFrame(frameId);
+          frameId = 0;
+        }
       }
+
       return addOriginal.apply(this, tokens);
     };
 
-    // A animação da bola termina antes do timeout de 7.5s do jogo.
-    // Capturamos o transform REAL do último frame e bloqueamos o reset
-    // posterior que fazia a bola sair do número em que havia parado.
     bola.addEventListener('animationend', function (ev) {
       if (ev.animationName !== 'giroBolaPremium') return;
 
+      // Captura o ponto EXATO em que a bola terminou a animação.
       transformFinal = getComputedStyle(bola).transform;
-      travarReset = true;
 
-      // Se o navegador ainda precisar remover a animação, o transform
-      // capturado permanece exatamente no mesmo ponto visual.
-      liberacaoTimer = setTimeout(function () {
-        travarReset = false;
-      }, 1200);
+      // O reset original acontece logo depois dos 7.5s. A partir daqui,
+      // congelamos a bola no último frame para ela não sair do número.
+      pararResetDaBola();
     });
-
-    // O código original faz bola.style.transform = ... depois de 7.5s.
-    // Interceptamos apenas esse reset enquanto a rodada está travada.
-    const proto = CSSStyleDeclaration.prototype;
-    const desc = Object.getOwnPropertyDescriptor(proto, 'transform');
-    if (desc && desc.set && desc.get) {
-      Object.defineProperty(proto, 'transform', {
-        configurable: true,
-        enumerable: desc.enumerable,
-        get: desc.get,
-        set: function (valor) {
-          if (this === bola.style && travarReset && transformFinal) {
-            return desc.set.call(this, transformFinal);
-          }
-          return desc.set.call(this, valor);
-        }
-      });
-    }
   }
 
   if (document.readyState === 'loading') {
