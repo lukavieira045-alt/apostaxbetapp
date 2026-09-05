@@ -3,6 +3,7 @@
   'use strict';
 
   function instalar() {
+    if (document.title.includes('Roleta de Relâmpagos') || !document.querySelector('.roleta-centro')) return;
     const estilo = document.createElement('style');
     estilo.textContent = '.roleta-area::before{display:none!important}';
     document.head.appendChild(estilo);
