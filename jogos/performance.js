@@ -1,9 +1,8 @@
 /*
- * Roleta 2 — controlador único do giro da roda.
+ * Roleta 2 — correção final da parada visual.
  * Não cria som.
  * Não altera resultado, saldo ou apostas.
- * Usa exatamente o --inicio-roleta e --giro-roleta calculados
- * pelo roleta2.html, então a roda termina no número sorteado.
+ * O roleta2.html continua escolhendo o número aleatório.
  */
 (function(){
   'use strict';
@@ -12,7 +11,7 @@
     const roleta = document.getElementById('roleta');
     if(!roleta) return;
 
-    let ultimoGiro = null;
+    let ultimaChave = null;
 
     const observer = new MutationObserver(function(){
       if(!roleta.classList.contains('girando-premium')) return;
@@ -22,27 +21,40 @@
       if(!inicio || !giro) return;
 
       const chave = inicio + '|' + giro;
-      if(chave === ultimoGiro) return;
-      ultimoGiro = chave;
+      if(chave === ultimaChave) return;
+      ultimaChave = chave;
 
-      /* A keyframe antiga começava sempre de zero.
-         Aqui usamos o estado real e o destino real da rodada. */
-      roleta.style.animation = 'none';
-      roleta.style.transition = 'none';
-      roleta.style.transform = 'rotate(' + inicio + ')';
+      /* Impede a keyframe original de assumir o controle.
+         O destino vem do índice aleatório calculado pelo jogo. */
+      roleta.style.setProperty('animation', 'none', 'important');
+      roleta.style.setProperty('transition', 'none', 'important');
+      roleta.style.setProperty('transform', 'rotate(' + inicio + ')', 'important');
 
       void roleta.offsetWidth;
 
-      roleta.style.transition = 'transform 7.5s cubic-bezier(.15,.65,.20,1)';
-      roleta.style.transform = 'rotate(calc(' + inicio + ' + ' + giro + '))';
+      requestAnimationFrame(function(){
+        roleta.style.setProperty(
+          'transition',
+          'transform 7.5s cubic-bezier(.15,.65,.20,1)',
+          'important'
+        );
+        roleta.style.setProperty(
+          'transform',
+          'rotate(calc(' + inicio + ' + ' + giro + '))',
+          'important'
+        );
+      });
 
       setTimeout(function(){
-        if(!roleta.classList.contains('girando-premium')){
-          roleta.style.transition = 'none';
-          roleta.style.transform = 'rotate(calc(' + inicio + ' + ' + giro + '))';
-          ultimoGiro = null;
-        }
-      }, 7600);
+        roleta.style.setProperty('animation', 'none', 'important');
+        roleta.style.setProperty('transition', 'none', 'important');
+        roleta.style.setProperty(
+          'transform',
+          'rotate(calc(' + inicio + ' + ' + giro + '))',
+          'important'
+        );
+        ultimaChave = null;
+      }, 7550);
     });
 
     observer.observe(roleta, {
