@@ -1,9 +1,8 @@
-/* Roleta 2 — mesma lógica de giro/parada: uma única trajetória, sem reset da bola. */
+/* Roleta 2 — correção somente da lógica de resultado/prêmio. Giro permanece intacto. */
 (function () {
   'use strict';
 
   function instalar() {
-    /* Ponteiro amarelo: permanece removido. */
     const estilo = document.createElement('style');
     estilo.textContent = '.roleta-area::before{display:none!important}';
     document.head.appendChild(estilo);
@@ -11,60 +10,83 @@
     const original = window.girarRoleta;
     if (typeof original !== 'function') return;
 
+    /* Mesma tabela de cores da roleta europeia. Não depende do visual. */
+    const VERMELHOS = new Set([
+      1,3,5,7,9,12,14,16,18,
+      19,21,23,25,27,30,32,34,36
+    ]);
+
+    function corResultado(numero) {
+      numero = Number(numero);
+      if (numero === 0) return 'verde';
+      return VERMELHOS.has(numero) ? 'vermelho' : 'preto';
+    }
+
     /*
-     * CORREÇÃO SOMENTE DA LÓGICA DO PRÊMIO:
-     * a cor da aposta é comparada diretamente com a cor real do número sorteado.
-     * Vermelho só ganha em vermelho; preto só ganha em preto; verde só ganha no 0.
+     * A aposta usada no fechamento é a cópia feita NO MOMENTO DO GIRO.
+     * Assim nenhuma alteração visual/estado posterior pode transformar
+     * uma aposta perdida em vitória.
      */
     window.finalizarRodada = async function (numero) {
+      numero = Number(numero);
+
       resultados.unshift(numero);
       resultados = resultados.slice(0, 8);
-
       atualizarResultados();
       document.getElementById('ultimoResultado').textContent = numero;
 
+      const apostasDaRodada = Array.isArray(ultimaAposta)
+        ? ultimaAposta.map(a => ({ ...a }))
+        : [];
+
       let premioBruto = 0;
 
-      apostas.forEach(aposta => {
+      apostasDaRodada.forEach(aposta => {
+        const valorAposta = aposta.valor;
+        const quantia = Number(aposta.quantia) || 0;
+
         if (aposta.tipo === 'numero') {
-          if (Number(aposta.valor) === Number(numero)) {
-            premioBruto += aposta.quantia * (Number(numero) === 0 ? 30 : 36);
+          /* Só o número EXATO sorteado pode pagar esta aposta. */
+          if (Number(valorAposta) === numero) {
+            premioBruto += quantia * (numero === 0 ? 30 : 36);
           }
           return;
         }
 
         if (aposta.tipo === 'cor') {
-          const corResultado = corNumero(numero);
-          const corApostada = String(aposta.valor).trim().toLowerCase();
+          const resultado = corResultado(numero);
+          const apostada = String(valorAposta).trim().toLowerCase();
 
-          /* REGRA EXATA: cores diferentes = zero de prêmio. */
-          if (corResultado === corApostada) {
-            premioBruto += aposta.quantia * 2;
+          /* Vermelho != preto. Preto != vermelho. Verde somente no 0. */
+          if (resultado === apostada) {
+            premioBruto += quantia * 2;
           }
           return;
         }
 
         if (aposta.tipo === 'par') {
           if (numero !== 0) {
-            const parResultado = numero % 2 === 0 ? 'par' : 'impar';
-            if (parResultado === aposta.valor) premioBruto += aposta.quantia * 2;
+            const resultado = numero % 2 === 0 ? 'par' : 'impar';
+            if (resultado === String(valorAposta).trim().toLowerCase()) {
+              premioBruto += quantia * 2;
+            }
           }
           return;
         }
 
         if (aposta.tipo === 'baixo') {
-          if (numero >= 1 && numero <= 18) premioBruto += aposta.quantia * 2;
+          if (numero >= 1 && numero <= 18) premioBruto += quantia * 2;
           return;
         }
 
         if (aposta.tipo === 'alto') {
-          if (numero >= 19 && numero <= 36) premioBruto += aposta.quantia * 2;
+          if (numero >= 19 && numero <= 36) premioBruto += quantia * 2;
           return;
         }
 
         if (aposta.tipo === 'dozen') {
           if (aposta.valor === 1 && numero >= 1 && numero <= 12) {
-            premioBruto += aposta.quantia * 3;
+            premioBruto += quantia * 3;
           }
           return;
         }
@@ -74,12 +96,12 @@
             : numero >= 13 && numero <= 24 ? 2
             : numero >= 25 && numero <= 36 ? 3
             : 0;
-          if (grupo === aposta.valor) premioBruto += aposta.quantia * 3;
+          if (grupo === Number(aposta.valor)) premioBruto += quantia * 3;
         }
       });
 
       const premioFinal = premioBruto * TAXA_CASA;
-      const cor = corNumero(numero);
+      const cor = corResultado(numero);
 
       if (premioFinal > 0) {
         await creditar(premioFinal);
@@ -99,12 +121,7 @@
       await obterSaldo();
     };
 
-    /*
-     * A Roleta 2 não usa uma animação independente da bola.
-     * Roda e bola partem do estado atual e recebem diretamente o
-     * transform final da mesma rodada. Assim, quando termina,
-     * o último frame já é o estado parado — não existe reset posterior.
-     */
+    /* GIRO ORIGINAL CORRIGIDO APENAS PARA CHAMAR O FINALIZADOR CERTO. */
     window.girarRoleta = async function () {
       if (girando) return;
 
@@ -146,11 +163,9 @@
 
         const inicioRoleta = Number(rotacaoRoletaAtual) || 0;
         const inicioBola = Number(rotacaoBolaAtual) || 0;
-
         const voltasRoleta = 8;
         const ajusteRoleta = (360 - anguloFinal) % 360;
         const giroRoleta = voltasRoleta * 360 + ajusteRoleta;
-
         const voltasBola = 12;
         const giroBola = voltasBola * 360 - anguloFinal;
 
@@ -168,7 +183,6 @@
         const easing = 'cubic-bezier(.08,.55,.15,1)';
         roleta.style.transition = `transform ${duracao}s ${easing}`;
         bola.style.transition = `transform ${duracao}s ${easing}`;
-
         iniciarSomRoleta();
 
         requestAnimationFrame(() => {
@@ -178,7 +192,6 @@
         });
 
         await new Promise(resolve => setTimeout(resolve, duracao * 1000 + 30));
-
         pararSomRoleta();
 
         rotacaoRoletaAtual = ((inicioRoleta + giroRoleta) % 360 + 360) % 360;
@@ -190,7 +203,6 @@
         bola.style.transform =
           `translate(-50%,-50%) rotate(${rotacaoBolaAtual}deg) translateY(-${raioBola}px)`;
 
-        /* IMPORTANTE: chama o finalizador corrigido acima, não o finalizador lexical original. */
         await window.finalizarRodada(numeroFinal);
 
         girando = false;
