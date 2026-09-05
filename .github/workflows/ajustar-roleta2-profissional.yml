@@ -1,0 +1,60 @@
+name: Ajustar Roleta 2 profissional
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  ajustar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar repositorio
+        uses: actions/checkout@v4
+
+      - name: Aplicar somente melhoria da roleta
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('jogos/roleta2.html')
+          s = p.read_text(encoding='utf-8')
+
+          old = '''const raioBola=\nwindow.innerWidth<=650\n?125\n:188;'''
+          new = '''const raioBola=\nwindow.innerWidth<=650\n?148\n:220;'''
+          if old not in s:
+              raise SystemExit('raioBola nao encontrado')
+          s = s.replace(old, new, 1)
+
+          old = '''@keyframes giroBolaPremium{\n0%{\ntransform:\ntranslate(-50%,-50%)\nrotate(var(--inicio-bola,0deg))\ntranslateY(var(--raio-bola,-188px));\n}\n20%{\ntransform:\ntranslate(-50%,-50%)\nrotate(calc(var(--inicio-bola,0deg) - var(--giro-bola)*.20))\ntranslateY(var(--raio-bola,-188px));\n}\n48%{\ntransform:\ntranslate(-50%,-50%)\nrotate(calc(var(--inicio-bola,0deg) - var(--giro-bola)*.52))\ntranslateY(var(--raio-bola,-188px));\n}\n72%{\ntransform:\ntranslate(-50%,-50%)\nrotate(calc(var(--inicio-bola,0deg) - var(--giro-bola)*.77))\ntranslateY(var(--raio-bola,-188px));\n}\n88%{\ntransform:\ntranslate(-50%,-50%)\nrotate(calc(var(--inicio-bola,0deg) - var(--giro-bola)*.92))\ntranslateY(var(--raio-bola,-188px));\n}\n96%{\ntransform:\ntranslate(-50%,-50%)\nrotate(calc(var(--inicio-bola,0deg) - var(--giro-bola)*.985))\ntranslateY(var(--raio-bola,-188px));\n}\n100%{\ntransform:\ntranslate(-50%,-50%)\nrotate(calc(var(--inicio-bola,0deg) - var(--giro-bola)))\ntranslateY(var(--raio-bola,-188px));\n}\n}'''
+          new = '''@keyframes giroBolaPremium{\n0%{\ntransform:\ntranslate(-50%,-50%)\nrotate(var(--inicio-bola,0deg))\ntranslateY(calc(var(--raio-bola,-188px) + -18px));\n}\n20%{\ntransform:\ntranslate(-50%,-50%)\nrotate(calc(var(--inicio-bola,0deg) - var(--giro-bola)*.20))\ntranslateY(calc(var(--raio-bola,-188px) + -18px));\n}\n48%{\ntransform:\ntranslate(-50%,-50%)\nrotate(calc(var(--inicio-bola,0deg) - var(--giro-bola)*.52))\ntranslateY(calc(var(--raio-bola,-188px) + -18px));\n}\n72%{\ntransform:\ntranslate(-50%,-50%)\nrotate(calc(var(--inicio-bola,0deg) - var(--giro-bola)*.77))\ntranslateY(calc(var(--raio-bola,-188px) + -18px));\n}\n84%{\ntransform:\ntranslate(-50%,-50%)\nrotate(calc(var(--inicio-bola,0deg) - var(--giro-bola)*.86))\ntranslateY(calc(var(--raio-bola,-188px) + -6px));\n}\n91%{\ntransform:\ntranslate(-50%,-50%)\nrotate(calc(var(--inicio-bola,0deg) - var(--giro-bola)*.925))\ntranslateY(var(--raio-bola,-188px));\n}\n96%{\ntransform:\ntranslate(-50%,-50%)\nrotate(calc(var(--inicio-bola,0deg) - var(--giro-bola)*.985))\ntranslateY(var(--raio-bola,-188px));\n}\n98%{\ntransform:\ntranslate(-50%,-50%)\nrotate(calc(var(--inicio-bola,0deg) - var(--giro-bola)*.997))\ntranslateY(calc(var(--raio-bola,-188px) + 5px));\n}\n100%{\ntransform:\ntranslate(-50%,-50%)\nrotate(calc(var(--inicio-bola,0deg) - var(--giro-bola)))\ntranslateY(var(--raio-bola,-188px));\n}\n}'''
+          if old not in s:
+              raise SystemExit('keyframes da bola nao encontrados')
+          s = s.replace(old, new, 1)
+
+          old = '''.roleta.girando-premium{\nanimation:giroRoletaPremium var(--duracao-giro,7.2s) cubic-bezier(.12,.72,.16,1) forwards;\n}\n\n.bola.girando-premium{\nanimation:giroBolaPremium var(--duracao-giro,7.2s) cubic-bezier(.18,.72,.12,1) forwards;\n}'''
+          new = '''.roleta.girando-premium{\nanimation:giroRoletaPremium var(--duracao-giro,8.2s) cubic-bezier(.12,.72,.16,1) forwards;\n}\n\n.bola.girando-premium{\nanimation:giroBolaPremium var(--duracao-giro,8.2s) cubic-bezier(.18,.72,.12,1) forwards;\n}'''
+          if old not in s:
+              raise SystemExit('animacoes premium nao encontradas')
+          s = s.replace(old, new, 1)
+
+          s = s.replace('animation-duration:6.8s\n}', 'animation-duration:7.8s\n}', 2)
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Publicar alteracao
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add jogos/roleta2.html
+          git commit -m "Aprimorar giro profissional da Roleta 2" || exit 0
+          git push
+
+      - name: Remover workflow temporario
+        if: success()
+        run: |
+          rm -f .github/workflows/ajustar-roleta2-profissional.yml
+          git add .github/workflows/ajustar-roleta2-profissional.yml
+          git commit -m "Remover workflow temporario da Roleta 2" || exit 0
+          git push
