@@ -29,8 +29,9 @@ jobs:
           test -f app/build.gradle.kts
           test -f app/src/main/AndroidManifest.xml
           test -f app/src/main/java/com/evolution/ai/MainActivity.kt
+          test -f app/src/main/java/com/evolution/ai/EvolutionLearningWorker.kt
           test -f gradle.properties
-      - name: Prepare Evolution brain and WhatsApp-style chat
+      - name: Prepare Evolution brain and ChatGPT-style chat
         working-directory: evolution-native
         run: |
           python3 - <<'PY'
@@ -38,11 +39,78 @@ jobs:
           import re
           p=Path('app/src/main/java/com/evolution/ai/MainActivity.kt')
           s=p.read_text()
+
+          # Current Qwen3 1.7B local brain: much lighter than the rejected 4B build.
           s=s.replace('private const val MODEL_URL = "https://huggingface.co/Qwen/Qwen3-4B-GGUF/resolve/main/Qwen3-4B-Q4_K_M.gguf?download=true"','private const val MODEL_URL = "https://huggingface.co/ggml-org/Qwen3-1.7B-GGUF/resolve/main/Qwen3-1.7B-Q4_K_M.gguf?download=true"')
           s=s.replace('private const val MODEL = "Qwen3-4B-Q4_K_M.gguf"','private const val MODEL = "Qwen3-1.7B-Q4_K_M.gguf"')
           s=s.replace('modelFile.length() < 2_000_000_000L','modelFile.length() < 900_000_000L')
           s=s.replace('LlamaConfig(contextSize = 3072, threads = 3)','LlamaConfig(contextSize = 2048, threads = 2)')
           s=s.replace('maxTokens = 640','maxTokens = 512')
+
+          # Keep one local model loaded for the whole app session. The old build loaded and
+          # released the GGUF on every message, which made the brain feel frozen.
+          s=s.replace('import dev.ffmpegkit.llama.LlamaConfig','import dev.ffmpegkit.llama.LlamaConfig\nimport dev.ffmpegkit.llama.LlamaModel')
+          s=s.replace('private var busy = false','private var busy = false\n    private var brainModel: LlamaModel? = null')
+          s=s.replace('import android.view.View','import android.view.View\nimport android.view.inputmethod.EditorInfo')
+          s=s.replace('import androidx.lifecycle.lifecycleScope','import androidx.lifecycle.lifecycleScope\nimport androidx.work.ExistingPeriodicWorkPolicy\nimport androidx.work.PeriodicWorkRequestBuilder\nimport androidx.work.WorkManager\nimport java.util.concurrent.TimeUnit')
+
+          # Start persistent adaptation/knowledge cycles. WorkManager survives app restarts and
+          # runs when Android allows background work; the worker also records offline cycles.
+          marker='        setupSpeech()\n        lifecycleScope.launch { prepareBrain() }'
+          repl='''        setupSpeech()
+        startLearningLoop()
+        lifecycleScope.launch { prepareBrain() }'''
+          s=s.replace(marker,repl,1)
+          marker='    private fun setupSpeech() {'
+          helper='''    private fun startLearningLoop() {
+        val request = PeriodicWorkRequestBuilder<EvolutionLearningWorker>(30, TimeUnit.MINUTES).build()
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "evolution-24h-learning",
+            ExistingPeriodicWorkPolicy.KEEP,
+            request
+        )
+    }
+
+'''
+          s=s.replace(marker,helper+marker,1)
+
+          # Chat input behaves like ChatGPT: keyboard send action and real visible controls.
+          s=s.replace('hint = "Converse com a Evolution..."','hint = "Escreva para a Evolution..."',1)
+          marker='        mic = Button(this).apply {'
+          # Replace the entire one-line mic/send construction if still present.
+          s=re.sub(r'''        mic = Button\(this\)\.apply \{ text = "[^\"]*"; textSize = 18f; setTextColor\(Color\.WHITE\); setOnClickListener \{ startListening\(\) \} \}\n        send = Button\(this\)\.apply \{ text = "[^\"]*"; textSize = 21f; isEnabled = false; setTextColor\(Color\.WHITE\); setOnClickListener \{ ask\(\) \} \}''', '''        mic = Button(this).apply {
+            text = "FALAR"
+            textSize = 11f
+            isAllCaps = false
+            minWidth = 112
+            minHeight = 56
+            setTextColor(Color.WHITE)
+            setOnClickListener { startListening() }
+            background = android.graphics.drawable.GradientDrawable().apply {
+                cornerRadius = 24f
+                setColor(Color.rgb(18, 76, 96))
+            }
+        }
+        send = Button(this).apply {
+            text = "ENVIAR"
+            textSize = 11f
+            isAllCaps = false
+            minWidth = 112
+            minHeight = 56
+            isEnabled = false
+            setTextColor(Color.WHITE)
+            setOnClickListener { ask() }
+            background = android.graphics.drawable.GradientDrawable().apply {
+                cornerRadius = 24f
+                setColor(Color.rgb(16, 105, 72))
+            }
+        }
+        input.imeOptions = EditorInfo.IME_ACTION_SEND
+        input.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEND) { ask(); true } else false
+        }''',s,count=1)
+
+          # Actual chat bubbles instead of raw TextView lines.
           s=s.replace('private lateinit var chat: TextView','private lateinit var chat: LinearLayout',1)
           old_chat='''        chat = TextView(this).apply {
             textSize = 15f; setTextColor(Color.rgb(229, 242, 255)); setPadding(12, 10, 12, 10)
@@ -60,18 +128,6 @@ jobs:
             isFillViewport = true
         }, LinearLayout.LayoutParams(-1, 0, .31f))'''
           s=s.replace(old_chat,new_chat,1)
-          s=s.replace('text = "🎙"; textSize = 18f','text = "FALAR"; textSize = 11f',1)
-          s=s.replace('text = "➤"; textSize = 21f','text = "ENVIAR"; textSize = 11f',1)
-          s=s.replace('hint = "Converse com a Evolution..."','hint = "Escreva para a Evolution..."',1)
-          old_tts='tts = android.speech.tts.TextToSpeech(this) { tts.language = Locale("pt", "BR") }'
-          new_tts='''tts = android.speech.tts.TextToSpeech(this) { result ->
-              if (result == android.speech.tts.TextToSpeech.SUCCESS) {
-                  tts.language = Locale("pt", "BR")
-                  val male = tts.voices.orEmpty().firstOrNull { it.locale.language == "pt" && (it.name.contains("male", true) || it.name.contains("masc", true)) }
-                  if (male != null) tts.voice = male
-              }
-          }'''
-          s=s.replace(old_tts,new_tts,1)
           marker='    private fun ask() {'
           helper='''    private fun addBubble(who: String, message: String) {
         val row = LinearLayout(this).apply {
@@ -85,7 +141,10 @@ jobs:
             setTextColor(Color.WHITE)
             setPadding(16, 11, 16, 11)
             maxWidth = (resources.displayMetrics.widthPixels * 0.78f).toInt()
-            setBackgroundColor(if (who == "Você") Color.rgb(16, 76, 105) else Color.rgb(22, 30, 45))
+            background = android.graphics.drawable.GradientDrawable().apply {
+                cornerRadius = 28f
+                setColor(if (who == "Você") Color.rgb(16, 76, 105) else Color.rgb(22, 30, 45))
+            }
         }
         val name = TextView(this).apply {
             text = who
@@ -93,22 +152,24 @@ jobs:
             setTextColor(Color.rgb(125, 160, 185))
             setPadding(2, 0, 2, 3)
         }
-        val bubbleBox = LinearLayout(this).apply {
+        val box = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             gravity = if (who == "Você") Gravity.END else Gravity.START
         }
-        bubbleBox.addView(name, LinearLayout.LayoutParams(-2, -2))
-        bubbleBox.addView(bubble, LinearLayout.LayoutParams(-2, -2))
-        row.addView(bubbleBox, LinearLayout.LayoutParams(-2, -2))
+        box.addView(name)
+        box.addView(bubble)
+        row.addView(box)
         chat.addView(row, LinearLayout.LayoutParams(-1, -2))
         chat.post { (chat.parent as? ScrollView)?.fullScroll(View.FOCUS_DOWN) }
     }
 
 '''
-          if marker in s: s=s.replace(marker, helper+marker,1)
+          s=s.replace(marker,helper+marker,1)
           s=s.replace('input.setText(""); chat.append("\\nVocê: $q\\n"); busy = true;','input.setText(""); addBubble("Você", q); busy = true;',1)
           s=s.replace('chat.append("Evolution: $a\\n")','addBubble("EVOLUTION", a)',1)
           s=s.replace('chat.append("Evolution: não consegui concluir: ${e.message}\\n")','addBubble("EVOLUTION", "Não consegui concluir agora: ${e.message ?: "erro desconhecido"}")',1)
+
+          # Prepare the model once at startup and keep it in memory for all messages.
           old_prepare='''            if (!modelFile.exists() || modelFile.length() < 900_000_000L) download(modelFile)
             withContext(Dispatchers.Main) {
                 status.text = "  •  CÉREBRO QWEN3-4B • LOCAL"
@@ -116,24 +177,37 @@ jobs:
                 send.isEnabled = true; mic.isEnabled = recognizer != null; core.setReady(true)
             }'''
           new_prepare='''            if (!modelFile.exists() || modelFile.length() < 900_000_000L) download(modelFile)
+            withContext(Dispatchers.Main) { status.text = "  •  CARREGANDO CÉREBRO LOCAL..." }
+            brainModel = try {
+                Llama.loadModel(modelFile.absolutePath, LlamaConfig(contextSize = 2048, threads = 2))
+            } catch (e: OutOfMemoryError) {
+                error("memória insuficiente para carregar o cérebro local neste aparelho")
+            }
             withContext(Dispatchers.Main) {
                 status.text = "  •  CÉREBRO LOCAL PRONTO"
                 chat.removeAllViews()
-                addBubble("EVOLUTION", "Online. Pode mandar sua mensagem. Eu vou responder aqui no chat.")
+                addBubble("EVOLUTION", "Online. Cérebro local pronto. Pode mandar sua mensagem.")
                 send.isEnabled = true; mic.isEnabled = recognizer != null; core.setReady(true)
             }'''
           s=s.replace(old_prepare,new_prepare,1)
+
+          # Use the already-loaded model. Never load/release the GGUF for every question.
           old_load='''        val model = Llama.loadModel(modelFile.absolutePath, LlamaConfig(contextSize = 2048, threads = 2))
         return try {'''
-          new_load='''        if (!::modelFile.isInitialized || !modelFile.exists()) error("núcleo local ainda não foi preparado")
-        val model = try {
-            Llama.loadModel(modelFile.absolutePath, LlamaConfig(contextSize = 2048, threads = 2))
-        } catch (e: OutOfMemoryError) {
-            error("memória insuficiente para carregar o núcleo local neste aparelho")
-        }
+          new_load='''        val model = brainModel ?: error("cérebro local ainda não está pronto")
         return try {'''
           s=s.replace(old_load,new_load,1)
-          s=s.replace('val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR")','val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR", "https://html.duckduckgo.com/html/?q=$q")')
+          s=s.replace('        } finally { Llama.releaseModel(model) }','        }',1)
+
+          # Research intent must work even for short phrases such as "pesquisar X".
+          s=s.replace('val research = q.length >= 18 && !conversational && (','val research = !conversational && (',1)
+          s=s.replace('val mem = memory.getString("items", "").orEmpty().takeLast(10000)','val mem = memory.getString("items", "").orEmpty().takeLast(10000)\n        val learning = memory.getString("learning_stream", "").orEmpty().takeLast(12000)',1)
+          s=s.replace('append("MEMÓRIA RELEVANTE:\\n").append(mem).append("\\n\\n")','append("MEMÓRIA RELEVANTE:\\n").append(mem).append("\\n\\n")\n            append("APRENDIZADO CONTÍNUO:\\n").append(learning).append("\\n\\n")',1)
+          s=s.replace('val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR")','val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR", "https://html.duckduckgo.com/html/?q=$q")',1)
+
+          # Release the persistent model only when Activity is destroyed.
+          s=s.replace('override fun onDestroy() { recognizer?.destroy(); if (::tts.isInitialized) tts.shutdown(); if (::core.isInitialized) core.stop(); super.onDestroy() }','override fun onDestroy() { recognizer?.destroy(); if (::tts.isInitialized) tts.shutdown(); brainModel?.let { Llama.releaseModel(it) }; brainModel = null; if (::core.isInitialized) core.stop(); super.onDestroy() }',1)
+
           p.write_text(s)
           PY
       - name: Build Evolution APK
@@ -145,5 +219,4 @@ jobs:
         with:
           name: evolution-debug-apk
           path: evolution-native/app/build/outputs/apk/debug/app-debug.apk
-          # Force a fresh APK build after the chat-layout fix
           if-no-files-found: error
