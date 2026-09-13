@@ -2,6 +2,8 @@ name: Evolution Final APK
 on:
   push:
     branches: [evolution-native]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
@@ -93,10 +95,10 @@ jobs:
           if marker in s and 'private fun startLearningLoop()' not in s: s=s.replace(marker,method+marker,1)
           p.write_text(s,encoding='utf-8')
           PY
-      - name: Compile and package APK
+      - name: Build Evolution APK
         working-directory: evolution-native
         run: gradle :app:assembleDebug --no-daemon --stacktrace
-      - name: Confirm new APK
+      - name: Verify APK
         run: |
           test -s evolution-native/app/build/outputs/apk/debug/app-debug.apk
           stat -c '%n %s bytes %y' evolution-native/app/build/outputs/apk/debug/app-debug.apk
