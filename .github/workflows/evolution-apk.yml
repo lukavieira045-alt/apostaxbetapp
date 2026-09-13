@@ -30,33 +30,29 @@ jobs:
           test -f app/src/main/AndroidManifest.xml
           test -f app/src/main/java/com/evolution/ai/MainActivity.kt
           test -f gradle.properties
-      - name: Prepare Evolution brain, voice, controls and chat
+      - name: Prepare Evolution brain and WhatsApp-style chat
         working-directory: evolution-native
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
           p=Path('app/src/main/java/com/evolution/ai/MainActivity.kt')
           s=p.read_text()
-          s=s.replace('private const val MODEL_URL = "https://huggingface.co/Qwen/Qwen3-4B-GGUF/resolve/main/Qwen3-4B-Q4_K_M.gguf?download=true"','private const val MODEL_URL = "https://huggingface.co/ggml-org/Qwen3-1.7B-GGUF/resolve/main/Qwen3-1.7B-Q4_K_M.gguf?download=true"')
-          s=s.replace('private const val MODEL = "Qwen3-4B-Q4_K_M.gguf"','private const val MODEL = "Qwen3-1.7B-Q4_K_M.gguf"')
-          s=s.replace('modelFile.length() < 2_000_000_000L','modelFile.length() < 900_000_000L')
-          s=s.replace('LlamaConfig(contextSize = 3072, threads = 3)','LlamaConfig(contextSize = 2048, threads = 2)')
-          s=s.replace('maxTokens = 640','maxTokens = 512')
-          old_prepare='''            if (!modelFile.exists() || modelFile.length() < 900_000_000L) download(modelFile)
-            withContext(Dispatchers.Main) {
-                status.text = "  •  CÉREBRO QWEN3-4B • LOCAL"
-                chat.text = "EVOLUTION ONLINE\\n\\nNúcleo de inteligência local avançado carregado.\\n\\nRaciocínio • memória • matemática • programação • pesquisa web • voz\\n\\nPode falar comigo, meu Rei."
-                send.isEnabled = true; mic.isEnabled = recognizer != null; core.setReady(true)
-            }'''
-          new_prepare='''            if (!modelFile.exists() || modelFile.length() < 900_000_000L) download(modelFile)
-            withContext(Dispatchers.Main) {
-                status.text = "  •  CÉREBRO LOCAL PRONTO"
-                chat.removeAllViews()
-                addBubble("EVOLUTION", "Online. Meu cérebro local está pronto. Pode mandar uma mensagem ou tocar em FALAR.")
-                send.isEnabled = true; mic.isEnabled = recognizer != null; core.setReady(true)
-            }'''
-          s=s.replace(old_prepare,new_prepare,1)
-          s=s.replace('private lateinit var chat: TextView','private lateinit var chat: LinearLayout',1)
+
+          # Stability: keep the approved sphere/nucleus visual untouched, but use a smaller
+          # local model so loading does not die around 60% on phones with limited RAM.
+          s=s.replace('private const val MODEL_URL = "https://huggingface.co/Qwen/Qwen3-4B-GGUF/resolve/main/Qwen3-4B-Q4_K_M.gguf?download=true"',
+                      'private const val MODEL_URL = "https://huggingface.co/ggml-org/Qwen3-1.7B-GGUF/resolve/main/Qwen3-1.7B-Q4_K_M.gguf?download=true"')
+          s=s.replace('private const val MODEL = "Qwen3-4B-Q4_K_M.gguf"',
+                      'private const val MODEL = "Qwen3-1.7B-Q4_K_M.gguf"')
+          s=s.replace('modelFile.length() < 2_000_000_000L', 'modelFile.length() < 900_000_000L')
+          s=s.replace('LlamaConfig(contextSize = 3072, threads = 3)', 'LlamaConfig(contextSize = 2048, threads = 2)')
+          s=s.replace('maxTokens = 640', 'maxTokens = 512')
+
+          # Real chat container: messages are separate bubbles, user on the right,
+          # Evolution on the left. Each bubble has a hard max width so text wraps
+          # naturally into multiple lines instead of becoming one giant line.
+          s=s.replace('private lateinit var chat: TextView', 'private lateinit var chat: LinearLayout', 1)
           old_chat='''        chat = TextView(this).apply {
             textSize = 15f; setTextColor(Color.rgb(229, 242, 255)); setPadding(12, 10, 12, 10)
             text = "EVOLUTION\\nPreparando o cérebro local..."; setBackgroundColor(Color.rgb(7, 12, 22))
@@ -70,12 +66,16 @@ jobs:
         root.addView(ScrollView(this).apply {
             addView(chat)
             setBackgroundColor(Color.rgb(7, 12, 22))
-            post { fullScroll(View.FOCUS_DOWN) }
+            isFillViewport = true
         }, LinearLayout.LayoutParams(-1, 0, .31f))'''
           s=s.replace(old_chat,new_chat,1)
+
+          # Visible controls.
           s=s.replace('text = "🎙"; textSize = 18f','text = "FALAR"; textSize = 11f',1)
           s=s.replace('text = "➤"; textSize = 21f','text = "ENVIAR"; textSize = 11f',1)
           s=s.replace('hint = "Converse com a Evolution..."','hint = "Escreva para a Evolution..."',1)
+
+          # Prefer a Portuguese male TTS voice when the device exposes one.
           old_tts='tts = android.speech.tts.TextToSpeech(this) { tts.language = Locale("pt", "BR") }'
           new_tts='''tts = android.speech.tts.TextToSpeech(this) { result ->
               if (result == android.speech.tts.TextToSpeech.SUCCESS) {
@@ -85,42 +85,79 @@ jobs:
               }
           }'''
           s=s.replace(old_tts,new_tts,1)
+
           marker='    private fun ask() {'
           helper='''    private fun addBubble(who: String, message: String) {
         val row = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = if (who == "Você") Gravity.END else Gravity.START
-            setPadding(4, 4, 4, 4)
+            setPadding(4, 5, 4, 5)
         }
         val bubble = TextView(this).apply {
-            text = "$who\\n$message"
-            textSize = 14f
+            text = message
+            textSize = 15f
             setTextColor(Color.WHITE)
-            setPadding(18, 12, 18, 12)
-            setBackgroundColor(if (who == "Você") Color.rgb(18, 67, 96) else Color.rgb(20, 28, 43))
+            setPadding(16, 11, 16, 11)
+            maxWidth = (resources.displayMetrics.widthPixels * 0.78f).toInt()
+            setBackgroundColor(if (who == "Você") Color.rgb(16, 76, 105) else Color.rgb(22, 30, 45))
         }
-        row.addView(bubble)
+        val name = TextView(this).apply {
+            text = who
+            textSize = 10f
+            setTextColor(Color.rgb(125, 160, 185))
+            setPadding(2, 0, 2, 3)
+        }
+        val bubbleBox = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = if (who == "Você") Gravity.END else Gravity.START
+        }
+        bubbleBox.addView(name, LinearLayout.LayoutParams(-2, -2))
+        bubbleBox.addView(bubble, LinearLayout.LayoutParams(-2, -2))
+        row.addView(bubbleBox, LinearLayout.LayoutParams(-2, -2))
         chat.addView(row, LinearLayout.LayoutParams(-1, -2))
         chat.post { (chat.parent as? ScrollView)?.fullScroll(View.FOCUS_DOWN) }
     }
 
 '''
-          if marker in s and 'private fun addBubble(who: String, message: String)' not in s: s=s.replace(marker,helper+marker,1)
-          s=s.replace('input.setText(""); chat.append("\\nVocê: $q\\n"); busy = true;','input.setText(""); addBubble("Você", q); busy = true;',1)
-          s=s.replace('chat.append("Evolution: $a\\n")','addBubble("EVOLUTION", a)',1)
-          s=s.replace('chat.append("Evolution: não consegui concluir: ${e.message}\\n")','addBubble("EVOLUTION", "Não consegui concluir agora: ${e.message ?: "erro desconhecido"}")',1)
-          s=s.replace('status.text = "  •  CÉREBRO QWEN3-4B • LOCAL"','status.text = "  •  CÉREBRO LOCAL PRONTO"')
+          if marker in s:
+              s=s.replace(marker, helper+marker,1)
+
+          # Replace every old single-line append with a proper bubble.
+          s=s.replace('input.setText(""); chat.append("\\nVocê: $q\\n"); busy = true;', 'input.setText(""); addBubble("Você", q); busy = true;',1)
+          s=s.replace('chat.append("Evolution: $a\\n")', 'addBubble("EVOLUTION", a)',1)
+          s=s.replace('chat.append("Evolution: não consegui concluir: ${e.message}\\n")', 'addBubble("EVOLUTION", "Não consegui concluir agora: ${e.message ?: "erro desconhecido"}")',1)
+
+          # Startup must not claim the brain is loaded until the model file is present.
+          old_prepare='''            if (!modelFile.exists() || modelFile.length() < 900_000_000L) download(modelFile)
+            withContext(Dispatchers.Main) {
+                status.text = "  •  CÉREBRO QWEN3-4B • LOCAL"
+                chat.text = "EVOLUTION ONLINE\\n\\nNúcleo de inteligência local avançado carregado.\\n\\nRaciocínio • memória • matemática • programação • pesquisa web • voz\\n\\nPode falar comigo, meu Rei."
+                send.isEnabled = true; mic.isEnabled = recognizer != null; core.setReady(true)
+            }'''
+          new_prepare='''            if (!modelFile.exists() || modelFile.length() < 900_000_000L) download(modelFile)
+            withContext(Dispatchers.Main) {
+                status.text = "  •  CÉREBRO LOCAL PRONTO"
+                chat.removeAllViews()
+                addBubble("EVOLUTION", "Online. Pode mandar sua mensagem. Eu vou responder aqui no chat.")
+                send.isEnabled = true; mic.isEnabled = recognizer != null; core.setReady(true)
+            }'''
+          s=s.replace(old_prepare,new_prepare,1)
+
+          # Keep model loading safe and lazy.
           old_load='''        val model = Llama.loadModel(modelFile.absolutePath, LlamaConfig(contextSize = 2048, threads = 2))
         return try {'''
           new_load='''        if (!::modelFile.isInitialized || !modelFile.exists()) error("núcleo local ainda não foi preparado")
         val model = try {
             Llama.loadModel(modelFile.absolutePath, LlamaConfig(contextSize = 2048, threads = 2))
         } catch (e: OutOfMemoryError) {
-            error("memória insuficiente para carregar o núcleo local neste aparelho; feche outros aplicativos e tente novamente")
+            error("memória insuficiente para carregar o núcleo local neste aparelho")
         }
         return try {'''
           s=s.replace(old_load,new_load,1)
-          s=s.replace('val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR")','val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR", "https://html.duckduckgo.com/html/?q=$q")')
+
+          # Search fallback chain.
+          s=s.replace('val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR")',
+                      'val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR", "https://html.duckduckgo.com/html/?q=$q")')
           p.write_text(s)
           PY
       - name: Build Evolution APK
