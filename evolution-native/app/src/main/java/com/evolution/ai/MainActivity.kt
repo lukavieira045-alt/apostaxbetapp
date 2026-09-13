@@ -42,10 +42,8 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val MIC = 41
-        // Qwen3-4B is the primary local brain. Q4_K_M is ~2.5 GB and is a much stronger
-        // reasoning/agent model than the previous 0.5B/1.5B choices.
-        private const val MODEL_URL = "https://huggingface.co/Qwen/Qwen3-4B-GGUF/resolve/main/Qwen3-4B-Q4_K_M.gguf?download=true"
-        private const val MODEL = "Qwen3-4B-Q4_K_M.gguf"
+        private const val MODEL_URL = "https://huggingface.co/Qwen/Qwen3-1.7B-GGUF/resolve/main/Qwen3-1.7B-Q4_K_M.gguf?download=true"
+        private const val MODEL = "Qwen3-1.7B-Q4_K_M.gguf"
         private const val SYSTEM = """
 Você é EVOLUTION, uma inteligência artificial local avançada, criada para resolver problemas de verdade.
 Você não é um chatbot de respostas vazias. Entenda a intenção, decomponha tarefas complexas, compare alternativas, faça verificações e entregue uma solução concreta.
@@ -91,9 +89,9 @@ Pode chamar o dono naturalmente de meu Rei ou chefe quando combinar, sem exagera
             hint = "Converse com a Evolution..."; setHintTextColor(Color.rgb(95, 112, 135)); setTextColor(Color.WHITE)
             minLines = 2; setSingleLine(false); setBackgroundColor(Color.rgb(11, 18, 31)); setPadding(15, 9, 15, 9)
         }
-        mic = Button(this).apply { text = "🎙"; textSize = 18f; setTextColor(Color.WHITE); setOnClickListener { startListening() } }
-        send = Button(this).apply { text = "➤"; textSize = 21f; isEnabled = false; setTextColor(Color.WHITE); setOnClickListener { ask() } }
-        controls.addView(input, LinearLayout.LayoutParams(0, -2, 1f)); controls.addView(mic, LinearLayout.LayoutParams(58, 58)); controls.addView(send, LinearLayout.LayoutParams(58, 58)); root.addView(controls)
+        mic = Button(this).apply { text = "FALAR"; textSize = 12f; setTextColor(Color.WHITE); setOnClickListener { startListening() } }
+        send = Button(this).apply { text = "ENVIAR"; textSize = 12f; isEnabled = false; setTextColor(Color.WHITE); setOnClickListener { ask() } }
+        controls.addView(input, LinearLayout.LayoutParams(0, -2, 1f)); controls.addView(mic, LinearLayout.LayoutParams(78, 58)); controls.addView(send, LinearLayout.LayoutParams(78, 58)); root.addView(controls)
         root.addView(TextView(this).apply {
             text = "NÚCLEO LOCAL  •  VOZ  •  MEMÓRIA  •  RACIOCÍNIO  •  PESQUISA WEB"; textSize = 9f; gravity = Gravity.CENTER
             setTextColor(Color.rgb(91, 125, 153)); setPadding(0, 7, 0, 0)
@@ -140,18 +138,16 @@ Pode chamar o dono naturalmente de meu Rei ou chefe quando combinar, sem exagera
         try {
             val dir = File(getExternalFilesDir("models"), "").apply { mkdirs() }
             modelFile = File(dir, MODEL)
-            // The 4B Q4 model is the real primary brain. Never silently replace it with
-            // a tiny model and call that "super intelligence".
-            if (!modelFile.exists() || modelFile.length() < 2_000_000_000L) download(modelFile)
+            if (!modelFile.exists() || modelFile.length() < 1_000_000_000L) download(modelFile)
             withContext(Dispatchers.Main) {
-                status.text = "  •  CÉREBRO QWEN3-4B • LOCAL"
-                chat.text = "EVOLUTION ONLINE\n\nNúcleo de inteligência local avançado carregado.\n\nRaciocínio • memória • matemática • programação • pesquisa web • voz\n\nPode falar comigo, meu Rei."
+                status.text = "  •  CÉREBRO QWEN3-1.7B • LOCAL"
+                chat.text = "EVOLUTION ONLINE\n\nNúcleo de inteligência local carregado.\n\nRaciocínio • memória • matemática • programação • pesquisa web • voz\n\nPode falar comigo, meu Rei."
                 send.isEnabled = true; mic.isEnabled = recognizer != null; core.setReady(true)
             }
         } catch (e: Exception) {
             withContext(Dispatchers.Main) {
                 status.text = "  •  NÚCLEO EM RECUPERAÇÃO"
-                chat.text = "Falha ao preparar o cérebro Qwen3-4B: ${e.message ?: "erro desconhecido"}"
+                chat.text = "Falha ao preparar o cérebro local: ${e.message ?: "erro desconhecido"}"
                 core.setReady(false)
             }
         }
@@ -183,18 +179,18 @@ Pode chamar o dono naturalmente de meu Rei ou chefe quando combinar, sem exagera
                 saveMemory(q, a)
                 tts.speak(a, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null, "evolution-answer")
             } catch (e: Exception) { chat.append("Evolution: não consegui concluir: ${e.message}\n") }
-            busy = false; core.setThinking(false); send.isEnabled = true; mic.isEnabled = recognizer != null; status.text = "  •  CÉREBRO QWEN3-4B • LOCAL"
+            busy = false; core.setThinking(false); send.isEnabled = true; mic.isEnabled = recognizer != null; status.text = "  •  CÉREBRO QWEN3-1.7B • LOCAL"
         }
     }
 
-    private fun answerFor(q: String): String {
+    private suspend fun answerFor(q: String): String {
         Calculator.tryCalculate(q)?.let { return it }
         val conversational = Regex("^(oi|olá|ola|bom dia|boa tarde|boa noite|obrigado|valeu|tudo bem)[!? .]*$", RegexOption.IGNORE_CASE).matches(q)
-        val research = q.length >= 18 && !conversational && (
+        val forceSearch = Regex("^pesquisar\\s+.+", RegexOption.IGNORE_CASE).matches(q)
+        val research = !conversational && (forceSearch || (q.length >= 18 && (
             Regex("\\b(pesquise|pesquisa|procure|pesquisar|busque|buscar|atual|agora|hoje|notícia|noticias|últimas|último|última|preço atual|quanto está|fonte|fontes|recentemente)\\b", RegexOption.IGNORE_CASE).containsMatchIn(q) ||
-            Regex("^(quem|qual|quais|o que|como|por que|porque|quando|onde)\\b", RegexOption.IGNORE_CASE).containsMatchIn(q)
-        )
-        val web = if (research) searchWeb(q) else ""
+            Regex("^(quem|qual|quais|o que|como|por que|porque|quando|onde)\\b", RegexOption.IGNORE_CASE).containsMatchIn(q))))
+        val web = if (research) searchWeb(q.removePrefix("pesquisar ").trim()) else ""
         val mem = memory.getString("items", "").orEmpty().takeLast(10000)
         val prompt = buildString {
             append("MEMÓRIA RELEVANTE:\n").append(mem).append("\n\n")
@@ -202,20 +198,19 @@ Pode chamar o dono naturalmente de meu Rei ou chefe quando combinar, sem exagera
             append("TAREFA DO USUÁRIO:\n").append(q).append("\n\n")
             append("Resolva a tarefa com o máximo de competência. Verifique fatos, números e pressupostos antes da resposta. Se houver várias partes, cubra todas. Não invente.\n")
         }
-        val model = Llama.loadModel(modelFile.absolutePath, LlamaConfig(contextSize = 3072, threads = 3))
+        val model = Llama.loadModel(modelFile.absolutePath, LlamaConfig(contextSize = 2048, threads = 4))
         return try {
             val raw = Llama.complete(
                 model,
                 prompt = "<|im_start|>system\n$SYSTEM<|im_end|>\n<|im_start|>user\n$prompt<|im_end|>\n<|im_start|>assistant\n",
                 systemPrompt = "",
-                maxTokens = 640
+                maxTokens = 384
             ).text.trim()
             cleanAnswer(raw)
         } finally { Llama.releaseModel(model) }
     }
 
     private fun cleanAnswer(raw: String): String {
-        // Qwen3 may emit private thinking blocks. Keep the useful answer and never show them.
         var s = raw.replace(Regex("<think>[\\s\\S]*?</think>"), "")
         s = s.replace("<|im_end|>", "").replace("<|endoftext|>", "").trim()
         return s.ifBlank { "Não consegui concluir a resposta agora." }
