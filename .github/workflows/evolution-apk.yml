@@ -1,27 +1,21 @@
 name: Evolution APK
-on:
-  workflow_dispatch:
-  pull_request:
-    branches: [ main ]
-    paths: [ 'evolution-native/**', '.github/workflows/evolution-apk.yml' ]
-  push:
-    branches: [ evolution-native ]
-    paths: [ 'evolution-native/**', '.github/workflows/evolution-apk.yml' ]
+on: push
 permissions:
   contents: read
-env:
-  GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx3g
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v5
-        with: { distribution: temurin, java-version: '17' }
+        with:
+          distribution: temurin
+          java-version: '17'
       - uses: android-actions/setup-android@v3
       - uses: gradle/actions/setup-gradle@v4
-        with: { gradle-version: '8.10' }
-      - name: Verify
+        with:
+          gradle-version: '8.10'
+      - name: Verify Evolution project
         working-directory: evolution-native
         run: |
           test -f settings.gradle.kts
@@ -29,9 +23,7 @@ jobs:
           test -f app/build.gradle.kts
           test -f app/src/main/AndroidManifest.xml
           test -f app/src/main/java/com/evolution/ai/MainActivity.kt
-          test -f app/src/main/java/com/evolution/ai/EvolutionLearningWorker.kt
-          test -f gradle.properties
-      - name: Prepare Evolution brain and ChatGPT-style chat
+      - name: Apply brain and chat fixes
         working-directory: evolution-native
         run: |
           python3 - <<'PY'
@@ -45,41 +37,12 @@ jobs:
           s=s.replace('LlamaConfig(contextSize = 3072, threads = 3)','LlamaConfig(contextSize = 2048, threads = 2)')
           s=s.replace('maxTokens = 640','maxTokens = 512')
           s=s.replace('import android.view.View','import android.view.View\nimport android.view.inputmethod.EditorInfo')
-          s=s.replace('import androidx.lifecycle.lifecycleScope','import androidx.lifecycle.lifecycleScope\nimport androidx.work.ExistingPeriodicWorkPolicy\nimport androidx.work.PeriodicWorkRequestBuilder\nimport androidx.work.WorkManager\nimport java.util.concurrent.TimeUnit')
-          s=s.replace('        setupSpeech()\n        lifecycleScope.launch { prepareBrain() }','        setupSpeech()\n        startLearningLoop()\n        lifecycleScope.launch { prepareBrain() }',1)
-          s=s.replace('    private fun setupSpeech() {','''    private fun startLearningLoop() {
-        val request = PeriodicWorkRequestBuilder<EvolutionLearningWorker>(30, TimeUnit.MINUTES).build()
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork("evolution-24h-learning", ExistingPeriodicWorkPolicy.KEEP, request)
-    }
-
-'''+ '    private fun setupSpeech() {',1)
-          s=s.replace('hint = "Converse com a Evolution..."','hint = "Escreva para a Evolution..."',1)
-          s=re.sub(r'''        mic = Button\(this\)\.apply \{ text = "[^\"]*"; textSize = 18f; setTextColor\(Color\.WHITE\); setOnClickListener \{ startListening\(\) \} \}\n        send = Button\(this\)\.apply \{ text = "[^\"]*"; textSize = 21f; isEnabled = false; setTextColor\(Color\.WHITE\); setOnClickListener \{ ask\(\) \} \}''', '''        mic = Button(this).apply { text = "FALAR"; textSize = 11f; isAllCaps = false; minWidth = 112; minHeight = 56; setTextColor(Color.WHITE); setOnClickListener { startListening() } }
-        send = Button(this).apply { text = "ENVIAR"; textSize = 11f; isAllCaps = false; minWidth = 112; minHeight = 56; isEnabled = false; setTextColor(Color.WHITE); setOnClickListener { ask() } }
-        input.imeOptions = EditorInfo.IME_ACTION_SEND
-        input.setOnEditorActionListener { _, actionId, _ -> if (actionId == EditorInfo.IME_ACTION_SEND) { ask(); true } else false }''',s,count=1)
-          s=s.replace('private lateinit var chat: TextView','private lateinit var chat: LinearLayout',1)
-          s=s.replace('''        chat = TextView(this).apply {
-            textSize = 15f; setTextColor(Color.rgb(229, 242, 255)); setPadding(12, 10, 12, 10)
-            text = "EVOLUTION\\nPreparando o cérebro local..."; setBackgroundColor(Color.rgb(7, 12, 22))
-        }
-        root.addView(ScrollView(this).apply { addView(chat); setBackgroundColor(Color.rgb(7, 12, 22)) }, LinearLayout.LayoutParams(-1, 0, .31f))''','''        chat = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(10,10,10,10); setBackgroundColor(Color.rgb(7,12,22)) }
-        root.addView(ScrollView(this).apply { addView(chat); setBackgroundColor(Color.rgb(7,12,22)); isFillViewport = true }, LinearLayout.LayoutParams(-1,0,.31f))''',1)
-          s=s.replace('    private fun ask() {','''    private fun addBubble(who: String, message: String) {
-        val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL; gravity = if (who == "Você") Gravity.END else Gravity.START; setPadding(4,5,4,5) }
-        val bubble = TextView(this).apply { text = message; textSize = 15f; setTextColor(Color.WHITE); setPadding(16,11,16,11); maxWidth = (resources.displayMetrics.widthPixels * .78f).toInt(); background = android.graphics.drawable.GradientDrawable().apply { cornerRadius = 28f; setColor(if (who == "Você") Color.rgb(16,76,105) else Color.rgb(22,30,45)) } }
-        val name = TextView(this).apply { text = who; textSize = 10f; setTextColor(Color.rgb(125,160,185)); setPadding(2,0,2,3) }
-        val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; gravity = if (who == "Você") Gravity.END else Gravity.START }
-        box.addView(name); box.addView(bubble); row.addView(box); chat.addView(row, LinearLayout.LayoutParams(-1,-2)); chat.post { (chat.parent as? ScrollView)?.fullScroll(View.FOCUS_DOWN) }
-    }
-
-    private fun ask() {''',1)
-          s=s.replace('input.setText(""); chat.append("\\nVocê: $q\\n"); busy = true;','input.setText(""); addBubble("Você", q); busy = true;',1)
-          s=s.replace('chat.append("Evolution: $a\\n")','addBubble("EVOLUTION", a)',1)
-          s=s.replace('chat.append("Evolution: não consegui concluir: ${e.message}\\n")','addBubble("EVOLUTION", "Não consegui concluir agora: ${e.message ?: "erro desconhecido"}")',1)
-          s=s.replace('chat.text = "Falha ao preparar o cérebro Qwen3-4B: ${e.message ?: "erro desconhecido"}"','chat.removeAllViews(); addBubble("EVOLUTION", "Falha ao preparar o cérebro local: ${e.message ?: "erro desconhecido"}")',1)
-          s=s.replace('val research = q.length >= 18 && !conversational && (','val research = !conversational && (',1)
-          s=s.replace('val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR")','val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR", "https://html.duckduckgo.com/html/?q=$q")',1)
+          s=s.replace('private var busy = false','private var busy = false\n    private var brainModel: dev.ffmpegkit.llama.LlamaModel? = null')
+          s=s.replace('val research = q.length >= 18 && !conversational && (','val research = !conversational && (')
+          s=s.replace('val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR")','val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR", "https://html.duckduckgo.com/html/?q=$q")')
+          s=s.replace('hint = "Converse com a Evolution..."','hint = "Escreva para a Evolution..."')
+          s=s.replace('text = "➤"','text = "ENVIAR"')
+          s=s.replace('text = "🎙"','text = "FALAR"')
           p.write_text(s)
           PY
       - name: Build Evolution APK
@@ -92,5 +55,3 @@ jobs:
           name: evolution-debug-apk
           path: evolution-native/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
-
-# Force a new push-triggered build of the Evolution APK.
