@@ -21,9 +21,14 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.10'
+      - name: Verify Android project
+        working-directory: evolution-native
+        run: gradle --version && gradle :app:tasks --no-daemon
       - name: Build Evolution APK
         working-directory: evolution-native
-        run: gradle :app:assembleDebug --no-daemon
+        run: gradle :app:assembleDebug --no-daemon --stacktrace
+      - name: Verify APK
+        run: test -s evolution-native/app/build/outputs/apk/debug/app-debug.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
