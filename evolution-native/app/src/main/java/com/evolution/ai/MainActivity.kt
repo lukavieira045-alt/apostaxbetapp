@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val MIC = 41
-        private const val MODEL_URL = "https://huggingface.co/Qwen/Qwen3-1.7B-GGUF/resolve/main/Qwen3-1.7B-Q4_K_M.gguf?download=true"
+        private const val MODEL_URL = "https://huggingface.co/ggml-org/Qwen3-1.7B-GGUF/resolve/main/Qwen3-1.7B-Q4_K_M.gguf?download=true"
         private const val MODEL = "Qwen3-1.7B-Q4_K_M.gguf"
         private const val SYSTEM = """
 Você é EVOLUTION, uma inteligência artificial local avançada, criada para resolver problemas de verdade.
@@ -190,7 +190,7 @@ Pode chamar o dono naturalmente de meu Rei ou chefe quando combinar, sem exagera
         val research = !conversational && (forceSearch || (q.length >= 18 && (
             Regex("\\b(pesquise|pesquisa|procure|pesquisar|busque|buscar|atual|agora|hoje|notícia|noticias|últimas|último|última|preço atual|quanto está|fonte|fontes|recentemente)\\b", RegexOption.IGNORE_CASE).containsMatchIn(q) ||
             Regex("^(quem|qual|quais|o que|como|por que|porque|quando|onde)\\b", RegexOption.IGNORE_CASE).containsMatchIn(q))))
-        val web = if (research) searchWeb(q.removePrefix("pesquisar ").trim()) else ""
+        val web = if (research) searchWeb(q.replaceFirst(Regex("^pesquisar\\s+", RegexOption.IGNORE_CASE), "").trim()) else ""
         val mem = memory.getString("items", "").orEmpty().takeLast(10000)
         val prompt = buildString {
             append("MEMÓRIA RELEVANTE:\n").append(mem).append("\n\n")
@@ -265,20 +265,5 @@ class EvolutionCoreView(context: android.content.Context) : View(context) {
         p.textAlign = Paint.Align.CENTER; p.textSize = 10f; p.color = Color.rgb(100, 169, 196); c.drawText(if (thinking) "EVOLUTION • PROCESSANDO" else if (ready) "EVOLUTION • NÚCLEO ONLINE" else "EVOLUTION • INICIALIZANDO", cx, h - 16f, p); p.textSize = 8f; p.color = Color.rgb(64, 103, 126); c.drawText("LOCAL CORE / 60 FPS / CONNECTED LIGHT", cx, h - 4f, p)
         if (System.currentTimeMillis() - lastSound > 3000L) { lastSound = System.currentTimeMillis(); try { tone.startTone(ToneGenerator.TONE_PROP_BEEP, 28) } catch (_: Exception) {} }
         postInvalidateOnAnimation()
-    }
-}
-
-object Calculator {
-    fun tryCalculate(text: String): String? {
-        val s = text.replace("quanto é", "", true).replace("calcule", "", true).trim()
-        if (!Regex("^[0-9+*/().,%\\- xX÷]+$").matches(s)) return null
-        return try { val v = Parser(s.replace("x", "*", true).replace("÷", "/").replace(",", ".")).parse(); "Resultado: $v" } catch (_: Exception) { null }
-    }
-    private class Parser(private val s: String) {
-        var i = 0
-        fun parse(): Double { val v = expr(); if (i < s.length) error("extra"); return v }
-        fun expr(): Double { var v = term(); while (i < s.length && (s[i] == '+' || s[i] == '-')) { val o = s[i++]; val n = term(); v = if (o == '+') v + n else v - n }; return v }
-        fun term(): Double { var v = factor(); while (i < s.length && (s[i] == '*' || s[i] == '/')) { val o = s[i++]; val n = factor(); v = if (o == '*') v * n else v / n }; return v }
-        fun factor(): Double { while (i < s.length && s[i].isWhitespace()) i++; if (i < s.length && s[i] == '-') { i++; return -factor() }; if (i < s.length && s[i] == '(') { i++; val v = expr(); if (i >= s.length || s[i++] != ')') error("paren"); return v }; val st = i; while (i < s.length && (s[i].isDigit() || s[i] == '.')) i++; if (st == i) error("number"); return s.substring(st, i).toDouble() }
     }
 }
