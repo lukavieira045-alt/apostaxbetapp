@@ -1,12 +1,14 @@
 package com.evolution.ai
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.*
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
-import android.content.Intent
 import android.view.Gravity
 import android.view.View
 import android.widget.*
@@ -38,6 +40,7 @@ class MainActivity : AppCompatActivity() {
     private val memory by lazy { getSharedPreferences("evolution_memory", MODE_PRIVATE) }
 
     companion object {
+        private const val MIC_REQUEST = 41
         private const val MODEL_URL = "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/main/qwen2.5-0.5b-instruct-q4_0.gguf?download=true"
         private const val MODEL_NAME = "qwen2.5-0.5b-instruct-q4_0.gguf"
         private const val SYSTEM = """
@@ -116,13 +119,23 @@ Não revele raciocínio interno privado; entregue conclusão, verificações e p
     }
 
     private fun startListening() {
-        if (brainBusy) return
+        if (brainBusy || recognizer == null) return
+        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), MIC_REQUEST)
+            return
+        }
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, "pt-BR")
             putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, false)
         }
         recognizer?.startListening(intent)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == MIC_REQUEST && grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) startListening()
+        else status.text = "  •  MICROFONE NÃO AUTORIZADO"
     }
 
     private suspend fun prepareBrain() = withContext(Dispatchers.IO) {
@@ -145,9 +158,9 @@ Não revele raciocínio interno privado; entregue conclusão, verificações e p
         conn.connectTimeout = 30000; conn.readTimeout = 120000; conn.requestMethod = "GET"; conn.connect()
         if (conn.responseCode !in 200..299) error("download HTTP ${conn.responseCode}")
         val total = conn.contentLengthLong
-        conn.inputStream.use { input -> file.outputStream().use { output ->
+        conn.inputStream.use { stream -> file.outputStream().use { output ->
             val buffer = ByteArray(1024 * 1024); var done = 0L; var n: Int
-            while (input.read(buffer).also { n = it } >= 0) { if (n == 0) continue; output.write(buffer,0,n); done += n; if (total > 0 && done % (8L*1024*1024) < n) runOnUiThread { status.text = "  •  BAIXANDO CÉREBRO ${done*100/total}%" } }
+            while (stream.read(buffer).also { n = it } >= 0) { if (n == 0) continue; output.write(buffer,0,n); done += n; if (total > 0 && done % (8L*1024*1024) < n) runOnUiThread { status.text = "  •  BAIXANDO CÉREBRO ${done*100/total}%" } }
         }}
         conn.disconnect()
     }
@@ -216,7 +229,7 @@ class EvolutionCoreView(context: android.content.Context) : View(context) {
         for(i in 0..4){p.style=Paint.Style.STROKE;p.strokeWidth=if(i==0)3f else 1.2f;p.color=when(i%3){0->Color.argb(210,73,220,255);1->Color.argb(120,150,91,255);else->Color.argb(110,255,67,193)};val rr=coreR*(1.05f+i*.17f);val oval=RectF(cx-rr,cy-rr*.72f,cx+rr,cy+rr*.72f);c.save();c.rotate(angle*(if(i%2==0)1f else-.65f),cx,cy);c.drawOval(oval,p);c.restore()}
         for(i in 0 until 18){val a=Math.toRadians(angle*(.7+i%3*.23)+i*20.0);val rr=coreR*(1.08f+(i%5)*.13f);val x=cx+cos(a).toFloat()*rr;val y=cy+sin(a).toFloat()*rr*.72f;p.style=Paint.Style.FILL;p.color=if(i%3==0)Color.rgb(255,74,195) else Color.rgb(67,220,255);c.drawCircle(x,y,if(i%4==0)3.2f else 1.7f,p)}
         val grad=RadialGradient(cx-coreR*.2f,cy-coreR*.22f,coreR,intArrayOf(Color.rgb(235,255,255),Color.rgb(70,218,255),Color.rgb(26,69,150),Color.rgb(6,11,28)),floatArrayOf(0f,.18f,.55f,1f),Shader.TileMode.CLAMP);p.shader=grad;p.style=Paint.Style.FILL;p.setShadowLayer(24f,0f,0f,Color.argb(180,43,198,255));c.drawCircle(cx,cy,coreR,p);p.clearShadowLayer();p.shader=null
-        // Central eye removed: the nucleus now has only a small connected pulsing light.
+        // No eye. Only a small connected pulsating light remains at the center.
         val lightPulse=1f+sin(angle*PI/180.0*1.8).toFloat()*.28f; val lr=coreR*.045f*lightPulse
         val light=RadialGradient(cx,cy,coreR*.16f,intArrayOf(Color.WHITE,Color.rgb(120,240,255),Color.argb(30,60,180,255),Color.TRANSPARENT),floatArrayOf(0f,.14f,.42f,1f),Shader.TileMode.CLAMP);p.shader=light;p.style=Paint.Style.FILL;c.drawCircle(cx,cy,coreR*.16f,p);p.shader=null
         p.style=Paint.Style.FILL;p.color=if(ready)Color.rgb(170,250,255) else Color.rgb(120,145,165);p.setShadowLayer(22f,0f,0f,p.color);c.drawCircle(cx,cy,lr,p);p.clearShadowLayer()
