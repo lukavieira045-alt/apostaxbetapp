@@ -1,0 +1,27 @@
+name: Evolution APK
+on:
+  workflow_dispatch:
+  push:
+    branches: [ evolution-native ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Build Evolution APK
+        working-directory: evolution-native
+        run: gradle :app:assembleDebug --no-daemon
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: evolution-debug-apk
+          path: evolution-native/app/build/outputs/apk/debug/app-debug.apk
