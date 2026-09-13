@@ -1,6 +1,6 @@
 name: Evolution APK (PR)
 on:
-  pull_request:
+  pull_request_target:
     branches: [ main ]
     paths: [ 'evolution-native/**', '.github/workflows/evolution-apk-main.yml' ]
   workflow_dispatch:
@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
