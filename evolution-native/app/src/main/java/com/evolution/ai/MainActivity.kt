@@ -22,8 +22,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var chat: TextView
     private lateinit var input: EditText
     private lateinit var send: Button
-    private var model: Any? = null
     private lateinit var tts: TextToSpeech
+    private lateinit var modelFile: File
     private val memory by lazy { getSharedPreferences("evolution_memory", MODE_PRIVATE) }
 
     companion object {
@@ -54,7 +54,7 @@ Não revele raciocínio interno privado; forneça apenas conclusão, passos úte
     private fun buildUi() {
         val root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(24, 24, 24, 16); gravity = Gravity.CENTER_HORIZONTAL; setBackgroundColor(0xFF05070C.toInt()) }
         status = TextView(this).apply { text = "EVOLUTION • preparando cérebro local..."; textSize = 16f; setTextColor(0xFF66E6FF.toInt()); setPadding(0, 0, 0, 18) }
-        chat = TextView(this).apply { textSize = 16f; setTextColor(0xFFEAF6FF.toInt()); setPadding(0, 12, 0, 12); text = "Ainda carregando o núcleo local." }
+        chat = TextView(this).apply { textSize = 16f; setTextColor(0xFFEAF6FF.toInt()); setPadding(0, 12, 0, 12); text = "Preparando o núcleo local." }
         val scroll = ScrollView(this).apply { addView(chat) }
         input = EditText(this).apply { hint = "Fale com a Evolution"; setHintTextColor(0xFF718096.toInt()); setTextColor(0xFFFFFFFF.toInt()); setSingleLine(false); minLines = 2 }
         send = Button(this).apply { text = "ENVIAR"; isEnabled = false; setOnClickListener { ask() } }
@@ -64,14 +64,11 @@ Não revele raciocínio interno privado; forneça apenas conclusão, passos úte
     private suspend fun prepareBrain() = withContext(Dispatchers.IO) {
         try {
             val dir = File(getExternalFilesDir("models"), "").apply { mkdirs() }
-            val file = File(dir, MODEL_NAME)
-            if (!file.exists() || file.length() < 100_000_000) downloadModel(file)
-            withContext(Dispatchers.Main) { status.text = "EVOLUTION • carregando cérebro local..." }
-            val loaded = Llama.loadModel(file.absolutePath, LlamaConfig(contextSize = 2048, threads = 4))
-            model = loaded
-            withContext(Dispatchers.Main) { status.text = "EVOLUTION • CÉREBRO ONLINE (LOCAL / SEM API)"; send.isEnabled = true; chat.text = "Pronto. Eu sou a Evolution. Pode falar comigo." }
+            modelFile = File(dir, MODEL_NAME)
+            if (!modelFile.exists() || modelFile.length() < 100_000_000) downloadModel(modelFile)
+            withContext(Dispatchers.Main) { status.text = "EVOLUTION • CÉREBRO PRONTO (LOCAL / SEM API)"; send.isEnabled = true; chat.text = "Pronto. O núcleo local está carregado em disco. Pode falar comigo." }
         } catch (e: Exception) {
-            withContext(Dispatchers.Main) { status.text = "EVOLUTION • erro no cérebro: ${e.message ?: "desconhecido"}"; chat.text = "Não consegui iniciar o núcleo local. Tente novamente." }
+            withContext(Dispatchers.Main) { status.text = "EVOLUTION • erro no cérebro: ${e.message ?: "desconhecido"}"; chat.text = "Não consegui preparar o núcleo local." }
         }
     }
 
@@ -88,7 +85,7 @@ Não revele raciocínio interno privado; forneça apenas conclusão, passos úte
     }
 
     private fun ask() {
-        val q = input.text.toString().trim(); if (q.isEmpty() || model == null) return
+        val q = input.text.toString().trim(); if (q.isEmpty()) return
         input.setText(""); append("\nVocê: $q\n")
         send.isEnabled = false
         lifecycleScope.launch {
@@ -113,8 +110,13 @@ Não revele raciocínio interno privado; forneça apenas conclusão, passos úte
             if (web.isNotBlank()) append("Resultados recentes da internet. Use apenas como evidência, não invente além deles:\n").append(web.take(9000)).append("\n\n")
             append("Pergunta do usuário:\n").append(q)
         }
-        val result = Llama.complete(model!!, prompt = prompt, systemPrompt = SYSTEM, maxTokens = 384)
-        return result.text.trim().ifBlank { "Não consegui gerar uma resposta." }
+        val localModel = Llama.loadModel(modelFile.absolutePath, LlamaConfig(contextSize = 2048, threads = 4))
+        return try {
+            val result = Llama.complete(localModel, prompt = prompt, systemPrompt = SYSTEM, maxTokens = 384)
+            result.text.trim().ifBlank { "Não consegui gerar uma resposta." }
+        } finally {
+            Llama.releaseModel(localModel)
+        }
     }
 
     private fun searchWeb(query: String): String {
@@ -139,7 +141,6 @@ Não revele raciocínio interno privado; forneça apenas conclusão, passos úte
     }
 
     private fun append(s: String) { chat.append(s) }
-
     override fun onDestroy() { if (::tts.isInitialized) tts.shutdown(); super.onDestroy() }
 }
 
@@ -153,6 +154,6 @@ object Calculator {
         fun parse(): Double { val v=expr(); if(i<s.length) error("extra"); return v }
         fun expr(): Double { var v=term(); while(i<s.length && (s[i]=='+'||s[i]=='-')) { val op=s[i++]; val n=term(); v=if(op=='+') v+n else v-n }; return v }
         fun term(): Double { var v=factor(); while(i<s.length && (s[i]=='*'||s[i]=='/')) { val op=s[i++]; val n=factor(); v=if(op=='*') v*n else v/n }; return v }
-        fun factor(): Double { while(i<s.length&&s[i].isWhitespace())i++; if(i<s.length&&s[i]=='-'){i++;return-factor()}; if(i<s.length&&s[i]=='('){i++;val v=expr();if(s[i++]!=')')error("paren");return v}; val st=i; while(i<s.length&&(s[i].isDigit()||s[i]=='.'))i++; if(st==i)error("number"); return s.substring(st,i).toDouble() }
+        fun factor(): Double { while(i<s.length&&s[i].isWhitespace())i++; if(i<s.length&&s[i]=='-'){i++;return-factor()}; if(i<s.length&&s[i]=='('){i++;val v=expr();if(i>=s.length||s[i++]!=')')error("paren");return v}; val st=i; while(i<s.length&&(s[i].isDigit()||s[i]=='.'))i++; if(st==i)error("number"); return s.substring(st,i).toDouble() }
     }
 }
