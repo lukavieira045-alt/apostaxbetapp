@@ -1,0 +1,1 @@
+Evolution native rebuild trigger. The APK must use the current Qwen3-1.7B local brain, ChatGPT/Yota-style ENVIAR/FALAR controls, real web research for explicit research requests, persistent memory, and the WorkManager learning loop.
