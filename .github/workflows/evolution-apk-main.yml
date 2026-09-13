@@ -109,7 +109,6 @@ jobs:
           s=s.replace('append("MEMÓRIA RELEVANTE:\\n").append(mem).append("\\n\\n")','append("MEMÓRIA RELEVANTE:\\n").append(mem).append("\\n\\n")\n            append("APRENDIZADO CONTÍNUO:\\n").append(learning).append("\\n\\n")',1)
           s=s.replace('val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR")','val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR", "https://html.duckduckgo.com/html/?q=$q")',1)
           s=s.replace('chat.text = "Falha ao preparar o cérebro Qwen3-4B: ${e.message ?: "erro desconhecido"}"','chat.removeAllViews(); addBubble("EVOLUTION", "Falha ao preparar o cérebro local: ${e.message ?: "erro desconhecido"}")',1)
-          s=s.replace('override fun onDestroy() { recognizer?.destroy(); if (::tts.isInitialized) tts.shutdown(); brainModel?.let { Llama.releaseModel(it) }; brainModel = null; if (::core.isInitialized) core.stop(); super.onDestroy() }','override fun onDestroy() { recognizer?.destroy(); if (::tts.isInitialized) tts.shutdown(); if (::core.isInitialized) core.stop(); super.onDestroy() }',1)
           p.write_text(s)
           PY
       - name: Build Evolution APK
@@ -122,3 +121,5 @@ jobs:
           name: evolution-debug-apk
           path: evolution-native/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+
+# Trigger a fresh build from main so the corrected Evolution APK is produced.
