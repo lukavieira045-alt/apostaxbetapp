@@ -82,28 +82,3 @@ jobs:
           git add jogos/roleta-cassino.html
           git diff --cached --quiet || git commit -m "Corrigir ficha da roleta"
           git push
-
-  evolution-apk:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: evolution-native
-      - uses: actions/setup-java@v5
-        with:
-          distribution: temurin
-          java-version: '17'
-      - uses: android-actions/setup-android@v3
-      - uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.10'
-      - name: Build Evolution APK
-        working-directory: evolution-native
-        run: gradle :app:assembleDebug --no-daemon --stacktrace
-      - name: Verify Evolution APK
-        run: test -s evolution-native/app/build/outputs/apk/debug/app-debug.apk
-      - uses: actions/upload-artifact@v4
-        with:
-          name: evolution-native-apk-active-ci
-          path: evolution-native/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
