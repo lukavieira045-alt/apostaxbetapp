@@ -38,21 +38,12 @@ jobs:
           import re
           p=Path('app/src/main/java/com/evolution/ai/MainActivity.kt')
           s=p.read_text()
-
-          # Stability: keep the approved sphere/nucleus visual untouched, but use a smaller
-          # local model so loading does not die around 60% on phones with limited RAM.
-          s=s.replace('private const val MODEL_URL = "https://huggingface.co/Qwen/Qwen3-4B-GGUF/resolve/main/Qwen3-4B-Q4_K_M.gguf?download=true"',
-                      'private const val MODEL_URL = "https://huggingface.co/ggml-org/Qwen3-1.7B-GGUF/resolve/main/Qwen3-1.7B-Q4_K_M.gguf?download=true"')
-          s=s.replace('private const val MODEL = "Qwen3-4B-Q4_K_M.gguf"',
-                      'private const val MODEL = "Qwen3-1.7B-Q4_K_M.gguf"')
-          s=s.replace('modelFile.length() < 2_000_000_000L', 'modelFile.length() < 900_000_000L')
-          s=s.replace('LlamaConfig(contextSize = 3072, threads = 3)', 'LlamaConfig(contextSize = 2048, threads = 2)')
-          s=s.replace('maxTokens = 640', 'maxTokens = 512')
-
-          # Real chat container: messages are separate bubbles, user on the right,
-          # Evolution on the left. Each bubble has a hard max width so text wraps
-          # naturally into multiple lines instead of becoming one giant line.
-          s=s.replace('private lateinit var chat: TextView', 'private lateinit var chat: LinearLayout', 1)
+          s=s.replace('private const val MODEL_URL = "https://huggingface.co/Qwen/Qwen3-4B-GGUF/resolve/main/Qwen3-4B-Q4_K_M.gguf?download=true"','private const val MODEL_URL = "https://huggingface.co/ggml-org/Qwen3-1.7B-GGUF/resolve/main/Qwen3-1.7B-Q4_K_M.gguf?download=true"')
+          s=s.replace('private const val MODEL = "Qwen3-4B-Q4_K_M.gguf"','private const val MODEL = "Qwen3-1.7B-Q4_K_M.gguf"')
+          s=s.replace('modelFile.length() < 2_000_000_000L','modelFile.length() < 900_000_000L')
+          s=s.replace('LlamaConfig(contextSize = 3072, threads = 3)','LlamaConfig(contextSize = 2048, threads = 2)')
+          s=s.replace('maxTokens = 640','maxTokens = 512')
+          s=s.replace('private lateinit var chat: TextView','private lateinit var chat: LinearLayout',1)
           old_chat='''        chat = TextView(this).apply {
             textSize = 15f; setTextColor(Color.rgb(229, 242, 255)); setPadding(12, 10, 12, 10)
             text = "EVOLUTION\\nPreparando o cérebro local..."; setBackgroundColor(Color.rgb(7, 12, 22))
@@ -69,13 +60,9 @@ jobs:
             isFillViewport = true
         }, LinearLayout.LayoutParams(-1, 0, .31f))'''
           s=s.replace(old_chat,new_chat,1)
-
-          # Visible controls.
           s=s.replace('text = "🎙"; textSize = 18f','text = "FALAR"; textSize = 11f',1)
           s=s.replace('text = "➤"; textSize = 21f','text = "ENVIAR"; textSize = 11f',1)
           s=s.replace('hint = "Converse com a Evolution..."','hint = "Escreva para a Evolution..."',1)
-
-          # Prefer a Portuguese male TTS voice when the device exposes one.
           old_tts='tts = android.speech.tts.TextToSpeech(this) { tts.language = Locale("pt", "BR") }'
           new_tts='''tts = android.speech.tts.TextToSpeech(this) { result ->
               if (result == android.speech.tts.TextToSpeech.SUCCESS) {
@@ -85,7 +72,6 @@ jobs:
               }
           }'''
           s=s.replace(old_tts,new_tts,1)
-
           marker='    private fun ask() {'
           helper='''    private fun addBubble(who: String, message: String) {
         val row = LinearLayout(this).apply {
@@ -119,15 +105,10 @@ jobs:
     }
 
 '''
-          if marker in s:
-              s=s.replace(marker, helper+marker,1)
-
-          # Replace every old single-line append with a proper bubble.
-          s=s.replace('input.setText(""); chat.append("\\nVocê: $q\\n"); busy = true;', 'input.setText(""); addBubble("Você", q); busy = true;',1)
-          s=s.replace('chat.append("Evolution: $a\\n")', 'addBubble("EVOLUTION", a)',1)
-          s=s.replace('chat.append("Evolution: não consegui concluir: ${e.message}\\n")', 'addBubble("EVOLUTION", "Não consegui concluir agora: ${e.message ?: "erro desconhecido"}")',1)
-
-          # Startup must not claim the brain is loaded until the model file is present.
+          if marker in s: s=s.replace(marker, helper+marker,1)
+          s=s.replace('input.setText(""); chat.append("\\nVocê: $q\\n"); busy = true;','input.setText(""); addBubble("Você", q); busy = true;',1)
+          s=s.replace('chat.append("Evolution: $a\\n")','addBubble("EVOLUTION", a)',1)
+          s=s.replace('chat.append("Evolution: não consegui concluir: ${e.message}\\n")','addBubble("EVOLUTION", "Não consegui concluir agora: ${e.message ?: "erro desconhecido"}")',1)
           old_prepare='''            if (!modelFile.exists() || modelFile.length() < 900_000_000L) download(modelFile)
             withContext(Dispatchers.Main) {
                 status.text = "  •  CÉREBRO QWEN3-4B • LOCAL"
@@ -142,8 +123,6 @@ jobs:
                 send.isEnabled = true; mic.isEnabled = recognizer != null; core.setReady(true)
             }'''
           s=s.replace(old_prepare,new_prepare,1)
-
-          # Keep model loading safe and lazy.
           old_load='''        val model = Llama.loadModel(modelFile.absolutePath, LlamaConfig(contextSize = 2048, threads = 2))
         return try {'''
           new_load='''        if (!::modelFile.isInitialized || !modelFile.exists()) error("núcleo local ainda não foi preparado")
@@ -154,10 +133,7 @@ jobs:
         }
         return try {'''
           s=s.replace(old_load,new_load,1)
-
-          # Search fallback chain.
-          s=s.replace('val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR")',
-                      'val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR", "https://html.duckduckgo.com/html/?q=$q")')
+          s=s.replace('val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR")','val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR", "https://html.duckduckgo.com/html/?q=$q")')
           p.write_text(s)
           PY
       - name: Build Evolution APK
@@ -169,3 +145,5 @@ jobs:
         with:
           name: evolution-debug-apk
           path: evolution-native/app/build/outputs/apk/debug/app-debug.apk
+          # Force a fresh APK build after the chat-layout fix
+          if-no-files-found: error
