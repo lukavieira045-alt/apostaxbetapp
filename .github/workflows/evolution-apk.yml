@@ -1,46 +1,27 @@
 name: Evolution APK
-
 on:
   workflow_dispatch:
   pull_request:
     branches: [ main ]
-    paths:
-      - 'evolution-native/**'
-      - '.github/workflows/evolution-apk.yml'
+    paths: [ 'evolution-native/**', '.github/workflows/evolution-apk.yml' ]
   push:
     branches: [ evolution-native ]
-    paths:
-      - 'evolution-native/**'
-      - '.github/workflows/evolution-apk.yml'
-
+    paths: [ 'evolution-native/**', '.github/workflows/evolution-apk.yml' ]
 permissions:
   contents: read
-
 env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx3g
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Java 17
-        uses: actions/setup-java@v5
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.10'
-
-      - name: Verify project files
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: '17' }
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with: { gradle-version: '8.10' }
+      - name: Verify
         working-directory: evolution-native
         run: |
           test -f settings.gradle.kts
@@ -49,35 +30,34 @@ jobs:
           test -f app/src/main/AndroidManifest.xml
           test -f app/src/main/java/com/evolution/ai/MainActivity.kt
           test -f gradle.properties
-          echo 'Projeto Android Evolution encontrado.'
-
-      - name: Preserve nucleus and fix coroutine calls
+      - name: Prepare Evolution brain, voice and controls
         working-directory: evolution-native
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          p = Path('app/src/main/java/com/evolution/ai/MainActivity.kt')
-          s = p.read_text()
-          old = 'private fun answerFor(q: String): String {'
-          new = 'private suspend fun answerFor(q: String): String {'
-          if old not in s:
-              raise SystemExit('assinatura answerFor não encontrada')
-          s = s.replace(old, new, 1)
+          p=Path('app/src/main/java/com/evolution/ai/MainActivity.kt')
+          s=p.read_text()
+          s=s.replace('private fun answerFor(q:String):String{','private suspend fun answerFor(q:String):String{',1)
+          s=s.replace('private fun answerFor(q: String): String {','private suspend fun answerFor(q: String): String {',1)
+          s=s.replace('text = "🎙"; textSize = 18f','text = "FALAR"; textSize = 11f',1)
+          s=s.replace('text = "➤"; textSize = 21f','text = "ENVIAR"; textSize = 11f',1)
+          old='tts = android.speech.tts.TextToSpeech(this) { tts.language = Locale("pt", "BR") }'
+          new='''tts = android.speech.tts.TextToSpeech(this) { result ->
+              if (result == android.speech.tts.TextToSpeech.SUCCESS) {
+                  tts.language = Locale("pt", "BR")
+                  val male = tts.voices.orEmpty().firstOrNull { it.locale.language == "pt" && (it.name.contains("male", true) || it.name.contains("masc", true)) }
+                  if (male != null) tts.voice = male
+              }
+          }'''
+          s=s.replace(old,new,1)
           p.write_text(s)
-          print('Núcleo anterior preservado; answerFor agora pode chamar o cérebro suspend.')
           PY
-
       - name: Build Evolution APK
         working-directory: evolution-native
         run: gradle :app:assembleDebug --no-daemon --stacktrace
-
       - name: Verify APK
-        run: |
-          test -s evolution-native/app/build/outputs/apk/debug/app-debug.apk
-          ls -lh evolution-native/app/build/outputs/apk/debug/app-debug.apk
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+        run: test -s evolution-native/app/build/outputs/apk/debug/app-debug.apk
+      - uses: actions/upload-artifact@v4
         with:
           name: evolution-debug-apk
           path: evolution-native/app/build/outputs/apk/debug/app-debug.apk
