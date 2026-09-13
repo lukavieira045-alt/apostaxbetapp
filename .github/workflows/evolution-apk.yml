@@ -51,6 +51,18 @@ jobs:
           test -f gradle.properties
           echo 'Projeto Android Evolution encontrado.'
 
+      - name: Preserve nucleus and fix coroutine call
+        working-directory: evolution-native
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('app/src/main/java/com/evolution/ai/MainActivity.kt')
+          s = p.read_text()
+          s = s.replace('private fun answerFor(q:String):String{', 'private suspend fun answerFor(q:String):String{', 1)
+          p.write_text(s)
+          print('Núcleo anterior preservado; chamada do cérebro corrigida.')
+          PY
+
       - name: Build Evolution APK
         working-directory: evolution-native
         run: gradle :app:assembleDebug --no-daemon --stacktrace
