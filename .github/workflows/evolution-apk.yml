@@ -35,21 +35,13 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import re
           p=Path('app/src/main/java/com/evolution/ai/MainActivity.kt')
           s=p.read_text()
-
-          # Keep the approved sphere/nucleus code untouched. Only the brain/UI plumbing is patched.
-          s=s.replace('private const val MODEL_URL = "https://huggingface.co/Qwen/Qwen3-4B-GGUF/resolve/main/Qwen3-4B-Q4_K_M.gguf?download=true"',
-                      'private const val MODEL_URL = "https://huggingface.co/Qwen/Qwen3-1.7B-GGUF/resolve/main/Qwen3-1.7B-Q4_K_M.gguf?download=true"')
-          s=s.replace('private const val MODEL = "Qwen3-4B-Q4_K_M.gguf"',
-                      'private const val MODEL = "Qwen3-1.7B-Q4_K_M.gguf"')
-          s=s.replace('modelFile.length() < 2_000_000_000L', 'modelFile.length() < 900_000_000L')
-          s=s.replace('LlamaConfig(contextSize = 3072, threads = 3)', 'LlamaConfig(contextSize = 2048, threads = 2)')
-          s=s.replace('maxTokens = 640', 'maxTokens = 512')
-
-          # The previous build could reach ~60% then fail while loading a 4B model into phone RAM.
-          # Do not load the model during startup: finish UI first and load lazily on the first message.
+          s=s.replace('private const val MODEL_URL = "https://huggingface.co/Qwen/Qwen3-4B-GGUF/resolve/main/Qwen3-4B-Q4_K_M.gguf?download=true"','private const val MODEL_URL = "https://huggingface.co/ggml-org/Qwen3-1.7B-GGUF/resolve/main/Qwen3-1.7B-Q4_K_M.gguf?download=true"')
+          s=s.replace('private const val MODEL = "Qwen3-4B-Q4_K_M.gguf"','private const val MODEL = "Qwen3-1.7B-Q4_K_M.gguf"')
+          s=s.replace('modelFile.length() < 2_000_000_000L','modelFile.length() < 900_000_000L')
+          s=s.replace('LlamaConfig(contextSize = 3072, threads = 3)','LlamaConfig(contextSize = 2048, threads = 2)')
+          s=s.replace('maxTokens = 640','maxTokens = 512')
           old_prepare='''            if (!modelFile.exists() || modelFile.length() < 900_000_000L) download(modelFile)
             withContext(Dispatchers.Main) {
                 status.text = "  •  CÉREBRO QWEN3-4B • LOCAL"
@@ -64,8 +56,7 @@ jobs:
                 send.isEnabled = true; mic.isEnabled = recognizer != null; core.setReady(true)
             }'''
           s=s.replace(old_prepare,new_prepare,1)
-
-          s=s.replace('private lateinit var chat: TextView', 'private lateinit var chat: LinearLayout', 1)
+          s=s.replace('private lateinit var chat: TextView','private lateinit var chat: LinearLayout',1)
           old_chat='''        chat = TextView(this).apply {
             textSize = 15f; setTextColor(Color.rgb(229, 242, 255)); setPadding(12, 10, 12, 10)
             text = "EVOLUTION\\nPreparando o cérebro local..."; setBackgroundColor(Color.rgb(7, 12, 22))
@@ -82,12 +73,9 @@ jobs:
             post { fullScroll(View.FOCUS_DOWN) }
         }, LinearLayout.LayoutParams(-1, 0, .31f))'''
           s=s.replace(old_chat,new_chat,1)
-
-          # Explicit visible controls.
           s=s.replace('text = "🎙"; textSize = 18f','text = "FALAR"; textSize = 11f',1)
           s=s.replace('text = "➤"; textSize = 21f','text = "ENVIAR"; textSize = 11f',1)
           s=s.replace('hint = "Converse com a Evolution..."','hint = "Escreva para a Evolution..."',1)
-
           old_tts='tts = android.speech.tts.TextToSpeech(this) { tts.language = Locale("pt", "BR") }'
           new_tts='''tts = android.speech.tts.TextToSpeech(this) { result ->
               if (result == android.speech.tts.TextToSpeech.SUCCESS) {
@@ -97,8 +85,6 @@ jobs:
               }
           }'''
           s=s.replace(old_tts,new_tts,1)
-
-          # Add real chat bubbles: Evolution left, user right.
           marker='    private fun ask() {'
           helper='''    private fun addBubble(who: String, message: String) {
         val row = LinearLayout(this).apply {
@@ -113,36 +99,28 @@ jobs:
             setPadding(18, 12, 18, 12)
             setBackgroundColor(if (who == "Você") Color.rgb(18, 67, 96) else Color.rgb(20, 28, 43))
         }
-        val lp = LinearLayout.LayoutParams(-2, -2).apply { width = minOf(LinearLayout.LayoutParams.WRAP_CONTENT, 0) }
         row.addView(bubble)
         chat.addView(row, LinearLayout.LayoutParams(-1, -2))
         chat.post { (chat.parent as? ScrollView)?.fullScroll(View.FOCUS_DOWN) }
     }
 
 '''
-          if marker in s and 'private fun addBubble(who: String, message: String)' not in s:
-              s=s.replace(marker, helper+marker,1)
-
-          s=s.replace('input.setText(""); chat.append("\\nVocê: $q\\n"); busy = true;', 'input.setText(""); addBubble("Você", q); busy = true;',1)
-          s=s.replace('chat.append("Evolution: $a\\n")', 'addBubble("EVOLUTION", a)',1)
-          s=s.replace('chat.append("Evolution: não consegui concluir: ${e.message}\\n")', 'addBubble("EVOLUTION", "Não consegui concluir agora: ${e.message ?: "erro desconhecido"}")',1)
-          s=s.replace('status.text = "  •  CÉREBRO QWEN3-4B • LOCAL"', 'status.text = "  •  CÉREBRO LOCAL PRONTO"')
-
-          # Lazy model load inside the actual answer path, with a clear recovery message.
+          if marker in s and 'private fun addBubble(who: String, message: String)' not in s: s=s.replace(marker,helper+marker,1)
+          s=s.replace('input.setText(""); chat.append("\\nVocê: $q\\n"); busy = true;','input.setText(""); addBubble("Você", q); busy = true;',1)
+          s=s.replace('chat.append("Evolution: $a\\n")','addBubble("EVOLUTION", a)',1)
+          s=s.replace('chat.append("Evolution: não consegui concluir: ${e.message}\\n")','addBubble("EVOLUTION", "Não consegui concluir agora: ${e.message ?: "erro desconhecido"}")',1)
+          s=s.replace('status.text = "  •  CÉREBRO QWEN3-4B • LOCAL"','status.text = "  •  CÉREBRO LOCAL PRONTO"')
           old_load='''        val model = Llama.loadModel(modelFile.absolutePath, LlamaConfig(contextSize = 2048, threads = 2))
         return try {'''
           new_load='''        if (!::modelFile.isInitialized || !modelFile.exists()) error("núcleo local ainda não foi preparado")
         val model = try {
             Llama.loadModel(modelFile.absolutePath, LlamaConfig(contextSize = 2048, threads = 2))
         } catch (e: OutOfMemoryError) {
-            error("memória insuficiente para carregar o núcleo local neste aparelho; reinicie o app e feche outros aplicativos")
+            error("memória insuficiente para carregar o núcleo local neste aparelho; feche outros aplicativos e tente novamente")
         }
         return try {'''
           s=s.replace(old_load,new_load,1)
-
-          # Make web research less dependent on one blocked engine.
-          s=s.replace('val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR")',
-                      'val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR", "https://html.duckduckgo.com/html/?q=$q")')
+          s=s.replace('val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR")','val urls = listOf("https://www.google.com/search?q=$q&hl=pt-BR", "https://www.bing.com/search?q=$q&setlang=pt-BR", "https://html.duckduckgo.com/html/?q=$q")')
           p.write_text(s)
           PY
       - name: Build Evolution APK
